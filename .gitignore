@@ -1,0 +1,10 @@
+.env 
+# Environment Variables
+ .env .env.local .env.*.local 
+ .env.development .env.test 
+ .env.production 
+ # IDE files
+  .idea/ 
+  .vscode/
+   # Logs *.log 
+   # Dependencies node_modules/

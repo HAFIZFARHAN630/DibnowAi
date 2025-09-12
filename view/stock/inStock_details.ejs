@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Stock Details</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+        <!-- Favicon -->
+            <link rel="icon" href="\images\DIB-NOW-512.png" type="image/x-icon">
+
+    
+    <!-- Icon Font Stylesheet -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="\bootstrap.css" rel="stylesheet">
+    <!-- Template Stylesheet -->
+    <link href="\styles.css" rel="stylesheet">
+    <link href="\styles1.css" rel="stylesheet">
+
+    
+</head>
+<body>
+             <!-- Sidebar Start -->
+             <div class="sidebar pe-4 pb-3">
+                <nav class="navbar">
+                  <div class="d-flex align-items-center ms-4 mb-4">
+                    <a href="/Setting" class="d-flex align-items-center text-decoration-none">
+                      <div class="position-relative">
+                        <img class="rounded-circle" src="<%- profileImagePath %>" alt="Profile Image" style="width: 40px; height: 40px;" onerror="this.onerror=null; this.src='/img/dumi img.png';">
+                        <div class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
+                    </div>
+                        <div class="ms-3">
+                            <h6 class="mb-0 text-dark"><%- firstName %></h6>
+                        </div>
+                    </a>
+                </div>
+                    <div class="navbar-nav w-100">
+                      <a href="/index" class="nav-item nav-link"><i class="bi bi-tv"></i>Dashboard</a>
+                      <a href="/inventory" class="nav-item nav-link  "><i class="bi bi-clipboard-data"></i>Inventory</a>
+                      <a href="/repair" class="nav-item nav-link "><i class="bi bi-tools"></i>Repair</a>
+                      <a href="/in_stock" class="nav-item nav-link active"><i class="bi bi-shop-window"></i>In Stock</a>
+                      <a href="/Clients" class="nav-item nav-link "><i class="bi bi-people"></i>Clients</a>
+                      <a href="/pricing" class="nav-item nav-link"><i class="bi bi-wallet2"></i>Plans</a>
+                      <a href="/sell" class="nav-item nav-link "><i class="bi bi-cash-stack"></i>Sold Item</a>
+                      <a href="/Teams" class="nav-item nav-link"><i class="fa-solid fa-users"></i>Teams</a>
+                      <a href="/Help" class="nav-item nav-link"><i class="bi bi-chat-dots"></i>Help</a>                     
+                    </div>
+                </nav>
+            </div>
+            <!-- Sidebar End -->
+
+        <!-- Navbar Start -->
+   <%- include('../par/header.ejs') %>
+        <!-- Navbar End -->
+         
+
+        <!--  -->
+        <div class="body-wrapper">
+          <div class="container-fluid">
+            <div class="card card-body py-3">
+              <div class="row align-items-center">
+                <div class="col-12">
+                  <div class="d-sm-flex align-items-center justify-space-between">
+                    <h4 class="mb-4 mb-sm-0 card-title">Product Detail</h4>
+                    <nav aria-label="breadcrumb" class="ms-auto">
+                      <ol class="breadcrumb">
+                        <li class="breadcrumb-item d-flex align-items-center">
+                          <a class="text-muted text-decoration-none d-flex" href="/index">
+                            <iconify-icon icon="solar:home-2-line-duotone" class="fs-6"></iconify-icon>
+                          </a>
+                        </li>
+                        <li class="breadcrumb-item" aria-current="page">
+                          <span class="badge fw-medium fs-2 bg-primary-subtle text-primary">
+                            Product Detail
+                          </span>
+                        </li>
+                      </ol>
+                    </nav>
+                  </div>
+                </div>
+              </div>
+            </div>
+  
+<!-- shop -->
+<div class="shop-detail">
+  <div class="card">
+    <div class="card-body p-4">
+      <% products.forEach((items) => { %>
+        <div class="row mb-5">
+          <div class="col-lg-6">
+            <div class="rounded overflow-hidden">
+              <img src="<%= items.device_image ? `/uploads/${items.device_image}` : 'default.jpg' %>" 
+                   alt="product-image" 
+                   class="img-fluid" 
+                   style="width: auto; border-radius: 0px !important;">
+            </div>
+          </div>
+
+          <div class="col-lg-6 d-flex align-items-center">
+            <div class="shop-content">
+              <!-- Display In Stock or Out of Stock Badge -->
+              <div class="d-flex align-items-center gap-2 mb-2">
+                <% if (items.Quantity > 0) { %>
+                  <span class="badge text-bg-success fs-2 fw-semibold">In Stock</span>
+                <% } else { %>
+                  <span class="badge text-bg-danger fs-2 fw-semibold">Out of Stock</span>
+                <% } %>
+              </div><br>
+
+              <h4 class="fw-bold mb-3 text-black"><%= items.product_name %></h4>
+              <p class="mb-3">Description: <%= items.gadget_problem %></p>
+              <h4 class="fw-semibold mb-3">
+                <span class="fs-5 text-muted">Retail Price: <%= items.Retail_Price %></span><br><br> 
+                <span class="fs-5 text-muted">Sale Price: <%= items.Sale_Price %></span>
+              </h4>
+              <div class="d-flex align-items-center gap-3 py-4 text-muted">
+                <h6 class="mb-0 fs-4 fw-semibold text-muted">Colors: <%= items.Color %></h6>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+</div>
+<!-- Description -->
+<div class="card">
+  <div class="card-body p-4">
+    <ul class="nav nav-pills user-profile-tab border-bottom" id="pills-tab" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button
+          class="text-black nav-link position-relative rounded-0 active d-flex align-items-center justify-content-center bg-transparent fs-3 py-6"
+          id="pills-description-tab"
+          data-bs-toggle="pill"
+          data-bs-target="#pills-description"
+          type="button"
+          role="tab"
+          aria-controls="pills-description"
+          aria-selected="true"
+        >
+          Description
+        </button>
+      </li>
+    </ul>
+    <div class="tab-content pt-4" id="pills-tabContent">
+      <% products.forEach((items, index) => { %>
+        <div
+class="tab-pane fade <%= index === 0 ? 'show active' : '' %>"
+id="pills-description-<%= index %>"
+role="tabpanel"
+aria-labelledby="pills-description-tab"
+tabindex="0"
+        >
+          <h3 class="fs-5 fw-semibold mb-7 text-dark">
+            This mobile offers a sleek design, powerful performance, and a stunning camera for capturing life's moments.          </h3>
+          <p class="mb-7">
+            <%- items.gadget_problem %>
+          </p>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+</div>
+</div>
+<!-- Description -->      
+<%- include('../par/footer.ejs') %> 
+  
+</body>
+<!-- JavaScript Libraries -->
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+
+<!-- Template Javascript -->
+<script src="js/main.js"></script>
+</html>

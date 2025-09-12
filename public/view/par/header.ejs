@@ -1,0 +1,93 @@
+
+        <!-- Navbar Start -->
+        <div class="content">
+            <nav class="navbar navbar-expand sticky-top px-4 py-0" style="background-color: #F3F3F9; box-shadow: 5px 9px 10px rgba(0, 0, 0, 0.1);">
+
+
+                <a href="/index" class="navbar-brand d-flex d-lg-none me-4">
+                    <img src="/images\DIB-NOW-512.png" alt="Logo" style="width: 82px; height: auto; border: none; border-radius: 0;">
+                </a>
+                
+                
+                <a href="#" class="sidebar-toggler flex-shrink-0 ">
+                    <i class="fa fa-bars"></i>
+                </a>
+                
+                <% if (isUser) { %>
+                <form class="d-md-flex ms-4">
+                    <div class="patient-card-body p-4 position-relative" 
+                        style="font-size: 2rem; font-weight: bold; padding: 0%; color: #333; text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);">
+                        <%= typeof plan_name !== "undefined" ? plan_name : "No Plan" %>
+                    </div>
+                    <a href="/pricing" class="ms-3"
+                        style="font-size: 1.2rem; font-weight: bold; background: linear-gradient(45deg, #007bff, #0056b3); 
+                               border: none; padding: 10px 20px; border-radius: 8px; color: white; text-decoration: none; 
+                               display: inline-block; transition: all 0.3s ease-in-out; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                               position: relative; overflow: hidden;"
+                        onmouseover="this.style.transform='scale(1.1)'; this.style.background='linear-gradient(45deg, #0056b3, #0041a3)'; 
+                                     this.style.boxShadow='0 6px 12px rgba(0, 0, 0, 0.2)';"
+                        onmouseout="this.style.transform='scale(1)'; this.style.background='linear-gradient(45deg, #007bff, #0056b3)';  this.style.boxShadow='0 4px 6px rgba(0, 0, 0, 0.1)';">
+                        Go to Plan
+                    </a>
+                </form>
+                <% } %>
+                
+                
+                
+                
+                
+                
+                <div class="navbar-nav align-items-center ms-auto">
+                    <div class="nav-item dropdown">
+              
+                        <div class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0">
+                            <a href="#" class="dropdown-item">
+                                <div class="d-flex align-items-center">
+                                    <img class="rounded-circle" src="img/user.jpg" alt="" style="width: 40px; height: 40px;">
+                                    <div class="ms-2">
+                                        <h6 class="fw-normal mb-0">Jhon send you a message</h6>
+                                        <small>15 minutes ago</small>
+                                    </div>
+                                </div>
+                            </a>
+                           
+                            <hr class="dropdown-divider">
+                            <a href="#" class="dropdown-item text-center">See all message</a>
+                        </div>
+                    </div>
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="fa fa-bell me-lg-2 text-white"></i>
+                            <span class="d-none d-lg-inline-flex text-dark">Notifications</span>
+                        </a>
+                        <% if (isUser) { %>
+
+                            <div class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0">
+                                <hr class="dropdown-divider">
+                               <a href="#" class="dropdown-item">
+                                   <h6 class="fw-normal mb-0"> </h6>
+                                   <small><%= status %></small>
+                               </a>
+                               <hr class="dropdown-divider">
+                               <a href="#" class="dropdown-item">
+                                   <h6 class="fw-normal mb-0"> Denied</h6>
+                                   <small><%= reson %></small>
+                                </a>
+                            <hr class="dropdown-divider">
+                            <a href="#" class="dropdown-item text-center">See all notifications</a>
+                        </div>
+                        <%}%>
+                    </div>
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle d-flex align-items-center gap-1" data-bs-toggle="dropdown">
+                            <img class="rounded-circle" src="<%- profileImagePath %>" alt="Profile Image" style="width: 40px; height: 40px;" onerror="this.onerror=null; this.src='/img/dumi img.png';">
+                            <span class="d-none d-lg-inline-flex"></span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0">
+                            <a href="/Setting" class="dropdown-item">Settings</a>
+                            <a href="/logout" class="dropdown-item">Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        <!-- Navbar End -->

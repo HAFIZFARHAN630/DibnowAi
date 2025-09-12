@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Clients</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+        <!-- Favicon -->
+            <link rel="icon" href="\images\DIB-NOW-512.png" type="image/x-icon">
+
+
+    <!-- Icon Font Stylesheet -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="bootstrap.css" rel="stylesheet">
+    <!-- Template Stylesheet -->
+    <link href="styles.css" rel="stylesheet">
+    <link href="styles1.css" rel="stylesheet">
+<style>
+  .body-wrapper {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.footer {
+    margin-top: auto;
+    padding:5px 11px 5px 95px;
+    background-color: #dadae0;
+    text-align: center;
+    width: 109%;
+    margin-left: -35px;
+      }
+</style>
+</head>
+<body>  
+      <!-- Sidebar Start -->
+      <div class="sidebar pe-4 pb-3">
+        <nav class="navbar">
+        
+          <div class="d-flex align-items-center ms-4 mb-4">
+            <a href="/Setting" class="d-flex align-items-center text-decoration-none">
+                <div class="position-relative">
+                    <img class="rounded-circle" src="<%- profileImagePath %>" alt="Profile Image" style="width: 40px; height: 40px;" onerror="this.onerror=null; this.src='img/dumi img.png';">
+                    <div class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
+                </div>
+                <div class="ms-3">
+                    <h6 class="mb-0 text-dark"><%- firstName %></h6>
+                </div>
+            </a>
+        </div>
+            <div class="navbar-nav w-100">
+              <a href="/index" class="nav-item nav-link"><i class="bi bi-tv"></i>Dashboard</a>
+              <a href="/inventory" class="nav-item nav-link  "><i class="bi bi-clipboard-data"></i>Inventory</a>
+              <a href="/repair" class="nav-item nav-link "><i class="bi bi-tools"></i>Repair</a>
+              <a href="/in_stock" class="nav-item nav-link"><i class="bi bi-shop-window"></i>In Stock</a>
+              <a href="/Clients" class="nav-item nav-link active"><i class="bi bi-people"></i>Clients</a>
+              <a href="/pricing" class="nav-item nav-link"><i class="bi bi-wallet2"></i>Plans</a>
+              <a href="/sell" class="nav-item nav-link "><i class="bi bi-cash-stack"></i>Sold Item</a>
+              <a href="/Teams" class="nav-item nav-link"><i class="fa-solid fa-users"></i>Teams</a>
+              <a href="/Help" class="nav-item nav-link"><i class="bi bi-chat-dots"></i>Help</a>           
+          </div>
+        </nav>
+    </div>
+    <!-- Sidebar End -->
+
+<!-- Navbar Start -->
+<%- include('../par/header.ejs') %>
+
+<% if (success_msg.length > 0) { %>
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <strong><i class="icon fa fa-check-circle me-2"></i><%= success_msg %></strong> 
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+<% } %>
+<% if (error_msg.length > 0) { %>
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <strong><%= error_msg %></strong>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+<% } %>
+       <!-- Navbar End -->
+        <!--  -->
+  <%- include('../par/Add_Repair.ejs') %>
+  <!--  -->
+  <div  class="action-buttons" style="display:flex; justify-content: end; margin-top: 10px; gap: 5px; margin-right:41px;">
+    <button class="btn btn-action btn-danger" data-bs-toggle="modal" data-bs-target="#gadgetRepairModal"><i class="bi bi-tools"></i> Add Repair Customer </button> 
+    <button class="btn btn-action btn-primary" data-bs-toggle="modal" data-bs-target="#gadgetrModal"><i class="bi bi-clipboard-data"></i> Add Inventory</button>
+  </div>
+<!-- content -->
+<div class="body-wrapper">
+    <div class="container-fluid">
+      <div class="card card-body py-3">
+        <div class="row align-items-center">
+          <div class="col-md-12 ">
+            <div class="d-sm-flex  align-items-center">
+              <h4 class="mb-4 mb-sm-0 card-title me-1">Clients</h4>
+                 <i class="fa-solid fa-user-group"></i>
+                    <div class="action-buttons" style="margin-left: auto; margin-right: 10px;">
+                      <button class="btn btn-action btn-primary" onclick="generatePDF()"> <i class="fa fa-file-pdf"></i> PDF </button>
+                      <button class="btn btn-action btn-success" onclick="generateExcel()"><i class="fa fa-file-excel"></i> Excel</button>                    
+                      <button class="btn btn-action btn-info" onclick="printTable()"><i class="fa fa-print"></i> Print</button>    
+                      <button
+                      class="btn btn-action btn-danger"
+                      onclick="deleteSelected()"
+                    >
+                      <i class="fa fa-trash"></i> Delete
+                    </button>                 
+                   </div>
+                   
+
+
+             <!-- Search Form -->
+<form class="position-relative">
+  <input
+      type="text"
+      class="form-control search-chat py-2 ps-5"
+      id="text-srh"
+      placeholder="Search Product"
+      oninput="filterTable()"
+  />
+  <i class="fa-solid fa-magnifying-glass position-absolute top-50 start-0 translate-middle-y fs-6 text-dark ms-3"></i>
+</form>
+                
+            </div>
+          </div>
+        </div>
+      </div>
+<!-- content -->
+
+      <!-- Clients -->
+      <div class="card card-body">
+        <div class="table-responsive">
+          <table
+          class="table search-table align-middle text-nowrap"
+          id="paginatedTable"
+        >
+          <thead class="header-item text-center">
+            <tr>
+              <th>
+                <div class="n-chk align-self-center text-center">
+                  <div class="form-check">
+                    <input
+                      type="checkbox"
+                      class="form-check-input primary"
+                      id="contact-check-all"
+                      onclick="toggleSelectAll(this)"
+                    />
+                    <label class="form-check-label" for="contact-check-all"></label>
+                  </div>
+                </div>
+              </th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Brand</th>
+              <th>Status</th>
+              <th class="text-center">Action</th>
+            </tr>
+          </thead>
+          <tbody class="text-center">
+            <% products.forEach(product => { %>
+            <tr class="search-items" data-user-id="<%= product.id %>">
+              <td>
+                <div class="n-chk align-self-center text-center">
+                  <div class="form-check">
+                    <input
+                      type="checkbox"
+                      class="form-check-input contact-chkbox primary"
+                      value="<%= product.id %>"
+                    />
+                    <label class="form-check-label"></label>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="d-flex align-items-center">
+                    <img
+                        src="<%= product.deviceImage %>"
+                        alt="avatar"
+                        class="rounded-circle"
+                        style="width: 30px; height: 30px; object-fit: cover"
+                    />
+                    <div class="ms-3">
+                        <span class="user-name mb-0 text-dark"><%= product.fullName %></span>
+                    </div>
+                </div>
+            </td>
+              <td><span class="usr-email-addr text-dark"><%= product.email %></span></td>
+              <td><span class="usr-location text-dark"><%= product.brand %></span></td>
+              <td style="display: none;" ><span class="usr-price text-dark "> <%= product.Price %></span></td>
+              <td style="display: none;"><span class="usr-select <%= product.mobileNumber %>"><%= product.mobileNumber %></span></td>
+              <td>
+                <select
+                  class="status-select <%= product.status %>"
+                  onchange="updateStatus('<%= product.id %>', this.value)"
+                >
+                  <option value="Pending" <%= product.status === 'Pending' ? 'selected' : '' %>>
+                    Pending
+                  </option>
+                  <option value="Cancelled" <%= product.status === 'Cancelled' ? 'selected' : '' %>>
+                    Cancelled
+                  </option>
+                  <option value="Progress" <%= product.status === 'Progress' ? 'selected' : '' %>>
+                    Progress
+                  </option>
+                  <option value="Completed" <%= product.status === 'Completed' ? 'selected' : '' %>>
+                    Completed
+                  </option>
+                  <option value="Delivered" <%= product.status === 'Delivered' ? 'selected' : '' %>>
+                    Delivered
+                  </option>
+                </select>
+              </td>
+              <td class="d-flex justify-content-end">
+                <div class="action-btn d-flex">
+                  <button
+                    class="btn text-black"
+                    onclick="printTable('<%= product.id %>')"
+                  >
+                    <i class="fa fa-print"></i> Print
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-link text-primary edit"
+                    data-bs-toggle="modal"
+                    data-bs-target="#editUserModal<%= product.id %>"
+                  >
+                    <i class="fs-4 fa-solid fa-pen-to-square text-primary"></i>
+                  </button>
+                  <form
+                  action="/Clients/<%= product.id %>"
+                  method="POST"
+                >
+                  <button type="submit"class="btn btn-link text-danger"><i class="fa-solid fa-trash-can text-danger"></i> </button>
+                </form> 
+                </div>
+              </td>
+            </tr>
+            <% }); %>
+          </tbody>
+        </table>
+        </div>
+      </div>
+
+        <!-- Pagination -->
+        <div class="d-flex justify-content-between align-items-center mt-3">
+          <span id="tableInfo" class="text-muted">Showing 1 to 10 of <%= products.length %> entries</span>
+          <nav>
+            <ul class="pagination" id="pagination"></ul>
+          </nav>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+    <!-- Content End -->
+
+    <!-- footer -->
+    <footer class="footer text-lg-start " >  
+      <div class="p3 text-center">  
+          Developed By <a style="color: black;" href="https://www.clicktaketech.com" target="_blank"><U>ClickTake Technologies</U></a> Copyright © 2025 DibNow || version 1.0.0
+
+      </div>  
+    </footer>
+    <!-- footer -->
+
+<!--  Form -->
+<% products.forEach(product => { %>
+  <div class="modal fade" id="editUserModal<%= product.id %>" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content gadget-form-modal" style="width:100%;">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editUserModalLabel" style="margin-left: auto; font-size: xx-large;margin-bottom: -17px;">Update Clients</h5>
+          <button type="button" class="btn-close gadget-close-btn" data-bs-dismiss="modal" aria-label="Close"><i class="fas fa-times gadget-close-btn" data-bs-dismiss="modal" aria-label="Close"></i></button>
+        </div>
+
+        <div class="modal-body" style="padding-top: 17px;">
+          <form action="/Clients/update/<%= product.id %>" method="POST" id="editUserForm<%= product.id %>" class="gadget-form">
+            <input type="hidden" name="id" value="<%= product.id %>" />
+            <div class="col-md-12">
+              <label for="fullName-<%= product.id %>" class="form-label">Full Name</label>
+              <input type="text" class="form-control gadget-input" name="fullName" id="fullName-<%= product.id %>" value="<%= product.fullName %>" required>
+            </div>
+            <div class="col-md-12">
+              <label for="email-<%= product.id %>" class="form-label">Email</label>
+              <input type="email" class="form-control gadget-input" name="email" id="email-<%= product.id %>" value="<%= product.email %>" required>
+            </div>
+            <div class="row">
+              <div class="row ">
+                <div class="col-md-6 ">
+                    <label for="brand" class="form-label">Brand Name</label>
+                    <select class="form-select gadget-select" name="brand" id="Brand" required>
+                        <% brand.forEach(brand => { %>
+                            <option value="<%= brand.name %>">
+                              <%= brand.name %>
+                            </option>
+                          <% }); %>
+                          <option value="Vivo">Vivo</option>
+                    </select>  
+                </div>
+              <div class="form-group col-md-6">
+                <label for="status-<%= product.id %>" class="form-label">Status</label>
+                <select class="form-control gadget-select status-select <%= product.status %>" id="status-<%= product.id %>" name="status" onchange="updateStatus('<%= product.id %>', this.value)">
+                  <option value="Pending" <%= product.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+                  <option value="Cancelled" <%= product.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+                  <option value="Progress" <%= product.status === 'Progress' ? 'selected' : '' %>>Progress</option>
+                  <option value="Completed" <%= product.status === 'Completed' ? 'selected' : '' %>>Completed</option>
+                  <option value="Delivered" <%= product.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+                </select>
+              </div>
+            </div>
+          </div>
+            <!-- Submit Button -->
+            <div class="btn-add">
+              <button type="submit" class="btn gadget-submit-btn" style=" background-color: #28a745; color: white;">
+                Update Clients
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <% }); %>
+    <!-- Form -->
+</body>
+
+
+<script>
+  // search bar
+  function filterTable() {
+    const searchValue = document.getElementById('text-srh').value.toLowerCase();
+    const rows = document.querySelectorAll('tbody .search-items'); 
+    rows.forEach(row => {
+        const fullName = row.querySelector('.user-name') ? row.querySelector('.user-name').textContent.toLowerCase() : '';
+        const email = row.querySelector('.usr-email-addr') ? row.querySelector('.usr-email-addr').textContent.toLowerCase() : '';
+        const brand = row.querySelector('.usr-location') ? row.querySelector('.usr-location').textContent.toLowerCase() : '';
+        const status = row.querySelector('.status-select') ? row.querySelector('.status-select option:checked').textContent.toLowerCase() : '';
+        // Check if any of the fields match the search input value
+        if (
+            fullName.includes(searchValue) ||
+            email.includes(searchValue) ||
+            brand.includes(searchValue) ||
+            status.includes(searchValue)
+        ) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+// Pdf select
+  document.querySelector('.btn-action i.fa-file-pdf').parentElement.addEventListener('click', function () {
+             
+              const content = document.querySelector('.container-fluid');
+      
+            
+              html2canvas(content, { scale: 2}).then((canvas) => {
+                  const imgData = canvas.toDataURL('image/png');
+                  const pdf = new jspdf.jsPDF('p', 'mm', 'a4'); // Portrait, millimeters, A4 size
+      
+                  // Dimensions for the PDF
+                  const pdfWidth = 190; 
+                  const pdfHeight = (canvas.height * pdfWidth) / canvas.width; 
+                  const pageHeight = 295; 
+                  let heightLeft = pdfHeight;
+                  let position = 10; 
+      
+                  // Add the content to the PDF
+                  pdf.addImage(imgData, 'PNG', 10, position, pdfWidth, pdfHeight);
+                  heightLeft -= pageHeight;
+      
+                  // Add new pages if content is longer than one page
+                  while (heightLeft > 0) {
+                      pdf.addPage();
+                      position = 0;
+                      pdf.addImage(imgData, 'PNG', 10, position, pdfWidth, pdfHeight);
+                      heightLeft -= pageHeight;
+                  }
+                  // Save the PDF
+                  pdf.save('clients_table.pdf');
+              });
+          });
+  // Excel // Excel
+  function generateExcel() {
+          const table = document.querySelector('.search-table');
+          
+          const wb = XLSX.utils.table_to_book(table, { sheet: "Clients Report" });
+  
+          // Generate Excel file and download it
+          XLSX.writeFile(wb, "clients_report.xlsx");
+      }
+   
+  // Delete  selected clients  Delete  selected clients
+    function toggleSelectAll(source) {
+      const checkboxes = document.querySelectorAll('.contact-chkbox');
+      checkboxes.forEach((checkbox) => {
+        checkbox.checked = source.checked;
+      });
+    }
+  // Delete selected clients
+  function deleteSelected() {
+      const selectedIds = [];
+      document.querySelectorAll('.contact-chkbox:checked').forEach((checkbox) => {
+        selectedIds.push(checkbox.value);
+      });
+      if (selectedIds.length === 0) {
+        alert('Please select at least one client to delete.');
+        return;
+      }
+      if (confirm('Are you sure you want to delete the selected clients?')) {
+        fetch('/Clients/delete', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ ids: selectedIds }),
+        })
+          .then((response) => {
+            if (response.ok) {
+              alert('Clients deleted successfully.');
+              location.reload();
+            } else {
+              alert('Failed to delete clients.');
+            }
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+            alert('An error occurred.');
+          });
+      }
+    }
+  
+  // Table pagination // Table pagination
+  document.addEventListener("DOMContentLoaded", () => {
+    const table = document.getElementById("paginatedTable");
+    const rows = table.querySelectorAll("tbody tr");
+    const pagination = document.getElementById("pagination");
+    const tableInfo = document.getElementById("tableInfo");
+  
+    const rowsPerPage = 10; // Number of rows to display per page
+    const totalPages = Math.ceil(rows.length / rowsPerPage);
+    let currentPage = 1;
+  
+    // Function to show rows for the current page
+    const showPage = (page) => {
+      currentPage = page;
+      const start = (page - 1) * rowsPerPage;
+      const end = start + rowsPerPage;
+  
+      rows.forEach((row, index) => {
+        row.style.display = index >= start && index < end ? "" : "none";
+      });
+  
+      // Update the pagination info
+      tableInfo.textContent = `Showing ${start + 1} to ${
+        end > rows.length ? rows.length : end
+      } of ${rows.length} entries`;
+  
+      // Update pagination buttons
+      updatePagination();
+    };
+  
+    // Function to create pagination buttons
+    const updatePagination = () => {
+      pagination.innerHTML = ""; 
+  
+      const createPageItem = (page, label, isDisabled = false, isActive = false) => {
+        const li = document.createElement("li");
+        li.className = `page-item ${isActive ? "active" : ""} ${isDisabled ? "disabled" : ""}`;
+        li.innerHTML = `<a class="page-link" href="#">${label}</a>`;
+        li.addEventListener("click", (e) => {
+          e.preventDefault();
+          if (!isDisabled) {
+            if (label === "Previous") {
+              showPage(currentPage - 1);
+            } else if (label === "Next") {
+              showPage(currentPage + 1);
+            } else {
+              showPage(page);
+            }
+          }
+        });
+        return li;
+      };
+  
+      // Add "Previous" button
+      pagination.appendChild(
+        createPageItem(currentPage - 1, "Previous", currentPage === 1)
+      );
+  
+      // Add numbered page buttons
+      for (let i = 1; i <= totalPages; i++) {
+        pagination.appendChild(
+          createPageItem(i, i, false, i === currentPage)
+        );
+      }
+  
+      // Add "Next" button
+      pagination.appendChild(
+        createPageItem(currentPage + 1, "Next", currentPage === totalPages)
+      );
+    };
+    // Initialize pagination
+    showPage(1);
+  });
+  
+  // ID for user to print // ID for user to print 
+  function printTable(userId) {
+    if (userId) {
+        const userRow = document.querySelector(`tr[data-user-id="${userId}"]`);
+
+        if (userRow) {
+            // Open a new window for printing and directly inject content
+            const printWindow = window.open( 'sss', 'PrintWindow', 'height=600,width=800');
+            let now = new Date();
+            let formattedDate = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+            let formattedTime = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            let liveDate = `${formattedDate}`;
+            let liveTime = `${formattedTime}`;
+
+            
+            printWindow.document.open();
+            printWindow.document.write(`
+              <html>
+                    <head>
+                        <style>
+                            body {
+                                font-family: Arial, sans-serif;
+                                margin: 0;
+                                padding: 0;
+                            }
+                            h1 {
+                                text-align: center;
+                                color: #333;
+                            }
+                            .live-date {
+                                margin-left: 20px;
+                                font-size: 14px;
+                                font-weight: bold;
+                            }
+                            .user-details {
+                                margin: 20px;
+                                padding: 20px;
+                                border-radius: 8px;
+                            }
+                            .customer-footer {
+                                margin-top: 590px;
+                                text-align: center;
+                                font-weight: bold;
+                            }
+                            .qr-code {
+                                margin-top: 100px;
+                                text-align: center;
+                            }
+                            img {
+                                width: 300px;
+                                height: 300px;
+                            }
+                            .date {
+                                display: flex;
+                                justify-content: space-between;
+                                margin-left: 20px;
+                            }
+                            .dates {
+                               display: flex;
+                               justify-content: space-between;
+                               margin-left: 20px;
+                               border-bottom: 3px double #ccc;
+                            }
+                            .info-section {
+                                margin: 20px;
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+                            }
+                            .info-section h5 {
+                                margin-right: 10px;
+                                font-weight: bold;
+                            }
+                            .info-section .left,
+                            .info-section .center,
+                            .info-section .right {
+                                flex: 1;
+                                text-align: center;
+                            }
+                            .center {
+                                text-align: center;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                         <h1><%- company %></h1>
+                           <div class="date">
+                            <p class="live-date">Date: ${liveDate}</p> 
+                            <p class="live-date">Time: ${liveTime}</p> 
+                        </div>
+
+                        <div class="date">
+                            <p class="live-date">Name: ${userRow.querySelector('.user-name').innerText}</p>
+                        </div>
+                          <div class="dates">
+                            <p class="live-date">Email: ${userRow.querySelector('.usr-email-addr').innerText}</p>
+                        </div>
+               
+                          <div class="info-section">
+                            <div class="left">
+                                <h5>Product</h5>
+                                <p>${userRow.querySelector('.usr-location').innerText}</p>
+                            </div>
+                            <div class="right">
+                                <h5>Price</h5>
+                                <p>${userRow.querySelector('.usr-price').innerText}</p>
+                            </div>
+                             <div class="center">
+                                <h5>Status</h5>
+                                <p>${userRow.querySelector('.status-select').value}</p>
+                            </div>
+                        </div>
+
+                    <!-- Customer Details Footer -->
+                        <div class="customer-footer">
+                            <p>Developed By ClickTake Technologies © 2025 DibNow</p>
+                        </div>
+                    </body>
+                   
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.focus(); 
+            printWindow.print();
+            printWindow.close(); 
+        }
+    } 
+    else {
+        // If no userId is provided, print the entire table
+        const tableContent = document.querySelector('.table-responsive').innerHTML;
+
+        const printWindow = window.open('sss', 'PrintTableWindow', 'width=800,height=600');
+
+        printWindow.document.open();
+        printWindow.document.write(`
+            <html>
+                <head>
+                    <style>
+                        /* Add styles for printing the entire table */
+                        body {
+                            font-family: Arial, sans-serif;
+                            margin: 0;
+                            padding: 0;
+                        }
+                        h2 {
+                            text-align: center;
+                            color: #333;
+                        }
+                        table {
+                            width: 100%;
+                            border-collapse: collapse;
+                            margin-top: 20px;
+                        }
+                        th, td {
+                            border: 1px solid #ddd;
+                            padding: 8px;
+                            text-align: left;
+                        }
+                        th {
+                            background-color: #f2f2f2;
+                            font-weight: bold;
+                        }
+                        td {
+                            background-color: #fafafa;
+                        }
+                               .customer-footer {
+                                margin-top: 745px;
+                                text-align: center;
+                                font-weight: bold;
+                            }
+                    </style>
+                </head>
+                <body>
+                    <h2>Clients Report</h2>
+                    ${tableContent}
+                      <!-- Customer Details Footer -->
+                        <div class="customer-footer">
+                            <p>Developed By Clicktake Technologies Copy Right @ 2025</p>
+                        </div>
+                </body>
+            </html>
+        `);
+        printWindow.document.close();
+        printWindow.focus();
+        printWindow.print();
+        printWindow.close();
+    }
+}
+
+
+  
+  </script>
+  
+        <!--  -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<!-- JavaScript Libraries -->
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+    
+<!-- Template Javascript -->
+<script src="js/main.js"></script>
+
+</html>

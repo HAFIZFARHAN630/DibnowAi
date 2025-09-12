@@ -1,0 +1,155 @@
+const sql = require("../models/inventery");
+const db = require("../config/db");
+
+exports.getInventory = (req, res) => {
+  const userId = req.session.userId;
+  if (!userId) {
+    console.error("User not logged in.");
+    return res.redirect("/");
+  }
+
+  // Fetch user profile
+  const profileSql =
+    "SELECT first_name, last_name, user_img FROM users WHERE id = ?";
+  db.query(profileSql, [userId], (err, profileResult) => {
+    if (err) {
+      console.error("Error fetching profile:", err);
+      return res.render("inventory/inventory", {
+        products: [],
+        categories: [],
+        brand: [],
+        profileImagePath: "",
+        firstName: "",
+        lastName: "",
+        totalSales,
+        salesData: [],
+      });
+    }
+
+    if (profileResult.length === 0) {
+      console.error("No user profile found.");
+      return res.render("inventory/inventory", {
+        products: [],
+        categories: [],
+        brand: [],
+        profileImagePath: "",
+        firstName: "",
+        lastName: "",
+        totalSales,
+        salesData: [],
+      });
+    }
+
+    const user = profileResult[0];
+    const firstName = user.first_name;
+    const lastName = user.last_name;
+    const profileImagePath = user.user_img || "/uploads/default.png";
+
+    // Fetch total sales for all days in the current month
+    const salesDataSql = `
+      SELECT 
+        DATE(sale_date) AS saleDate, 
+        SUM(Sale_Price) AS totalSales 
+      FROM inventery 
+      WHERE user_id = ? 
+        AND MONTH(sale_date) = MONTH(CURDATE()) 
+        AND YEAR(sale_date) = YEAR(CURDATE()) 
+      GROUP BY DATE(sale_date)
+      ORDER BY saleDate
+    `;
+    db.query(salesDataSql, [userId], (err, salesDataResult) => {
+      if (err) {
+        console.error("Error fetching sales data:", err);
+        return res.render("inventory/inventory", {
+          products: [],
+          categories: [],
+          brand: [],
+          profileImagePath,
+          firstName,
+          lastName,
+          totalSales,
+          salesData: [],
+        });
+      }
+
+      // Format salesData for graph
+      const salesData = salesDataResult.map((row) => ({
+        date: row.saleDate,
+        total: row.totalSales || 0,
+      }));
+
+      // Fetch categories
+      const categoriesSql = "SELECT name FROM categories WHERE user_id = ?";
+      db.query(categoriesSql, [userId], (err, categories) => {
+        if (err) {
+          console.error("Error fetching categories:", err);
+          return res.render("inventory/inventory", {
+            products: [],
+            categories: [],
+            brand: [],
+            profileImagePath,
+            firstName,
+            lastName,
+            totalSales,
+            salesData,
+          });
+        }
+
+        // Fetch brands
+        const brandSql = "SELECT name FROM brand WHERE user_id = ?";
+        db.query(brandSql, [userId], (err, brand) => {
+          if (err) {
+            console.error("Error fetching brand:", err);
+            return res.render("inventory/inventory", {
+              products: [],
+              categories,
+              brand: [],
+              profileImagePath,
+              firstName,
+              lastName,
+              totalSales,
+              salesData,
+            });
+          }
+
+          // Fetch products
+          const productsSql =
+            "SELECT product_name, device_image, Sale_Price, Retail_Price, gadget_problem FROM inventery WHERE user_id = ? ORDER BY device_image DESC LIMIT 10";
+          db.query(productsSql, [userId], (err, products) => {
+            if (err) {
+              console.error("Error fetching products:", err);
+              return res.render("inventory/inventory", {
+                products: [],
+                categories,
+                brand,
+                profileImagePath,
+                firstName,
+                lastName,
+                totalSales,
+                salesData,
+              });
+            }
+
+            // Calculate today's total sales
+            const totalSales = salesData.reduce(
+              (sum, item) => sum + item.total,
+              0
+            );
+
+            // Render the view with all fetched data
+            res.render("inventory/inventory", {
+              products,
+              categories,
+              brand,
+              profileImagePath,
+              firstName,
+              lastName,
+              totalSales,
+              salesData, // Make sure this is passed
+            });
+          });
+        });
+      });
+    });
+  });
+};

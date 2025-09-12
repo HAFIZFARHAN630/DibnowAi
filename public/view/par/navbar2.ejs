@@ -1,0 +1,57 @@
+<nav class="custom-navbar1 navbar-expand-lg">
+    <div class="container-fluid">
+      <div class="d-flex justify-content-end gap-2 mt-2">
+        <a href="/inventory" data-bs-toggle="modal" data-bs-target="#gadgetrModal">
+            <button class="btn btn-danger animated-btn text-white">Add Product</button>
+        </a>
+        <a href="/categoryForm">
+          <button class="btn btn-secondary animated-btn">Add Category</button>
+        </a>
+        <a href="/BrandForm">
+          <button class="btn btn-success animated-btn">Add Brand</button>
+        </a>
+        <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#gadgetRepairModal">
+            <button class="btn btn-info animated-btn text-white">Repair Products</button>
+        </a>          
+      </div>
+    </div>
+  </nav>
+
+  <style>
+  
+    .animated-btn {
+      transition: all 0.3s ease;
+    }
+  
+
+    .animated-btn:hover {
+      transform: scale(1.1); 
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+      opacity: 0.9;
+    }
+  
+
+    .btn-danger, .btn-secondary, .btn-success ,.btn-info {
+      transition: background-color 0.3s ease, transform 0.3s ease;
+      border-radius:20px;
+    }
+
+    .btn-danger:hover {
+      background-color: #d8520a;
+    }
+  
+    .btn-secondary:hover {
+      background-color: #6c757d;
+    }
+  
+    .btn-success:hover {
+      background-color: #28a745;
+    }
+    .btn-info:hover {
+        background-color: #17a2b8;
+    }
+
+  </style>
+  
+
+

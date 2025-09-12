@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>All User</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+   <!-- Favicon -->
+   <link rel="icon" href="\images\Dib Now 16.svg" type="image/x-icon">
+
+    <!-- Icon Font Stylesheet -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="bootstrap.css" rel="stylesheet">
+    <!-- Template Stylesheet -->
+    <link href="styles.css" rel="stylesheet">
+    <link href="styles1.css" rel="stylesheet">
+
+</head>
+<body>  
+      <!-- Sidebar Start -->
+      <div class="sidebar pe-4 pb-3">
+        <nav class="navbar">
+            <div class="d-flex align-items-center ms-4 mb-4">
+              <a href="/Setting" class="d-flex align-items-center text-decoration-none">
+                <div class="position-relative">
+                    <img class="rounded-circle" src="<%- profileImagePath %>" alt="Profile Image" style="width: 40px; height: 40px;" onerror="this.onerror=null; this.src='img/dumi img.png';">
+                    <div class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
+                </div>
+                <div class="ms-3">
+                    <h6 class="mb-0 text-dark"><%- firstName %></h6>
+                </div>
+            </a>
+            </div>
+            <div class="navbar-nav w-100">
+              <div class="navbar-nav w-100">
+                <a href="/index" class="nav-item nav-link "><i class="bi bi-tv"></i>Dashboard</a>
+                <a href="/admin" class="nav-item nav-link active"> <i class="bi bi-people-fill"></i>All User</a> 
+                <a href="/addadmin" class="nav-item nav-link "><i class="fa-solid fa-user-tie"></i>Add Admin</a>   
+                <a href="/request" class="nav-item nav-link "><i class="fa-solid fa-code-pull-request"></i>Request</a>    
+                <a href="https://dashboard.tawk.to/#/dashboard/659fdbaf0ff6374032bedfad" class="nav-item nav-link " target="_blank" ><i class="bi bi-chat-text-fill"></i>Chat</a>
+        
+              </div>
+          </div>
+        </nav>
+    </div>
+    <!-- Sidebar End -->
+
+
+ <!-- Navbar Start -->
+<%- include('../par/header.ejs') %>
+<!-- Navbar End -->
+
+<!-- content -->
+<div class="body-wrapper">
+    <div class="container-fluid">
+      <div class="card card-body py-3">
+        <div class="row align-items-center">
+          <div class="col-md-12 ">
+            <div class="d-sm-flex  align-items-center">
+              <h4 class="mb-4 mb-sm-0 card-title me-1">All User <i class="bi bi-people-fill"></i></h4>
+            </div>
+          </div>
+        </div>
+      </div>
+<!-- content -->
+
+      <!-- Clients -->
+      <div class="card card-body">
+        <div class="table-responsive">
+          <table class="table search-table align-middle text-nowrap" id="paginatedTable">
+            <thead class="header-item text-center">
+              <tr>
+                <th>First Name</th>
+                <th>Email</th>
+                <th>Phone Number</th>
+                <th>Company</th>
+                <th>Plane</th>
+                <th class="text-center">Action</th>
+              </tr>
+            </thead>
+            <tbody class="text-center">
+              <% users.forEach((user) => { %>
+                <% if (user.role !== "admin") { %> <!-- Condition to exclude admins -->
+                  <tr>
+                    <td><%= user.first_name %></td>
+                    <td><%= user.email %></td>
+                    <td><%= user.phone_number %></td>
+                    <td><%= user.company %></td>
+                    <td><%= user.plan_name %></td>
+                    <td>
+
+                      <!-- update  -->
+                      <div class="d-flex justify-content-center align-items-center">
+
+                        <button type="button" class="btn btn-link text-primary edit" data-bs-toggle="modal" data-bs-target="#editUserModal<%= user.id %>"> 
+                          <i class="fs-4 fa-solid fa-pen-to-square text-primary"></i>
+                        </button>
+                        <!-- update  -->
+
+                        <form action="/admin/delete/<%= user.id %>" method="POST">
+                          <button type="submit" class="button close-button" style="border: none; background-color: transparent;">
+                            <i class="fa-solid fa-trash-can text-danger"></i>
+                          </button>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                <% } %>
+              <% }); %>
+            </tbody>
+            
+          </table>
+        </div>
+      </div>  
+    <!-- Content End -->
+
+<!-- update modal -->
+<% users.forEach((user) => { %>
+  <% if (user.role !== "admin") { %> <!-- Exclude admins -->
+    <div class="modal fade" id="editUserModal<%= user.id %>" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content gadget-form-modal" style="width:100%;">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editUserModalLabel" style="font-size: xx-large;margin-bottom: -17px;">Update Users</h5>
+            <button type="button" class="btn-close gadget-close-btn" data-bs-dismiss="modal" aria-label="Close"><i class="fas fa-times gadget-close-btn"></i></button>
+          </div>
+          
+          <form action="/admin/update/<%= user.id %>" method="POST">
+            <div class="row">
+              <!-- Left Column -->
+              <div class="mb-3 col-md-6">
+                <label for="first_name" class="form-label">First Name</label>
+                <input type="text" class="form-control" id="first_name" name="first_name" value="<%= user.first_name %>" required>
+              </div>
+              
+              <div class="mb-3 col-md-6">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" name="email" value="<%= user.email %>" required>
+              </div>
+
+              <div class="mb-3 col-md-6">
+                <label for="phone_number" class="form-label">Phone Number</label>
+                <input type="text" class="form-control" id="phone_number" name="phone_number" value="<%= user.phone_number %>" required>
+              </div>
+
+              <div class="mb-3 col-md-6">
+                <label for="company" class="form-label">Company</label>
+                <input type="text" class="form-control" id="company" name="company" value="<%= user.company %>" required>
+              </div>
+            </div>
+            <div class="row">
+              <div class="mb-3 col-md-6">
+                <label for="plan_name" class="form-label">Plan</label>
+                <select class="form-select" id="plan_name" name="plan_name" required>
+                  <option value="FREE TRIAL" <%= user.plan_name === 'FREE TRIAL' ? 'selected' : '' %>>FREE TRIAL</option>
+                  <option value="BASIC" <%= user.plan_name === 'BASIC' ? 'selected' : '' %>>BASIC</option>
+                  <option value="STANDARD" <%= user.plan_name === 'STANDARD' ? 'selected' : '' %>>STANDARD</option>
+                  <option value="PREMIUM" <%= user.plan_name === 'PREMIUM' ? 'selected' : '' %>>PREMIUM</option>
+                </select>
+              </div>
+  
+              <div class="mb-3 col-md-6">
+                <label for="plan_limit" class="form-label">Add Limit</label>
+                <input type="number" class="form-control" id="plan_limit" name="plan_limit" value="<%= user.plan_limit %>" required>
+              </div>
+            </div>
+    
+            <button type="submit" class="btn btn-primary">Update User</button>
+          </form>
+          
+        </div>
+      </div>
+    </div>
+  <% } %>
+<% }) %>
+
+
+</body>
+  <!-- JavaScript Libraries -->
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Template Javascript -->
+  <script src="js/main.js"></script>
+
+</html>
+
+
