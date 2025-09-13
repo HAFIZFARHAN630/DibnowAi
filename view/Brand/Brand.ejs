@@ -38,10 +38,14 @@
   margin-bottom: 5px;
 }
 
+
+
     </style>
 </head>
 
 <body>
+
+    
     <!-- Sidebar Start -->
     <div class="sidebar pe-4 pb-3">
         <nav class="navbar">
@@ -57,23 +61,23 @@
             </a>
         </div>
         <div class="navbar-nav w-100">
-          <a href="/index" class="nav-item nav-link"><i class="bi bi-tv"></i>Dashboard</a>
+          <a href="/index" class="nav-item nav-link"><i class="bi bi-tv dynamic-color-icon"></i>Dashboard</a>
           <div class="dropdown">
               <a href="/inventory" class="nav-item nav-link active dropdown-toggle" id="inventoryDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-clipboard-data"></i>Inventory
+                <i class="bi bi-clipboard-data dynamic-color-icon"></i>Inventory
               </a>
               <ul class="dropdown-menu" aria-labelledby="inventoryDropdown">
-                  <a class="dropdown-item" href="/category"><i class="bi bi-tags"></i> Categories</a>
-                  <a class="dropdown-item" href="/Brand"><i class="bi bi-box"></i>  Brands</a>
+                  <a class="dropdown-item" href="/category"><i class="bi bi-tags dynamic-color-icon"></i> Categories</a>
+                  <a class="dropdown-item" href="/Brand"><i class="bi bi-box dynamic-color-icon"></i>  Brands</a>
               </ul>
           </div>
-                <a href="/repair" class="nav-item nav-link"><i class="bi bi-tools"></i>Repair</a>
-                <a href="/in_stock" class="nav-item nav-link"><i class="bi bi-shop-window"></i>In Stock</a>
-                <a href="/Clients" class="nav-item nav-link"><i class="bi bi-people"></i>Clients</a>
-                <a href="/pricing" class="nav-item nav-link"><i class="bi bi-wallet2"></i>Plans</a>
-                <a href="/sell" class="nav-item nav-link"><i class="bi bi-cash-stack"></i>Sold Item</a>
-                <a href="/Teams" class="nav-item nav-link"><i class="fa-solid fa-users"></i>Teams</a>
-                <a href="/Help" class="nav-item nav-link"><i class="bi bi-chat-dots"></i>Help</a>
+                <a href="/repair" class="nav-item nav-link"><i class="bi bi-tools dynamic-color-icon"></i>Repair</a>
+                <a href="/in_stock" class="nav-item nav-link"><i class="bi bi-shop-window dynamic-color-icon"></i>In Stock</a>
+                <a href="/Clients" class="nav-item nav-link"><i class="bi bi-people dynamic-color-icon"></i>Clients</a>
+                <a href="/pricing" class="nav-item nav-link"><i class="bi bi-wallet2 dynamic-color-icon"></i>Plans</a>
+                <a href="/sell" class="nav-item nav-link"><i class="bi bi-cash-stack dynamic-color-icon"></i>Sold Item</a>
+                <a href="/Teams" class="nav-item nav-link"><i class="fa-solid fa-users dynamic-color-icon"></i>Teams</a>
+                <a href="/Help" class="nav-item nav-link"><i class="bi bi-chat-dots dynamic-color-icon"></i>Help</a>
             </div>
         </nav>
     </div>
@@ -214,14 +218,43 @@
     <% }) %>
     <!-- update Brand Modal -->
      
+
+
     <!-- footer -->
 <%-include('../par/footer.ejs')%>
     <!-- footer -->
-</body>
-  <!-- JavaScript Libraries -->
+  
+  
+
+<script>
+  const randomColor = () => {
+    const r = Math.floor(Math.random() * 256);
+    const g = Math.floor(Math.random() * 256);
+    const b = Math.floor(Math.random() * 256);
+    const a = 0.9;
+    return `rgba(${r}, ${g}, ${b}, ${a})`;
+  };
+
+  function applyColors() {
+    const icons = document.querySelectorAll('.dynamic-color-icon');
+    icons.forEach((icon) => {
+      const color = randomColor();
+      icon.style.setProperty("color", color, "important");
+      icon.style.setProperty("fill", color, "important");
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    applyColors();
+    setTimeout(applyColors, 300);
+    setTimeout(applyColors, 1000);
+  });
+</script>
+<!-- JavaScript Libraries -->
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
  <!-- Template Javascript -->
   <script src="js/main.js"></script>
+</body>
 </html>

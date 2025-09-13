@@ -29,8 +29,16 @@ router.get("/sign_up", (req, res) => {
 // Sign-in route
 router.post("/sign_in", signin);
 
-// Sign-out route
-router.get("/logout", logout);
+// Sign-out routes
+router.get("/logout", (req, res) => {
+  console.log('GET /logout hit');
+  logout(req, res);
+});
+
+router.post("/logout", (req, res) => {
+  console.log('POST /logout hit');
+  logout(req, res);
+});
 
 // Forgot password route
 router.post("/forgot-password", forgotPassword);

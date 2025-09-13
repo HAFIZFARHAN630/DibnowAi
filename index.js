@@ -66,6 +66,12 @@ app.use((req, res, next) => {
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "view"));
 
+// Debug middleware
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+});
+
 // Routes
 app.use("/", authRoutes);
 app.use("/", productRoutes);
@@ -82,11 +88,6 @@ app.use("/", pricingRoutes);
 app.use("/", SellRoutes);
 app.use("/", requestRoutes);
 app.use("/", TeamsRoutes);
-
-// Route handlers
-app.get("/", (req, res) => {
-  res.send("Home Page");
-});
 
 // 404 Middleware
 app.use((req, res) => {

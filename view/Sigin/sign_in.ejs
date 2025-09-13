@@ -23,91 +23,246 @@
     <link href="/styles1.css" rel="stylesheet">
 
     <style>
+      /* Professional Login Page Styling */
+      body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      .auth-card {
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 25%, #e2e8f0 50%, #cbd5e1 75%, #94a3b8 100%);
+        backdrop-filter: blur(25px);
+        border-radius: 25px;
+        padding: 50px;
+        box-shadow: 0 30px 100px rgba(0, 0, 0, 0.2);
+        border: 2px solid rgba(255, 255, 255, 0.4);
+        max-width: 550px;
+        width: 100%;
+        margin: 0 auto;
+      }
+
+      @media (max-width: 768px) {
+        .auth-card {
+          padding: 30px 25px;
+          max-width: 90%;
+          border-radius: 20px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .auth-card {
+          padding: 25px 20px;
+          max-width: 95%;
+          border-radius: 15px;
+        }
+      }
+
+      .auth-card h1 {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        text-align: center;
+      }
+
+      .auth-card p {
+        color: #6b7280;
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+        text-align: center;
+      }
+
+      .form-label {
+        font-weight: 600;
+        color: #374151;
+        font-size: 1rem;
+        margin-bottom: 0.75rem;
+      }
+
+      .form-control {
+        height: 55px;
+        border: 2px solid rgba(102, 126, 234, 0.2);
+        border-radius: 12px;
+        padding: 15px 20px;
+        font-size: 1rem;
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+      }
+
+      .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        background: rgba(255, 255, 255, 0.95);
+        transform: translateY(-2px);
+      }
+
+      .btn-primary {
+        height: 55px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+      }
+
+      .btn-primary:hover {
+        background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+        transform: translateY(-3px);
+        box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+      }
+
+      .text-primary {
+        color: #667eea !important;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+
+      .text-primary:hover {
+        color: #5a67d8 !important;
+        text-decoration: underline;
+      }
+
+      .alert-success {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        border: none;
+        border-radius: 12px;
+        color: white;
+        font-weight: 500;
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+      }
+
+      .bg-dark {
+        background: linear-gradient(135deg, #1f2937 0%, #111827 100%) !important;
+      }
+
+      #main-wrapper {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+      }
+
+      .bg-body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%) !important;
+      }
+
       /* Basic modal background */
 .modal-backdrop {
   opacity: 0.5 !important; /* Dim the background slightly */
 }
 
-/* Modal container styles */
+/* Modal styles */
 #forgetpassword .modal-dialog {
-  max-width: 500px;  /* Set the width of the modal */
-  margin-top: 10vh;  /* Center the modal vertically */
+  max-width: 650px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
 }
 
-/* Modal content styles */
 #forgetpassword .modal-content {
-  border-radius: 10px;  /* Rounded corners */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);  /* Subtle shadow */
-  background: #fff;  /* White background */
-  padding: 20px;  /* Padding for the content */
-  transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  min-height: 320px;
 }
 
-/* Modal header styles */
 #forgetpassword .modal-header {
-  text-align: center;
-  display: block;
-
+  border: none;
+  padding: 40px 40px 0;
+  position: relative;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 16px 16px 0 0;
 }
 
 #forgetpassword .modal-title {
-  font-size: 1.5rem;
+  font-size: 28px;
   font-weight: 600;
-  color: #343a40;  /* Dark text color */
+  color: #ffffff;
+  margin: 0;
+}
+
+#forgetpassword .modal-subtitle {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.9);
+  margin-top: 12px;
+  line-height: 1.5;
 }
 
 #forgetpassword .btn-close {
-  font-size: 1.25rem;
-  background: none;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 36px;
+  height: 36px;
+  background: #ffffff;
   border: none;
-  color: #aaa;
-  cursor: pointer;
+  border-radius: 50%;
+  opacity: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* Button hover effect */
+#forgetpassword .btn-close::before {
+  content: '×';
+  font-size: 24px;
+  color: #dc2626;
+  font-weight: bold;
+}
+
 #forgetpassword .btn-close:hover {
-  color: #333;
+  background: #f3f4f6;
+  transform: scale(1.1);
 }
 
-/* Form input fields */
-#forgetpassword .form-control {
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  padding: 12px;
-  font-size: 1rem;
-  transition: border-color 0.3s ease-in-out;
+#forgetpassword .modal-body {
+  padding: 32px 40px 40px;
 }
 
-/* Focus and hover effects on form input */
-#forgetpassword .form-control:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 8px rgba(38, 143, 255, 0.5);
-  outline: none;
-}
-
-/* Label styles */
 #forgetpassword .form-label {
+  font-size: 14px;
   font-weight: 500;
-  color: #495057;
+  color: #374151;
   margin-bottom: 8px;
 }
 
-/* Submit button styles */
-#forgetpassword .btn-primary {
-  background-color: #007bff; /* Primary color */
-  border: none;
-  color: white;
-  padding: 12px 20px;
-  width: 100%;
+#forgetpassword .form-control {
+  height: 48px;
+  border: 1px solid #d1d5db;
   border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 500;
-  transition: background-color 0.3s ease;
-  cursor: pointer;
+  font-size: 14px;
+  padding: 12px 16px;
+  transition: border-color 0.2s;
 }
-/* Hover effect on submit button */
+
+#forgetpassword .form-control:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+#forgetpassword .btn-primary {
+  height: 48px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
 #forgetpassword .btn-primary:hover {
-  background-color: #0056b3;
+  background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
 }
 
     </style>
@@ -121,11 +276,11 @@
       <div class="position-relative z-index-5">
         <div class="row gx-0">
 
-          <div class="col-lg-6 col-xl-6 col-xxl-6">
+          <div class="col-lg-6 col-xl-6 col-xxl-6" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);">
             <div class="min-vh-100 bg-body row justify-content-center align-items-center p-5 mt-n4">
               <div class="col-12 auth-card mt-n4">
              
-                <h2 class="mb-2 mt-4 fs-7 fw-bolder text-black  ">Login</h2>
+                <h1 class="mb-2 mt-4 fs-7 fw-bolder text-black">Login</h1>
                 <% if (message) { %>
                   <div class="alert alert-success alert-dismissible fade show" role="alert">
                     <strong> <%= message %></strong> 
@@ -190,20 +345,23 @@
   <div class="dark-transparent sidebartoggler"></div>
 
   <!-- Modal -->
-<div id="forgetpassword" class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+<div id="forgetpassword" class="modal fade" tabindex="-1" aria-labelledby="forgotPasswordLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Forgot Password</h5>
-        <p>Please enter your email address to receive a OTP to Forgot your password</p>
+        <div>
+          <h5 class="modal-title" id="forgotPasswordLabel">Reset Password</h5>
+          <p class="modal-subtitle">Enter your email address and we'll send you an OTP to reset your password.</p>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <form action="/forgot-password" method="POST">
           <div class="mb-3">
-            <label for="email" class="form-label">Email</label>
-            <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" aria-describedby="emailHelp" />
+            <label for="forgotEmail" class="form-label">Email Address</label>
+            <input type="email" class="form-control" id="forgotEmail" name="email" placeholder="Enter your email address" required />
           </div>
-          <button type="submit" class="btn btn-primary">Send OTP</button>
+          <button type="submit" class="btn btn-primary w-100">SEND OTP</button>
         </form>
       </div>
     </div>

@@ -85,9 +85,191 @@
                         </a>
                         <div class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0">
                             <a href="/Setting" class="dropdown-item">Settings</a>
-                            <a href="/logout" class="dropdown-item">Logout</a>
+                            <a href="#" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#logoutModal">Logout</a>
                         </div>
                     </div>
                 </div>
             </nav>
         <!-- Navbar End -->
+
+        <!-- Logout Modal -->
+        <div id="logoutModal" class="modal fade" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div>
+                            <h5 class="modal-title" id="logoutModalLabel">Confirm Logout</h5>
+                            <p class="modal-subtitle">Please select a reason and type 'LOGOUT' to confirm your session termination.</p>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="logoutForm" action="/logout" method="POST">
+                            <div class="mb-4">
+                                <label for="logoutReason" class="form-label">Reason for Logout</label>
+                                <select class="form-control" id="logoutReason" name="reason" required>
+                                    <option value="">Select a reason</option>
+                                    <option value="End of work session">End of work session</option>
+                                    <option value="Security reasons">Security reasons</option>
+                                    <option value="Switching accounts">Switching accounts</option>
+                                    <option value="System maintenance">System maintenance</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="mb-4">
+                                <label for="confirmText" class="form-label">Confirmation Text</label>
+                                <input type="text" class="form-control" id="confirmText" placeholder="Type LOGOUT to confirm" required />
+                            </div>
+                            <a href="/logout" type="submit" class="btn btn-danger w-100" id="logoutBtn" disabled>CONFIRM LOGOUT</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <style>
+        /* Logout Modal Styles */
+        #logoutModal .modal-dialog {
+            max-width: 650px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            margin: 0;
+        }
+
+        #logoutModal .modal-content {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.15);
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #e2e8f0 100%);
+            min-height: 450px;
+            overflow: hidden;
+        }
+
+        #logoutModal .modal-header {
+            border: none;
+            padding: 45px 45px 25px;
+            position: relative;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 50%, #d63031 100%);
+            color: white;
+            border-radius: 20px 20px 0 0;
+        }
+
+        #logoutModal .modal-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        #logoutModal .modal-subtitle {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.95);
+            margin-top: 12px;
+            line-height: 1.6;
+        }
+
+        #logoutModal .btn-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+            border: none;
+            border-radius: 50%;
+            opacity: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        #logoutModal .btn-close::before {
+            content: '×';
+            font-size: 26px;
+            color: #dc2626;
+            font-weight: bold;
+        }
+
+        #logoutModal .btn-close:hover {
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            transform: scale(1.1) rotate(90deg);
+        }
+
+        #logoutModal .modal-body {
+            padding: 35px 45px 45px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        }
+
+        #logoutModal .form-label {
+            font-size: 16px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 12px;
+        }
+
+        #logoutModal .form-control {
+            height: 55px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 16px;
+            padding: 15px 20px;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+        }
+
+        #logoutModal .form-control:focus {
+            border-color: #ff6b6b;
+            box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.1);
+            transform: translateY(-2px);
+        }
+
+        #logoutModal .btn-danger {
+            height: 55px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 50%, #d63031 100%);
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 16px;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+        }
+
+        #logoutModal .btn-danger:hover:not(:disabled) {
+            background: linear-gradient(135deg, #ee5a24 0%, #d63031 50%, #b71c1c 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(255, 107, 107, 0.4);
+        }
+
+        #logoutModal .btn-danger:disabled {
+            background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        #logoutModal .mb-4 {
+            margin-bottom: 25px !important;
+        }
+        </style>
+
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const confirmText = document.getElementById('confirmText');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const reasonSelect = document.getElementById('logoutReason');
+            
+            function checkForm() {
+                const isTextValid = confirmText.value.toUpperCase() === 'LOGOUT';
+                const isReasonSelected = reasonSelect.value !== '';
+                logoutBtn.disabled = !(isTextValid && isReasonSelected);
+            }
+            
+            confirmText.addEventListener('input', checkForm);
+            reasonSelect.addEventListener('change', checkForm);
+        });
+        </script>

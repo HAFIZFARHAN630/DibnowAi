@@ -121,11 +121,8 @@ exports.forgotPassword = async (req, res) => {
     console.log("OTP updated in the database for email:", email);
 
     // Send OTP to user's email
-    const transporter = nodemailer.createTransporter({
+    const transporter = nodemailer.createTransport({
       service: "gmail",
-      port: 587,
-      secure: false,
-      requireTLS: true,
       auth: {
         user: "hamzahayat3029@gmail.com",
         pass: "ceud ztsg vqwr lmtl",
@@ -206,6 +203,11 @@ exports.verifyOtpAndResetPassword = async (req, res) => {
 
 // Logout
 exports.logout = (req, res) => {
+  console.log('Logout route hit:', req.method, req.url);
+  console.log('Request body:', req.body);
+  
+  const reason = req.body.reason || 'User logout';
+  
   req.session.destroy((err) => {
     if (err) {
       console.error("Error destroying session:", err);
@@ -213,6 +215,10 @@ exports.logout = (req, res) => {
     }
     res.clearCookie("connect.sid");
     res.clearCookie("auth_token");
+    
+    // Log the logout reason for audit purposes
+    console.log(`User logged out. Reason: ${reason}`);
+    
     res.render("Sigin/sign_in", {
       message: "You have been logged out successfully.",
     });
