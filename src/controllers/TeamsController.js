@@ -100,3 +100,56 @@ exports.deleteteam = async (req, res) => {
     res.redirect("/Teams");
   }
 };
+
+// Show Add Team Member Form
+exports.showAddTeamMemberForm = async (req, res) => {
+  try {
+    const userId = req.userId;
+
+    const user = await User.findById(userId).select(
+      "first_name last_name user_img role plan_name status denial_reason"
+    );
+
+    if (!user) {
+      return res.redirect("/sign_in");
+    }
+
+    res.render("admin/add_team_member", {
+      profileImagePath: user.user_img || "/uploads/default.png",
+      firstName: user.first_name,
+      lastName: user.last_name,
+      isUser: user.role === "user",
+      plan_name: user.plan_name || "No Plan",
+      status: user.status,
+      reson: user.denial_reason,
+      message: null
+    });
+  } catch (error) {
+    console.error("Error loading add team member form:", error.message);
+    res.redirect("/Teams");
+  }
+};
+
+// Add Admin Team Member
+exports.addAdminTeamMember = async (req, res) => {
+  try {
+    const { Username, Email, password, Number, role, department } = req.body;
+    const userId = req.userId;
+
+    const newAdminTeamMember = new AddUser({
+      name: Username,
+      email: Email,
+      phone: Number,
+      address: `${role} - ${department}`,
+      user_id: userId
+    });
+
+    await newAdminTeamMember.save();
+    req.flash("success_msg", "Team member created successfully!");
+    res.redirect("/Teams");
+  } catch (error) {
+    console.error("Error creating admin team member:", error.message);
+    req.flash("error_msg", "Failed to create team member. Please try again.");
+    res.redirect("/AdminTeam");
+  }
+};

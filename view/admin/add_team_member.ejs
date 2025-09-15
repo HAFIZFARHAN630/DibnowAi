@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Clients</title>
+    <title>Add Team Member</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="" name="keywords">
     <meta content="" name="description">
@@ -57,7 +57,7 @@
             padding: 40px;
             box-shadow: 0 30px 100px rgba(0, 0, 0, 0.2);
             border: 2px solid rgba(255, 255, 255, 0.4);
-            max-width: 900px;
+            max-width: 800px;
             width: 100%;
             margin: 0 auto;
             position: relative;
@@ -162,8 +162,8 @@
             <div class="navbar-nav w-100">
                 <a href="/index" class="nav-item nav-link "><i class="bi bi-tv dynamic-color-icon"></i>Dashboard</a>
                 <a href="/admin" class="nav-item nav-link "> <i class="bi bi-people-fill dynamic-color-icon"></i>All User</a> 
-                <a href="/addadmin" class="nav-item nav-link active"><i class="fa-solid fa-user-tie dynamic-color-icon"></i>Add Admin</a>
-                <a href="/AdminTeam" class="nav-item nav-link" style="display: block !important; visibility: visible !important;"><i class="fas fa-users-cog dynamic-color-icon"></i>Add Team</a> 
+                <a href="/addadmin" class="nav-item nav-link "><i class="fa-solid fa-user-tie dynamic-color-icon"></i>Add Admin</a>
+                <a href="/AdminTeam" class="nav-item nav-link active"><i class="fas fa-users-cog dynamic-color-icon"></i>Add Team Member</a> 
                 <a href="/request" class="nav-item nav-link "><i class="fa-solid fa-code-pull-request dynamic-color-icon"></i>Request</a>
                 <a href="https://dashboard.tawk.to/#/dashboard/659fdbaf0ff6374032bedfad" class="nav-item nav-link " target="_blank" ><i class="bi bi-chat-text-fill dynamic-color-icon"></i>Chat</a>     
           </div>
@@ -172,8 +172,26 @@
     <!-- Sidebar End -->
 
           <!-- Navbar Start -->
-          <%- include('../par/header.ejs') %>
-           <!-- Navbar End -->
+          <div class="content">
+            <nav class="navbar navbar-expand sticky-top px-4 py-0" style="background-color: #F3F3F9; box-shadow: 5px 9px 10px rgba(0, 0, 0, 0.1);">
+                <a href="/index" class="navbar-brand d-flex d-lg-none me-4">
+                    <img src="/images/DIB-NOW-512.png" alt="Logo" style="width: 82px; height: auto; border: none; border-radius: 0;">
+                </a>
+                <a href="#" class="sidebar-toggler flex-shrink-0">
+                    <i class="fa fa-bars"></i>
+                </a>
+                <div class="navbar-nav align-items-center ms-auto">
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle d-flex align-items-center gap-1" data-bs-toggle="dropdown">
+                            <img class="rounded-circle" src="<%- profileImagePath %>" alt="Profile Image" style="width: 40px; height: 40px;" onerror="this.onerror=null; this.src='/img/dumi img.png';">
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0">
+                            <a href="/Setting" class="dropdown-item">Settings</a>
+                            <a href="/logout" class="dropdown-item">Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
 
 <div class="professional-form">
   <div class="form-container">
@@ -181,8 +199,8 @@
       <i class="fas fa-times"></i>
     </button>
     <div class="form-header">
-      <h2><i class="fa-solid fa-user-tie me-3"></i>Add Admin</h2>
-      <p>Create a new administrator account with full system access</p>
+      <h2><i class="fas fa-users-cog me-3"></i>Add Team Member</h2>
+      <p>Create a new team member account with role-based access</p>
     </div>
     
     <% if (message) { %>
@@ -191,19 +209,19 @@
       </div>
     <% } %>
 
-    <form action="/addadmin" method="POST">
+    <form action="/AdminTeam" method="POST">
       <div class="row">
         <div class="col-md-6">
           <div class="form-group">
-            <label for="first_name" class="form-label">First Name *</label>
-            <input type="text" class="form-control" id="first_name" name="first_name" required placeholder="Enter first name">
+            <label for="Username" class="form-label">Full Name *</label>
+            <input type="text" class="form-control" id="Username" name="Username" required placeholder="Enter full name">
           </div>
         </div>
         
         <div class="col-md-6">
           <div class="form-group">
-            <label for="last_name" class="form-label">Last Name *</label>
-            <input type="text" class="form-control" id="last_name" name="last_name" required placeholder="Enter last name">
+            <label for="Email" class="form-label">Email Address *</label>
+            <input type="email" class="form-control" id="Email" name="Email" required placeholder="Enter email address">
           </div>
         </div>
       </div>
@@ -211,34 +229,15 @@
       <div class="row">
         <div class="col-md-6">
           <div class="form-group">
-            <label for="email" class="form-label">Email Address *</label>
-            <input type="email" class="form-control" id="email" name="email" required placeholder="Enter email address">
-          </div>
-        </div>
-
-        <div class="col-md-6">
-          <div class="form-group">
-            <label for="phone_number" class="form-label">Phone Number *</label>
-            <input type="text" class="form-control" id="phone_number" name="phone_number" required placeholder="Enter phone number">
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-6">
-          <div class="form-group">
             <label for="password" class="form-label">Password *</label>
-            <input type="password" class="form-control" id="password" name="password" required placeholder="Enter secure password">
+            <input type="password" class="form-control" id="password" name="password" required minlength="6" placeholder="Minimum 6 characters">
           </div>
         </div>
 
         <div class="col-md-6">
           <div class="form-group">
-            <label for="role" class="form-label">Role *</label>
-            <select class="form-select" id="role" name="role" required>
-              <option value="admin">Admin</option>
-              <option value="user">User</option>
-            </select>
+            <label for="Number" class="form-label">Phone Number *</label>
+            <input type="tel" class="form-control" id="Number" name="Number" required placeholder="Enter phone number">
           </div>
         </div>
       </div>
@@ -246,30 +245,40 @@
       <div class="row">
         <div class="col-md-6">
           <div class="form-group">
-            <label for="plan_name" class="form-label">Plan *</label>
-            <select class="form-select" id="plan_name" name="plan_name" required>
-              <option value="FREE TRIAL">FREE TRIAL</option>
-              <option value="BASIC">BASIC</option>
-              <option value="STANDARD">STANDARD</option>
-              <option value="PREMIUM">PREMIUM</option>
+            <label for="role" class="form-label">Team Role *</label>
+            <select class="form-select" id="role" name="role" required>
+              <option value="" disabled selected>Select Team Role</option>
+              <option value="Team">Team Member</option>
+              <option value="Team Lead">Team Lead</option>
+              <option value="Supervisor">Supervisor</option>
+              <option value="Manager">Manager</option>
             </select>
           </div>
         </div>
 
         <div class="col-md-6">
           <div class="form-group">
-            <label for="plan_limit" class="form-label">Plan Limit *</label>
-            <input type="number" class="form-control" id="plan_limit" name="plan_limit" required placeholder="Enter plan limit">
+            <label for="department" class="form-label">Department *</label>
+            <select class="form-select" id="department" name="department" required>
+              <option value="" disabled selected>Select Department</option>
+              <option value="Billing">Billing</option>
+              <option value="Sales">Sales</option>
+              <option value="Support">Support</option>
+              <option value="Technical">Technical</option>
+              <option value="Management">Management</option>
+            </select>
           </div>
         </div>
       </div>
 
       <button type="submit" class="btn-submit">
-        <i class="fa-solid fa-user-tie me-2"></i>Create Admin Account
+        <i class="fas fa-users-cog me-2"></i>Create Team Member
       </button>
     </form>
   </div>
 </div>
+          </div>
+           <!-- Navbar End -->
 </body>
 
 <!-- JavaScript Libraries -->
@@ -278,6 +287,5 @@
 
 <!-- Template Javascript -->
 <script src="js/main.js"></script>
-
 
 </html>
