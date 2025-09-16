@@ -24,11 +24,14 @@ exports.getbrand = async (req, res) => {
       lastName: user.last_name,
       brand: brands,
       isUser: user.role === "user",
+      isAdmin: user.role === "admin",
       plan_name: user.plan_name || "No Plan",
       success_msg: req.flash("success_msg"),
       error_msg: req.flash("error_msg"),
       status: user.status,
       reson: user.denial_reason,
+      notifications: res.locals.notifications || [],
+      unreadCount: res.locals.unreadCount || 0,
     });
   } catch (error) {
     console.error("Error fetching brands:", error.message);
@@ -51,6 +54,19 @@ exports.addbrand = async (req, res) => {
     });
 
     await newBrand.save();
+    
+    // Create notification for adding brand
+    if (req.app.locals.notificationService) {
+      const user = await User.findById(req.session.userId).select('first_name');
+      if (user) {
+        await req.app.locals.notificationService.createNotification(
+          req.session.userId,
+          user.first_name,
+          "Add Brand"
+        );
+      }
+    }
+    
     req.flash("success_msg", "Brand added successfully");
     res.redirect("/Brand");
   } catch (error) {
@@ -65,6 +81,19 @@ exports.deletebrand = async (req, res) => {
     const brandId = req.params.id;
     
     await Brand.findByIdAndDelete(brandId);
+    
+    // Create notification for deleting brand
+    if (req.app.locals.notificationService) {
+      const user = await User.findById(req.session.userId).select('first_name');
+      if (user) {
+        await req.app.locals.notificationService.createNotification(
+          req.session.userId,
+          user.first_name,
+          "Delete Brand"
+        );
+      }
+    }
+    
     req.flash("success_msg", "Brand deleted successfully");
     res.redirect("/Brand");
   } catch (error) {
@@ -83,6 +112,18 @@ exports.update = async (req, res) => {
       name,
       description
     });
+    
+    // Create notification for updating brand
+    if (req.app.locals.notificationService) {
+      const user = await User.findById(req.session.userId).select('first_name');
+      if (user) {
+        await req.app.locals.notificationService.createNotification(
+          req.session.userId,
+          user.first_name,
+          "Update Brand"
+        );
+      }
+    }
     
     req.flash("success_msg", "Brand updated successfully");
     res.redirect("/Brand");

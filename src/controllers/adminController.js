@@ -22,15 +22,24 @@ exports.admin = async (req, res) => {
     // Filter out the logged-in user from the list
     const users = allUsers.filter((user) => user._id.toString() !== userId);
     
+    // Get notification data
+    const Notification = require("../models/notification");
+    const notifications = await Notification.find().sort({ timestamp: -1 }).limit(10);
+    const unreadCount = await Notification.countDocuments({ isRead: false });
+    
     res.render("admin/adminfile", {
       profileImagePath,
       firstName: loggedInUser.first_name,
       users: users,
+      notifications: notifications,
+      unreadCount: unreadCount
     });
   } catch (error) {
     console.error("Error fetching admin data:", error.message);
     return res.render("admin/adminfile", {
       users: [],
+      notifications: [],
+      unreadCount: 0,
       error_msg: "Unable to load admin data. Please try again."
     });
   }
@@ -93,16 +102,25 @@ exports.selectAddAdmin = async (req, res) => {
     const profileImagePath = loggedInUser.user_img || "/uploads/default.png";
     const users = allUsers.filter((user) => user._id.toString() !== userId);
     
+    // Get notification data
+    const Notification = require("../models/notification");
+    const notifications = await Notification.find().sort({ timestamp: -1 }).limit(10);
+    const unreadCount = await Notification.countDocuments({ isRead: false });
+    
     res.render("admin/addAdmin", {
       message: "",
       profileImagePath,
       firstName: loggedInUser.first_name,
       users: users,
+      notifications: notifications,
+      unreadCount: unreadCount
     });
   } catch (error) {
     console.error("Error fetching admin data:", error.message);
     return res.render("admin/addAdmin", {
       users: [],
+      notifications: [],
+      unreadCount: 0,
       error_msg: "Unable to load admin data. Please try again."
     });
   }
@@ -153,10 +171,44 @@ exports.addAdmin = async (req, res) => {
 
     await newUser.save();
     req.flash("success_msg", "Admin created successfully!");
-    res.redirect("/addAdmin");
+    res.redirect("/admin");
   } catch (error) {
     console.error("Error creating admin:", error.message);
     req.flash("error_msg", "Failed to create admin. Please try again.");
     res.redirect("/addAdmin");
+  }
+};
+
+// Add a user
+exports.addUser = async (req, res) => {
+  try {
+    const {
+      first_name,
+      email,
+      phone_number,
+      company,
+      plan_name,
+      plan_limit,
+    } = req.body;
+
+    // Create new user with default values
+    const newUser = new User({
+      first_name,
+      email,
+      phone_number,
+      company,
+      plan_name,
+      plan_limit,
+      role: "user",
+      password: await bcrypt.hash("defaultpassword123", 10)
+    });
+
+    await newUser.save();
+    req.flash("success_msg", "User created successfully!");
+    res.redirect("/admin");
+  } catch (error) {
+    console.error("Error creating user:", error.message);
+    req.flash("error_msg", "Failed to create user. Please try again.");
+    res.redirect("/admin");
   }
 };

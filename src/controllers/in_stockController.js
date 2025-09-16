@@ -124,6 +124,19 @@ exports.additems = async (req, res) => {
     });
 
     await newItem.save();
+    
+    // Create notification for adding inventory
+    if (req.app.locals.notificationService) {
+      const user = await User.findById(req.session.userId).select('first_name');
+      if (user) {
+        await req.app.locals.notificationService.createNotification(
+          req.session.userId,
+          user.first_name,
+          "Add Inventory"
+        );
+      }
+    }
+    
     req.flash("success_msg", `${product_name} added successfully`);
     res.redirect("/in_stock");
   } catch (error) {

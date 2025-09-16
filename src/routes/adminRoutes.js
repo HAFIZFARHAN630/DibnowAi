@@ -6,6 +6,7 @@ const {
   selectAddAdmin,
   deleteUser,
   updateUser,
+  addUser,
 } = require("../controllers/adminController");
 const { isAuthenticated, isAdmin } = require("../middlewares/authMiddleware");
 
@@ -24,5 +25,8 @@ router.get("/addadmin", isAuthenticated, isAdmin, selectAddAdmin);
 
 // Add Admin action
 router.post("/addadmin", isAuthenticated, isAdmin, addAdmin);
+
+// Add User route
+router.post("/admin/addUser", isAuthenticated, isAdmin, addUser);
 
 module.exports = router;

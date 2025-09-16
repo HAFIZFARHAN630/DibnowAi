@@ -27,11 +27,14 @@ exports.getcategory = async (req, res) => {
       lastName: user.last_name,
       categories: categories,
       isUser: user.role === "user",
+      isAdmin: user.role === "admin",
       plan_name: user.plan_name || "No Plan",
       success_msg: req.flash("success_msg"),
       error_msg: req.flash("error_msg"),
       status: user.status,
       reson: user.denial_reason,
+      notifications: res.locals.notifications || [],
+      unreadCount: res.locals.unreadCount || 0,
     });
   } catch (error) {
     console.error("Error fetching categories:", error.message);
@@ -56,6 +59,19 @@ exports.addcategory = async (req, res) => {
     });
 
     await newCategory.save();
+    
+    // Create notification for adding category
+    if (req.app.locals.notificationService) {
+      const user = await User.findById(req.session.userId).select('first_name');
+      if (user) {
+        await req.app.locals.notificationService.createNotification(
+          req.session.userId,
+          user.first_name,
+          "Add Category"
+        );
+      }
+    }
+    
     req.flash("success_msg", "Category added successfully");
     res.redirect("/category");
   } catch (error) {
@@ -70,6 +86,19 @@ exports.deletecategory = async (req, res) => {
     const categoryId = req.params.id;
     
     await Category.findByIdAndDelete(categoryId);
+    
+    // Create notification for deleting category
+    if (req.app.locals.notificationService) {
+      const user = await User.findById(req.session.userId).select('first_name');
+      if (user) {
+        await req.app.locals.notificationService.createNotification(
+          req.session.userId,
+          user.first_name,
+          "Delete Category"
+        );
+      }
+    }
+    
     req.flash("success_msg", "Category deleted successfully");
     res.redirect("/category");
   } catch (error) {
@@ -88,6 +117,18 @@ exports.update = async (req, res) => {
       name,
       description
     });
+    
+    // Create notification for updating category
+    if (req.app.locals.notificationService) {
+      const user = await User.findById(req.session.userId).select('first_name');
+      if (user) {
+        await req.app.locals.notificationService.createNotification(
+          req.session.userId,
+          user.first_name,
+          "Update Category"
+        );
+      }
+    }
     
     req.flash("success_msg", "Category updated successfully");
     res.redirect("/category");

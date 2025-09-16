@@ -80,6 +80,19 @@ exports.addProduct = async (req, res) => {
     });
 
     await newRepair.save();
+    
+    // Create notification for adding repair customer
+    if (req.app.locals.notificationService) {
+      const user = await User.findById(req.session.userId).select('first_name');
+      if (user) {
+        await req.app.locals.notificationService.createNotification(
+          req.session.userId,
+          user.first_name,
+          "Add Repair Customer"
+        );
+      }
+    }
+    
     req.flash("success_msg", "Repair product added successfully");
     res.redirect("/repair");
   } catch (error) {
@@ -173,6 +186,19 @@ exports.updateProduct = async (req, res) => {
     const { status } = req.body;
     
     await Repair.findByIdAndUpdate(productId, { status });
+    
+    // Create notification for changing repair status
+    if (req.app.locals.notificationService) {
+      const user = await User.findById(req.session.userId).select('first_name');
+      if (user) {
+        await req.app.locals.notificationService.createNotification(
+          req.session.userId,
+          user.first_name,
+          "Change Repair Status"
+        );
+      }
+    }
+    
     req.flash("success_msg", "Status updated successfully");
     res.redirect("/repair");
   } catch (error) {

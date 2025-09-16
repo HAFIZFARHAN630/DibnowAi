@@ -56,27 +56,36 @@
                         </div>
                     </div>
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                            <i class="fa fa-bell me-lg-2 text-white"></i>
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" id="notificationDropdown">
+                            <i class="fa fa-bell me-lg-2 text-white position-relative">
+                                <% if (isAdmin && typeof unreadCount !== 'undefined' && unreadCount > 0) { %>
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notificationBadge">
+                                        <%= unreadCount %>
+                                    </span>
+                                <% } else if (isAdmin) { %>
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none" id="notificationBadge">0</span>
+                                <% } %>
+                            </i>
                             <span class="d-none d-lg-inline-flex text-dark">Notifications</span>
                         </a>
+                        
+                        <%- include('notifications.ejs') %>
                         <% if (isUser) { %>
-
                             <div class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0">
                                 <hr class="dropdown-divider">
                                <a href="#" class="dropdown-item">
                                    <h6 class="fw-normal mb-0"> </h6>
-                                   <small><%= status %></small>
+                                   <small><%= typeof status !== 'undefined' ? status : '' %></small>
                                </a>
                                <hr class="dropdown-divider">
                                <a href="#" class="dropdown-item">
                                    <h6 class="fw-normal mb-0"> Denied</h6>
-                                   <small><%= reson %></small>
+                                   <small><%= typeof reson !== 'undefined' ? reson : '' %></small>
                                 </a>
                             <hr class="dropdown-divider">
                             <a href="#" class="dropdown-item text-center">See all notifications</a>
                         </div>
-                        <%}%>
+                        <% } %>
                     </div>
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle d-flex align-items-center gap-1" data-bs-toggle="dropdown">
@@ -255,9 +264,236 @@
         #logoutModal .mb-4 {
             margin-bottom: 25px !important;
         }
+        
+        /* Notification Styles */
+        .notification-item {
+            border-left: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .notification-item.unread {
+            background-color: #f8f9fa;
+            border-left-color: #007bff;
+        }
+        
+        .notification-item:hover {
+            background-color: #e9ecef;
+        }
+        
+        #notificationBadge {
+            font-size: 0.7rem;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
         </style>
 
+        <!-- Socket.IO Client -->
+        <script src="/socket.io/socket.io.js"></script>
+        
         <script>
+        // Notification Management (Admin only)
+        <% if (isAdmin) { %>
+        let socket, isSelectionMode = false;
+        
+        try { socket = io(); } catch (e) { console.error('Socket.IO failed:', e); }
+        
+        if (socket) {
+          socket.on('newNotification', function(notification) {
+            const badge = document.getElementById('notificationBadge');
+            badge.textContent = (parseInt(badge.textContent) || 0) + 1;
+            badge.classList.remove('d-none');
+            
+            const list = document.getElementById('notificationList');
+            const empty = list.querySelector('.empty-notifications');
+            if (empty) empty.remove();
+            
+            list.insertAdjacentHTML('afterbegin', `
+                <div class="notification-item unread" data-id="${notification.id}">
+                    <div class="d-flex align-items-start p-3">
+                        <div class="notification-checkbox d-none me-3">
+                            <input type="checkbox" class="form-check-input notification-select" value="${notification.id}">
+                        </div>
+                        <div class="notification-avatar me-3">
+                            <div class="avatar-circle bg-primary text-white d-flex align-items-center justify-content-center">
+                                ${notification.userName.charAt(0).toUpperCase()}
+                            </div>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-start mb-1">
+                                <h6 class="notification-user fw-bold mb-0 text-dark">${notification.userName}</h6>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge bg-primary rounded-pill px-2 py-1">New</span>
+                                    <button class="btn btn-sm btn-outline-danger rounded-circle delete-notification" data-id="${notification.id}">
+                                        <i class="fas fa-trash fa-xs"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <p class="notification-action mb-1 text-secondary">${notification.action}</p>
+                            <small class="notification-time text-muted">
+                                <i class="fas fa-clock me-1"></i>
+                                ${new Date(notification.timestamp).toLocaleString()}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            `);
+            attachEvents();
+          });
+          
+          socket.on('notificationsRead', function() {
+            const badge = document.getElementById('notificationBadge');
+            badge.textContent = '0';
+            badge.classList.add('d-none');
+            document.querySelectorAll('.notification-item.unread').forEach(item => {
+                item.classList.remove('unread');
+                const b = item.querySelector('.badge');
+                if (b) b.remove();
+            });
+          });
+        }
+        
+        function attachEvents() {
+            document.querySelectorAll('.delete-notification').forEach(btn => {
+                btn.onclick = function(e) {
+                    e.stopPropagation();
+                    fetch(`/api/notifications/${this.dataset.id}`, {method: 'DELETE'})
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.success) {
+                            const item = document.querySelector(`[data-id="${this.dataset.id}"]`);
+                            if (item?.classList.contains('unread')) {
+                                const badge = document.getElementById('notificationBadge');
+                                badge.textContent = Math.max(0, parseInt(badge.textContent) - 1);
+                                badge.classList.toggle('d-none', badge.textContent === '0');
+                            }
+                            item?.remove();
+                            checkEmpty();
+                        }
+                    });
+                };
+            });
+            
+            document.querySelectorAll('.notification-select').forEach(cb => {
+                cb.onchange = () => {
+                    const span = document.getElementById('selectedCount');
+                    if (span) span.textContent = document.querySelectorAll('.notification-select:checked').length;
+                };
+            });
+        }
+        
+        function checkEmpty() {
+            const list = document.getElementById('notificationList');
+            if (!list.querySelector('.notification-item')) {
+                list.innerHTML = `
+                    <div class="empty-notifications text-center py-5">
+                        <i class="fas fa-bell-slash fa-3x text-muted mb-3"></i>
+                        <h6 class="text-muted mb-2">No notifications yet</h6>
+                        <p class="text-muted small mb-0">You'll see notifications here when users perform actions</p>
+                    </div>
+                `;
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mark all as read
+            document.getElementById('markAllRead')?.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                fetch('/api/notifications/mark-read', {method: 'POST', headers: {'Content-Type': 'application/json'}})
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        const badge = document.getElementById('notificationBadge');
+                        badge.textContent = '0';
+                        badge.classList.add('d-none');
+                        document.querySelectorAll('.notification-item.unread').forEach(item => {
+                            item.classList.remove('unread');
+                            const b = item.querySelector('.badge');
+                            if (b) b.remove();
+                        });
+                    }
+                });
+            });
+            
+            // Selection mode toggle
+            document.getElementById('selectAllNotifications')?.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                isSelectionMode = !isSelectionMode;
+                document.querySelectorAll('.notification-checkbox').forEach(cb => cb.classList.toggle('d-none', !isSelectionMode));
+                document.querySelector('.bulk-actions-bar')?.classList.toggle('d-none', !isSelectionMode);
+                if (!isSelectionMode) {
+                    document.querySelectorAll('.notification-select').forEach(cb => cb.checked = false);
+                    const span = document.getElementById('selectedCount');
+                    if (span) span.textContent = '0';
+                }
+            });
+            
+            // Close notifications
+            document.getElementById('closeNotifications')?.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const dropdown = document.querySelector('.notification-container');
+                const dropdownToggle = document.getElementById('notificationDropdown');
+                if (dropdown && dropdownToggle) {
+                    dropdown.classList.remove('show');
+                    dropdownToggle.setAttribute('aria-expanded', 'false');
+                    dropdownToggle.classList.remove('show');
+                    document.body.click();
+                }
+            });
+            
+            // Bulk delete
+            document.getElementById('deleteSelected')?.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const ids = Array.from(document.querySelectorAll('.notification-select:checked')).map(cb => cb.value);
+                if (ids.length) {
+                    fetch('/api/notifications/delete-multiple', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ids})
+                    }).then(r => r.json()).then(data => {
+                        if (data.success) {
+                            let unread = 0;
+                            ids.forEach(id => {
+                                const item = document.querySelector(`[data-id="${id}"]`);
+                                if (item?.classList.contains('unread')) unread++;
+                                item?.remove();
+                            });
+                            const badge = document.getElementById('notificationBadge');
+                            badge.textContent = Math.max(0, parseInt(badge.textContent) - unread);
+                            badge.classList.toggle('d-none', badge.textContent === '0');
+                            isSelectionMode = false;
+                            document.querySelectorAll('.notification-checkbox').forEach(cb => cb.classList.add('d-none'));
+                            document.querySelector('.bulk-actions-bar')?.classList.add('d-none');
+                            checkEmpty();
+                        }
+                    });
+                }
+            });
+            
+            // Cancel selection
+            document.getElementById('cancelSelection')?.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                isSelectionMode = false;
+                document.querySelectorAll('.notification-checkbox').forEach(cb => cb.classList.add('d-none'));
+                document.querySelector('.bulk-actions-bar')?.classList.add('d-none');
+                document.querySelectorAll('.notification-select').forEach(cb => cb.checked = false);
+                const span = document.getElementById('selectedCount');
+                if (span) span.textContent = '0';
+            });
+            
+            attachEvents();
+        });
+        <% } %>
+        
         document.addEventListener('DOMContentLoaded', function() {
             const confirmText = document.getElementById('confirmText');
             const logoutBtn = document.getElementById('logoutBtn');

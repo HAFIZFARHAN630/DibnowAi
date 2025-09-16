@@ -23,6 +23,15 @@ exports.SelectTeam = async (req, res) => {
     const isAdmin = user.role === "admin";
     const teamMembers = isAdmin ? await AddUser.find({}) : await AddUser.find({ user_id: userId });
 
+    // Get notification data for admin
+    let notifications = [];
+    let unreadCount = 0;
+    if (isAdmin) {
+      const Notification = require("../models/notification");
+      notifications = await Notification.find().sort({ timestamp: -1 }).limit(10);
+      unreadCount = await Notification.countDocuments({ isRead: false });
+    }
+
     res.render("Teams/Teams", {
       users: teamMembers,
       profileImagePath: user.user_img || "/uploads/default.png",
@@ -33,6 +42,8 @@ exports.SelectTeam = async (req, res) => {
       plan_name: user.plan_name || "No Plan",
       status: user.status,
       reson: user.denial_reason,
+      notifications: notifications,
+      unreadCount: unreadCount
     });
   } catch (error) {
     console.error("Error fetching team data:", error.message);
@@ -46,6 +57,8 @@ exports.SelectTeam = async (req, res) => {
       plan_name: "No Plan",
       status: "",
       reson: "",
+      notifications: [],
+      unreadCount: 0,
       error_msg: "Unable to load team data. Please try again."
     });
   }
@@ -164,6 +177,15 @@ exports.showAddTeamMemberForm = async (req, res) => {
       return res.redirect("/sign_in");
     }
 
+    // Get notification data for admin
+    let notifications = [];
+    let unreadCount = 0;
+    if (user.role === "admin") {
+      const Notification = require("../models/notification");
+      notifications = await Notification.find().sort({ timestamp: -1 }).limit(10);
+      unreadCount = await Notification.countDocuments({ isRead: false });
+    }
+
     res.render("admin/add_team_member", {
       profileImagePath: user.user_img || "/uploads/default.png",
       firstName: user.first_name,
@@ -172,6 +194,8 @@ exports.showAddTeamMemberForm = async (req, res) => {
       plan_name: user.plan_name || "No Plan",
       status: user.status,
       reson: user.denial_reason,
+      notifications: notifications,
+      unreadCount: unreadCount,
       message: null
     });
   } catch (error) {

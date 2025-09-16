@@ -44,6 +44,15 @@ exports.signup = [
 
       await newUser.save();
 
+      // Create notification for registration
+      if (req.app.locals.notificationService) {
+        await req.app.locals.notificationService.createNotification(
+          newUser._id,
+          newUser.first_name,
+          "Register"
+        );
+      }
+
       // Success
       res.render("Sigin/sign_in", {
         message: "Account created successfully. Please sign in.",
@@ -79,6 +88,18 @@ exports.signin = [
       });
 
       res.cookie("auth_token", token, { httpOnly: true });
+
+      // Create notification for login
+      if (req.app.locals.notificationService) {
+        console.log(`Calling notification service for login: ${user.first_name}`);
+        await req.app.locals.notificationService.createNotification(
+          user._id,
+          user.first_name,
+          "Login"
+        );
+      } else {
+        console.log('Notification service not available');
+      }
 
       return res.redirect("/index");
     } catch (error) {
@@ -198,19 +219,40 @@ exports.verifyOtpAndResetPassword = async (req, res) => {
 // forget password // forget password
 
 // Logout
-exports.logout = (req, res) => {
+exports.logout = async (req, res) => {
   console.log('Logout route hit:', req.method, req.url);
   console.log('Request body:', req.body);
   
   const reason = req.body.reason || 'User logout';
+  const userId = req.session.userId;
   
-  req.session.destroy((err) => {
+  // Get user info for notification before destroying session
+  let userName = 'Unknown User';
+  if (userId) {
+    try {
+      const user = await User.findById(userId).select('first_name');
+      if (user) userName = user.first_name;
+    } catch (error) {
+      console.error('Error fetching user for logout notification:', error);
+    }
+  }
+  
+  req.session.destroy(async (err) => {
     if (err) {
       console.error("Error destroying session:", err);
       return res.redirect("/index");
     }
     res.clearCookie("connect.sid");
     res.clearCookie("auth_token");
+    
+    // Create notification for logout
+    if (req.app.locals.notificationService && userId) {
+      await req.app.locals.notificationService.createNotification(
+        userId,
+        userName,
+        "Logout"
+      );
+    }
     
     // Log the logout reason for audit purposes
     console.log(`User logged out. Reason: ${reason}`);

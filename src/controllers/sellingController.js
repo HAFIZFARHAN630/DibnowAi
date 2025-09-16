@@ -91,6 +91,30 @@ exports.Sell = async (req, res) => {
     
     await Inventory.findByIdAndUpdate(productId, updateData);
 
+    // Create notification for making a sale
+    if (req.app.locals.notificationService) {
+      const user = await User.findById(userId).select('first_name');
+      if (user) {
+        await req.app.locals.notificationService.createNotification(
+          userId,
+          user.first_name,
+          "Make Sale"
+        );
+      }
+    }
+    
+    // Create notification for moving item to out-stock if quantity is 0
+    if (updatedQuantity === 0 && req.app.locals.notificationService) {
+      const user = await User.findById(userId).select('first_name');
+      if (user) {
+        await req.app.locals.notificationService.createNotification(
+          userId,
+          user.first_name,
+          "Move to Out-stock"
+        );
+      }
+    }
+
     req.flash("success_msg", `${Product} sold successfully!`);
     return res.redirect("/in_stock");
   } catch (error) {

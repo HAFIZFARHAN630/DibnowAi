@@ -29,6 +29,7 @@ const pricingRoutes = require("./src/routes/pricingRoutes");
 const SellRoutes = require("./src/routes/sellRoutes");
 const TeamsRoutes = require("./src/routes/TeamsRoutes");
 const requestRoutes = require("./src/routes/requestRoutes");
+const notificationRoutes = require("./src/routes/notificationRoutes");
 
 // Initialize Express app
 const app = express();
@@ -37,6 +38,29 @@ const app = express();
 // Create HTTP server and integrate Socket.IO
 const server = http.createServer(app);
 const io = socketIo(server);
+
+// Initialize notification service
+const NotificationService = require("./notificationService");
+const notificationService = new NotificationService(io);
+
+// Make notification service available globally
+app.locals.notificationService = notificationService;
+
+// Socket.IO connection handling
+io.on("connection", (socket) => {
+  console.log("Socket.IO: User connected:", socket.id);
+  
+  socket.on("markNotificationsRead", async () => {
+    console.log("Socket.IO: Mark notifications as read request");
+    await notificationService.markAsRead();
+  });
+  
+  socket.on("disconnect", () => {
+    console.log("Socket.IO: User disconnected:", socket.id);
+  });
+});
+
+console.log("Socket.IO server initialized");
 
 // Middleware
 app.use(bodyParser.json());
@@ -94,6 +118,10 @@ app.use(async (req, res, next) => {
   next();
 });
 
+// Add notification data middleware
+const { addNotificationData } = require("./src/middlewares/notificationMiddleware");
+app.use(addNotificationData);
+
 // Debug middleware
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.url}`);
@@ -107,6 +135,7 @@ app.use((req, res, next) => {
 });
 
 // Routes
+app.use("/", notificationRoutes);
 app.use("/", authRoutes);
 app.use("/", productRoutes);
 app.use("/", categoryRoutes);

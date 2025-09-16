@@ -23,17 +23,30 @@ exports.allusers = async (req, res) => {
     // Filter out the logged-in user from the list
     const users = allUsers.filter((user) => user._id.toString() !== userId);
 
+    // Get notification data for admin
+    let notifications = [];
+    let unreadCount = 0;
+    if (loggedInUser.role === "admin") {
+      const Notification = require("../models/notification");
+      notifications = await Notification.find().sort({ timestamp: -1 }).limit(10);
+      unreadCount = await Notification.countDocuments({ isRead: false });
+    }
+
     res.render("Request/request", {
       message: "",
       profileImagePath,
       firstName: loggedInUser.first_name,
       isUser: loggedInUser.role === "user",
       users: users,
+      notifications: notifications,
+      unreadCount: unreadCount
     });
   } catch (error) {
     console.error("Error fetching request data:", error.message);
     return res.render("Request/request", {
       users: [],
+      notifications: [],
+      unreadCount: 0,
       error_msg: "Unable to load request data. Please try again."
     });
   }

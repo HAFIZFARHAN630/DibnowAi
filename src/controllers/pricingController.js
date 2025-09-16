@@ -190,6 +190,18 @@ exports.paymentSuccess = [
       // Now, update the plan_limit based on the selected plan
       await subscribePlan(userId, plan);
 
+      // Create notification for buying a plan
+      if (req.app.locals.notificationService) {
+        const user = await User.findById(userId).select('first_name');
+        if (user) {
+          await req.app.locals.notificationService.createNotification(
+            userId,
+            user.first_name,
+            "Buy Plan"
+          );
+        }
+      }
+
       req.flash(
         "success_msg",
         `Your subscription plan has been updated to ${plan}.`
