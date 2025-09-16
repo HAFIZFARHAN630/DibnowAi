@@ -23,8 +23,7 @@ exports.allusers = async (req, res) => {
       return res.redirect("/sign_in");
     }
 
-    const isAdmin = user.role === "admin";
-    const isUser = user.role === "user";
+
 
     // Fetch all data concurrently
     const [
@@ -70,10 +69,10 @@ exports.allusers = async (req, res) => {
       completedRepairs,
       teamCount,
       teams,
-      isAdmin,
+
       status: user.status,
       reson: user.denial_reason,
-      isUser,
+
       plan_name: user.plan_name || "No Plan",
       totalSales,
       totalRepairs,

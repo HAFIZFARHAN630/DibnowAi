@@ -4,23 +4,24 @@ const AddUser = require("../models/adduser");
 // Fetch Team profile data
 exports.SelectTeam = async (req, res) => {
   try {
-    const userId = req.session.userId;
+    const userId = req.userId || req.session.userId;
     if (!userId) {
       console.error("User is not logged in.");
       return res.redirect("/sign_in");
     }
 
-    // Fetch user and team members concurrently
-    const [user, teamMembers] = await Promise.all([
-      User.findById(userId).select(
-        "first_name last_name phone_number email company address user_img plan_name status denial_reason role"
-      ),
-      AddUser.find({ user_id: userId })
-    ]);
+    // Fetch user and team members
+    const user = await User.findById(userId).select(
+      "first_name last_name phone_number email company address user_img plan_name status denial_reason role"
+    );
 
     if (!user) {
       return res.redirect("/sign_in");
     }
+
+    // Determine if admin or user and fetch appropriate team members
+    const isAdmin = user.role === "admin";
+    const teamMembers = isAdmin ? await AddUser.find({}) : await AddUser.find({ user_id: userId });
 
     res.render("Teams/Teams", {
       users: teamMembers,
@@ -28,6 +29,7 @@ exports.SelectTeam = async (req, res) => {
       firstName: user.first_name,
       lastName: user.last_name,
       isUser: user.role === "user",
+      isAdmin: isAdmin,
       plan_name: user.plan_name || "No Plan",
       status: user.status,
       reson: user.denial_reason,
@@ -36,15 +38,25 @@ exports.SelectTeam = async (req, res) => {
     console.error("Error fetching team data:", error.message);
     return res.render("Teams/Teams", {
       users: [],
+      isAdmin: false,
+      profileImagePath: "/uploads/default.png",
+      firstName: "User",
+      lastName: "",
+      isUser: true,
+      plan_name: "No Plan",
+      status: "",
+      reson: "",
       error_msg: "Unable to load team data. Please try again."
     });
   }
 };
 
+
+
 // Add a new user
 exports.addteams = async (req, res) => {
   try {
-    const { name, email, address, phone } = req.body;
+    const { name, email, address, phone, department, role } = req.body;
     const userId = req.session.userId;
 
     const newTeamMember = new AddUser({
@@ -52,6 +64,8 @@ exports.addteams = async (req, res) => {
       email,
       address,
       phone,
+      department: department || 'Team',
+      role: role || 'Team Member',
       user_id: userId
     });
 
@@ -68,36 +82,72 @@ exports.addteams = async (req, res) => {
 // Update Team Controller
 exports.updateteam = async (req, res) => {
   try {
-    const { id, name, email, address, phone } = req.body;
+    console.log('=== UPDATE TEAM CONTROLLER CALLED ===');
+    console.log('Update request received:', req.body);
+    console.log('User ID from middleware:', req.userId);
+    console.log('Request method:', req.method);
+    console.log('Request URL:', req.url);
     
-    await AddUser.findByIdAndUpdate(id, {
+    const { id, name, email, phone, department, role } = req.body;
+    
+    if (!id || !name || !email || !phone) {
+      console.log('Missing required fields');
+      return res.json({ success: false, message: "All fields are required." });
+    }
+    
+    console.log('Attempting to update team member with ID:', id);
+    
+    const updatedUser = await AddUser.findByIdAndUpdate(id, {
       name,
       email,
-      address,
-      phone
-    });
+      phone,
+      department: department || 'Team',
+      role: role || 'Team Member'
+    }, { new: true });
     
-    req.flash("success_msg", "Team member updated successfully!");
-    res.redirect("/Teams");
+    if (!updatedUser) {
+      console.log('Team member not found with ID:', id);
+      return res.json({ success: false, message: "Team member not found." });
+    }
+    
+    console.log('Team member updated successfully:', updatedUser);
+    res.json({ success: true, message: "Team member updated successfully!" });
   } catch (error) {
-    console.error("Error updating team member:", error.message);
-    req.flash("error_msg", "Failed to update team member. Please try again.");
-    res.redirect("/Teams");
+    console.error("Error updating team member:", error);
+    res.json({ success: false, message: error.message || "Failed to update team member." });
   }
 };
 
 // Delete Team
 exports.deleteteam = async (req, res) => {
   try {
-    const userId = req.params.id;
+    console.log('=== DELETE TEAM CONTROLLER CALLED ===');
+    const teamMemberId = req.params.id;
     
-    await AddUser.findByIdAndDelete(userId);
-    req.flash("success_msg", "Team member deleted successfully!");
-    res.redirect("/Teams");
+    console.log('Delete request received for ID:', teamMemberId);
+    console.log('User ID from middleware:', req.userId);
+    console.log('Request method:', req.method);
+    console.log('Request URL:', req.url);
+    
+    if (!teamMemberId) {
+      console.log('No team member ID provided');
+      return res.json({ success: false, message: "Team member ID is required." });
+    }
+    
+    console.log('Attempting to delete team member with ID:', teamMemberId);
+    
+    const deletedUser = await AddUser.findByIdAndDelete(teamMemberId);
+    
+    if (!deletedUser) {
+      console.log('Team member not found with ID:', teamMemberId);
+      return res.json({ success: false, message: "Team member not found." });
+    }
+    
+    console.log('Team member deleted successfully:', deletedUser);
+    res.json({ success: true, message: "Team member deleted successfully!" });
   } catch (error) {
-    console.error("Error deleting team member:", error.message);
-    req.flash("error_msg", "Failed to delete team member. Please try again.");
-    res.redirect("/Teams");
+    console.error("Error deleting team member:", error);
+    res.json({ success: false, message: error.message || "Failed to delete team member." });
   }
 };
 
@@ -140,7 +190,8 @@ exports.addAdminTeamMember = async (req, res) => {
       name: Username,
       email: Email,
       phone: Number,
-      address: `${role} - ${department}`,
+      role: role,
+      department: department,
       user_id: userId
     });
 

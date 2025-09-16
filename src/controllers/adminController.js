@@ -25,7 +25,6 @@ exports.admin = async (req, res) => {
     res.render("admin/adminfile", {
       profileImagePath,
       firstName: loggedInUser.first_name,
-      isUser: loggedInUser.role === "user",
       users: users,
     });
   } catch (error) {
@@ -98,7 +97,6 @@ exports.selectAddAdmin = async (req, res) => {
       message: "",
       profileImagePath,
       firstName: loggedInUser.first_name,
-      isUser: loggedInUser.role === "user",
       users: users,
     });
   } catch (error) {

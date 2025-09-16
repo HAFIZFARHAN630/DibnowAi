@@ -80,10 +80,6 @@ exports.signin = [
 
       res.cookie("auth_token", token, { httpOnly: true });
 
-      if (user.role === "admin") {
-        return res.redirect("/admin");
-      }
-
       return res.redirect("/index");
     } catch (error) {
       console.error("Login error:", error.message);

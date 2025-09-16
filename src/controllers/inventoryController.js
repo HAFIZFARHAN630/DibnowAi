@@ -47,6 +47,7 @@ exports.getInventory = async (req, res) => {
         firstName: "",
         lastName: "",
         isUser: false,
+        isAdmin: false,
         daysInMonth: [],
       });
     }
@@ -89,7 +90,7 @@ exports.getInventory = async (req, res) => {
       firstName,
       lastName,
       daysInMonth,
-      isUser: user.role === "user",
+
       plan_name: user.plan_name || "No Plan",
       status: user.status,
       reson: user.denial_reason,
@@ -106,7 +107,7 @@ exports.getInventory = async (req, res) => {
       profileImagePath: "",
       firstName: "",
       lastName: "",
-      isUser: false,
+
       daysInMonth: [],
       error_msg: "Unable to load inventory. Please try again."
     });

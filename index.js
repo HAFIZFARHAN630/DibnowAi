@@ -10,6 +10,9 @@ const socketIo = require("socket.io");
 
 const cookieParser = require("cookie-parser");
 
+// Database connection
+require("./src/config/db");
+
 // Import routes
 const authRoutes = require("./src/routes/authRoutes");
 const productRoutes = require("./src/routes/repairRoutes");
@@ -66,9 +69,40 @@ app.use((req, res, next) => {
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "view"));
 
+// Global middleware to set user role variables for all EJS templates
+app.use(async (req, res, next) => {
+  if (req.session.userId) {
+    try {
+      const User = require("./src/models/user");
+      const user = await User.findById(req.session.userId).select("role");
+      if (user) {
+        res.locals.isAdmin = user.role === "admin";
+        res.locals.isUser = user.role === "user";
+      } else {
+        res.locals.isAdmin = false;
+        res.locals.isUser = false;
+      }
+    } catch (error) {
+      console.error("Error fetching user role:", error.message);
+      res.locals.isAdmin = false;
+      res.locals.isUser = false;
+    }
+  } else {
+    res.locals.isAdmin = false;
+    res.locals.isUser = false;
+  }
+  next();
+});
+
 // Debug middleware
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.url}`);
+  if (req.body && Object.keys(req.body).length > 0) {
+    console.log('Request body:', req.body);
+  }
+  if (req.session && req.session.userId) {
+    console.log('User ID from session:', req.session.userId);
+  }
   next();
 });
 
@@ -87,11 +121,18 @@ app.use("/", indexRoutes);
 app.use("/", pricingRoutes);
 app.use("/", SellRoutes);
 app.use("/", requestRoutes);
-app.use("/", TeamsRoutes);
+// Add Teams routes with explicit logging
+app.use("/", (req, res, next) => {
+  if (req.url.includes('team')) {
+    console.log('Teams route intercepted:', req.method, req.url);
+  }
+  next();
+}, TeamsRoutes);
 
-// 404 Middleware
+// 404 Middleware with logging
 app.use((req, res) => {
-  return res.status(404).render("404");
+  console.log('404 - Route not found:', req.method, req.url);
+  return res.status(404).json({ error: 'Route not found', method: req.method, url: req.url });
 });
 
 // Start the server

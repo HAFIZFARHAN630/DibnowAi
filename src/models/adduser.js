@@ -5,7 +5,9 @@ const addUserSchema = new mongoose.Schema({
   name: { type: String },
   email: { type: String },
   address: { type: String },
-  phone: { type: String }
+  phone: { type: String },
+  department: { type: String },
+  role: { type: String }
 });
 
 module.exports = mongoose.model("AddUser", addUserSchema);

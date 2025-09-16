@@ -43,35 +43,7 @@
   <%- include('../par/Add_Repair.ejs') %>
   <!--  -->
 
-               <!-- Sidebar Start -->
-               <div class="sidebar pe-4 pb-3">
-                <nav class="navbar">
-                
-                  <div class="d-flex align-items-center ms-4 mb-4">
-                    <a href="/Setting" class="d-flex align-items-center text-decoration-none">
-                        <div class="position-relative">
-                            <img class="rounded-circle" src="<%- profileImagePath %>" alt="Profile Image" style="width: 40px; height: 40px;" onerror="this.onerror=null; this.src='img/dumi img.png';">
-                            <div class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
-                        </div>
-                        <div class="ms-3">
-                            <h6 class="mb-0 text-dark"><%- firstName %></h6>
-                        </div>
-                    </a>
-                </div>
-                    <div class="navbar-nav w-100">
-                        <a href="/index" class="nav-item nav-link"><i class="bi bi-tv"></i>Dashboard</a>
-                        <a href="/inventory" class="nav-item nav-link  "><i class="bi bi-clipboard-data"></i>Inventory</a>
-                        <a href="/repair" class="nav-item nav-link active"><i class="bi bi-tools"></i>Repair</a>
-                        <a href="/in_stock" class="nav-item nav-link"><i class="bi bi-shop-window"></i>In Stock</a>
-                        <a href="/Clients" class="nav-item nav-link"><i class="bi bi-people"></i>Clients</a>
-                        <a href="/pricing" class="nav-item nav-link"><i class="bi bi-wallet2"></i>Plans</a>
-                        <a href="/sell" class="nav-item nav-link "><i class="bi bi-cash-stack"></i>Sold Item</a>
-                        <a href="/Teams" class="nav-item nav-link"><i class="fa-solid fa-users"></i>Teams</a>
-                        <a href="/Help" class="nav-item nav-link"><i class="bi bi-chat-dots"></i>Help</a>           
-                    </div>
-                </nav>
-            </div>
-            <!-- Sidebar End -->
+               <%- include('../par/sidebar.ejs') %>
 
   <!-- Navbar Start -->
   <%- include('../par/header.ejs') %>

@@ -35,129 +35,362 @@
         margin-left: -35px;
           }
 
+      .btn-add-team {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        border: none;
+        border-radius: 12px;
+        padding: 12px 24px;
+        color: white;
+        font-weight: 600;
+        font-size: 14px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+      }
+      
+      .btn-add-team:hover {
+        background: linear-gradient(135deg, #059669 0%, #047857 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        color: white;
+        text-decoration: none;
+      }
 
-          .modal-dialog {
-    max-width: 600px;
-    border-radius: 10px;
-    overflow: hidden;
-   
-  }
-  .modal-header {
-    background-color: #007bff;
-    color: white;
-    padding: 15px;
-  }
-  .modal-title {
-    font-size: 20px;
-    font-weight: bold;
-  }
-  .btn-close {
-    color: white;
-  }
-  .modal-body {
-    padding: 20px;
-    background-color: #f9f9f9;
-    width: 601px;
-  }
-  .form-group label {
-    font-weight: 600;
-    margin-bottom: 5px;
-    display: block;
-  }
-  .form-control {
-    border-radius: 5px;
-    border: 1px solid #ddd;
-  }
-  .form-control:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-  }
-  .btn-add button {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    font-weight: bold;
-    background-color: #007bff;
-    border: none;
-    color: white;
-    border-radius: 5px;
-  }
-  .btn-add button:hover {
-    background-color: #0056b3;
-  }
+      .filter-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 15px;
+      }
+
+      .filter-select {
+        min-width: 180px;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        padding: 8px 12px;
+        font-size: 14px;
+        background: white;
+        transition: all 0.3s ease;
+      }
+
+      .filter-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        outline: none;
+      }
+
+      .filter-select option[value="Billing"] {
+        background-color: #3b82f6;
+        color: white;
+      }
+
+      .filter-select option[value="Sales"] {
+        background-color: #10b981;
+        color: white;
+      }
+
+      .filter-select option[value="Support"] {
+        background-color: #f59e0b;
+        color: white;
+      }
+
+      .filter-select option[value="Technical"] {
+        background-color: #8b5cf6;
+        color: white;
+      }
+
+      .filter-select option[value="Management"] {
+        background-color: #ef4444;
+        color: white;
+      }
+
+      .dept-billing {
+        background-color: #3b82f6;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-weight: 500;
+        font-size: 12px;
+      }
+
+      .dept-sales {
+        background-color: #10b981;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-weight: 500;
+        font-size: 12px;
+      }
+
+      .dept-support {
+        background-color: #f59e0b;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-weight: 500;
+        font-size: 12px;
+      }
+
+      .dept-technical {
+        background-color: #8b5cf6;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-weight: 500;
+        font-size: 12px;
+      }
+
+      .dept-management {
+        background-color: #ef4444;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-weight: 500;
+        font-size: 12px;
+      }
+
+      .dept-na {
+        background-color: #6b7280;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-weight: 500;
+        font-size: 12px;
+      }
+
+      /* Modal Styles - Same as verify-otp.ejs */
+      .form-container {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+        padding: 50px 40px 30px 40px;
+        margin-top: 60px;
+        border-radius: 25px;
+        box-shadow: 0 30px 100px rgba(0, 0, 0, 0.2);
+        width: 100%;
+        position: relative;
+        backdrop-filter: blur(15px);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        min-height: auto;
+      }
+
+      .close-btn {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+        border: none;
+        border-radius: 50%;
+        color: white;
+        font-size: 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+      }
+
+      .close-btn:hover {
+        transform: scale(1.1) rotate(90deg);
+        box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+      }
+
+      .form-header {
+        text-align: center;
+        margin-bottom: 35px;
+      }
+
+      .form-title {
+        font-size: 36px;
+        font-weight: 700;
+        color: #ffffff;
+        margin-bottom: 10px;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .form-subtitle {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 18px;
+        line-height: 1.5;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-label {
+        font-weight: 600;
+        color: #ffffff;
+        margin-bottom: 12px;
+        font-size: 18px;
+        display: block;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      }
+
+      .form-control {
+        width: 100%;
+        height: 50px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 15px;
+        padding: 12px 20px;
+        font-size: 16px;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%);
+        transition: all 0.3s ease;
+        outline: none;
+        backdrop-filter: blur(10px);
+      }
+
+      .form-control:focus {
+        border-color: rgba(255, 255, 255, 0.8);
+        box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+        background: rgba(255, 255, 255, 0.98);
+      }
+
+      .form-control::placeholder {
+        color: #9ca3af;
+      }
+
+      .submit-btn {
+        width: 100%;
+        height: 50px;
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 15px;
+        color: #667eea;
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
+        text-transform: uppercase;
+      }
+
+      .submit-btn:hover {
+        background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+        transform: translateY(-3px);
+        box-shadow: 0 15px 40px rgba(255, 255, 255, 0.3);
+        color: #764ba2;
+      }
+
+      .submit-btn:active {
+        transform: translateY(-1px);
+      }
+
+      /* Responsive Design for Modal */
+      @media (max-width: 768px) {
+        .form-container {
+          padding: 30px 25px;
+          max-width: 100%;
+        }
+        
+        .form-title {
+          font-size: 28px;
+        }
+        
+        .form-subtitle {
+          font-size: 14px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .form-container {
+          padding: 25px 20px;
+        }
+        
+        .form-title {
+          font-size: 24px;
+        }
+        
+        .form-control {
+          height: 50px;
+          font-size: 14px;
+        }
+        
+        .submit-btn {
+          height: 50px;
+          font-size: 16px;
+        }
+      }
+
+      .filter-label {
+        font-weight: 600;
+        color: #495057;
+        font-size: 14px;
+        margin: 0;
+      }
+
+      @media (max-width: 768px) {
+        .filter-container {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+        
+        .filter-select {
+          width: 100%;
+        }
+      }
+
+
     </style>
 </head>
 
 <body>
 
-              <!-- Sidebar Start -->
-              <div class="sidebar pe-4 pb-3">
-               <nav class="navbar">
-               
-                 <div class="d-flex align-items-center ms-4 mb-4">
-                   <a href="/Setting" class="d-flex align-items-center text-decoration-none">
-                       <div class="position-relative">
-                           <img class="rounded-circle" src="<%- profileImagePath %>" alt="Profile Image" style="width: 40px; height: 40px;" onerror="this.onerror=null; this.src='img/dumi img.png';">
-                           <div class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
-                       </div>
-                       <div class="ms-3">
-                           <h6 class="mb-0 text-dark"><%- firstName %></h6>
-                       </div>
-                   </a>
-               </div>
-                   <div class="navbar-nav w-100">
-                       <a href="/index" class="nav-item nav-link"><i class="bi bi-tv"></i>Dashboard</a>
-                       <a href="/inventory" class="nav-item nav-link  "><i class="bi bi-clipboard-data"></i>Inventory</a>
-                       <a href="/repair" class="nav-item nav-link "><i class="bi bi-tools"></i>Repair</a>
-                       <a href="/in_stock" class="nav-item nav-link"><i class="bi bi-shop-window"></i>In Stock</a>
-                       <a href="/Clients" class="nav-item nav-link"><i class="bi bi-people"></i>Clients</a>
-                       <a href="/pricing" class="nav-item nav-link"><i class="bi bi-wallet2"></i>Plans</a>
-                       <a href="/sell" class="nav-item nav-link "><i class="bi bi-cash-stack"></i>Sold Item</a>
-                       <a href="/Teams" class="nav-item nav-link active"><i class="fa-solid fa-users"></i>Teams</a>
-                       <a href="/Help" class="nav-item nav-link"><i class="bi bi-chat-dots"></i>Help</a>           
-                   </div>
-               </nav>
-           </div>
-           <!-- Sidebar End -->
+              <%- include('../par/sidebar.ejs') %>
 
   <!-- Navbar Start -->
   <%- include('../par/header.ejs') %>
 
   <div class="body-wrapper" style=" position: relative;">
     <div class="container-fluid">
-        <!-- Coming Soon Banner -->
-        <div style="display: flex; justify-content: center; align-items: center; text-align: center; font-size: 1.5rem;  font-weight: bold; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); border-radius: 10px;  padding: 15px; background: linear-gradient(45deg, #000F66, #06B544); color: #fff;  width: 80%;  margin: 20px auto;">
-        🚀 Coming Soon! Stay Tuned. 🚀 
-      </div>
      <div class="card card-body py-3">
             <div class="row align-items-center">
                 <div class="col-md-12">
                     <div class="d-flex justify-content-between align-items-center">
-                        <h4 class="mb-4 mb-sm-0 card-title"> Coming Soon</h4>
-                        <button class="btn me-1 mb-1 bg-secondary px-4 fs-4 text-white" disabled>
-                            <i class="bi bi-clock-history me-2"></i> Coming Soon
-                        </button>
+                        <h4 class="mb-4 mb-sm-0 card-title">Team Members <i class="bi bi-people-fill"></i></h4>
+                        <a href="/AdminTeam" class="btn-add-team">
+                            <i class="fas fa-user-plus"></i> Add Team Member
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="card card-body">
-            <div class="table-responsive">
+            <div class="d-flex justify-content-end">
+                <div class="filter-container">
+                    <label for="departmentFilter" class="filter-label">Filter:</label>
+                    <select class="filter-select" id="departmentFilter">
+                        <option value="">All Departments</option>
+                        <option value="Billing">Billing</option>
+                        <option value="Sales">Sales</option>
+                        <option value="Support">Support</option>
+                        <option value="Technical">Technical</option>
+                        <option value="Management">Management</option>
+                    </select>
+                </div>
+            </div>
+            <div class="table-responsive mt-3">
                 <table class="table search-table align-middle text-nowrap" id="paginatedTable">
                     <thead class="header-item">
                         <tr>
                             <th>Name</th>
                             <th>Email</th>
-                            <th>Address</th>
                             <th>Phone</th>
+                            <th>Department</th>
+                            <th>Role</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         <% users.forEach(user => { %>
-                        <tr class="search-items">
+                        <tr class="search-items" data-department="<%= user.department || '' %>">
                             <td style="color: #1f2324;">
                                 <div class="d-flex align-items-center">
                                     <img src="https://img.icons8.com/3d-fluency/94/user-male--v4.png" alt="user-male--v4"/>
@@ -169,15 +402,28 @@
                                 </div>
                             </td>
                             <td style="color: #1f2324;"><span class="usr-email-addr"><%= user.email %></span></td>
-                            <td style="color: #1f2324;"><span class="usr-location"><%= user.address %></span></td>
                             <td style="color: #1f2324;"><span class="usr-ph-no"><%= user.phone %></span></td>
+                            <td style="color: #1f2324;">
+                                <span class="usr-department 
+                                    <% if (user.department === 'Billing') { %>dept-billing
+                                    <% } else if (user.department === 'Sales') { %>dept-sales
+                                    <% } else if (user.department === 'Support') { %>dept-support
+                                    <% } else if (user.department === 'Technical') { %>dept-technical
+                                    <% } else if (user.department === 'Management') { %>dept-management
+                                    <% } else { %>dept-na<% } %>">
+                                    <%= user.department || 'N/A' %>
+                                </span>
+                            </td>
+                            <td style="color: #1f2324;"><span class="usr-role"><%= user.role || 'N/A' %></span></td>
                             <td>
                                 <div class="action-btn">
-                                    <button type="button" class="btn btn-link text-secondary edit" disabled>
-                                        <i class="fa-solid fa-pen-to-square text-secondary"></i>
+                                    <button type="button" class="btn btn-link text-success edit" 
+                                            onclick="openEditModal('<%= user._id %>', '<%= user.name %>', '<%= user.email %>', '<%= user.phone %>', '<%= user.department || '' %>', '<%= user.role || '' %>')">
+                                        <i class="fa-solid fa-pen-to-square text-success"></i>
                                     </button>
-                                    <button type="submit" class="btn btn-link text-secondary p-0 b" disabled>
-                                        <i class="fa-solid fa-trash-can text-secondary"></i>
+                                    <button type="button" class="btn btn-link text-danger p-0" 
+                                            onclick="deleteTeamMember('<%= user._id %>', '<%= user.name %>')">
+                                        <i class="fa-solid fa-trash-can text-danger"></i>
                                     </button>
                                 </div>
                             </td>
@@ -189,12 +435,83 @@
         </div>
     </div>
 </div>
-  <!-- add user from end  -->
 
+<!-- Update Team Member Modal -->
+<div class="modal fade" id="updateTeamModal" tabindex="-1" aria-labelledby="updateTeamModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" style="max-width: 800px; min-height: auto;">
+    <div class="modal-content" style="background: transparent; border: none; min-height: auto;">
+      <div class="form-container">
+        <button class="close-btn" data-bs-dismiss="modal" aria-label="Close">
+          <i class="fas fa-times"></i>
+        </button>
+        
+        <div class="form-header">
+          <h1 class="form-title">Update Team Member</h1>
+          <p class="form-subtitle">Update the team member information below</p>
+        </div>
+        
+        <form id="updateTeamForm">
+          <input type="hidden" id="updateTeamId" name="id">
+          
+          <div class="form-group">
+            <label for="updateName" class="form-label">
+              <i class="fas fa-user me-2"></i>Full Name
+            </label>
+            <input type="text" class="form-control" id="updateName" name="name" required placeholder="Enter full name">
+          </div>
+          
+          <div class="form-group">
+            <label for="updateEmail" class="form-label">
+              <i class="fas fa-envelope me-2"></i>Email
+            </label>
+            <input type="email" class="form-control" id="updateEmail" name="email" required placeholder="Enter email address">
+          </div>
+
+          <div class="form-group">
+            <label for="updatePhone" class="form-label">
+              <i class="fas fa-phone me-2"></i>Phone
+            </label>
+            <input type="text" class="form-control" id="updatePhone" name="phone" required placeholder="Enter phone number">
+          </div>
+
+          <div class="form-group">
+            <label for="updateDepartment" class="form-label">
+              <i class="fas fa-building me-2"></i>Department
+            </label>
+            <select class="form-control" id="updateDepartment" name="department" required>
+              <option value="">Select Department</option>
+              <option value="Billing">Billing</option>
+              <option value="Sales">Sales</option>
+              <option value="Support">Support</option>
+              <option value="Technical">Technical</option>
+              <option value="Management">Management</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="updateRole" class="form-label">
+              <i class="fas fa-user-tag me-2"></i>Role
+            </label>
+            <select class="form-control" id="updateRole" name="role" required>
+              <option value="">Select Role</option>
+              <option value="Team">Team</option>
+              <option value="Team Lead">Team Lead</option>
+              <option value="Supervisor">Supervisor</option>
+              <option value="Manager">Manager</option>
+            </select>
+          </div>
+  
+          <button type="submit" class="submit-btn">
+            <i class="fas fa-save me-2"></i>Update Team Member
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 
 <%- include('../par/footer.ejs') %>
 
-  
 </body>
 <!-- JavaScript Libraries -->
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
@@ -203,4 +520,131 @@
 
 <!-- Template Javascript -->
 <script src="js/main.js"></script>
+<script>
+// Department filter functionality
+document.getElementById('departmentFilter').addEventListener('change', function() {
+    const selectedDepartment = this.value;
+    const tableRows = document.querySelectorAll('#paginatedTable tbody tr');
+    
+    tableRows.forEach(row => {
+        const rowDepartment = row.getAttribute('data-department');
+        if (selectedDepartment === '' || rowDepartment === selectedDepartment) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+});
+
+// Open edit modal with pre-filled data
+function openEditModal(id, name, email, phone, department, role) {
+    document.getElementById('updateTeamId').value = id;
+    document.getElementById('updateName').value = name;
+    document.getElementById('updateEmail').value = email;
+    document.getElementById('updatePhone').value = phone;
+    document.getElementById('updateDepartment').value = department;
+    document.getElementById('updateRole').value = role;
+    
+    const modal = new bootstrap.Modal(document.getElementById('updateTeamModal'));
+    modal.show();
+}
+
+// Handle update form submission
+document.getElementById('updateTeamForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const submitBtn = this.querySelector('.submit-btn');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Updating...';
+    submitBtn.disabled = true;
+    
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData);
+    
+    console.log('Sending update data:', data);
+    
+    fetch('/updateteam', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        console.log('Response status:', response.status);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Response data:', data);
+        if (data.success) {
+            const modal = bootstrap.Modal.getInstance(document.getElementById('updateTeamModal'));
+            modal.hide();
+            location.reload();
+        } else {
+            alert(data.message || 'Error updating team member');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Network error: ' + error.message);
+    })
+    .finally(() => {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    });
+});
+
+// Delete team member with confirmation
+function deleteTeamMember(id, name) {
+    if (confirm(`Are you sure you want to delete ${name}? This action cannot be undone.`)) {
+        console.log('Deleting team member with ID:', id);
+        
+        fetch(`/deleteteam/${id}`, {
+            method: 'POST'
+        })
+        .then(response => {
+            console.log('Delete response status:', response.status);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Delete response data:', data);
+            if (data.success) {
+                // Remove the row from table without full reload
+                const row = document.querySelector(`button[onclick*="${id}"]`).closest('tr');
+                if (row) {
+                    row.remove();
+                }
+                
+                // Show success message
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-success alert-dismissible fade show';
+                alertDiv.innerHTML = `
+                    <i class="fas fa-check-circle me-2"></i>${data.message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                document.querySelector('.card-body').prepend(alertDiv);
+                
+                // Auto dismiss after 3 seconds
+                setTimeout(() => {
+                    if (alertDiv.parentNode) {
+                        alertDiv.remove();
+                    }
+                }, 3000);
+            } else {
+                alert(data.message || 'Error deleting team member');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Network error: ' + error.message);
+        });
+    }
+}
+</script>
 </html>

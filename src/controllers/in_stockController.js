@@ -33,7 +33,6 @@ exports.viewitems = async (req, res) => {
       categories: categories,
       brand: brands,
       products: products,
-      isUser: user.role === "user",
       plan_name: user.plan_name || "No Plan",
       success_msg: req.flash("success_msg"),
       error_msg: req.flash("error_msg"),
@@ -226,7 +225,6 @@ exports.desProducts = async (req, res) => {
       lastName: user.last_name,
       company: user.company,
       products: [product], // Wrap in array to match template expectation
-      isUser: user.role === "user",
       plan_name: user.plan_name,
       success_msg: req.flash("success_msg"),
       error_msg: req.flash("error_msg"),
