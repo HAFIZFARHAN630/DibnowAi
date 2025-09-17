@@ -1,228 +1,320 @@
 <style>
-  /* General Modal Styling */
-  .gadget-form-modal {
-    border-radius: 12px;
-    padding: 20px;
-    background: #f9f9f9;
+  /* Professional Modal Styling */
+  .professional-modal .modal-dialog {
+    max-width: 900px;
+    margin: 30px auto;
   }
   
-  .gadget-form-modal .modal-header {
-    border-bottom: 1px solid #ddd;
-    margin-top: -36px;
-    padding:15px;   
-  
-  }
-  
-  .gadget-form-modal .modal-title {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #343a40;
-  }
-  .gadget-close-btn {
-    font-size: 1.5rem;
-    background: none;
+  .professional-modal .modal-content {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
     border: none;
-    color: #343a40;
-    opacity: 0.7;
-    transition: opacity 0.3s ease;
+    border-radius: 25px;
+    box-shadow: 0 30px 100px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(15px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    overflow: hidden;
   }
   
-  .gadget-close-btn:hover {
-    opacity: 1;
+  .professional-modal .modal-header {
+    background: transparent;
+    border: none;
+    padding: 30px 50px 20px;
+    position: relative;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
   }
   
-  /* Form Inputs and Select */
-  .gadget-input, .gadget-select, .gadget-file, .gadget-textarea {
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    /* padding: 10px; */
-    transition: all 0.3s ease;
-  }
-  
-  .gadget-input:focus, .gadget-select:focus, .gadget-textarea:focus {
-    border-color: #28a745;
-    box-shadow: 0 0 8px rgba(40, 167, 69, 0.6);
-    outline: none;
-  }
-  
-  /* Textarea Styling */
-  .gadget-textarea {
-    resize: vertical;
-    height: 58px;
-  }
-  
-  
-  .gadget-form .form-label {
-    font-weight: 600;
-    color: #495057;
-  }
-  
-  .gadget-form .col-md-4, .gadget-form .col-md-6 {
-    margin-bottom: 12px;
-  }
-  
-  .gadget-form .col-md-4 {
-    padding-right: 15px;
-  }
-  
-  .gadget-form .col-md-6 {
-    padding-right: 15px;
-  }
-  
-  /* Submit Button */
-  .gadget-submit-btn {
+  .professional-modal .modal-title {
+    font-size: 36px;
+    font-weight: 700;
+    color: #ffffff;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    text-align: center;
     width: 100%;
-    padding: 12px;
-    font-size: 1.1rem;
-    background-color: #28a745;
+    margin: 0;
+    display: block;
+  }
+  
+  .professional-modal .modal-subtitle {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 18px;
+    text-align: center;
+    margin: 10px 0 0 0;
+    line-height: 1.5;
+    display: block;
+    width: 100%;
+  }
+  
+  .professional-close-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
     border: none;
+    border-radius: 50%;
     color: white;
-    border-radius: 8px;
-    transition: background-color 0.3s ease;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
   }
   
-  .gadget-submit-btn:hover {
-    background-color: #218838;
+  .professional-close-btn:hover {
+    transform: scale(1.1) rotate(90deg);
+    box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
   }
   
-  /* Responsive Design Adjustments */
+  .professional-modal .modal-body {
+    padding: 20px 50px 50px;
+  }
+  
+  .professional-form .form-group {
+    margin-bottom: 25px;
+  }
+  
+  .professional-form .form-label {
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 12px;
+    font-size: 18px;
+    display: block;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  }
+  
+  .professional-form .form-control,
+  .professional-form .form-select {
+    width: 100%;
+    height: 60px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 15px;
+    padding: 18px 25px;
+    font-size: 18px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%);
+    transition: all 0.3s ease;
+    outline: none;
+    backdrop-filter: blur(10px);
+  }
+  
+  .professional-form .form-control:focus,
+  .professional-form .form-select:focus {
+    border-color: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.98);
+  }
+  
+  .professional-form .form-control::placeholder {
+    color: #9ca3af;
+  }
+  
+  .professional-form .form-control[type="file"] {
+    padding: 15px 25px;
+    height: auto;
+  }
+  
+  .professional-form textarea.form-control {
+    height: 100px;
+    resize: vertical;
+  }
+  
+  .professional-submit-btn {
+    width: 100%;
+    height: 60px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 15px;
+    color: #667eea;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
+    text-transform: uppercase;
+    margin-top: 1rem;
+  }
+  
+  .professional-submit-btn:hover {
+    background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(255, 255, 255, 0.3);
+    color: #764ba2;
+  }
+  
+  /* Responsive Design */
   @media (max-width: 768px) {
-    .gadget-form-modal {
-        padding: 10px;
+    .professional-modal .modal-dialog {
+      margin: 15px;
+      max-width: calc(100% - 30px);
     }
-  
-    .gadget-form .col-md-6, .gadget-form .col-md-4 {
-        padding: 10px 0;
+    
+    .professional-modal .modal-header,
+    .professional-modal .modal-body {
+      padding: 25px 30px;
     }
-  
-    .gadget-submit-btn {
-        font-size: 1rem;
+    
+    .professional-modal .modal-title {
+      font-size: 28px;
+    }
+    
+    .professional-modal .modal-subtitle {
+      font-size: 14px;
+    }
+    
+    .professional-form .form-control,
+    .professional-form .form-select {
+      height: 50px;
+      font-size: 16px;
+      padding: 15px 20px;
+    }
+    
+    .professional-submit-btn {
+      height: 50px;
+      font-size: 16px;
     }
   }
-
-/* Form Inputs and Select */
-.gadget-input,
-.gadget-textarea {
-width: 100%;
-border-radius: 8px;
-padding: 10px;
-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-transition: all 0.3s ease;
-}
-
-/* Form Label Styling */
-.gadget-form .form-label {
-font-weight: 600;
-color: #495057;
-margin-bottom: 5px;
-}
-  </style>
+  
+  @media (max-width: 480px) {
+    .professional-modal .modal-header,
+    .professional-modal .modal-body {
+      padding: 20px 25px;
+    }
+    
+    .professional-modal .modal-title {
+      font-size: 24px;
+    }
+    
+    .professional-form .form-control,
+    .professional-form .form-select {
+      height: 45px;
+      font-size: 14px;
+    }
+  }
+</style>
   
 
 <!-- Repair Form -->
-<div class="modal fade" id="gadgetRepairModal" tabindex="-1" aria-labelledby="gadgetRepairModalLabel" aria-hidden="true">
+<div class="modal fade professional-modal" id="gadgetRepairModal" tabindex="-1" aria-labelledby="gadgetRepairModalLabel" aria-hidden="true">
   <div class="modal-dialog">
-      <div class="modal-content gadget-form-modal" style="height: 551px;margin-top: -23px;">
+      <div class="modal-content">
           <div class="modal-header">
-              <h3 class="modal-title text-dark" id="gadgetRepairModalLabel" style="margin-left: auto; font-size: xx-large;margin-bottom: -17px;">Add Repair Custormer</h3>
-              <button type="button" class="btn-close gadget-close-btn" data-bs-dismiss="modal" aria-label="Close">               
-                 <i class="fas fa-times gadget-close-btn" data-bs-dismiss="modal" aria-label="Close"></i>
+              <h2 class="modal-title" id="gadgetRepairModalLabel">
+                <i class="fa-solid fa-tools me-3"></i>Add Repair Customer
+              </h2>
+              <p class="modal-subtitle">Create a new repair service request with customer details</p>
+              <button type="button" class="professional-close-btn" data-bs-dismiss="modal" aria-label="Close">
+                 <i class="fas fa-times"></i>
               </button>
           </div>
-          <div class="modal-body" style="padding-top: 17px;">
-              <form action="/repair" method="POST" enctype="multipart/form-data" class="gadget-form">
-                <div class="row">
-                  <!-- Random ID Field -->
-                  <div class="col-md-6" style="display: none;">
-                    <input type="text" class="form-control gadget-input" name="random_id" id="randomId"  readonly required>
+          <div class="modal-body">
+              <form action="/repair" method="POST" enctype="multipart/form-data" class="professional-form">
+                <div class="row" style="display: none;">
+                  <div class="col-md-6">
+                    <input type="text" class="form-control" name="random_id" id="randomId" readonly required>
                   </div>
                 </div>
                 
-                <div class="row ">
+                <div class="row">
                   <div class="col-md-6">
-                    <label for="fullName" class="form-label">Full Name</label>
-                    <input type="text" class="form-control gadget-input" name="fullName" required>
+                    <div class="form-group">
+                      <label for="fullName" class="form-label">Full Name *</label>
+                      <input type="text" class="form-control" name="fullName" required placeholder="Enter customer full name">
+                    </div>
                   </div>
                   <div class="col-md-6">
-                    <label for="mobileNumber" class="form-label">Mobile Number</label>
-                    <input type="tel" class="form-control gadget-input" name="mobileNumber" required>
-                    <div class="invalid-feedback">
-                      This field is required.
+                    <div class="form-group">
+                      <label for="mobileNumber" class="form-label">Mobile Number *</label>
+                      <input type="tel" class="form-control" name="mobileNumber" required placeholder="Enter mobile number">
                     </div>
                   </div>
                 </div>
 
-                <!--  -->
-                <div class="row ">
-                  <div class="col-md-6 mt-n2">
-                    <label for="Price" class="form-label">Price</label>
-                    <input type="number" class="form-control gadget-input" name="Price">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="Price" class="form-label">Repair Price</label>
+                      <input type="number" class="form-control" name="Price" placeholder="Enter repair price">
+                    </div>
                   </div>
-                  <div class="col-md-6 mt-n2">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control gadget-input" name="email">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="email" class="form-label">Email Address</label>
+                      <input type="email" class="form-control" name="email" placeholder="Enter email address">
+                    </div>
                   </div>
                 </div>
-                <!--  -->
-                <div class="row ">
-                  <div class="col-md-6 mt-n2">
-                    <label for="brand" class="form-label">Brand Name</label>
-                    <select class="form-select gadget-select" name="brand" id="Brand" required>
-                      <% brand.forEach(brand => { %>
-                      <option value="<%= brand.name %>">
-                        <%= brand.name %>
-                      </option>
-                      <% }); %>
-                      <option value="Apple">Apple</option>
-                      <option value="Samsung">Samsung</option>
-                      <option value="Oppo">Oppo</option>
-                      <option value="Xiaomi">Xiaomi</option>
-                      <option value="OnePlus">OnePlus</option>
-                      <option value="Realme">Realme</option>
-                      <option value="Vivo">Vivo</option>
-                    </select>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="brand" class="form-label">Brand Name *</label>
+                      <select class="form-select" name="brand" id="Brand" required>
+                        <option value="" disabled selected>Select Brand</option>
+                        <% brand.forEach(brand => { %>
+                        <option value="<%= brand.name %>">
+                          <%= brand.name %>
+                        </option>
+                        <% }); %>
+                        <option value="Apple">Apple</option>
+                        <option value="Samsung">Samsung</option>
+                        <option value="Oppo">Oppo</option>
+                        <option value="Xiaomi">Xiaomi</option>
+                        <option value="OnePlus">OnePlus</option>
+                        <option value="Realme">Realme</option>
+                        <option value="Vivo">Vivo</option>
+                      </select>
+                    </div>
                   </div>
 
-                  <div class="col-md-6 mt-n2">
-                    <label for="device" class="form-label">Choose Device</label>
-                    <select class="form-select gadget-select" name="device" aria-label="Choose Device">
-                      <option value="phone">Phone</option>
-                      <option value="tablet">Tablet</option>
-                      <option value="laptop">Laptop</option>
-                      <option value="other">Other</option>
-                    </select>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="device" class="form-label">Device Type *</label>
+                      <select class="form-select" name="device" required>
+                        <option value="" disabled selected>Select Device Type</option>
+                        <option value="phone">Phone</option>
+                        <option value="tablet">Tablet</option>
+                        <option value="laptop">Laptop</option>
+                        <option value="other">Other</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
-                <!--  -->
-                
                 <div class="row">
-                  <div class="col-md-6 mt-2">
-                    <label for="deviceImage" class="form-label">Upload Device Image</label>
-                    <input type="file" class="form-control gadget-file" name="deviceImage">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="deviceImage" class="form-label">Device Image</label>
+                      <input type="file" class="form-control" name="deviceImage" accept="image/*">
+                    </div>
                   </div>
-                  <div class="col-md-6 mt-2">
-                    <label for="status" class="form-label">Device Status</label>
-                    <select class="form-select gadget-select" name="status" aria-label="Status" required>
-                      <option value="Pending">Pending</option>
-                      <option value="Cancelled">Cancelled</option>
-                      <option value="Progress">Progress</option>
-                      <option value="Completed">Completed</option>
-                      <option value="Delivered">Delivered</option>
-                    </select>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="status" class="form-label">Repair Status *</label>
+                      <select class="form-select" name="status" required>
+                        <option value="" disabled selected>Select Status</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Cancelled">Cancelled</option>
+                        <option value="Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Delivered">Delivered</option>
+                      </select>
+                    </div>
                   </div> 
                 </div>
 
-                <!-- Tell Your Device Problem -->
-                <div>
-                  <label for="gadgetProblem" class="form-label">Tell Your Device Problem </label>
-                  <textarea class="form-control gadget-textarea" id="gadgetProblem" name="gadgetProblem" rows="2"></textarea>
-                
-                  <div class="invalid-feedback">
-                    This field is required.
-                  </div>
-                
-                  <button type="submit" class="btn gadget-submit-btn mt-3">Submit</button>
+                <div class="form-group">
+                  <label for="gadgetProblem" class="form-label">Device Problem Description</label>
+                  <textarea class="form-control" id="gadgetProblem" name="gadgetProblem" rows="3" placeholder="Describe the device problem in detail"></textarea>
                 </div>
+                
+                <button type="submit" class="professional-submit-btn">
+                  <i class="fa-solid fa-tools me-2"></i>Create Repair Request
+                </button>
                 
                 <script>
                   let counter = localStorage.getItem('counter') ? parseInt(localStorage.getItem('counter')) : 1000;
@@ -243,99 +335,128 @@ margin-bottom: 5px;
 
 
 
-<!-- Add Product  form-->  
+<!-- Add Product form -->  
 <!-- Modal for Adding Inventory -->
-<div class="modal fade" id="gadgetrModal" tabindex="-1" aria-labelledby="gadgetrModalLabel" aria-hidden="true">
+<div class="modal fade professional-modal" id="gadgetrModal" tabindex="-1" aria-labelledby="gadgetrModalLabel" aria-hidden="true">
   <div class="modal-dialog">
-    <div class="modal-content gadget-form-modal" style="height: 551px; margin-top: -23px;">
-      <div class="modal-header d-flex justify-content-center">
-        <h5 class="modal-title text-dark" id="gadgetRepairModalLabel" style="margin-left: auto; font-size: xx-large; margin-bottom: -17px;">Add Inventory</h5>
-        <button type="button" class="btn-close gadget-close-btn" data-bs-dismiss="modal" aria-label="Close">
-          <i class="fas fa-times gadget-close-btn" data-bs-dismiss="modal" aria-label="Close"></i>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="gadgetrModalLabel">
+          <i class="bi bi-clipboard-data me-3"></i>Add Inventory
+        </h2>
+        <p class="modal-subtitle">Add new products to your inventory management system</p>
+        <button type="button" class="professional-close-btn" data-bs-dismiss="modal" aria-label="Close">
+          <i class="fas fa-times"></i>
         </button>
       </div>
 
-      <div class="modal-body" style="padding-top: 17px;">
-        <form action="/in_stock" method="POST" enctype="multipart/form-data" class="gadget-form">
+      <div class="modal-body">
+        <form action="/in_stock" method="POST" enctype="multipart/form-data" class="professional-form">
           <div class="row">
             <div class="col-md-6">
-              <label for="product_name" class="form-label">Item Name</label>
-              <input type="text" name="product_name" class="form-control gadget-input" id="product_name" required>
+              <div class="form-group">
+                <label for="product_name" class="form-label">Item Name *</label>
+                <input type="text" name="product_name" class="form-control" id="product_name" required placeholder="Enter product name">
+              </div>
             </div>
 
             <div class="col-md-6">
-              <label for="Model" class="form-label">Model</label>
-              <input type="text" name="Model" class="form-control gadget-input" id="Model" required>
+              <div class="form-group">
+                <label for="Model" class="form-label">Model *</label>
+                <input type="text" name="Model" class="form-control" id="Model" required placeholder="Enter model number">
+              </div>
             </div>
           </div>
 
-          <div class="row justify-content-between">
+          <div class="row">
             <div class="col-md-4">
-              <label for="Brand" class="form-label">Brand</label>
-              <select class="form-select gadget-select" name="Brand" id="brand" required>
-                <% brand.forEach(brand => { %>
-                <option value="<%= brand.name %>"><%= brand.name %></option>
-                <% }); %>
-                <option value="Apple">Apple</option>
-                <option value="Samsung">Samsung</option>
-                <option value="Oppo">Oppo</option>
-                <option value="Xiaomi">Xiaomi</option>
-                <option value="OnePlus">OnePlus</option>
-                <option value="Realme">Realme</option>
-                <option value="Vivo">Vivo</option>
-              </select>
+              <div class="form-group">
+                <label for="Brand" class="form-label">Brand *</label>
+                <select class="form-select" name="Brand" id="brand" required>
+                  <option value="" disabled selected>Select Brand</option>
+                  <% brand.forEach(brand => { %>
+                  <option value="<%= brand.name %>"><%= brand.name %></option>
+                  <% }); %>
+                  <option value="Apple">Apple</option>
+                  <option value="Samsung">Samsung</option>
+                  <option value="Oppo">Oppo</option>
+                  <option value="Xiaomi">Xiaomi</option>
+                  <option value="OnePlus">OnePlus</option>
+                  <option value="Realme">Realme</option>
+                  <option value="Vivo">Vivo</option>
+                </select>
+              </div>
             </div>
 
             <div class="col-md-4">
-              <label for="Category" class="form-label">Category</label>
-              <select class="form-select gadget-select" name="Category" id="Category" required>
-                <% categories.forEach(product => { %>
-                <option value="<%= product.name %>"><%= product.name %></option>
-                <% }); %>
-                <option value="New Mobile">New Mobile</option>
-                <option value="Used Mobile">Used Mobile</option>
-              </select>
+              <div class="form-group">
+                <label for="Category" class="form-label">Category *</label>
+                <select class="form-select" name="Category" id="Category" required>
+                  <option value="" disabled selected>Select Category</option>
+                  <% categories.forEach(product => { %>
+                  <option value="<%= product.name %>"><%= product.name %></option>
+                  <% }); %>
+                  <option value="New Mobile">New Mobile</option>
+                  <option value="Used Mobile">Used Mobile</option>
+                </select>
+              </div>
             </div>
 
             <div class="col-md-4">
-              <label for="Color" class="form-label">Color</label>
-              <input type="color" name="Color" class="form-control gadget-input" id="Color">
+              <div class="form-group">
+                <label for="Color" class="form-label">Color</label>
+                <input type="color" name="Color" class="form-control" id="Color">
+              </div>
             </div>
           </div>
 
-          <div class="row justify-content-between">
+          <div class="row">
             <div class="col-md-4">
-              <label for="Sale_Price" class="form-label">Sale Price</label>
-              <input type="number" name="Sale_Price" class="form-control gadget-input" id="Sale_Price" required>
+              <div class="form-group">
+                <label for="Sale_Price" class="form-label">Sale Price *</label>
+                <input type="number" name="Sale_Price" class="form-control" id="Sale_Price" required placeholder="Enter sale price">
+              </div>
             </div>
 
             <div class="col-md-4">
-              <label for="Retail_Price" class="form-label">Retail Price</label>
-              <input type="number" name="Retail_Price" class="form-control gadget-input" id="Retail_Price" required>
+              <div class="form-group">
+                <label for="Retail_Price" class="form-label">Retail Price *</label>
+                <input type="number" name="Retail_Price" class="form-control" id="Retail_Price" required placeholder="Enter retail price">
+              </div>
             </div>
 
             <div class="col-md-4">
-              <label for="imei_number" class="form-label">IMEI Or Serial number</label>
-              <input type="text" name="imei_number" class="form-control gadget-input" id="imei_number">
+              <div class="form-group">
+                <label for="imei_number" class="form-label">IMEI/Serial Number</label>
+                <input type="text" name="imei_number" class="form-control" id="imei_number" placeholder="Enter IMEI or serial number">
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="Quantity" class="form-label">Quantity</label>
+                <input type="number" name="Quantity" class="form-control" id="Quantity" placeholder="Enter quantity">
+              </div>
             </div>
 
             <div class="col-md-6">
-              <label for="Quantity" class="form-label">Quantity</label>
-              <input type="number" name="Quantity" class="form-control gadget-file" id="Quantity">
-            </div>
-
-            <div class="col-md-6">
-              <label for="device_image" class="form-label">Upload Mobile Image</label>
-              <input type="file" name="device_image" class="form-control gadget-file" id="device_image" required>
+              <div class="form-group">
+                <label for="device_image" class="form-label">Product Image *</label>
+                <input type="file" name="device_image" class="form-control" id="device_image" required accept="image/*">
+              </div>
             </div>
           </div>
 
-          <div class="mb-3">
-            <label for="gadgetProblem" class="form-label">Device Details</label>
-            <textarea class="form-control gadget-textarea" id="gadgetProblem" name="gadget_problem" rows="2" placeholder="Describe your Device Details"></textarea>
+          <div class="form-group">
+            <label for="gadgetProblem" class="form-label">Product Details</label>
+            <textarea class="form-control" id="gadgetProblem" name="gadget_problem" rows="3" placeholder="Describe product specifications and details"></textarea>
           </div>
 
-          <button type="submit" class="btn gadget-submit-btn">Submit</button>
+          <button type="submit" class="professional-submit-btn">
+            <i class="bi bi-clipboard-data me-2"></i>Add to Inventory
+          </button>
         </form>
       </div>
     </div>
@@ -346,28 +467,35 @@ margin-bottom: 5px;
 
 
 <!-- Brand form -->
-<div class="modal fade" id="brandModal" tabindex="-1" aria-labelledby="brandModalLabel" aria-hidden="true">
+<div class="modal fade professional-modal" id="brandModal" tabindex="-1" aria-labelledby="brandModalLabel" aria-hidden="true">
 <div class="modal-dialog">
-  <div class="modal-content gadget-form-modal" style="margin-top: 110px;">
+  <div class="modal-content">
     <div class="modal-header">
-      <h5 class="modal-title" id="brandModalLabel" style="margin-left: auto; font-size: xx-large;margin-bottom: -17px;">Add Brand</h5>
-      <button type="button" class="btn-close gadget-close-btn" data-bs-dismiss="modal" aria-label="Close">                
-        <i class="fas fa-times gadget-close-btn" data-bs-dismiss="modal" aria-label="Close"></i>
+      <h2 class="modal-title" id="brandModalLabel">
+        <i class="fa-solid fa-tags me-3"></i>Add Brand
+      </h2>
+      <p class="modal-subtitle">Create a new brand for your product catalog</p>
+      <button type="button" class="professional-close-btn" data-bs-dismiss="modal" aria-label="Close">                
+        <i class="fas fa-times"></i>
       </button>
-      </div>
-    <form class="gadget-form mt-4" action="/Brand" method="post">
-      <div class="form-group">
-        <label for="name" class="form-label">Brand Name:</label>
-        <input type="text" id="name" name="name" required class="gadget-input">
-      </div>
+    </div>
+    <div class="modal-body">
+      <form class="professional-form" action="/Brand" method="post">
+        <div class="form-group">
+          <label for="name" class="form-label">Brand Name *</label>
+          <input type="text" id="name" name="name" required class="form-control" placeholder="Enter brand name">
+        </div>
 
-      <div class="form-group">
-        <label for="description" class="form-label">Description:</label>
-        <textarea id="description" name="description" class="gadget-textarea"></textarea>
-      </div>
+        <div class="form-group">
+          <label for="description" class="form-label">Description</label>
+          <textarea id="description" name="description" class="form-control" rows="3" placeholder="Enter brand description"></textarea>
+        </div>
 
-      <button type="submit" class="gadget-submit-btn">Add Brand</button>
-    </form>
+        <button type="submit" class="professional-submit-btn">
+          <i class="fa-solid fa-tags me-2"></i>Add Brand
+        </button>
+      </form>
+    </div>
   </div>
 </div>
 </div>
@@ -375,32 +503,38 @@ margin-bottom: 5px;
 
 
 <!-- Categories form -->
-<div class="modal fade" id="categoriesModal" tabindex="-1" aria-labelledby="categoriesModalLabel" aria-hidden="true">
+<div class="modal fade professional-modal" id="categoriesModal" tabindex="-1" aria-labelledby="categoriesModalLabel" aria-hidden="true">
 <div class="modal-dialog">
-  <div class="modal-content gadget-form-modal" style="margin-top: 110px;">
+  <div class="modal-content">
     <div class="modal-header">
-      <h5 class="modal-title" id="categoriesModalLabel" style="margin-left: auto; font-size: xx-large;margin-bottom: -17px;">Add  Category</h5>
-      <button type="button" class="btn-close gadget-close-btn" data-bs-dismiss="modal" aria-label="Close">                
-        <i class="fas fa-times gadget-close-btn" data-bs-dismiss="modal" aria-label="Close"></i>
+      <h2 class="modal-title" id="categoriesModalLabel">
+        <i class="fa-solid fa-list me-3"></i>Add Category
+      </h2>
+      <p class="modal-subtitle">Create a new product category for better organization</p>
+      <button type="button" class="professional-close-btn" data-bs-dismiss="modal" aria-label="Close">                
+        <i class="fas fa-times"></i>
       </button>
-      </div>
-    <form class="gadget-form mt-4" action="/category" method="post">
-      <div class="form-group">
-        <label for="name" class="form-label">Category Name:</label>
-        <input type="text" id="name" name="name" required class="gadget-input">
-      </div>
+    </div>
+    <div class="modal-body">
+      <form class="professional-form" action="/category" method="post">
+        <div class="form-group">
+          <label for="name" class="form-label">Category Name *</label>
+          <input type="text" id="name" name="name" required class="form-control" placeholder="Enter category name">
+        </div>
 
-      <div class="form-group">
-        <label for="description" class="form-label">Description:</label>
-        <textarea id="description" name="description" class="gadget-textarea"></textarea>
-      </div>
+        <div class="form-group">
+          <label for="description" class="form-label">Description</label>
+          <textarea id="description" name="description" class="form-control" rows="3" placeholder="Enter category description"></textarea>
+        </div>
 
-      <button type="submit" class="gadget-submit-btn">Add Category</button>
-    </form>
+        <button type="submit" class="professional-submit-btn">
+          <i class="fa-solid fa-list me-2"></i>Add Category
+        </button>
+      </form>
+    </div>
   </div>
 </div>
 </div>
-<!-- Categories form -->
-
+<!-- Categories form -->
 
 

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Logout Confirmation</title>
+</head>
+<body style="margin:0; padding:0; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color:#f8fafc;">
+  <div style="max-width:600px; margin:0 auto; background-color:#ffffff; box-shadow:0 4px 6px rgba(0,0,0,0.1);">
+    
+    <!-- Header -->
+    <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); padding:40px 30px; text-align:center;">
+      <h1 style="color:#ffffff; margin:0; font-size:28px; font-weight:600;">Logout Successful</h1>
+      <p style="color:#e0f7ff; margin:10px 0 0 0; font-size:16px;">See you again soon!</p>
+    </div>
+    
+    <!-- Content -->
+    <div style="padding:40px 30px;">
+      <h2 style="color:#2d3748; margin:0 0 20px 0; font-size:24px; font-weight:600;">Goodbye {{name}}! 👋</h2>
+      
+      <p style="color:#4a5568; font-size:16px; line-height:1.6; margin:0 0 25px 0;">
+        You have successfully logged out of your account. Your session has been securely terminated and all active tokens have been invalidated.
+      </p>
+      
+      <!-- Logout Info -->
+      <div style="background-color:#f0f9ff; padding:25px; border-radius:12px; border:1px solid #bae6fd; margin:30px 0;">
+        <div style="display:flex; align-items:center; margin-bottom:15px;">
+          <span style="color:#0369a1; font-size:18px; margin-right:10px;">🕐</span>
+          <p style="color:#0c4a6e; margin:0; font-size:14px; font-weight:500;">Logout Time:</p>
+        </div>
+        <p style="color:#075985; margin:0; font-size:16px; font-weight:600;">{{logoutTime}}</p>
+      </div>
+      
+      <div style="text-align:center; margin:35px 0;">
+        <a href="{{link}}" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color:#ffffff; text-decoration:none; padding:16px 32px; border-radius:8px; font-weight:600; font-size:16px; display:inline-block; box-shadow:0 4px 14px rgba(79, 172, 254, 0.4);">
+          🔐 Login Again
+        </a>
+      </div>
+      
+      <div style="background-color:#f0fdf4; padding:20px; border-radius:8px; border-left:4px solid #22c55e; margin:25px 0;">
+        <p style="color:#15803d; margin:0; font-size:14px; font-weight:500;">✅ Security Confirmed:</p>
+        <p style="color:#166534; margin:5px 0 0 0; font-size:14px; line-height:1.5;">Your account is secure. If this logout wasn't initiated by you, please contact our support team immediately.</p>
+      </div>
+    </div>
+    
+    <!-- Footer -->
+    <div style="background-color:#2d3748; padding:30px; text-align:center;">
+      <p style="color:#a0aec0; margin:0; font-size:14px;">© 2024 Hafiz Farhan. All rights reserved.</p>
+      <p style="color:#718096; margin:10px 0 0 0; font-size:12px;">This email was sent from a secure server.</p>
+    </div>
+    
+  </div>
+</body>
+</html>

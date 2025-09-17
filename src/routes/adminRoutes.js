@@ -19,9 +19,11 @@ router.post("/admin/update/:id", isAuthenticated, isAdmin, updateUser);
 // Delete a user
 router.post("/admin/delete/:id", isAuthenticated, isAdmin, deleteUser);
 
-// Add Admin page // Add Admin page
-// Add Admin page // Add Admin page
-router.get("/addadmin", isAuthenticated, isAdmin, selectAddAdmin);
+// Add Admin page
+router.get("/addadmin", isAuthenticated, isAdmin, (req, res, next) => {
+  console.log("GET /addadmin route hit");
+  selectAddAdmin(req, res, next);
+});
 
 // Add Admin action
 router.post("/addadmin", isAuthenticated, isAdmin, addAdmin);

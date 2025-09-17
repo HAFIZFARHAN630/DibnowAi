@@ -2,8 +2,7 @@
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const nodemailer = require("nodemailer");
-
+  const { sendConfirmationEmail, sendForgotPasswordEmail, sendLogoutEmail } = require("../../emailService");
 // Signup
 exports.signup = [
   async (req, res) => {
@@ -29,6 +28,9 @@ exports.signup = [
 
       // Hash the password
       const hashedPassword = await bcrypt.hash(password, 10);
+      // Generate OTP
+      const otp = Math.floor(100000 + Math.random() * 900000);
+      const otpExpiry = Date.now() + 600000; // 10 mins expiry
 
       // Create new user
       const newUser = new User({
@@ -39,7 +41,10 @@ exports.signup = [
         password: hashedPassword,
         company,
         address,
-        postcode
+        postcode,
+        isVerified: false,   //  new field
+      otp: otp.toString(),
+      otp_expiry: new Date(otpExpiry),
       });
 
       await newUser.save();
@@ -52,19 +57,95 @@ exports.signup = [
           "Register"
         );
       }
+   try {
+     await sendConfirmationEmail(email, first_name, otp);
+     console.log("Signup OTP sent to:", email);
+   } catch (mailError) {
+     console.error("Failed to send signup OTP:", mailError.message);
+   }
 
-      // Success
-      res.render("Sigin/sign_in", {
-        message: "Account created successfully. Please sign in.",
-      });
-    } catch (error) {
-      console.error("Error creating account:", error.message);
-      return res.render("Sigin/sign_up", {
-        message: "An error occurred while creating your account. Please try again.",
-      });
+    // Redirect to login page
+    return res.redirect("/sign_in?message=Account created successfully! Please check your email for confirmation and login.");
+
+  } catch (error) {
+    console.error("Signup error:", error.message);
+    return res.render("Sigin/sign_up", {
+      message: "An error occurred while creating your account. Please try again.",
+    });
+     
     }
   },
 ];
+exports.verifySignupOtp = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+
+    const user = await User.findOne({
+      email,
+      otp,
+      otp_expiry: { $gt: new Date() }, // not expired
+    });
+
+    if (!user) {
+      return res.render("Sigin/signup_verify_otp", {
+        email,
+        message: "Invalid or expired OTP. Please try again.",
+      });
+    }
+
+    // Mark user as verified
+    user.isVerified = true;
+    user.otp = null;
+    user.otp_expiry = null;
+    await user.save();
+
+    return res.render("Sigin/sign_in", {
+      message: "Your email has been verified. You can now sign in.",
+    });
+
+  } catch (error) {
+    console.error("Signup OTP verification error:", error.message);
+    return res.render("Sigin/signup_verify_otp", {
+      email: req.body.email,
+      message: "An error occurred. Please try again.",
+    });
+  }
+};
+// Auto Verify via Link (when clicking the email button)
+exports.autoVerifySignup = async (req, res) => {
+  try {
+    const { email, otp } = req.query;
+
+    const user = await User.findOne({
+      email,
+      otp,
+      otp_expiry: { $gt: new Date() }
+    });
+
+    if (!user) {
+      return res.render("Sigin/signup_verify_otp", {
+        email,
+        message: "Invalid or expired OTP. Please try again."
+      });
+    }
+
+    //  Verify the user
+    user.isVerified = true;
+    user.otp = null;
+    user.otp_expiry = null;
+    await user.save();
+
+    return res.render("Sigin/sign_in", {
+      message: "Your email has been verified. You can now sign in."
+    });
+  } catch (err) {
+    console.error("Auto verification error:", err.message);
+    return res.render("Sigin/signup_verify_otp", {
+      email: req.query.email,
+      message: "An error occurred. Please try again."
+    });
+  }
+};
 
 // Signin
 exports.signin = [
@@ -113,7 +194,7 @@ exports.signin = [
 
 // forget password // forget password
 // Forgot Password - Send OTP
-exports.forgotPassword = async (req, res) => {
+  exports.forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
 
@@ -127,44 +208,20 @@ exports.forgotPassword = async (req, res) => {
 
     // Generate OTP
     const otp = Math.floor(100000 + Math.random() * 900000);
-    const otpExpiry = Date.now() + 600000;
+    const otpExpiry = Date.now() + 600000; // 10 mins
 
-    // Update user with OTP and expiry
-    await User.findOneAndUpdate(
-      { email },
-      { otp: otp.toString(), otp_expiry: new Date(otpExpiry) }
-    );
+    // Save OTP + expiry
+    user.otp = otp.toString();
+    user.otp_expiry = new Date(otpExpiry);
+    await user.save();
 
-    console.log("OTP updated in the database for email:", email);
+    console.log("Forgot password OTP generated for:", email);
 
-    // Send OTP to user's email
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: "hamzahayat3029@gmail.com",
-        pass: "ceud ztsg vqwr lmtl",
-      },
-    });
+    // Send OTP email (with reset link)
+    await sendForgotPasswordEmail(email, user.first_name || "User", otp);
 
-    const mailOptions = {
-      from: "hamzahayat3029@gmail.com",
-      to: email,
-      subject: "Password Reset OTP",
-      text: `Your OTP for password reset is: ${otp}`,
-    };
-
-    transporter.sendMail(mailOptions, (err, info) => {
-      if (err) {
-        console.error("Email sending error:", err.message);
-        return res.render("Sigin/sign_in", {
-          message: "Error sending OTP email. Please try again.",
-        });
-      }
-      res.render("Sigin/verify_otp", {
-        email,
-        message: "OTP Code Sent To Your Email.",
-      });
-    });
+    // Redirect to pre-filled OTP form
+    return res.redirect(`/forgot-password?email=${email}&otp=${otp}`);
   } catch (error) {
     console.error("Forgot password error:", error.message);
     return res.render("Sigin/sign_in", {
@@ -172,93 +229,139 @@ exports.forgotPassword = async (req, res) => {
     });
   }
 };
+exports.renderResetPasswordForm = async (req, res) => {
+  try {
+    const { email, otp } = req.query;
 
+    // Check if user exists and OTP is valid
+    const user = await User.findOne({
+      email,
+      otp,
+      otp_expiry: { $gt: new Date() },
+    });
+
+    if (!user) {
+      return res.render("Sigin/signup_verify_otp", {
+        email,
+        message: "Invalid or expired OTP. Please request a new one.",
+      });
+    }
+
+    // Render reset password form with hidden OTP + email
+    return res.render("Sigin/reset_password", {
+      email,
+      otp, // send OTP to form
+      message: "Enter your new password below.",
+    });
+  } catch (error) {
+    console.error("Error rendering reset password form:", error.message);
+    return res.render("Sigin/signup_verify_otp", {
+      email: req.query.email,
+      message: "An error occurred. Please try again.",
+    });
+  }
+};
 exports.verifyOtpAndResetPassword = async (req, res) => {
   try {
     const { email, otp, newPassword } = req.body;
 
-    // Check if OTP is valid and not expired
+    // Validate OTP
     const user = await User.findOne({
       email,
       otp,
-      otp_expiry: { $gt: new Date() }
+      otp_expiry: { $gt: new Date() },
     });
 
     if (!user) {
-      console.log("Invalid or expired OTP. No matching record found.");
-      return res.render("Sigin/verify_otp", {
+      return res.render("Sigin/forgot_pwd_verify_otp", {
         email,
         message: "Invalid or expired OTP. Please try again.",
       });
     }
 
-    // Hash the new password
+    // If OTP is correct but no newPassword yet → show reset form
+    if (!newPassword) {
+      return res.render("Sigin/reset_password", {
+        email,
+        otp,
+        message: "Enter your new password below.",
+      });
+    }
+
+    // Hash new password
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-    // Update the password and clear OTP fields
-    await User.findOneAndUpdate(
-      { email },
-      {
-        password: hashedPassword,
-        otp: null,
-        otp_expiry: null
-      }
-    );
+    // Save new password + clear OTP
+    user.password = hashedPassword;
+    user.otp = null;
+    user.otp_expiry = null;
+    await user.save();
 
-    res.render("Sigin/sign_in", {
-      message: "Password reset successfully. Please sign in.",
+    return res.render("Sigin/sign_in", {
+      message: "Password reset successfully. Please log in.",
     });
   } catch (error) {
-    console.error("Error updating password:", error.message);
-    return res.render("Sigin/verify_otp", {
+    console.error("Error resetting password:", error.message);
+    return res.render("Sigin/signup_verify_otp", {
       email: req.body.email,
       message: "An error occurred. Please try again.",
     });
   }
 };
+
 // forget password // forget password
 
 // Logout
-exports.logout = async (req, res) => {
-  console.log('Logout route hit:', req.method, req.url);
-  console.log('Request body:', req.body);
-  
-  const reason = req.body.reason || 'User logout';
-  const userId = req.session.userId;
-  
-  // Get user info for notification before destroying session
-  let userName = 'Unknown User';
-  if (userId) {
-    try {
-      const user = await User.findById(userId).select('first_name');
-      if (user) userName = user.first_name;
-    } catch (error) {
-      console.error('Error fetching user for logout notification:', error);
-    }
-  }
-  
-  req.session.destroy(async (err) => {
-    if (err) {
-      console.error("Error destroying session:", err);
-      return res.redirect("/index");
-    }
-    res.clearCookie("connect.sid");
-    res.clearCookie("auth_token");
-    
-    // Create notification for logout
-    if (req.app.locals.notificationService && userId) {
-      await req.app.locals.notificationService.createNotification(
-        userId,
-        userName,
-        "Logout"
-      );
-    }
-    
-    // Log the logout reason for audit purposes
-    console.log(`User logged out. Reason: ${reason}`);
-    
-    res.render("Sigin/sign_in", {
-      message: "You have been logged out successfully.",
-    });
-  });
-};
+ exports.logout = async (req, res) => {
+   console.log("Logout route hit:", req.method, req.url);
+   console.log("Request body:", req.body);
+ 
+   try {
+     const reason = req.body.reason; // now required
+     const sessionUserId = req.session.userId;
+     const user = sessionUserId ? await User.findById(sessionUserId) : null;
+ 
+     if (!user) {
+       return res.render("Sigin/sign_in", {
+         message: "Cannot determine user email. Logout cancelled.",
+       });
+     }
+ 
+     const email = user.email;
+     const name = user.first_name || "User";
+ 
+     req.session.destroy(async (err) => {
+       if (err) {
+         console.error("Error destroying session:", err);
+         return res.redirect("/index");
+       }
+ 
+       res.clearCookie("connect.sid");
+       res.clearCookie("auth_token");
+        // Create notification for logout
+     const userId = sessionUserId;
+     const userName = name;
+     if (req.app.locals.notificationService && userId) {
+       await req.app.locals.notificationService.createNotification(
+         userId,
+         userName,
+         "Logout"
+       );}
+ 
+       // Send logout email
+       await sendLogoutEmail(email, name, reason);
+ 
+       console.log(`User logged out. Reason: ${reason}`);
+ 
+       return res.render("Sigin/sign_in", {
+         message: "You have been logged out successfully.",
+       });
+     });
+   } catch (error) {
+     console.error("Logout error:", error.message);
+     return res.render("Sigin/sign_in", {
+       message: "An error occurred during logout.",
+     });
+   }
+ };
+ 

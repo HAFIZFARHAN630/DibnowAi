@@ -4,11 +4,11 @@ const userSchema = new mongoose.Schema({
   first_name: { type: String },
   last_name: { type: String },
   email: { type: String, unique: true },
-  phone_number: { type: Number },
+  phone_number: { type: String },
   password: { type: String },
   company: { type: String },
   address: { type: String },
-  postcode: { type: Number },
+  postcode: { type: String },
   user_img: { type: String },
   country: { type: String },
   currency: { type: String },
@@ -22,7 +22,10 @@ const userSchema = new mongoose.Schema({
   transfer_id: { type: String },
   amount: { type: Number },
   status: { type: String },
-  denial_reason: { type: String }
+  denial_reason: { type: String },
+  isVerified: {type:Boolean, default: false},
+  otp: {type:String},
+  otp_expiry:{type:Date},
 });
 
 module.exports = mongoose.model("User", userSchema);
