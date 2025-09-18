@@ -68,7 +68,7 @@ exports.signup = [
     return res.redirect("/sign_in?message=Account created successfully! Please check your email for confirmation and login.");
 
   } catch (error) {
-    console.error("Signup error:", error.message);
+    console.error("Signup error:", error);
     return res.render("Sigin/sign_up", {
       message: "An error occurred while creating your account. Please try again.",
     });
@@ -104,7 +104,7 @@ exports.verifySignupOtp = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("Signup OTP verification error:", error.message);
+    console.error("Signup OTP verification error:", error);
     return res.render("Sigin/signup_verify_otp", {
       email: req.body.email,
       message: "An error occurred. Please try again.",
@@ -139,7 +139,7 @@ exports.autoVerifySignup = async (req, res) => {
       message: "Your email has been verified. You can now sign in."
     });
   } catch (err) {
-    console.error("Auto verification error:", err.message);
+    console.error("Auto verification error:", err);
     return res.render("Sigin/signup_verify_otp", {
       email: req.query.email,
       message: "An error occurred. Please try again."
@@ -184,9 +184,9 @@ exports.signin = [
 
       return res.redirect("/index");
     } catch (error) {
-      console.error("Login error:", error.message);
-      return res.render("Sigin/sign_in", { 
-        message: "An error occurred during login. Please try again." 
+      console.error("Login error:", error);
+      return res.render("Sigin/sign_in", {
+        message: "An error occurred during login. Please try again."
       });
     }
   },
@@ -218,12 +218,17 @@ exports.signin = [
     console.log("Forgot password OTP generated for:", email);
 
     // Send OTP email (with reset link)
-    await sendForgotPasswordEmail(email, user.first_name || "User", otp);
+    try {
+      await sendForgotPasswordEmail(email, user.first_name || "User", otp);
+      console.log("Forgot password OTP sent to:", email);
+    } catch (mailError) {
+      console.error("Failed to send forgot password OTP:", mailError.message);
+    }
 
     // Redirect to pre-filled OTP form
     return res.redirect(`/forgot-password?email=${email}&otp=${otp}`);
   } catch (error) {
-    console.error("Forgot password error:", error.message);
+    console.error("Forgot password error:", error);
     return res.render("Sigin/sign_in", {
       message: "An error occurred. Please try again.",
     });
@@ -254,7 +259,7 @@ exports.renderResetPasswordForm = async (req, res) => {
       message: "Enter your new password below.",
     });
   } catch (error) {
-    console.error("Error rendering reset password form:", error.message);
+    console.error("Error rendering reset password form:", error);
     return res.render("Sigin/signup_verify_otp", {
       email: req.query.email,
       message: "An error occurred. Please try again.",
@@ -301,7 +306,7 @@ exports.verifyOtpAndResetPassword = async (req, res) => {
       message: "Password reset successfully. Please log in.",
     });
   } catch (error) {
-    console.error("Error resetting password:", error.message);
+    console.error("Error resetting password:", error);
     return res.render("Sigin/signup_verify_otp", {
       email: req.body.email,
       message: "An error occurred. Please try again.",
@@ -358,7 +363,7 @@ exports.verifyOtpAndResetPassword = async (req, res) => {
        });
      });
    } catch (error) {
-     console.error("Logout error:", error.message);
+     console.error("Logout error:", error);
      return res.render("Sigin/sign_in", {
        message: "An error occurred during logout.",
      });

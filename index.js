@@ -11,7 +11,7 @@ const socketIo = require("socket.io");
 const cookieParser = require("cookie-parser");
 
 // Database connection
-require("./src/config/db");
+const { connectDB } = require("./src/config/db");
 
 // Import routes
 const authRoutes = require("./src/routes/authRoutes");
@@ -166,6 +166,8 @@ app.use((req, res) => {
 
 // Start the server
 const PORT = process.env.Port || 3000;
-server.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+connectDB().then(() => {
+  server.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+  });
 });
