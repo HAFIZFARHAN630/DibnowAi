@@ -278,7 +278,7 @@ exports.verifyOtpAndResetPassword = async (req, res) => {
     });
 
     if (!user) {
-      return res.render("Sigin/forgot_pwd_verify_otp", {
+      return res.render("Sigin/sign_in", {
         email,
         message: "Invalid or expired OTP. Please try again.",
       });

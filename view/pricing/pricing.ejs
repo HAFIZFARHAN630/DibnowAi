@@ -463,24 +463,43 @@
             <label for="paymentMethod">Choose Payment Method:</label>
             <input type="hidden" id="paymentMethod" name="paymentMethod" required>
 
+            <% if (enabledGateways && enabledGateways.length > 0) { %>
             <div class="payment-buttons">
-              <button type="button" class="btn payment-btn " onclick="setPaymentMethod('paypal', this)"  style=" color: #002883;">
-                <i class="fa-brands fa-paypal"></i> PayPal
-              </button>
-              <button type="button" class="btn payment-btn text-dark" onclick="setPaymentMethod('stripe', this)" style="color: #6254F7;">
-               <img width="28" height="38" src="https://img.icons8.com/color/48/mastercard-logo.png" alt="mastercard-logo"/> Stripe
-              </button>
-              <button type="button" class="btn payment-btn text-dark" style="color: #28a745;" data-bs-toggle="collapse" data-bs-target="#bankOptions">
-                <i class="fa-solid fa-university"></i> Bank
-            </button>
-          </div>
+              <% enabledGateways.forEach(gateway => { %>
+                <% if (gateway.type === 'paypal') { %>
+                  <button type="button" class="btn payment-btn" onclick="setPaymentMethod('paypal', this)" style="color: #002883;">
+                    <i class="fa-brands fa-paypal"></i> <%= gateway.name %>
+                  </button>
+                <% } else if (gateway.type === 'stripe') { %>
+                  <button type="button" class="btn payment-btn text-dark" onclick="setPaymentMethod('stripe', this)" style="color: #6254F7;">
+                    <i class="bi bi-credit-card" style="font-size: 20px; color: #635bff;"></i> <%= gateway.name %>
+                  </button>
+                <% } else if (gateway.type === 'bank') { %>
+                  <button type="button" class="btn payment-btn text-dark" style="color: #28a745;" onclick="setPaymentMethod('bank', this)" data-bs-toggle="collapse" data-bs-target="#bankOptions">
+                    <i class="fa-solid fa-university"></i> <%= gateway.name %>
+                  </button>
+                <% } else if (gateway.type === 'jazzcash') { %>
+                  <button type="button" class="btn payment-btn text-warning" onclick="setPaymentMethod('jazzcash', this)" data-bs-toggle="collapse" data-bs-target="#jazzCashInfo">
+                    <i class="fas fa-mobile-alt me-2"></i> <%= gateway.name %>
+                  </button>
+                <% } else if (gateway.type === 'payfast') { %>
+                  <button type="button" class="btn payment-btn text-danger" onclick="setPaymentMethod('payfast', this)" data-bs-toggle="collapse" data-bs-target="#payfastInfo">
+                    <i class="bi bi-credit-card me-2"></i> <%= gateway.name %>
+                  </button>
+                <% } %>
+              <% }) %>
+            </div>
+            <% } else { %>
+              <p class="text-danger">No payment gateways enabled. Please contact the administrator.</p>
+            <% } %>
           <div id="bankOptions" class="collapse mt-3">
+            <% if (enabledGateways.find(g => g.type === 'bank')) { %>
+            <div class="alert alert-info mb-3">
+              <h6>Bank Transfer Instructions:</h6>
+              <p><%= enabledGateways.find(g => g.type === 'bank').instructions %></p>
+            </div>
+            <% } %>
             <div class="d-flex flex-wrap justify-content-center gap-3">
-                <!-- JazzCash -->
-                <a data-bs-toggle="collapse" href="#jazzCashInfo" role="button" aria-expanded="false" aria-controls="jazzCashInfo">
-                    <img  src="/images/Jazz cash logo.svg" alt="JazzCash" class="img-fluid" style="cursor: pointer; width: 70px; border-radius: 0%;">
-                </a>
-                
                 <!-- Easypaisa -->
                 <a data-bs-toggle="collapse" href="#easypaisaInfo" role="button" aria-expanded="false" aria-controls="easypaisaInfo">
                     <img src="/images/EASYPAISA logo.svg" alt="Easypaisa" class="img-fluid" style="cursor: pointer; width: 70px;">
@@ -504,9 +523,10 @@
     
             <!-- JazzCash Info -->
             <div id="jazzCashInfo" class="collapse text-center mt-2">
+                <div class="alert alert-info">
+                  <p><%= enabledGateways.find(g => g.type === 'jazzcash') ? enabledGateways.find(g => g.type === 'jazzcash').instructions : 'JazzCash instructions not configured.' %></p>
+                </div>
                 <img src="images/JAZZCASH QR.png" alt="JazzCash" style="border-radius: 0%; width: 180px">
-                <p><strong>JazzCash:</strong> +92 306 9753003</p>
-                <p><strong>Name:</strong> Muhammad Farhan Ayoub - 3003</p>
             </div>
     
             <!-- Easypaisa Info -->
@@ -537,6 +557,12 @@
                 <p><strong>Account Number:</strong> 5530235061300013</p>
                 <p><strong>IBAN Number:</strong> PK25BPUN5530235061300013</p>
                 <p><strong>Swift Code:</strong> BPUN PKKA 786</p>
+            </div>
+            <!-- Payfast Info -->
+            <div id="payfastInfo" class="collapse text-center mt-2">
+                <div class="alert alert-info">
+                  <p><%= enabledGateways.find(g => g.type === 'payfast') ? enabledGateways.find(g => g.type === 'payfast').instructions : 'Payfast instructions not configured.' %></p>
+                </div>
             </div>
         </div>
     
@@ -595,8 +621,8 @@
                 var transferModal = new bootstrap.Modal(document.getElementById("transferModal"));
                 transferModal.show();
             } else {
-                // Allow normal form submission (PayPal)
-                document.getElementById("paymentForm").submit();
+                // Allow normal form submission
+                document.getElementById("planForm").submit();
             }
         });
     });

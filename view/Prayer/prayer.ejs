@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Prayer</title>
+  <!-- plugins:css -->
+  <link rel="stylesheet" href="vendors/feather/feather.css">
+  <link rel="stylesheet" href="vendors\ti-icons\css\themify-icons.css">
+  <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
+  <!-- endinject -->
+  <!-- Plugin css for this page -->
+  <link rel="stylesheet" href="vendors/datatables.net-bs4/dataTables.bootstrap4.css">
+  <link rel="stylesheet" href="vendors\ti-icons\css\themify-icons.css">
+  <link rel="stylesheet" type="text/css" href="js/select.dataTables.min.css">
+  <!-- End plugin css for this page -->
+  <!-- inject:css -->
+  <link rel="stylesheet" href="css/vertical-layout-light/style.css">
+  <!-- endinject -->
+  <link rel="shortcut icon" href="images/favicon.png" />
+
+  <!-- Material Design Icons CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
+<link href="https://cdn.jsdelivr.net/npm/@mdi/font@7.2.96/css/materialdesignicons.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+<body>
+    <!-- Navbar Start -->
+    <%- include('../par/header.ejs') %>
+    <!-- Navbar End -->
+  <div class="container-scroller">
+    <!-- partial:partials/_navbar -->
+     <%- include('../par/sidebar.ejs') %>
+
+    
+    <div class="container-fluid page-body-wrapper">
+   <!-- ✅ Modern Sidebar Replacement -->
+<nav class="modern-sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h1 class="sidebar-title">القرآن الكريم</h1>
+    <p class="sidebar-subtitle">Prayer Panel</p>
+  </div>
+  <nav class="sidebar-nav">
+    <ul style="list-style: none; padding: 0; margin: 0;">
+      <li class="nav-item">
+        <a class="nav-link" href="/index">
+          <i class="bi bi-grid"></i>
+          <span>Dashboard</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/package">
+          <i class="bi bi-box-seam"></i>
+          <span>All Packages</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/History">
+          <i class="bi bi-clock-history"></i>
+          <span>History</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/complaint">
+          <i class="bi bi-wallet2"></i>
+          <span>Wallet</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/profile">
+          <i class="bi bi-person"></i>
+          <span>Profile</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/contactus">
+          <i class="bi bi-telephone"></i>
+          <span>Contact Us</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/changepassword">
+          <i class="bi bi-lock"></i>
+          <span>Change Password</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/logout">
+          <i class="bi bi-box-arrow-right"></i>
+          <span>Logout</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+</nav>
+
+<!-- NavBar End -->
+
+<!-- Sidebar Overlay for Mobile -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="main-panel">
+    <style>
+        /* ✅ Sidebar Styling Copied From Quran App */
+.modern-sidebar {
+  width: 320px;
+  background: linear-gradient(180deg, rgba(30, 41, 59, 0.95) 0%, rgba(51, 65, 85, 0.9) 100%);
+  backdrop-filter: blur(25px);
+  border-right: 1px solid rgba(16, 185, 129, 0.2);
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  z-index: 10;
+  box-shadow: 8px 0 32px -8px rgba(0, 0, 0, 0.3), inset -1px 0 0 rgba(16, 185, 129, 0.1);
+  transition: transform 0.3s ease;
+}
+
+/* Mobile responsive sidebar */
+@media (max-width: 991px) {
+  .modern-sidebar {
+    transform: translateX(-100%);
+    z-index: 9999;
+  }
+  
+  .modern-sidebar.active {
+    transform: translateX(0);
+  }
+  
+  .main-panel {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+  
+  .sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9998;
+    display: none;
+  }
+  
+  .sidebar-overlay.active {
+    display: block;
+  }
+}
+
+@media (min-width: 992px) {
+  .main-panel {
+    margin-left: 320px;
+  }
+}
+
+.sidebar-header {
+  padding: 2.5rem 2rem;
+  text-align: center;
+  border-bottom: 1px solid rgba(16, 185, 129, 0.2);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(79, 70, 229, 0.05) 100%);
+}
+
+.sidebar-title {
+  font-size: 1.75rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #10b981 0%, #34d399 50%, #6ee7b7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.75rem;
+  font-family: 'Amiri', serif;
+  text-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+}
+
+.sidebar-subtitle {
+  color: #94a3b8;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+}
+
+.sidebar-nav .nav-link {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  color: #cbd5e1;
+  text-decoration: none;
+  border-radius: 16px;
+  transition: all 0.4s ease;
+  font-weight: 600;
+  position: relative;
+  overflow: hidden;
+}
+
+.sidebar-nav .nav-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.sidebar-nav .nav-link:hover::before {
+  left: 100%;
+}
+
+.sidebar-nav .nav-link:hover {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(79, 70, 229, 0.1) 100%);
+  color: #10b981;
+  transform: translateX(8px);
+  box-shadow: 0 4px 12px -2px rgba(16, 185, 129, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-nav .nav-link i {
+  margin-right: 1rem;
+  font-size: 1.25rem;
+  transition: all 0.3s ease;
+}
+
+.sidebar-nav .nav-link:hover i {
+  transform: scale(1.1);
+  color: #34d399;
+}
+
+        /* Professional Dark Prayer UI Design */
+        .prayer-container {
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            padding: 2rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .prayer-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(79, 70, 229, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 40% 60%, rgba(236, 72, 153, 0.06) 0%, transparent 70%),
+                url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="stars" patternUnits="userSpaceOnUse" width="100" height="100"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="0.8" fill="rgba(255,255,255,0.08)"/><circle cx="50" cy="10" r="0.6" fill="rgba(255,255,255,0.06)"/><circle cx="10" cy="60" r="0.9" fill="rgba(255,255,255,0.09)"/><circle cx="90" cy="30" r="0.7" fill="rgba(255,255,255,0.07)"/></pattern></defs><rect width="100" height="100" fill="url(%23stars)"/></svg>') center/200px;
+            pointer-events: none;
+        }
+
+        .prayer-card {
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(51, 65, 85, 0.9) 100%);
+            backdrop-filter: blur(25px);
+            border-radius: 32px;
+            box-shadow: 
+                0 32px 64px -12px rgba(0, 0, 0, 0.4),
+                0 0 0 1px rgba(148, 163, 184, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            padding: 3rem;
+            max-width: 700px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+            border: 1px solid rgba(79, 70, 229, 0.2);
+        }
+
+        .prayer-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #4f46e5, #7c3aed, #ec4899);
+            border-radius: 32px 32px 0 0;
+        }
+
+        .islamic-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .bismillah {
+            font-family: 'Amiri', serif;
+            font-size: 2rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
+            direction: rtl;
+            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .prayer-title {
+            font-size: 2.25rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #ec4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 4px 8px rgba(79, 70, 229, 0.2);
+        }
+
+        .prayer-subtitle {
+            color: #94a3b8;
+            font-size: 1.125rem;
+            margin-bottom: 0;
+            font-weight: 500;
+        }
+
+        .search-section {
+            background: linear-gradient(145deg, rgba(51, 65, 85, 0.8) 0%, rgba(71, 85, 105, 0.6) 100%);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(79, 70, 229, 0.2);
+            box-shadow: 
+                0 8px 32px -8px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .search-input {
+            border: 2px solid rgba(79, 70, 229, 0.3);
+            border-radius: 16px;
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(30, 41, 59, 0.8);
+            color: #e2e8f0;
+            box-shadow: 
+                0 4px 6px -1px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .search-input::placeholder {
+            color: #94a3b8;
+        }
+
+        .search-input:focus {
+            border-color: #7c3aed;
+            box-shadow: 
+                0 0 0 3px rgba(124, 58, 237, 0.2),
+                0 4px 12px -2px rgba(79, 70, 229, 0.3);
+            outline: none;
+            background: rgba(30, 41, 59, 0.9);
+        }
+
+        .search-btn {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #ec4899 100%);
+            border: none;
+            border-radius: 16px;
+            padding: 1rem 2rem;
+            color: white;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            box-shadow: 
+                0 8px 16px -4px rgba(79, 70, 229, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .search-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 
+                0 12px 24px -6px rgba(79, 70, 229, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .city-display {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 2px 4px rgba(79, 70, 229, 0.2);
+        }
+
+        .date-qibla-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .info-card {
+            background: linear-gradient(145deg, rgba(79, 70, 229, 0.15) 0%, rgba(124, 58, 237, 0.1) 100%);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid rgba(79, 70, 229, 0.3);
+            box-shadow: 
+                0 8px 16px -4px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .info-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 12px 24px -6px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+
+        .info-card-title {
+            font-size: 0.875rem;
+            color: #94a3b8;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+
+        .info-card-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .prayer-times-grid {
+            display: grid;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .prayer-time-card {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(51, 65, 85, 0.8) 100%);
+            border-radius: 20px;
+            padding: 1.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(79, 70, 229, 0.2);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 8px 16px -4px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .prayer-time-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(124, 58, 237, 0.2), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .prayer-time-card:hover::before {
+            left: 100%;
+        }
+
+        .prayer-time-card:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 
+                0 16px 32px -8px rgba(0, 0, 0, 0.4),
+                0 0 0 1px rgba(124, 58, 237, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            border-color: rgba(124, 58, 237, 0.4);
+        }
+
+        .prayer-name {
+            color: #e2e8f0;
+            font-size: 1.25rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .prayer-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            box-shadow: 
+                0 4px 8px -2px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .prayer-time-card:hover .prayer-icon {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 
+                0 8px 16px -4px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .fajr-icon { background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); }
+        .sunrise-icon { background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%); }
+        .dhuhr-icon { background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); }
+        .asr-icon { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+        .maghrib-icon { background: linear-gradient(135deg, #ec4899 0%, #be185d 100%); }
+        .isha-icon { background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%); }
+
+        .prayer-time {
+            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 1.5rem;
+            font-weight: 800;
+            font-family: 'Inter', sans-serif;
+            text-shadow: 0 2px 4px rgba(79, 70, 229, 0.2);
+        }
+
+        .error-message {
+            background: linear-gradient(145deg, rgba(239, 68, 68, 0.15) 0%, rgba(220, 38, 38, 0.1) 100%);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            padding: 1rem 1.5rem;
+            border-radius: 16px;
+            text-align: center;
+            margin-top: 1rem;
+            font-weight: 600;
+            box-shadow: 
+                0 4px 6px -1px rgba(239, 68, 68, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f4f6;
+            border-radius: 50%;
+            border-top-color: #3b82f6;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Professional Mobile Design */
+        @media (max-width: 991px) {
+            .main-panel {
+                margin-left: 0 !important;
+                width: 100% !important;
+            }
+            
+            .content-wrapper {
+                padding: 15px;
+                min-height: calc(100vh - 60px);
+            }
+            
+            .prayer-container {
+                padding: 10px 0;
+            }
+            
+            .prayer-card {
+                margin: 0;
+                padding: 20px;
+                border-radius: 20px;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            }
+            
+            .islamic-header {
+                margin-bottom: 1.5rem;
+                padding: 0 10px;
+            }
+            
+            .bismillah {
+                font-size: 1.6rem;
+                margin-bottom: 1rem;
+                line-height: 1.4;
+            }
+            
+            .prayer-title {
+                font-size: 2rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .prayer-subtitle {
+                font-size: 1rem;
+                margin-bottom: 0;
+            }
+            
+            .search-section {
+                padding: 1.5rem;
+                margin-bottom: 1.5rem;
+                border-radius: 16px;
+            }
+            
+            .search-section .row {
+                margin: 0;
+            }
+            
+            .search-section .col-md-8,
+            .search-section .col-md-4 {
+                padding: 0;
+                margin-bottom: 12px;
+            }
+            
+            .search-section .col-md-4 {
+                margin-bottom: 0;
+            }
+            
+            .form-label {
+                font-size: 0.9rem;
+                color: #94a3b8;
+                margin-bottom: 8px;
+                font-weight: 600;
+            }
+            
+            .search-input {
+                padding: 16px 18px;
+                font-size: 16px; /* Prevents zoom on iOS */
+                border-radius: 12px;
+                border: 2px solid rgba(16, 185, 129, 0.3);
+                background: rgba(30, 41, 59, 0.8);
+                color: #e2e8f0;
+                width: 100%;
+                transition: all 0.3s ease;
+            }
+            
+            .search-input:focus {
+                border-color: #10b981;
+                box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+                outline: none;
+                background: rgba(30, 41, 59, 0.9);
+            }
+            
+            .search-input::placeholder {
+                color: #94a3b8;
+            }
+            
+            .search-btn {
+                width: 100%;
+                padding: 16px;
+                font-size: 1rem;
+                font-weight: 700;
+                border-radius: 12px;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                transition: all 0.3s ease;
+                box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            }
+            
+            .search-btn:hover, .search-btn:active {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+            }
+            
+            .city-display {
+                font-size: 1.3rem;
+                margin-bottom: 1.5rem;
+                padding: 0 10px;
+            }
+            
+            .date-qibla-section {
+                grid-template-columns: 1fr;
+                gap: 12px;
+                margin-bottom: 2rem;
+            }
+            
+            .info-card {
+                padding: 16px;
+                border-radius: 16px;
+                text-align: center;
+                background: rgba(79, 70, 229, 0.15);
+                border: 1px solid rgba(79, 70, 229, 0.3);
+                transition: all 0.3s ease;
+            }
+            
+            .info-card:hover {
+                transform: translateY(-2px);
+                background: rgba(79, 70, 229, 0.2);
+                border-color: rgba(79, 70, 229, 0.4);
+                box-shadow: 0 8px 24px rgba(79, 70, 229, 0.2);
+            }
+            
+            .info-card-title {
+                font-size: 0.8rem;
+                color: #94a3b8;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                font-weight: 600;
+                margin-bottom: 8px;
+            }
+            
+            .info-card-value {
+                font-size: 1.1rem;
+                font-weight: 700;
+                background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+            
+            .prayer-times-grid {
+                gap: 12px;
+                margin-bottom: 1.5rem;
+            }
+            
+            .prayer-time-card {
+                padding: 16px;
+                border-radius: 16px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                background: rgba(30, 41, 59, 0.9);
+                border: 1px solid rgba(79, 70, 229, 0.2);
+                position: relative;
+                overflow: hidden;
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            }
+            
+            .prayer-time-card:hover {
+                transform: translateY(-3px) scale(1.01);
+                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+                border-color: rgba(124, 58, 237, 0.4);
+            }
+            
+            .prayer-name {
+                font-size: 1.1rem;
+                font-weight: 700;
+                color: #e2e8f0;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+            
+            .prayer-icon {
+                width: 40px;
+                height: 40px;
+                border-radius: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.1rem;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+                transition: all 0.3s ease;
+            }
+            
+            .prayer-time-card:hover .prayer-icon {
+                transform: scale(1.1) rotate(5deg);
+                box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+            }
+            
+            .prayer-time {
+                font-size: 1.3rem;
+                font-weight: 800;
+                font-family: 'Inter', sans-serif;
+                background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+            
+            .error-message {
+                background: rgba(239, 68, 68, 0.15);
+                border: 1px solid rgba(239, 68, 68, 0.3);
+                color: #fca5a5;
+                padding: 16px;
+                border-radius: 12px;
+                text-align: center;
+                margin: 1.5rem 0;
+                font-weight: 600;
+                font-size: 0.95rem;
+            }
+            
+            .loading-spinner {
+                display: inline-block;
+                width: 16px;
+                height: 16px;
+                border: 2px solid #f3f4f6;
+                border-radius: 50%;
+                border-top-color: #10b981;
+                animation: spin 1s ease-in-out infinite;
+            }
+            
+            /* Bottom spacing for mobile navigation */
+            .content-wrapper::after {
+                content: '';
+                display: block;
+                height: 80px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .content-wrapper {
+                padding: 10px;
+            }
+            
+            .prayer-card {
+                padding: 16px;
+            }
+            
+            .bismillah {
+                font-size: 1.4rem;
+            }
+            
+            .prayer-title {
+                font-size: 1.75rem;
+            }
+            
+            .search-section {
+                padding: 1rem;
+            }
+            
+            .city-display {
+                font-size: 1.1rem;
+            }
+            
+            .prayer-time-card {
+                padding: 12px;
+                flex-direction: column;
+                text-align: center;
+                gap: 8px;
+            }
+            
+            .prayer-name {
+                font-size: 1rem;
+                flex-direction: row;
+                justify-content: center;
+            }
+            
+            .prayer-icon {
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
+            }
+            
+            .prayer-time {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+
+    <div class="content-wrapper">
+        <div class="prayer-container">
+            <div class="container">
+                <div class="prayer-card">
+                    <div class="islamic-header">
+                        <div class="bismillah">بِسْمِ ٱللّٰهِ ٱلرَّحْمٰنِ ٱلرَّحِيْمِ</div>
+                        <h1 class="prayer-title">Prayer Times</h1>
+                        <p class="prayer-subtitle">Stay connected with your spiritual journey</p>
+                    </div>
+
+                    <div class="search-section">
+                        <div class="row align-items-end">
+                            <div class="col-md-8 mb-3 mb-md-0">
+                                <label for="city-input" class="form-label fw-semibold text-muted mb-2">Enter Your City</label>
+                                <input type="text" id="city-input" class="form-control search-input" placeholder="e.g., Karachi, Lahore, Islamabad" />
+                            </div>
+                            <div class="col-md-4">
+                                <button class="btn search-btn w-100" onclick="fetchPrayerTimings()">
+                                    <i class="bi bi-search me-2"></i>Get Times
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="city-display" id="city-name">Select your city to view prayer times</div>
+
+                    <div class="date-qibla-section">
+                        <div class="info-card">
+                            <div class="info-card-title">Date</div>
+                            <div class="info-card-value" id="date">
+                                <div class="loading-spinner"></div>
+                            </div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-card-title">Qibla Direction</div>
+                            <div class="info-card-value" id="qibla">
+                                <i class="bi bi-compass"></i> --°
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="prayer-times-grid">
+                        <div class="prayer-time-card">
+                            <div class="prayer-name">
+                                <div class="prayer-icon fajr-icon">🌅</div>
+                                Fajr
+                            </div>
+                            <div class="prayer-time" id="fajr">--:--</div>
+                        </div>
+
+                        <div class="prayer-time-card">
+                            <div class="prayer-name">
+                                <div class="prayer-icon sunrise-icon">☀️</div>
+                                Sunrise
+                            </div>
+                            <div class="prayer-time" id="sunrise">--:--</div>
+                        </div>
+
+                        <div class="prayer-time-card">
+                            <div class="prayer-name">
+                                <div class="prayer-icon dhuhr-icon">🌞</div>
+                                Dhuhr
+                            </div>
+                            <div class="prayer-time" id="dhuhr">--:--</div>
+                        </div>
+
+                        <div class="prayer-time-card">
+                            <div class="prayer-name">
+                                <div class="prayer-icon asr-icon">🌤️</div>
+                                Asr
+                            </div>
+                            <div class="prayer-time" id="asr">--:--</div>
+                        </div>
+
+                        <div class="prayer-time-card">
+                            <div class="prayer-name">
+                                <div class="prayer-icon maghrib-icon">🌆</div>
+                                Maghrib
+                            </div>
+                            <div class="prayer-time" id="maghrib">--:--</div>
+                        </div>
+
+                        <div class="prayer-time-card">
+                            <div class="prayer-name">
+                                <div class="prayer-icon isha-icon">🌙</div>
+                                Isha
+                            </div>
+                            <div class="prayer-time" id="isha">--:--</div>
+                        </div>
+                    </div>
+
+                    <div id="error-message" class="error-message" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+                
+                <script>
+                    // Initialize with current date
+                    document.addEventListener('DOMContentLoaded', function() {
+                        document.getElementById("date").innerHTML = new Date().toDateString();
+                    });
+
+                    document.getElementById("city-input").addEventListener("keypress", function (event) {
+                        if (event.key === "Enter") {
+                            fetchPrayerTimings();
+                        }
+                    });
+                
+                    function fetchPrayerTimings() {
+                        const city = document.getElementById("city-input").value.trim();
+                        const country = "Pakistan";
+                        const errorDiv = document.getElementById("error-message");
+                
+                        if (!city) {
+                            showError("Please enter a city name.");
+                            return;
+                        }
+                
+                        // Hide error and show loading
+                        errorDiv.style.display = 'none';
+                        document.getElementById("city-name").textContent = `Loading prayer times for ${city}...`;
+                        
+                        // Show loading for prayer times
+                        const timeElements = ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'];
+                        timeElements.forEach(id => {
+                            document.getElementById(id).innerHTML = '<div class="loading-spinner"></div>';
+                        });
+                
+                        const apiUrl = `https://api.aladhan.com/v1/timingsByCity?city=${city}&country=${country}&method=2`;
+                
+                        fetch(apiUrl)
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error(`HTTP error! Status: ${response.status}`);
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                const timings = data.data.timings;
+                                
+                                document.getElementById("city-name").textContent = `${city}, ${country}`;
+                
+                                function convertTo12Hour(time) {
+                                    let [hours, minutes] = time.split(":");
+                                    let period = "AM";
+                                    hours = parseInt(hours, 10);
+                
+                                    if (hours >= 12) {
+                                        period = "PM";
+                                        if (hours > 12) hours -= 12;
+                                    } else if (hours === 0) {
+                                        hours = 12;
+                                    }
+                
+                                    return `${hours}:${minutes} ${period}`;
+                                }
+                
+                                document.getElementById("fajr").textContent = convertTo12Hour(timings.Fajr);
+                                document.getElementById("sunrise").textContent = convertTo12Hour(timings.Sunrise);
+                                document.getElementById("dhuhr").textContent = convertTo12Hour(timings.Dhuhr);
+                                document.getElementById("asr").textContent = convertTo12Hour(timings.Asr);
+                                document.getElementById("maghrib").textContent = convertTo12Hour(timings.Maghrib);
+                                document.getElementById("isha").textContent = convertTo12Hour(timings.Isha);
+                
+                                document.getElementById("date").textContent = new Date().toDateString();
+                
+                                fetchQiblaDirection(city, country);
+                            })
+                            .catch(error => {
+                                showError("Failed to fetch prayer timings. Please check your city name and try again.");
+                                console.error("Error fetching prayer timings:", error);
+                                
+                                // Reset prayer times
+                                timeElements.forEach(id => {
+                                    document.getElementById(id).textContent = '--:--';
+                                });
+                                document.getElementById("city-name").textContent = "Select your city to view prayer times";
+                            });
+                    }
+                
+                    async function fetchQiblaDirection(city, country) {
+                        const qiblaElement = document.getElementById("qibla");
+                        qiblaElement.innerHTML = '<i class="bi bi-compass"></i> <div class="loading-spinner"></div>';
+                        
+                        try {
+                            // Use a more reliable method to get coordinates first
+                            const geocodeUrl = `https://api.aladhan.com/v1/timingsByCity?city=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}&method=2`;
+                            const response = await fetch(geocodeUrl);
+                            
+                            if (!response.ok) {
+                                throw new Error(`Unable to get location data`);
+                            }
+                            
+                            const data = await response.json();
+                            const latitude = data.data.meta.latitude;
+                            const longitude = data.data.meta.longitude;
+                            
+                            // Calculate Qibla direction using coordinates
+                            const qiblaDirection = calculateQiblaDirection(latitude, longitude);
+                            
+                            qiblaElement.innerHTML = `<i class="bi bi-compass"></i> ${qiblaDirection.toFixed(1)}°`;
+                            
+                        } catch (error) {
+                            console.error("Error fetching Qibla direction:", error);
+                            qiblaElement.innerHTML = '<i class="bi bi-compass"></i> --°';
+                        }
+                    }
+
+                    // Calculate Qibla direction using Haversine formula
+                    function calculateQiblaDirection(lat, lng) {
+                        // Kaaba coordinates
+                        const kaabaLat = 21.4225;
+                        const kaabaLng = 39.8262;
+                        
+                        const latRad = lat * Math.PI / 180;
+                        const lngRad = lng * Math.PI / 180;
+                        const kaabaLatRad = kaabaLat * Math.PI / 180;
+                        const kaabaLngRad = kaabaLng * Math.PI / 180;
+                        
+                        const dLng = kaabaLngRad - lngRad;
+                        
+                        const y = Math.sin(dLng) * Math.cos(kaabaLatRad);
+                        const x = Math.cos(latRad) * Math.sin(kaabaLatRad) - 
+                                  Math.sin(latRad) * Math.cos(kaabaLatRad) * Math.cos(dLng);
+                        
+                        let bearing = Math.atan2(y, x) * 180 / Math.PI;
+                        
+                        // Normalize to 0-360 degrees
+                        bearing = (bearing + 360) % 360;
+                        
+                        return bearing;
+                    }
+                    
+                    function showError(message) {
+                        const errorDiv = document.getElementById("error-message");
+                        errorDiv.textContent = message;
+                        errorDiv.style.display = 'block';
+                    }
+
+                    // Sidebar Toggle for Mobile
+                    function toggleSidebar() {
+                        const sidebar = document.getElementById('sidebar');
+                        const overlay = document.getElementById('sidebarOverlay');
+
+                        if (sidebar && overlay) {
+                            sidebar.classList.toggle('active');
+                            overlay.classList.toggle('active');
+                        }
+                    }
+
+                    // Auto-hide sidebar when clicking on links (mobile)
+                    document.addEventListener('DOMContentLoaded', function () {
+                        if (window.innerWidth <= 991) {
+                            const sidebarLinks = document.querySelectorAll('.modern-sidebar .nav-link');
+                            sidebarLinks.forEach(link => {
+                                link.addEventListener('click', function () {
+                                    if (!this.getAttribute('data-toggle')) {
+                                        toggleSidebar();
+                                    }
+                                });
+                            });
+                        }
+
+                        // Close sidebar when clicking overlay
+                        const overlay = document.getElementById('sidebarOverlay');
+                        if (overlay) {
+                            overlay.addEventListener('click', toggleSidebar);
+                        }
+
+                        // Connect to navbar toggle buttons
+                        const toggleButtons = document.querySelectorAll('[data-toggle="offcanvas"]');
+                        toggleButtons.forEach(button => {
+                            button.addEventListener('click', toggleSidebar);
+                        });
+                    });
+
+                    // Handle window resize
+                    window.addEventListener('resize', function () {
+                        const sidebar = document.getElementById('sidebar');
+                        const overlay = document.getElementById('sidebarOverlay');
+
+                        if (window.innerWidth > 991) {
+                            if (sidebar) sidebar.classList.remove('active');
+                            if (overlay) overlay.classList.remove('active');
+                        }
+                    });
+                </script>
+                
+                
+                
+</div>
+</div>
+
+</div>
+</div>
+</div>           
+
+
+
+<%- include('../par/header.ejs') %>
+  <!-- plugins:js -->
+  <script src="vendors/js/vendor.bundle.base.js"></script>
+  <!-- endinject -->
+  <!-- Plugin js for this page -->
+  <script src="vendors/chart.js/Chart.min.js"></script>
+  <script src="vendors/datatables.net/jquery.dataTables.js"></script>
+  <script src="vendors/datatables.net-bs4/dataTables.bootstrap4.js"></script>
+  <script src="js/dataTables.select.min.js"></script>
+
+  <!-- End plugin js for this page -->
+  <!-- inject:js -->
+  <script src="js/off-canvas.js"></script>
+  <script src="js/hoverable-collapse.js"></script>
+  <script src="js/template.js"></script>
+  <script src="js/settings.js"></script>
+  <script src="js/todolist.js"></script>
+  <!-- endinject -->
+  <!-- Custom js for this page-->
+  <script src="js/dashboard.js"></script>
+  <script src="js/Chart.roundedBarCharts.js"></script>
+  <!-- End custom js for this page-->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
+

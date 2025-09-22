@@ -1,39 +1,98 @@
 <!-- Sidebar Start -->
 <div class="sidebar pe-4 pb-3">
   <nav class="navbar">
-    <div class="d-flex align-items-center ms-4 mb-4">
+
+    <div class="navbar-nav w-100">
+      <a href="/index" class="nav-item nav-link active"><i class="bi bi-tv dynamic-color-icon"></i>Dashboard</a>
+      <% if (isAdmin) { %>
+        
+        <a href="/admin" class="nav-item nav-link"><i class="bi bi-people-fill dynamic-color-icon"></i>All User</a>
+        <a href="/addadmin" class="nav-item nav-link"><i class="fa-solid fa-user-tie dynamic-color-icon"></i>Add Admin</a>
+        <a href="/AdminTeam" class="nav-item nav-link"><i class="fas fa-users-cog dynamic-color-icon"></i>Add Team</a>
+        <a href="/Teams" class="nav-item nav-link"><i class="fa-solid fa-users dynamic-color-icon"></i>All Teams</a>
+        <a href="/request" class="nav-item nav-link"><i class="fa-solid fa-code-pull-request dynamic-color-icon"></i>Request</a>
+        <a href="/admin/payment-settings" class="nav-item nav-link">
+          <i class="bi bi-credit-card dynamic-color-icon"></i>Billing Settings
+        </a>
+        <a href="/admin/wallet" class="nav-item nav-link">
+          <i class="bi bi-wallet2 dynamic-color-icon"></i>Wallet Management
+        </a>
+        <a href="/admin/active-users" class="nav-item nav-link">
+          <i class="bi bi-person-check dynamic-color-icon"></i>Active Users
+        </a>
+        <a href="/admin/expired-users" class="nav-item nav-link">
+          <i class="bi bi-person-x dynamic-color-icon"></i>Expired Users
+        </a>
+        <a href="https://dashboard.tawk.to/#/dashboard/659fdbaf0ff6374032bedfad" class="nav-item nav-link" target="_blank"><i class="bi bi-chat-text-fill dynamic-color-icon"></i>Chat</a>
+      <% } %>
+      <% if (isUser) { %>
+        <a href="/inventory" class="nav-item nav-link"><i class="bi bi-clipboard-data dynamic-color-icon"></i>Inventory</a>
+        <a href="/repair" class="nav-item nav-link"><i class="bi bi-tools dynamic-color-icon"></i>Repair</a>
+        <a href="/in_stock" class="nav-item nav-link"><i class="bi bi-shop-window dynamic-color-icon"></i>In Stock</a>
+        <a href="/Clients" class="nav-item nav-link"><i class="bi bi-people dynamic-color-icon"></i>Clients</a>
+        <a href="/pricing" class="nav-item nav-link"><i class="bi bi-wallet2 dynamic-color-icon"></i>Plans</a>
+        <a href="/wallet" class="nav-item nav-link"><i class="bi bi-credit-card dynamic-color-icon"></i>Wallet</a>
+        <a href="/sell" class="nav-item nav-link"><i class="bi bi-cash-stack dynamic-color-icon"></i>Item History</a>
+        <a href="/Help" class="nav-item nav-link"><i class="bi bi-chat-dots dynamic-color-icon"></i>Help</a>
+      <% } %>
+    </div>
+    <br>
+
+    <!-- User Profile at Bottom -->
+    <div class="sidebar-user d-flex align-items-center ms-4 mb-4">
       <a href="/Setting" class="d-flex align-items-center text-decoration-none">
         <div class="position-relative">
-          <img class="rounded-circle" src="<%- profileImagePath %>" alt="Profile Image" style="width: 40px; height: 40px;" onerror="this.onerror=null; this.src='img/dumi img.png';">
-          <div class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
+          <img class="rounded-circle" src="<%- profileImagePath %>" alt="Profile Image" style="width: 40px; height: 40px;" onerror="this.onerror=null; this.src='/img/dumi img.png';">
+          <div class="online-dot position-absolute end-0 top-0"></div>
         </div>
         <div class="ms-3">
-          <h6 class="mb-0 text-dark"><%- firstName %></h6>
+          <h6 class="mb-0 fw-bold"><%- typeof firstName !== 'undefined' ? firstName : 'User' %></h6>
+          <p class="mb-0 small"><%- typeof email !== 'undefined' ? email : 'user@example.com' %></p>
         </div>
       </a>
     </div>
-
-    <div class="navbar-nav w-100">
-      <a href="/index" class="nav-item nav-link active"><i class="bi bi-tv"></i>Dashboard</a>
-      <% if (isAdmin) { %>
-        
-        <a href="/admin" class="nav-item nav-link"><i class="bi bi-people-fill"></i>All User</a> 
-        <a href="/addadmin" class="nav-item nav-link"><i class="fa-solid fa-user-tie"></i>Add Admin</a>
-        <a href="/AdminTeam" class="nav-item nav-link"><i class="fas fa-users-cog"></i>Add Team</a> 
-        <a href="/Teams" class="nav-item nav-link"><i class="fa-solid fa-users"></i>All Teams</a>
-        <a href="/request" class="nav-item nav-link"><i class="fa-solid fa-code-pull-request"></i>Request</a>    
-        <a href="https://dashboard.tawk.to/#/dashboard/659fdbaf0ff6374032bedfad" class="nav-item nav-link" target="_blank"><i class="bi bi-chat-text-fill"></i>Chat</a>
-      <% } %>
-      <% if (isUser) { %>
-        <a href="/inventory" class="nav-item nav-link"><i class="bi bi-clipboard-data"></i>Inventory</a>
-        <a href="/repair" class="nav-item nav-link"><i class="bi bi-tools"></i>Repair</a>
-        <a href="/in_stock" class="nav-item nav-link"><i class="bi bi-shop-window"></i>In Stock</a>
-        <a href="/Clients" class="nav-item nav-link"><i class="bi bi-people"></i>Clients</a>
-        <a href="/pricing" class="nav-item nav-link"><i class="bi bi-wallet2"></i>Plans</a>
-        <a href="/sell" class="nav-item nav-link"><i class="bi bi-cash-stack"></i>Item History</a>
-        <a href="/Help" class="nav-item nav-link"><i class="bi bi-chat-dots"></i>Help</a>
-      <% } %>
-    </div>
   </nav>
-</div>
+ </div>
+
+<script>
+  // Function to generate random rgba color
+  const randomColor = () => {
+    const r = Math.floor(Math.random() * 256);
+    const g = Math.floor(Math.random() * 256);
+    const b = Math.floor(Math.random() * 256);
+    const a = 0.8; // opacity
+    return `rgba(${r}, ${g}, ${b}, ${a})`;
+  };
+
+  // When DOM is fully loaded
+  window.addEventListener('DOMContentLoaded', () => {
+    // Apply random colors to icons
+    const icons = document.querySelectorAll('.dynamic-color-icon');
+    icons.forEach(icon => {
+      icon.style.color = randomColor();
+    });
+
+    // Set initial active link based on current URL
+    const currentPath = window.location.pathname;
+    const navLinks = document.querySelectorAll('.sidebar .nav-link');
+    navLinks.forEach(link => {
+      const href = link.getAttribute('href');
+      if ((href === currentPath) || (href === '/index' && currentPath === '/')) {
+        link.classList.add('active');
+      } else {
+        link.classList.remove('active');
+      }
+    });
+
+    // Add click event listeners for sidebar links to update active
+    navLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        // Remove active from all links
+        navLinks.forEach(l => l.classList.remove('active'));
+        // Add active to clicked link
+        link.classList.add('active');
+      });
+    });
+  });
+</script>
 <!-- Sidebar End -->

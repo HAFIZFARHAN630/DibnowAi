@@ -30,6 +30,13 @@ const SellRoutes = require("./src/routes/sellRoutes");
 const TeamsRoutes = require("./src/routes/TeamsRoutes");
 const requestRoutes = require("./src/routes/requestRoutes");
 const notificationRoutes = require("./src/routes/notificationRoutes");
+const walletRoutes = require("./src/routes/walletRoutes");
+
+// Import new MongoDB-based routes
+const quranRoutes = require("./src/routes/quranRoutes");
+const prayerRoutes = require("./src/routes/prayerRoutes");
+const tasbeehRoutes = require("./src/routes/tasbeehRoutes");
+const weatherRoutes = require("./src/routes/weatherRoutes");
 
 // Initialize Express app
 const app = express();
@@ -150,6 +157,14 @@ app.use("/", indexRoutes);
 app.use("/", pricingRoutes);
 app.use("/", SellRoutes);
 app.use("/", requestRoutes);
+app.use("/", walletRoutes);
+
+// Add new MongoDB-based routes
+app.use("/", quranRoutes);
+app.use("/", prayerRoutes);
+app.use("/", tasbeehRoutes);
+app.use("/", weatherRoutes);
+
 // Add Teams routes with explicit logging
 app.use("/", (req, res, next) => {
   if (req.url.includes('team')) {
@@ -170,4 +185,80 @@ connectDB().then(() => {
   server.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
   });
+
+  // Basic recurring billing check - run every 24 hours
+  setInterval(async () => {
+    try {
+      const User = require('./src/models/user');
+      const Wallet = require('./src/models/wallet');
+      const Transaction = require('./src/models/transaction');
+      const Payments = require('./src/models/payments');
+
+      const planPrices = {
+        BASIC: 20.88,
+        STANDARD: 35.88,
+        PREMIUM: 55.88,
+      };
+
+      const today = new Date();
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+
+      const expiringPayments = await Payments.find({
+        status: 'active',
+        expiryDate: { $lt: tomorrow }
+      }).populate('user');
+
+      for (const payment of expiringPayments) {
+        const user = payment.user;
+        if (user.plan_name === 'FREE_TRIAL') continue;
+
+        const wallet = await Wallet.findOne({ user: user._id });
+        if (!wallet || wallet.balance < planPrices[user.plan_name]) continue;
+
+        // Deduct from balance
+        wallet.balance -= planPrices[user.plan_name];
+        await wallet.save();
+
+        // Create new payment record
+        const newExpiry = new Date(today);
+        newExpiry.setDate(newExpiry.getDate() + 30);
+        const newPayment = new Payments({
+          user: user._id,
+          plan: user.plan_name,
+          amount: planPrices[user.plan_name],
+          gateway: 'wallet',
+          startDate: today,
+          expiryDate: newExpiry,
+          status: 'active'
+        });
+        await newPayment.save();
+
+        // Create transaction
+        const newTransaction = new Transaction({
+          user: user._id,
+          type: 'payment',
+          amount: planPrices[user.plan_name],
+          status: 'success'
+        });
+        await newTransaction.save();
+
+        // Update plan limits - add to current
+        const currentUser = await User.findById(user._id).select('plan_limit');
+        let planLimit;
+        switch (user.plan_name) {
+          case 'BASIC': planLimit = 300; break;
+          case 'STANDARD': planLimit = 500; break;
+          case 'PREMIUM': planLimit = 1000; break;
+          default: planLimit = 30;
+        }
+        const newLimit = (currentUser.plan_limit || 0) + planLimit;
+        await User.findByIdAndUpdate(user._id, { plan_limit: newLimit });
+
+        console.log(`Auto-renewed plan for user ${user._id}`);
+      }
+    } catch (error) {
+      console.error('Recurring billing error:', error.message);
+    }
+  }, 24 * 60 * 60 * 1000); // 24 hours
 });

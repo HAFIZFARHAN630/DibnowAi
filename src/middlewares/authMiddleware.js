@@ -23,7 +23,7 @@ function isAuthenticated(req, res, next) {
 async function isAdmin(req, res, next) {
   try {
     const userId = req.userId;
-    
+
     const user = await User.findById(userId).select("role");
     if (!user || user.role !== "admin") {
       return res.redirect("/index");
@@ -35,4 +35,46 @@ async function isAdmin(req, res, next) {
   }
 }
 
-module.exports = { isAuthenticated, isAdmin };
+// Middleware to set user data for views
+async function setUserData(req, res, next) {
+  try {
+    if (req.userId) {
+      const user = await User.findById(req.userId).select("first_name email user_img role");
+
+      if (user) {
+        // Set variables for views
+        res.locals.profileImagePath = user.user_img || '/img/dumi img.png';
+        res.locals.firstName = user.first_name || 'User';
+        res.locals.email = user.email || 'user@example.com';
+        res.locals.isAdmin = user.role === 'admin';
+        res.locals.isUser = user.role === 'user';
+      } else {
+        // Set default values if user not found
+        res.locals.profileImagePath = '/img/dumi img.png';
+        res.locals.firstName = 'User';
+        res.locals.email = 'user@example.com';
+        res.locals.isAdmin = false;
+        res.locals.isUser = false;
+      }
+    } else {
+      // Set default values if no user
+      res.locals.profileImagePath = '/img/dumi img.png';
+      res.locals.firstName = 'User';
+      res.locals.email = 'user@example.com';
+      res.locals.isAdmin = false;
+      res.locals.isUser = false;
+    }
+    next();
+  } catch (error) {
+    console.error("Error setting user data:", error.message);
+    // Set default values on error
+    res.locals.profileImagePath = '/img/dumi img.png';
+    res.locals.firstName = 'User';
+    res.locals.email = 'user@example.com';
+    res.locals.isAdmin = false;
+    res.locals.isUser = false;
+    next();
+  }
+}
+
+module.exports = { isAuthenticated, isAdmin, setUserData };

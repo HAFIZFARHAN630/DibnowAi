@@ -9,6 +9,8 @@ const {
   insertTransfer,
 } = require("../controllers/pricingController");
 
+const { getEnabledGateways } = require("../controllers/paymentPublicController");
+
 router.get("/pricing", allUsers);
 router.post("/pricing", addSubscription);
 router.get("/success", paymentSuccess);
@@ -16,5 +18,7 @@ router.get("/cancel", paymentCancel);
 router.post("/pricing/free-trial", freeTrial);
 
 router.post("/transfer", insertTransfer);
+
+router.get("/api/payment-gateways", getEnabledGateways);
 
 module.exports = router;

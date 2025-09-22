@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="utf-8">
+    <title>All User</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+   <!-- Favicon -->
+   <link rel="icon" href="\images\Dib Now 16.svg" type="image/x-icon">
+
+    <!-- Icon Font Stylesheet -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="/bootstrap.css" rel="stylesheet">
+    <!-- Template Stylesheet -->
+    <link href="/styles.css" rel="stylesheet">
+    <link href="/styles1.css" rel="stylesheet">
+    
+    <style>
+        .professional-form {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+        
+        .close-btn:hover {
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+        }
+        
+        .form-container {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            padding: 50px;
+            border-radius: 25px;
+            box-shadow: 0 30px 100px rgba(0, 0, 0, 0.2);
+            max-width: 1200px;
+            width: 100%;
+            position: relative;
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .form-header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+        
+        .form-header h2 {
+            font-size: 36px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .form-header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 18px;
+            line-height: 1.5;
+            margin: 0;
+        }
+        
+        .gateway-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .gateway-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .gateway-header h4 {
+            color: #ffffff;
+            margin: 0 10px 0 0;
+            font-size: 22px;
+        }
+        
+        .gateway-icon {
+            font-size: 28px;
+            margin-right: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 8px;
+            font-size: 16px;
+            display: block;
+        }
+        
+        .form-control, .form-check-input {
+            width: 100%;
+            height: 50px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            padding: 12px 15px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.9);
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        
+        .form-control:focus {
+            border-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.95);
+        }
+        
+        .form-check {
+            margin-bottom: 15px;
+        }
+        
+        .form-check-input:checked {
+            background-color: #10b981;
+            border-color: #10b981;
+        }
+        
+        .btn-submit {
+            width: 100%;
+            height: 60px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            color: #667eea;
+            font-size: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
+            text-transform: uppercase;
+            margin-top: 20px;
+        }
+        
+        .btn-submit:hover {
+            background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(255, 255, 255, 0.3);
+            color: #764ba2;
+        }
+        
+        .alert {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            text-align: center;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+            border: none;
+        }
+        
+        .alert-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+        
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 30px 20px;
+            }
+            
+            .form-header h2 {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <%- include('../par/sidebar.ejs') %>
+
+    <!-- Navbar Start -->
+    <%- include('../par/header.ejs') %>
+    <!-- Navbar End -->
+
+    <div class="professional-form">
+        <div class="form-container">
+            <button type="button" class="close-btn" onclick="window.history.back()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="form-header">
+                <h2><i class="bi bi-credit-card me-3"></i>Payment Settings</h2>
+                <p>Configure and manage payment gateways for the system</p>
+            </div>
+            
+            <% if (success_msg) { %>
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle me-2"></i><%= success_msg %>
+                </div>
+            <% } %>
+            
+            <% if (error_msg) { %>
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle me-2"></i><%= error_msg %>
+                </div>
+            <% } %>
+
+            <form action="/admin/payment-settings" method="POST">
+                <!-- Stripe Section -->
+                <div class="gateway-section">
+                    <div class="gateway-header">
+                        <i class="bi bi-credit-card gateway-icon" style="color: #635bff;"></i>
+                        <h4>Stripe</h4>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="stripe_enabled" name="stripe_enabled" <%= stripeSettings && stripeSettings.enabled ? 'checked' : '' %> value="true">
+                        <label class="form-label" for="stripe_enabled">Enable Stripe</label>
+                    </div>
+                    <div class="form-group">
+                        <label for="stripe_mode" class="form-label">Mode</label>
+                        <select class="form-control" id="stripe_mode" name="stripe_mode">
+                            <option value="live" <%= stripeSettings && stripeSettings.mode === 'live' ? 'selected' : '' %>>Live</option>
+                            <option value="sandbox" <%= stripeSettings && stripeSettings.mode === 'sandbox' ? 'selected' : '' %>>Sandbox</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="stripe_publishable_key" class="form-label">Publishable Key</label>
+                                <input type="text" class="form-control" id="stripe_publishable_key" name="stripe_publishable_key" value="<%= stripeSettings ? (stripeSettings.credentials ? stripeSettings.credentials.publishable_key : '') : '' %>" placeholder="pk_...">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="stripe_secret_key" class="form-label">Secret Key</label>
+                                <input type="password" class="form-control" id="stripe_secret_key" name="stripe_secret_key" value="<%= stripeSettings ? (stripeSettings.credentials ? stripeSettings.credentials.secret_key : '') : '' %>" placeholder="sk_...">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PayPal Section -->
+                <div class="gateway-section">
+                    <div class="gateway-header">
+                        <i class="fab fa-paypal gateway-icon" style="color: #003087;"></i>
+                        <h4>PayPal</h4>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="paypal_enabled" name="paypal_enabled" <%= paypalSettings && paypalSettings.enabled ? 'checked' : '' %> value="true">
+                        <label class="form-label" for="paypal_enabled">Enable PayPal</label>
+                    </div>
+                    <div class="form-group">
+                        <label for="paypal_mode" class="form-label">Mode</label>
+                        <select class="form-control" id="paypal_mode" name="paypal_mode">
+                            <option value="live" <%= paypalSettings && paypalSettings.mode === 'live' ? 'selected' : '' %>>Live</option>
+                            <option value="sandbox" <%= paypalSettings && paypalSettings.mode === 'sandbox' ? 'selected' : '' %>>Sandbox</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="paypal_client_id" class="form-label">Client ID</label>
+                                <input type="text" class="form-control" id="paypal_client_id" name="paypal_client_id" value="<%= paypalSettings ? (paypalSettings.credentials ? paypalSettings.credentials.client_id : '') : '' %>" placeholder="Client ID...">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="paypal_client_secret" class="form-label">Client Secret</label>
+                                <input type="password" class="form-control" id="paypal_client_secret" name="paypal_client_secret" value="<%= paypalSettings ? (paypalSettings.credentials ? paypalSettings.credentials.client_secret : '') : '' %>" placeholder="Client Secret...">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bank Section -->
+                <div class="gateway-section">
+                    <div class="gateway-header">
+                        <i class="bi bi-bank gateway-icon" style="color: #28a745;"></i>
+                        <h4>Bank Transfer</h4>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="bank_enabled" name="bank_enabled" <%= bankSettings && bankSettings.enabled ? 'checked' : '' %> value="true">
+                        <label class="form-label" for="bank_enabled">Enable Bank Transfer</label>
+                    </div>
+                    <div class="form-group">
+                        <label for="bank_instructions" class="form-label">Bank Instructions</label>
+                        <textarea class="form-control" id="bank_instructions" name="bank_instructions" rows="3"><%= bankSettings ? (bankSettings.credentials ? bankSettings.credentials.instructions : '') : '' %></textarea>
+                    </div>
+                    <p class="text-white-50">Customize bank transfer instructions for users.</p>
+                </div>
+
+                <!-- JazzCash Section -->
+                <div class="gateway-section">
+                    <div class="gateway-header">
+                        <i class="fas fa-mobile-alt gateway-icon" style="color: #f39c12;"></i>
+                        <h4>JazzCash</h4>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="jazzcash_enabled" name="jazzcash_enabled" <%= jazzcashSettings && jazzcashSettings.enabled ? 'checked' : '' %> value="true">
+                        <label class="form-label" for="jazzcash_enabled">Enable JazzCash</label>
+                    </div>
+                    <div class="form-group">
+                        <label for="jazzcash_mode" class="form-label">Mode</label>
+                        <select class="form-control" id="jazzcash_mode" name="jazzcash_mode">
+                            <option value="live" <%= jazzcashSettings && jazzcashSettings.mode === 'live' ? 'selected' : '' %>>Live</option>
+                            <option value="sandbox" <%= jazzcashSettings && jazzcashSettings.mode === 'sandbox' ? 'selected' : '' %>>Sandbox</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="jazzcash_merchant_id" class="form-label">Merchant ID</label>
+                                <input type="text" class="form-control" id="jazzcash_merchant_id" name="jazzcash_merchant_id" value="<%= jazzcashSettings ? (jazzcashSettings.credentials ? jazzcashSettings.credentials.merchant_id : '') : '' %>" placeholder="Merchant ID...">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="jazzcash_password" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="jazzcash_password" name="jazzcash_password" value="<%= jazzcashSettings ? (jazzcashSettings.credentials ? jazzcashSettings.credentials.password : '') : '' %>" placeholder="Password...">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payfast Section -->
+                <div class="gateway-section">
+                    <div class="gateway-header">
+                        <i class="bi bi-credit-card gateway-icon" style="color: #e74c3c;"></i>
+                        <h4>Payfast</h4>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="payfast_enabled" name="payfast_enabled" <%= payfastSettings && payfastSettings.enabled ? 'checked' : '' %> value="true">
+                        <label class="form-label" for="payfast_enabled">Enable Payfast</label>
+                    </div>
+                    <div class="form-group">
+                        <label for="payfast_mode" class="form-label">Mode</label>
+                        <select class="form-control" id="payfast_mode" name="payfast_mode">
+                            <option value="live" <%= payfastSettings && payfastSettings.mode === 'live' ? 'selected' : '' %>>Live</option>
+                            <option value="sandbox" <%= payfastSettings && payfastSettings.mode === 'sandbox' ? 'selected' : '' %>>Sandbox</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="payfast_merchant_key" class="form-label">Merchant Key</label>
+                                <input type="text" class="form-control" id="payfast_merchant_key" name="payfast_merchant_key" value="<%= payfastSettings ? (payfastSettings.credentials ? payfastSettings.credentials.merchant_key : '') : '' %>" placeholder="Merchant Key...">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="payfast_merchant_secret" class="form-label">Merchant Secret</label>
+                                <input type="password" class="form-control" id="payfast_merchant_secret" name="payfast_merchant_secret" value="<%= payfastSettings ? (payfastSettings.credentials ? payfastSettings.credentials.merchant_secret : '') : '' %>" placeholder="Merchant Secret...">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    <i class="bi bi-save me-2"></i>Save Payment Settings
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript Libraries -->
+     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Socket.IO Client -->
+  <script src="/socket.io/socket.io.js"></script>
+
+  <!-- Template Javascript -->
+  <script src="/js/main.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="/js/main.js"></script>
+</body>
+</html>

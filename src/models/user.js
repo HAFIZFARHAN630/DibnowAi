@@ -24,6 +24,7 @@ const userSchema = new mongoose.Schema({
   isVerified: {type:Boolean, default: false},
   otp: {type:String},
   otp_expiry:{type:Date},
+  stripe_customer_id: { type: String },
 });
 
 module.exports = mongoose.model("User", userSchema);

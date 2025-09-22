@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Tasbeeh</title>
+  <!-- plugins:css -->
+  <link rel="stylesheet" href="vendors/feather/feather.css">
+  <link rel="stylesheet" href="vendors\ti-icons\css\themify-icons.css">
+  <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
+  <!-- endinject -->
+  <!-- Plugin css for this page -->
+  <link rel="stylesheet" href="vendors/datatables.net-bs4/dataTables.bootstrap4.css">
+  <link rel="stylesheet" href="vendors\ti-icons\css\themify-icons.css">
+  <link rel="stylesheet" type="text/css" href="js/select.dataTables.min.css">
+  <!-- End plugin css for this page -->
+  <!-- inject:css -->
+  <link rel="stylesheet" href="css/vertical-layout-light/style.css">
+  <!-- endinject -->
+  <link rel="shortcut icon" href="images/favicon.png" />
+
+  <!-- Material Design Icons CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
+<link href="https://cdn.jsdelivr.net/npm/@mdi/font@7.2.96/css/materialdesignicons.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<style>
+    body {
+        background-color: black;
+        color: white;
+       
+    }
+    .btn-group button {
+        background-color: #333;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 10px;
+    }
+    .counter {
+        font-size: 100px;
+        font-weight: bold;
+        margin: 20px 0;
+    }
+    .circle-btn {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background-color: #002611;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        margin-top: 20px;
+    }
+    .circle-btn i {
+        font-size: 50px;
+        color: #00ff99;
+    }
+    .small-btn {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: #002611;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+</style>
+</head>
+<body>
+
+    
+
+    <!-- Navbar Start -->
+    <%- include('../par/header.ejs') %>
+    <!-- Navbar End -->
+  <div class="container-scroller">
+    <!-- partial:partials/_navbar -->
+    <%- include('../par/sidebar.ejs') %>
+    <!-- partial:partials/_navbar -->
+
+    <!-- partial -->
+    <div class="container-fluid page-body-wrapper">
+
+       <!-- Sidebar Overlay for Mobile -->
+       <div class="sidebar-overlay" id="sidebarOverlay"></div>
+       
+       <!-- ✅ Modern Sidebar Replacement -->
+<nav class="modern-sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h1 class="sidebar-title">القرآن الكريم</h1>
+    <p class="sidebar-subtitle">Tasbeeh Counter</p>
+  </div>
+  <nav class="sidebar-nav">
+    <ul style="list-style: none; padding: 0; margin: 0;">
+      <li class="nav-item">
+        <a class="nav-link" href="/index">
+          <i class="bi bi-grid"></i>
+          <span>Dashboard</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/package">
+          <i class="bi bi-box-seam"></i>
+          <span>All Packages</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/History">
+          <i class="bi bi-clock-history"></i>
+          <span>History</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/complaint">
+          <i class="bi bi-wallet2"></i>
+          <span>Wallet</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/profile">
+          <i class="bi bi-person"></i>
+          <span>Profile</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/contactus">
+          <i class="bi bi-telephone"></i>
+          <span>Contact Us</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/changepassword">
+          <i class="bi bi-lock"></i>
+          <span>Change Password</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/logout">
+          <i class="bi bi-box-arrow-right"></i>
+          <span>Logout</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+</nav>
+
+<!-- NavBar End -->
+
+      <div class="main-panel">
+    <style>
+        /* ✅ Sidebar Styling from Quran App */
+.modern-sidebar {
+  width: 320px;
+  background: linear-gradient(180deg, rgba(30, 41, 59, 0.95) 0%, rgba(51, 65, 85, 0.9) 100%);
+  backdrop-filter: blur(25px);
+  border-right: 1px solid rgba(16, 185, 129, 0.2);
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  z-index: 10;
+  box-shadow: 8px 0 32px -8px rgba(0, 0, 0, 0.3), inset -1px 0 0 rgba(16, 185, 129, 0.1);
+  transition: transform 0.3s ease;
+}
+
+/* Mobile responsive sidebar */
+@media (max-width: 991px) {
+  .modern-sidebar {
+    transform: translateX(-100%);
+    z-index: 9999;
+  }
+  
+  .modern-sidebar.active {
+    transform: translateX(0);
+  }
+  
+  .main-panel {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+  
+  .sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9998;
+    display: none;
+  }
+  
+  .sidebar-overlay.active {
+    display: block;
+  }
+}
+
+@media (min-width: 992px) {
+  .main-panel {
+    margin-left: 320px;
+  }
+}
+
+.sidebar-header {
+  padding: 2.5rem 2rem;
+  text-align: center;
+  border-bottom: 1px solid rgba(16, 185, 129, 0.2);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(79, 70, 229, 0.05) 100%);
+}
+
+.sidebar-title {
+  font-size: 1.75rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #10b981 0%, #34d399 50%, #6ee7b7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.75rem;
+  font-family: 'Amiri', serif;
+  text-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+}
+
+.sidebar-subtitle {
+  color: #94a3b8;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+}
+
+.sidebar-nav .nav-link {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  color: #cbd5e1;
+  text-decoration: none;
+  border-radius: 16px;
+  transition: all 0.4s ease;
+  font-weight: 600;
+  position: relative;
+  overflow: hidden;
+}
+
+.sidebar-nav .nav-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.sidebar-nav .nav-link:hover::before {
+  left: 100%;
+}
+
+.sidebar-nav .nav-link:hover {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(79, 70, 229, 0.1) 100%);
+  color: #10b981;
+  transform: translateX(8px);
+  box-shadow: 0 4px 12px -2px rgba(16, 185, 129, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-nav .nav-link i {
+  margin-right: 1rem;
+  font-size: 1.25rem;
+  transition: all 0.3s ease;
+}
+
+.sidebar-nav .nav-link:hover i {
+  transform: scale(1.1);
+  color: #34d399;
+}
+
+        /* Professional Dark Tasbeeh UI Design */
+        .tasbeeh-container {
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 30%, #16213e 70%, #0f3460 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            padding: 2rem 1rem;
+        }
+
+        .tasbeeh-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 15% 25%, rgba(139, 92, 246, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 85% 75%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 50% 40%, rgba(79, 70, 229, 0.06) 0%, transparent 70%),
+                url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="tasbeeh-pattern" patternUnits="userSpaceOnUse" width="30" height="30"><circle cx="15" cy="15" r="1.5" fill="rgba(139,92,246,0.08)"/><circle cx="5" cy="5" r="1" fill="rgba(16,185,129,0.06)"/><circle cx="25" cy="8" r="0.8" fill="rgba(79,70,229,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23tasbeeh-pattern)"/></svg>') center/150px;
+            pointer-events: none;
+        }
+
+        .tasbeeh-card {
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(51, 65, 85, 0.9) 100%);
+            backdrop-filter: blur(25px);
+            border-radius: 40px;
+            padding: 3.5rem 2.5rem;
+            box-shadow: 
+                0 40px 80px -16px rgba(0, 0, 0, 0.4),
+                0 0 0 1px rgba(139, 92, 246, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            text-align: center;
+            max-width: 550px;
+            width: 100%;
+            position: relative;
+            z-index: 10;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        .tasbeeh-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #8b5cf6, #10b981, #4f46e5);
+            border-radius: 40px 40px 0 0;
+        }
+
+        .islamic-header {
+            margin-bottom: 2rem;
+        }
+
+        .bismillah {
+            font-family: 'Amiri', serif;
+            font-size: 1.75rem;
+            color: #e2e8f0;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 4px 8px rgba(139, 92, 246, 0.3);
+            direction: rtl;
+            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tasbeeh-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #8b5cf6 0%, #10b981 50%, #4f46e5 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.75rem;
+            text-shadow: 0 4px 8px rgba(139, 92, 246, 0.2);
+            letter-spacing: -0.025em;
+        }
+
+        .tasbeeh-subtitle {
+            color: #94a3b8;
+            font-size: 1.125rem;
+            margin-bottom: 0;
+            font-weight: 500;
+            letter-spacing: 0.025em;
+        }
+
+        /* Controls Section */
+        .controls-section {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+            margin-bottom: 2.5rem;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            padding: 0.75rem 1.25rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .control-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.3s ease;
+        }
+
+        .control-btn:hover::before {
+            left: 100%;
+        }
+
+        .increment-btn {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(139, 92, 246, 0.25);
+        }
+
+        .increment-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px -3px rgba(139, 92, 246, 0.35);
+        }
+
+        .edit-btn {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.25);
+        }
+
+        .edit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px -3px rgba(59, 130, 246, 0.35);
+        }
+
+        .reset-btn {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.25);
+        }
+
+        .reset-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px -3px rgba(239, 68, 68, 0.35);
+        }
+
+        /* Counter Display */
+       .counter-section {
+  margin: 2.5rem 0;
+  position: relative;
+  min-height: 200px; /* Add this to ensure enough space */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.counter-ring {
+  z-index: 1;
+}
+
+.counter-display {
+  z-index: 2;
+  position: relative;
+}
+
+
+        .counter-display {
+            font-size: 5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 4px 8px rgba(17, 153, 142, 0.3);
+            margin: 0;
+            line-height: 1;
+            position: relative;
+            z-index: 2;
+        }
+
+       .counter-ring {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 160px;
+  height: 160px;
+  border: 8px solid rgba(16, 185, 129, 0.2);
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(52, 211, 153, 0.05));
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(16, 185, 129, 0.2);
+  pointer-events: none;
+  z-index: 1;
+}
+
+        .counter-ring::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            mask: radial-gradient(circle, transparent 48%, black 52%);
+            -webkit-mask: radial-gradient(circle, transparent 48%, black 52%);
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .main-action-btn {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 
+                0 12px 24px -6px rgba(17, 153, 142, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-action-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.3) 0%, transparent 50%);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .main-action-btn:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 
+                0 20px 40px -8px rgba(17, 153, 142, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .main-action-btn:active {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 
+                0 8px 16px -4px rgba(17, 153, 142, 0.6),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .secondary-action-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+            color: white;
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 
+                0 6px 12px -3px rgba(107, 114, 128, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .secondary-action-btn:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 
+                0 8px 16px -4px rgba(107, 114, 128, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        /* Progress Indicators */
+        .progress-section {
+            margin-top: 2rem;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .progress-item {
+            background: linear-gradient(145deg, rgba(51, 65, 85, 0.8) 0%, rgba(71, 85, 105, 0.6) 100%);
+            border-radius: 16px;
+            padding: 1.25rem;
+            text-align: center;
+            border: 1px solid rgba(79, 70, 229, 0.2);
+            box-shadow: 
+                0 8px 16px -4px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .progress-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 12px 24px -6px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            border-color: rgba(124, 58, 237, 0.3);
+        }
+
+        .progress-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            line-height: 1.2;
+        }
+
+        .progress-label {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+
+        /* Responsive Design */
+        /* Professional Mobile Design */
+        @media (max-width: 991px) {
+            .main-panel {
+                margin-left: 0 !important;
+                width: 100% !important;
+            }
+            
+            .content-wrapper {
+                padding: 15px;
+                min-height: calc(100vh - 60px);
+            }
+            
+            .tasbeeh-container {
+                padding: 10px 0;
+            }
+            
+            .tasbeeh-card {
+                margin: 0;
+                padding: 24px;
+                border-radius: 20px;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            }
+            
+            .islamic-header {
+                margin-bottom: 1.5rem;
+                padding: 0 10px;
+            }
+            
+            .bismillah {
+                font-size: 1.6rem;
+                margin-bottom: 1rem;
+                line-height: 1.4;
+            }
+            
+            .tasbeeh-title {
+                font-size: 2rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .tasbeeh-subtitle {
+                font-size: 1rem;
+                margin-bottom: 0;
+            }
+            
+            .counter-section {
+                margin-bottom: 2rem;
+                padding: 0 10px;
+            }
+            
+            .counter-display {
+                font-size: 5rem;
+                font-weight: 800;
+                background: linear-gradient(135deg, #10b981, #34d399);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                text-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+                margin-bottom: 1.5rem;
+            }
+            
+            .counter-ring {
+                width: 200px;
+                height: 200px;
+                border: 8px solid rgba(16, 185, 129, 0.2);
+                border-radius: 50%;
+                position: relative;
+                margin: 0 auto 2rem;
+                background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(52, 211, 153, 0.05));
+                backdrop-filter: blur(10px);
+                box-shadow: 0 8px 32px rgba(16, 185, 129, 0.2);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .counter-progress {
+                position: absolute;
+                top: -8px;
+                left: -8px;
+                width: 216px;
+                height: 216px;
+                border-radius: 50%;
+                background: conic-gradient(from 0deg, #10b981, #34d399, transparent);
+                opacity: 0.8;
+                transition: all 0.3s ease;
+            }
+            
+            .main-action-btn {
+                width: 120px;
+                height: 120px;
+                border-radius: 50%;
+                background: linear-gradient(135deg, #10b981, #34d399);
+                border: none;
+                color: white;
+                font-size: 2rem;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 2;
+                position: relative;
+            }
+            
+            .main-action-btn:hover, .main-action-btn:active {
+                transform: scale(1.05);
+                box-shadow: 0 12px 32px rgba(16, 185, 129, 0.5);
+            }
+            
+            .current-dhikr {
+                font-size: 1.2rem;
+                color: #10b981;
+                font-weight: 600;
+                text-align: center;
+                margin-bottom: 1.5rem;
+                padding: 12px 20px;
+                background: rgba(16, 185, 129, 0.1);
+                border: 1px solid rgba(16, 185, 129, 0.3);
+                border-radius: 12px;
+                font-family: 'Amiri', serif;
+                direction: rtl;
+            }
+            
+            .controls-section {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+                margin-bottom: 2rem;
+                justify-content: center;
+                padding: 0 5px;
+            }
+            
+            .control-btn {
+                flex: 1;
+                min-width: calc(50% - 5px);
+                max-width: 150px;
+                padding: 12px 16px;
+                font-size: 0.9rem;
+                font-weight: 600;
+                border-radius: 12px;
+                background: rgba(255, 255, 255, 0.08);
+                border: 1px solid rgba(255, 255, 255, 0.12);
+                color: #cbd5e1;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+            
+            .control-btn:hover, .control-btn.active {
+                background: rgba(16, 185, 129, 0.15);
+                border-color: rgba(16, 185, 129, 0.4);
+                color: #10b981;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+            }
+            
+            .dhikr-selector {
+                margin-bottom: 2rem;
+                padding: 0 5px;
+            }
+            
+            .dhikr-options {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .dhikr-option {
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 16px;
+                padding: 16px;
+                text-align: center;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                backdrop-filter: blur(10px);
+            }
+            
+            .dhikr-option:hover, .dhikr-option.active {
+                background: rgba(16, 185, 129, 0.15);
+                border-color: rgba(16, 185, 129, 0.4);
+                transform: translateY(-2px);
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            }
+            
+            .dhikr-arabic {
+                font-family: 'Amiri', serif;
+                font-size: 1.2rem;
+                color: #10b981;
+                margin-bottom: 8px;
+                direction: rtl;
+                font-weight: 600;
+            }
+            
+            .dhikr-translation {
+                font-size: 0.9rem;
+                color: #94a3b8;
+                line-height: 1.4;
+            }
+            
+            .progress-section {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+                margin-bottom: 2rem;
+            }
+            
+            .progress-card {
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 16px;
+                padding: 16px;
+                text-align: center;
+                transition: all 0.3s ease;
+                backdrop-filter: blur(10px);
+            }
+            
+            .progress-card:hover {
+                background: rgba(255, 255, 255, 0.1);
+                border-color: rgba(16, 185, 129, 0.3);
+                transform: translateY(-2px);
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            }
+            
+            .progress-label {
+                font-size: 0.8rem;
+                color: #94a3b8;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                font-weight: 600;
+                margin-bottom: 8px;
+            }
+            
+            .progress-value {
+                font-size: 1.5rem;
+                font-weight: 800;
+                color: #10b981;
+                margin-bottom: 4px;
+            }
+            
+            .progress-bar {
+                width: 100%;
+                height: 4px;
+                background: rgba(16, 185, 129, 0.2);
+                border-radius: 2px;
+                overflow: hidden;
+                margin-top: 8px;
+            }
+            
+            .progress-fill {
+                height: 100%;
+                background: linear-gradient(90deg, #10b981, #34d399);
+                border-radius: 2px;
+                transition: width 0.3s ease;
+            }
+            
+            .stats-section {
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 16px;
+                padding: 20px;
+                margin-bottom: 2rem;
+                backdrop-filter: blur(10px);
+            }
+            
+            .stats-title {
+                font-size: 1.2rem;
+                color: #e2e8f0;
+                font-weight: 600;
+                margin-bottom: 16px;
+                text-align: center;
+            }
+            
+            .stats-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 12px;
+            }
+            
+            .stat-item {
+                text-align: center;
+                padding: 12px;
+                background: rgba(16, 185, 129, 0.1);
+                border-radius: 12px;
+                border: 1px solid rgba(16, 185, 129, 0.2);
+            }
+            
+            .stat-value {
+                font-size: 1.2rem;
+                font-weight: 700;
+                color: #10b981;
+                margin-bottom: 4px;
+            }
+            
+            .stat-label {
+                font-size: 0.7rem;
+                color: #94a3b8;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+            
+            /* Bottom spacing for mobile navigation */
+            .content-wrapper::after {
+                content: '';
+                display: block;
+                height: 80px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .content-wrapper {
+                padding: 10px;
+            }
+            
+            .tasbeeh-card {
+                padding: 16px;
+            }
+            
+            .bismillah {
+                font-size: 1.4rem;
+            }
+            
+            .tasbeeh-title {
+                font-size: 1.75rem;
+            }
+            
+            .counter-display {
+                font-size: 4rem;
+            }
+            
+            .counter-ring {
+                width: 160px;
+                height: 160px;
+            }
+            
+            .main-action-btn {
+                width: 100px;
+                height: 100px;
+                font-size: 1.8rem;
+            }
+            
+            .control-btn {
+                min-width: calc(100% - 10px);
+                margin-bottom: 8px;
+            }
+            
+            .progress-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+        }
+
+        /* Animation for count changes */
+        .counter-animate {
+            animation: countBounce 0.3s ease-out;
+        }
+
+        @keyframes countBounce {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        /* Ripple effect for buttons */
+        .ripple {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ripple::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            transform: scale(0);
+            animation: ripple-animation 0.6s linear;
+            pointer-events: none;
+        }
+
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+    </style>
+
+    <div class="content-wrapper">
+        <div class="tasbeeh-container">
+            <div class="container">
+                <div class="tasbeeh-card">
+                    <div class="islamic-header">
+                        <div class="bismillah">بِسْمِ ٱللّٰهِ ٱلرَّحْمٰنِ ٱلرَّحِيْمِ</div>
+                        <h1 class="tasbeeh-title">Digital Tasbeeh</h1>
+                        <p class="tasbeeh-subtitle">Keep track of your dhikr and remembrance of Allah</p>
+                    </div>
+
+                    <div class="controls-section">
+                        <button id="increment-by" class="control-btn increment-btn">
+                            <i class="bi bi-plus-circle me-1"></i>
+                            Increment: <span id="increment-value">1</span>
+                        </button>
+                        <button id="edit" class="control-btn edit-btn">
+                            <i class="bi bi-gear me-1"></i>
+                            Settings
+                        </button>
+                        <button id="reset" class="control-btn reset-btn">
+                            <i class="bi bi-arrow-clockwise me-1"></i>
+                            Reset
+                        </button>
+                    </div>
+
+                    <div class="counter-section">
+                        <div class="counter-ring"></div>
+                        <h1 id="counter" class="counter-display">0</h1>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button id="increment" class="main-action-btn ripple">
+                            <i class="bi bi-hand-index-thumb"></i>
+                        </button>
+                        <button id="decrement" class="secondary-action-btn">
+                            <i class="bi bi-dash"></i>
+                        </button>
+                    </div>
+
+                    <div class="progress-section">
+                        <div class="progress-item">
+                            <div class="progress-value" id="total-today">0</div>
+                            <div class="progress-label">Today</div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-value" id="session-count">0</div>
+                            <div class="progress-label">Session</div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-value" id="streak-days">1</div>
+                            <div class="progress-label">Streak</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let count = 0;
+        let incrementValue = 1;
+        let sessionCount = 0;
+        let totalToday = 0;
+
+        // Load saved data
+        function loadData() {
+            const saved = localStorage.getItem('tasbeeh-data');
+            if (saved) {
+                const data = JSON.parse(saved);
+                count = data.count || 0;
+                sessionCount = data.sessionCount || 0;
+                totalToday = data.totalToday || 0;
+                updateDisplay();
+            }
+        }
+
+        // Save data
+        function saveData() {
+            const data = {
+                count,
+                sessionCount,
+                totalToday,
+                lastSaved: new Date().toDateString()
+            };
+            localStorage.setItem('tasbeeh-data', JSON.stringify(data));
+        }
+
+        // Update display
+        function updateDisplay() {
+            document.getElementById("counter").textContent = count;
+            document.getElementById("session-count").textContent = sessionCount;
+            document.getElementById("total-today").textContent = totalToday;
+            document.getElementById("increment-value").textContent = incrementValue;
+        }
+
+        // Add ripple effect
+        function addRipple(event) {
+            const button = event.currentTarget;
+            const rect = button.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = event.clientX - rect.left - size / 2;
+            const y = event.clientY - rect.top - size / 2;
+            
+            const ripple = document.createElement('span');
+            ripple.style.cssText = `
+                position: absolute;
+                width: ${size}px;
+                height: ${size}px;
+                left: ${x}px;
+                top: ${y}px;
+                background: rgba(255, 255, 255, 0.6);
+                border-radius: 50%;
+                transform: scale(0);
+                animation: ripple-animation 0.6s linear;
+                pointer-events: none;
+            `;
+            
+            button.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 600);
+        }
+
+        // Animate counter
+        function animateCounter() {
+            const counter = document.getElementById("counter");
+            counter.classList.add("counter-animate");
+            setTimeout(() => counter.classList.remove("counter-animate"), 300);
+        }
+
+        // Event listeners
+        document.getElementById("increment").addEventListener("click", function (event) {
+            addRipple(event);
+            count += incrementValue;
+            sessionCount += incrementValue;
+            totalToday += incrementValue;
+            updateDisplay();
+            animateCounter();
+            saveData();
+        });
+
+        document.getElementById("decrement").addEventListener("click", function () {
+            if (count > 0) {
+                count -= incrementValue;
+                if (sessionCount > 0) sessionCount -= incrementValue;
+                if (totalToday > 0) totalToday -= incrementValue;
+                updateDisplay();
+                animateCounter();
+                saveData();
+            }
+        });
+
+        document.getElementById("reset").addEventListener("click", function () {
+            if (confirm("Are you sure you want to reset the counter?")) {
+                count = 0;
+                sessionCount = 0;
+                updateDisplay();
+                animateCounter();
+                saveData();
+            }
+        });
+
+        document.getElementById("increment-by").addEventListener("click", function () {
+            const newValue = prompt("Enter increment value:", incrementValue);
+            if (newValue && !isNaN(newValue) && newValue > 0) {
+                incrementValue = parseInt(newValue);
+                updateDisplay();
+            }
+        });
+
+        document.getElementById("edit").addEventListener("click", function () {
+            alert("Settings: You can customize increment value, reset counters, and view detailed statistics here.");
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            updateDisplay();
+        });
+
+        // Auto-save every 30 seconds
+        setInterval(saveData, 30000);
+    </script>
+                
+                
+</div>
+</div>
+
+</div>
+</div>
+</div>           
+
+
+
+<%- include('../par/header.ejs') %>
+  <!-- plugins:js -->
+  <script src="vendors/js/vendor.bundle.base.js"></script>
+  <!-- endinject -->
+  <!-- Plugin js for this page -->
+  <script src="vendors/chart.js/Chart.min.js"></script>
+  <script src="vendors/datatables.net/jquery.dataTables.js"></script>
+  <script src="vendors/datatables.net-bs4/dataTables.bootstrap4.js"></script>
+  <script src="js/dataTables.select.min.js"></script>
+
+  <!-- End plugin js for this page -->
+  <!-- inject:js -->
+  <script src="js/off-canvas.js"></script>
+  <script src="js/hoverable-collapse.js"></script>
+  <script src="js/template.js"></script>
+  <script src="js/settings.js"></script>
+  <script src="js/todolist.js"></script>
+  <!-- endinject -->
+  <!-- Custom js for this page-->
+  <script src="js/dashboard.js"></script>
+  <script src="js/Chart.roundedBarCharts.js"></script>
+  <!-- End custom js for this page-->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    // Sidebar Toggle for Mobile
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+
+        if (sidebar && overlay) {
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+    }
+
+    // Auto-hide sidebar when clicking on links (mobile)
+    document.addEventListener('DOMContentLoaded', function () {
+        if (window.innerWidth <= 991) {
+            const sidebarLinks = document.querySelectorAll('.modern-sidebar .nav-link');
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', function () {
+                    if (!this.getAttribute('data-toggle')) {
+                        toggleSidebar();
+                    }
+                });
+            });
+        }
+
+        // Close sidebar when clicking overlay
+        const overlay = document.getElementById('sidebarOverlay');
+        if (overlay) {
+            overlay.addEventListener('click', toggleSidebar);
+        }
+
+        // Connect to navbar toggle buttons
+        const toggleButtons = document.querySelectorAll('[data-toggle="offcanvas"]');
+        toggleButtons.forEach(button => {
+            button.addEventListener('click', toggleSidebar);
+        });
+    });
+
+    // Handle window resize
+    window.addEventListener('resize', function () {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+
+        if (window.innerWidth > 991) {
+            if (sidebar) sidebar.classList.remove('active');
+            if (overlay) overlay.classList.remove('active');
+        }
+    });
+  </script>
+</body>
+
+</html>
+

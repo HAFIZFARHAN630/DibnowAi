@@ -26,6 +26,28 @@
       display: flex;
       flex-direction: column;
     }
+
+      #teamSearch {
+        border-radius: 25px;
+        background-color: #f8f9fa;
+        border: 2px solid #e9ecef;
+        color: #212529;
+        padding: 10px 20px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        width: 250px;
+      }
+
+      #teamSearch:focus {
+        background-color: #ffffff;
+        border-color: #10b981;
+        box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25);
+        color: #212529;
+      }
+
+      #teamSearch::placeholder {
+        color: #6c757d;
+      }
     .footer {
         margin-top: auto;
         padding:5px 11px 5px 95px;
@@ -354,9 +376,12 @@
                 <div class="col-md-12">
                     <div class="d-flex justify-content-between align-items-center">
                         <h4 class="mb-4 mb-sm-0 card-title">Team Members <i class="bi bi-people-fill"></i></h4>
-                        <a href="/AdminTeam" class="btn-add-team">
-                            <i class="fas fa-user-plus"></i> Add Team Member
-                        </a>
+                        <div class="d-flex align-items-center gap-2">
+                            <input type="text" id="teamSearch" class="form-control" style="width: 250px;" placeholder="Search team members...">
+                            <a href="/AdminTeam" class="btn-add-team">
+                                <i class="fas fa-user-plus"></i> Add Team Member
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -521,6 +546,23 @@
 <!-- Template Javascript -->
 <script src="js/main.js"></script>
 <script>
+    // Team search functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('teamSearch');
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const table = document.getElementById('paginatedTable');
+                if (table) {
+                    const rows = table.querySelectorAll('tbody tr');
+                    rows.forEach(row => {
+                        const text = row.textContent.toLowerCase();
+                        row.style.display = text.includes(searchTerm) ? '' : 'none';
+                    });
+                }
+            });
+        }
+    });
 // Department filter functionality
 document.getElementById('departmentFilter').addEventListener('change', function() {
     const selectedDepartment = this.value;

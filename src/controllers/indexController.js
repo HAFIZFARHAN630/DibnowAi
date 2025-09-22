@@ -1,4 +1,6 @@
 const User = require("../models/user");
+const Wallet = require("../models/wallet");
+const Payments = require("../models/payments");
 const Repair = require("../models/repair");
 const Inventory = require("../models/inventery");
 const SoldItem = require("../models/Sold_Products");
@@ -60,6 +62,12 @@ exports.allusers = async (req, res) => {
       profileImagePath,
       firstName: user.first_name,
       lastName: user.last_name,
+      phoneNumber: user.phone_number,
+      email: user.email,
+      company: user.company,
+      address: user.address,
+      country: user.country,
+      currency: user.currency,
       products: repairs,
       inventory,
       productCount,
