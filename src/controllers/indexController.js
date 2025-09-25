@@ -1,6 +1,7 @@
 const User = require("../models/user");
 const Wallet = require("../models/wallet");
 const Payments = require("../models/payments");
+const PlanRequest = require("../models/planRequest");
 const Repair = require("../models/repair");
 const Inventory = require("../models/inventery");
 const SoldItem = require("../models/Sold_Products");
@@ -38,7 +39,11 @@ exports.allusers = async (req, res) => {
       completedRepairs,
       teams,
       teamCount,
-      deliveredRepairs
+      deliveredRepairs,
+      subscription,
+      matchedPackage,
+      latestPayment,
+      userPlan
     ] = await Promise.all([
       Repair.find({ user_id: userId }).sort({ _id: -1 }),
       Inventory.find({ user_id: userId }).sort({ _id: -1 }),
@@ -49,7 +54,11 @@ exports.allusers = async (req, res) => {
       Repair.countDocuments({ status: 'Completed', user_id: userId }),
       AddUser.find().select('name'),
       AddUser.countDocuments(),
-      Repair.find({ status: 'Delivered' }).select('Price')
+      Repair.find({ status: 'Delivered' }).select('Price'),
+      Payments.findOne({ user: userId }).sort({ createdAt: -1 }),
+      Payments.findOne({ user: userId }).sort({ createdAt: -1 }),
+      Payments.findOne({ user: userId }).sort({ createdAt: -1 }),
+      PlanRequest.findOne({ user: userId }).sort({ createdAt: -1 })
     ]);
 
     // Calculate totals
@@ -84,6 +93,11 @@ exports.allusers = async (req, res) => {
       plan_name: user.plan_name || "No Plan",
       totalSales,
       totalRepairs,
+      subscription,
+      matchedPackage,
+      latestPayment,
+      userPlan,
+      isUser: user.role === 'user',
       success_msg: req.flash("success_msg"),
       error_msg: req.flash("error_msg"),
     });

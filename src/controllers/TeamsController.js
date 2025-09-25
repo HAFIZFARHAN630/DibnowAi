@@ -70,7 +70,7 @@ exports.SelectTeam = async (req, res) => {
 exports.addteams = async (req, res) => {
   try {
     const { name, email, address, phone, department, role } = req.body;
-    const userId = req.session.userId;
+    const userId = req.userId || req.session.userId;
 
     const newTeamMember = new AddUser({
       name,
@@ -208,7 +208,7 @@ exports.showAddTeamMemberForm = async (req, res) => {
 exports.addAdminTeamMember = async (req, res) => {
   try {
     const { Username, Email, password, Number, role, department } = req.body;
-    const userId = req.userId;
+    const userId = req.userId || req.session.userId;
 
     const newAdminTeamMember = new AddUser({
       name: Username,
@@ -226,5 +226,142 @@ exports.addAdminTeamMember = async (req, res) => {
     console.error("Error creating admin team member:", error.message);
     req.flash("error_msg", "Failed to create team member. Please try again.");
     res.redirect("/AdminTeam");
+  }
+};
+
+// Show Add Team Form for Users
+exports.addTeamForm = async (req, res) => {
+  try {
+    const userId = req.userId;
+
+    const user = await User.findById(userId).select(
+      "first_name last_name user_img role plan_name status denial_reason"
+    );
+
+    if (!user) {
+      return res.redirect("/sign_in");
+    }
+
+    // Get notification data for admin
+    let notifications = [];
+    let unreadCount = 0;
+    if (user.role === "admin") {
+      const Notification = require("../models/notification");
+      notifications = await Notification.find().sort({ timestamp: -1 }).limit(10);
+      unreadCount = await Notification.countDocuments({ isRead: false });
+    }
+
+    res.render("team/add-team", {
+      profileImagePath: user.user_img || "/uploads/default.png",
+      firstName: user.first_name,
+      lastName: user.last_name,
+      isUser: user.role === "user",
+      plan_name: user.plan_name || "No Plan",
+      status: user.status,
+      reson: user.denial_reason,
+      notifications: notifications,
+      unreadCount: unreadCount,
+      message: null
+    });
+  } catch (error) {
+    console.error("Error loading add team form:", error.message);
+    res.redirect("/index");
+  }
+};
+
+// Create Team Member with Plan Limits
+exports.createTeam = async (req, res) => {
+  try {
+    const { name, email, role } = req.body;
+    const userId = req.userId;
+
+    if (!name || !email || !role) {
+      req.flash("error_msg", "All fields are required.");
+      return res.redirect("/team/add");
+    }
+
+    // Get user to check plan limits
+    const user = await User.findById(userId).select("plan_name");
+    if (!user) {
+      req.flash("error_msg", "User not found.");
+      return res.redirect("/team/add");
+    }
+
+    // Check plan limits
+    const planLimits = {
+      'FREE': 2,
+      'BASIC': 6,
+      'STANDARD': 10,
+      'PREMIUM': Infinity
+    };
+
+    const userLimit = planLimits[user.plan_name] || 0;
+
+    // Count existing team members for this user
+    const existingMembersCount = await AddUser.countDocuments({ user_id: userId });
+
+    if (existingMembersCount >= userLimit) {
+      req.flash("error_msg", "You have reached your team member limit. Please upgrade.");
+      return res.redirect("/team/add");
+    }
+
+    // Create new team member
+    const newTeamMember = new AddUser({
+      name,
+      email,
+      role: role || 'Team Member',
+      user_id: userId
+    });
+
+    await newTeamMember.save();
+    req.flash("success_msg", "Team member added successfully!");
+    res.redirect("/team/list");
+  } catch (error) {
+    console.error("Error creating team member:", error.message);
+    req.flash("error_msg", "Failed to add team member. Please try again.");
+    res.redirect("/team/add");
+  }
+};
+
+// List User's Team Members
+exports.listTeams = async (req, res) => {
+  try {
+    const userId = req.userId;
+
+    const user = await User.findById(userId).select(
+      "first_name last_name user_img role plan_name status denial_reason"
+    );
+
+    if (!user) {
+      return res.redirect("/sign_in");
+    }
+
+    // Fetch user's team members
+    const teamMembers = await AddUser.find({ user_id: userId });
+
+    // Get notification data for admin
+    let notifications = [];
+    let unreadCount = 0;
+    if (user.role === "admin") {
+      const Notification = require("../models/notification");
+      notifications = await Notification.find().sort({ timestamp: -1 }).limit(10);
+      unreadCount = await Notification.countDocuments({ isRead: false });
+    }
+
+    res.render("team/userAllTeam", {
+      users: teamMembers,
+      profileImagePath: user.user_img || "/uploads/default.png",
+      firstName: user.first_name,
+      lastName: user.last_name,
+      isUser: user.role === "user",
+      plan_name: user.plan_name || "No Plan",
+      status: user.status,
+      reson: user.denial_reason,
+      notifications: notifications,
+      unreadCount: unreadCount
+    });
+  } catch (error) {
+    console.error("Error fetching user teams:", error.message);
+    res.redirect("/index");
   }
 };

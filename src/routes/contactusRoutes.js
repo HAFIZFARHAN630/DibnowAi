@@ -5,16 +5,19 @@ const {
   feedback,
   AllComplaint,
   UserComplaint,
+  AdminUserComplaints,
 } = require("../controllers/contactusController");
-const { isAuthenticated, setUserData } = require("../middlewares/authMiddleware");
 
 router.get("/contactUs", profile);
 router.post("/submit-feedback", feedback);
 
 // get the complaint of the user
-router.get("/complaint", isAuthenticated, setUserData, AllComplaint);
+router.get("/complaint", AllComplaint);
 
 // post the complaint of the user
 router.post("/complaint", UserComplaint);
+
+// admin route to view all user complaints
+router.get("/UserComplaint", AdminUserComplaints);
 
 module.exports = router;

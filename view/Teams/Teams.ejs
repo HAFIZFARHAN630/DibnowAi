@@ -16,10 +16,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
 
     <!-- Customized Bootstrap Stylesheet -->
-    <link href="bootstrap.css" rel="stylesheet">
+    <link href="/bootstrap.css" rel="stylesheet">
     <!-- Template Stylesheet -->
-    <link href="styles.css" rel="stylesheet">
-    <link href="styles1.css" rel="stylesheet">
+    <link href="/styles.css" rel="stylesheet">
+    <link href="/styles1.css" rel="stylesheet">
     <style>
       .body-wrapper {
       min-height: 100%;
@@ -442,12 +442,20 @@
                             <td style="color: #1f2324;"><span class="usr-role"><%= user.role || 'N/A' %></span></td>
                             <td>
                                 <div class="action-btn">
-                                    <button type="button" class="btn btn-link text-success edit" 
-                                            onclick="openEditModal('<%= user._id %>', '<%= user.name %>', '<%= user.email %>', '<%= user.phone %>', '<%= user.department || '' %>', '<%= user.role || '' %>')">
+                                    <button type="button" class="btn btn-link text-success edit"
+                                            data-id="<%= user._id %>"
+                                            data-name="<%= user.name %>"
+                                            data-email="<%= user.email %>"
+                                            data-phone="<%= user.phone %>"
+                                            data-department="<%= user.department || '' %>"
+                                            data-role="<%= user.role || '' %>"
+                                            onclick="openEditModal(this)">
                                         <i class="fa-solid fa-pen-to-square text-success"></i>
                                     </button>
-                                    <button type="button" class="btn btn-link text-danger p-0" 
-                                            onclick="deleteTeamMember('<%= user._id %>', '<%= user.name %>')">
+                                    <button type="button" class="btn btn-link text-danger p-0"
+                                            data-id="<%= user._id %>"
+                                            data-name="<%= user.name %>"
+                                            onclick="deleteTeamMember(this)">
                                         <i class="fa-solid fa-trash-can text-danger"></i>
                                     </button>
                                 </div>
@@ -541,10 +549,9 @@
 <!-- JavaScript Libraries -->
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
 
 <!-- Template Javascript -->
-<script src="js/main.js"></script>
+<script src="/js/main.js"></script>
 <script>
     // Team search functionality
     document.addEventListener('DOMContentLoaded', function() {
@@ -579,14 +586,21 @@ document.getElementById('departmentFilter').addEventListener('change', function(
 });
 
 // Open edit modal with pre-filled data
-function openEditModal(id, name, email, phone, department, role) {
+function openEditModal(button) {
+    const id = button.getAttribute('data-id');
+    const name = button.getAttribute('data-name');
+    const email = button.getAttribute('data-email');
+    const phone = button.getAttribute('data-phone');
+    const department = button.getAttribute('data-department');
+    const role = button.getAttribute('data-role');
+
     document.getElementById('updateTeamId').value = id;
     document.getElementById('updateName').value = name;
     document.getElementById('updateEmail').value = email;
     document.getElementById('updatePhone').value = phone;
     document.getElementById('updateDepartment').value = department;
     document.getElementById('updateRole').value = role;
-    
+
     const modal = new bootstrap.Modal(document.getElementById('updateTeamModal'));
     modal.show();
 }
@@ -640,10 +654,13 @@ document.getElementById('updateTeamForm').addEventListener('submit', function(e)
 });
 
 // Delete team member with confirmation
-function deleteTeamMember(id, name) {
+function deleteTeamMember(button) {
+    const id = button.getAttribute('data-id');
+    const name = button.getAttribute('data-name');
+
     if (confirm(`Are you sure you want to delete ${name}? This action cannot be undone.`)) {
         console.log('Deleting team member with ID:', id);
-        
+
         fetch(`/deleteteam/${id}`, {
             method: 'POST'
         })

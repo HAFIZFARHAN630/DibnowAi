@@ -8,6 +8,8 @@ const addUserSchema = new mongoose.Schema({
   phone: { type: String },
   department: { type: String },
   role: { type: String }
+}, {
+  timestamps: true // This adds createdAt and updatedAt fields
 });
 
 module.exports = mongoose.model("AddUser", addUserSchema);

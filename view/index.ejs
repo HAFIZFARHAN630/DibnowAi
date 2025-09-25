@@ -173,12 +173,97 @@
                 <i class="bi bi-layers-fill position-absolute" style="font-size: 6.5rem; color: rgba(123, 31, 162, 0.2); bottom: -36px; right: 10px; z-index: 1;"></i>
             </div>
         </div>
+        </div>
+        </div>
+
+
+        <!-- Plan Status Card -->
+       <% if (isUser) { %>
+<div class="container mt-4">
+    <div class="row">
+        <!-- Plan Status Block -->
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+            <div class="patient-card position-relative plan-status-card" style="background-color: #E8F5E8; overflow: hidden; border-radius: 10px;">
+                <div class="patient-card-header text-white p-2" style="background-color: #4CAF50; font-weight: bold;">Plan Status</div>
+                <div class="patient-card-body p-4 position-relative" style="font-size: 1.2rem; font-weight: bold;">
+                    <% if (userPlan && userPlan.planName) { %>
+                        <div class="plan-info">
+                            <div class="plan-name" style="color: #2E7D32; font-size: 1.1rem; margin-bottom: 8px;">
+                                <%= userPlan.planName %>
+                            </div>
+                            <div class="plan-status">
+                                <% if (userPlan.status === 'Active') { %>
+                                    <span class="badge bg-success">Active</span>
+                                <% } else if (userPlan.status === 'Expired') { %>
+                                    <span class="badge bg-danger">Expired</span>
+                                <% } else if (userPlan.status === 'Pending') { %>
+                                    <span class="badge bg-warning text-dark">Pending</span>
+                                <% } else if (userPlan.status === 'Paid') { %>
+                                    <span class="badge bg-info">Paid</span>
+                                <% } else { %>
+                                    <span class="badge bg-secondary"><%= userPlan.status %></span>
+                                <% } %>
+                            </div>
+                            <div class="plan-expiry text-muted mt-2" style="font-size: 0.8rem;">
+                                Expires: <%= new Date(userPlan.expiryDate).toLocaleDateString() %>
+                            </div>
+                        </div>
+                    <% } else { %>
+                        <div class="no-plan text-center text-muted">
+                            <div>No plan assigned yet</div>
+                            <small>Contact admin for plan assignment</small>
+                        </div>
+                    <% } %>
+                </div>
+                <i class="bi bi-calendar-check position-absolute" style="font-size: 4rem; color: rgba(76, 175, 80, 0.2); bottom: -20px; right: 10px;"></i>
+            </div>
+        </div>
+
+        <!-- Subscription Status Block -->
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+            <div class="patient-card position-relative subscription-status-card" style="background-color: #E8F5E8; overflow: hidden; border-radius: 10px;">
+                <div class="patient-card-header text-white p-2" style="background-color: #4CAF50; font-weight: bold;">Subscription Status</div>
+                <div class="patient-card-body p-4 position-relative" style="font-size: 1.2rem; font-weight: bold;">
+                    <% if (subscription && subscription.status === 'active') { %>
+                        <% if (subscription.invoice_status === 'unpaid') { %>
+                            <div style="color: #FF9800;">Active + Unpaid</div>
+                            <small class="text-muted">Please complete payment</small>
+                        <% } else if (subscription.invoice_status === 'paid') { %>
+                            <% const now = new Date(); %>
+                            <% const expiryDate = new Date(subscription.expiryDate); %>
+                            <% if (now > expiryDate) { %>
+                                <div style="color: #F44336;">Active + Paid + Expired</div>
+                                <small class="text-muted">Renew subscription</small>
+                            <% } else { %>
+                                <div style="color: #4CAF50;">Active + Paid + Valid</div>
+                                <small class="text-muted">Expires: <%= expiryDate.toLocaleDateString() %></small>
+                            <% } %>
+                        <% } %>
+                    <% } else if (subscription && subscription.status === 'expired') { %>
+                        <div style="color: #F44336;">Expired</div>
+                        <small class="text-muted">Subscription expired</small>
+                    <% } else if (subscription && subscription.status === 'pending') { %>
+                        <div style="color: #FF9800;">Pending Payment</div>
+                        <small class="text-muted">Payment under review</small>
+                    <% } else { %>
+                        <div class="text-muted">No Subscription</div>
+                        <small>Choose a plan</small>
+                    <% } %>
+                </div>
+                <i class="bi bi-credit-card position-absolute" style="font-size: 4rem; color: rgba(76, 175, 80, 0.2); bottom: -20px; right: 10px;"></i>
+            </div>
+        </div>
     </div>
 </div>
+<% } %>
+
+    
+
 
             <!-- Sale & Revenue End -->
 
             <!-- Quick Actions Section -->
+             <% if (isUser) { %>
             <div class="container-fluid px-4 py-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); margin: 20px 0; border-radius: 15px; box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);">
               <div class="quick-actions">
                 <div class="d-flex align-items-center mb-4">
@@ -243,6 +328,7 @@
                 </div>
               </div>
             </div>
+            <% } %>
 
             <style>
               .action-item:hover {

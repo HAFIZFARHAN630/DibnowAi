@@ -11,6 +11,9 @@ const {
   deleteteam,
   showAddTeamMemberForm,
   addAdminTeamMember,
+  addTeamForm,
+  createTeam,
+  listTeams,
 } = require("../controllers/TeamsController");
 
 router.get("/Teams", SelectTeam);
@@ -24,6 +27,11 @@ router.post("/AdminTeam", isAuthenticated, addAdminTeamMember);
 // Test routes without authentication first
 router.post("/updateteam", updateteam);
 router.post("/deleteteam/:id", deleteteam);
+
+// User team management routes
+router.get("/team/add", isAuthenticated, addTeamForm);
+router.post("/team/add", isAuthenticated, createTeam);
+router.get("/team/list", isAuthenticated, listTeams);
 
 // Add test routes to verify they work
 router.get("/test-update", (req, res) => {

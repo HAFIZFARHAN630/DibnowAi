@@ -1,5 +1,6 @@
 // authController.js
 const User = require("../models/user");
+const PlanRequest = require("../models/planRequest");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
   const { sendConfirmationEmail, sendForgotPasswordEmail, sendLogoutEmail } = require("../../emailService");
@@ -48,6 +49,24 @@ exports.signup = [
       });
 
       await newUser.save();
+
+      // Auto-assign Free Trial plan
+      const trialExpiryDate = new Date();
+      trialExpiryDate.setDate(trialExpiryDate.getDate() + 7); // 7 days trial
+
+      const freeTrialPlan = new PlanRequest({
+        user: newUser._id,
+        planName: "Free Trial",
+        status: "Active",
+        startDate: new Date(),
+        expiryDate: trialExpiryDate,
+        invoiceStatus: "Unpaid",
+        amount: 0,
+        description: "Free Trial Plan - 7 days access"
+      });
+
+      await freeTrialPlan.save();
+      console.log(`Free Trial plan assigned to user: ${newUser.email}`);
 
       // Create notification for registration
       if (req.app.locals.notificationService) {
@@ -169,6 +188,27 @@ exports.signin = [
       });
 
       res.cookie("auth_token", token, { httpOnly: true });
+
+      // Check if user has a plan, if not assign Free Trial
+      const existingPlan = await PlanRequest.findOne({ user: user._id });
+      if (!existingPlan) {
+        const trialExpiryDate = new Date();
+        trialExpiryDate.setDate(trialExpiryDate.getDate() + 7); // 7 days trial
+
+        const freeTrialPlan = new PlanRequest({
+          user: user._id,
+          planName: "Free Trial",
+          status: "Active",
+          startDate: new Date(),
+          expiryDate: trialExpiryDate,
+          invoiceStatus: "Unpaid",
+          amount: 0,
+          description: "Free Trial Plan - 7 days access"
+        });
+
+        await freeTrialPlan.save();
+        console.log(`Free Trial plan assigned to existing user: ${user.email}`);
+      }
 
       // Create notification for login
       if (req.app.locals.notificationService) {

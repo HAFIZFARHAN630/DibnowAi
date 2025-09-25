@@ -1,0 +1,2686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Add Team Member</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Icon Font Stylesheet -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="\bootstrap.css" rel="stylesheet">
+    <!-- Template Stylesheet -->
+    <link href="\styles.css" rel="stylesheet">
+    <link href="\styles1.css" rel="stylesheet">
+
+  
+</head>
+<style>
+    /* Global Theme Variables */
+    :root {
+      /* Brand Colors - Same for both themes */
+      --primary-color: #4F46E5;
+      --primary-dark: #3730A3;
+      --secondary-color: #10B981;
+      --accent-color: #F59E0B;
+      --danger-color: #EF4444;
+      --success-color: #22C55E;
+      --warning-color: #F59E0B;
+      --info-color: #3B82F6;
+
+      /* Light Theme Colors */
+      --bg-primary: #FFFFFF;
+      --bg-secondary: #F8FAFC;
+      --bg-tertiary: #F1F5F9;
+      --text-primary: #1E293B;
+      --text-secondary: #475569;
+      --text-tertiary: #64748B;
+      --border-primary: #E2E8F0;
+      --border-secondary: #CBD5E1;
+      --shadow-light: rgba(0, 0, 0, 0.1);
+      --shadow-medium: rgba(0, 0, 0, 0.15);
+      --shadow-heavy: rgba(0, 0, 0, 0.25);
+      --card-bg: #FFFFFF;
+      --navbar-bg: #FFFFFF;
+      --sidebar-bg: #FFFFFF;
+    }
+
+    /* Dark Theme Colors */
+    [data-theme="dark"] {
+      --bg-primary: #0F172A;
+      --bg-secondary: #1E293B;
+      --bg-tertiary: #334155;
+      --text-primary: #F8FAFC;
+      --text-secondary: #CBD5E1;
+      --text-tertiary: #94A3B8;
+      --border-primary: #334155;
+      --border-secondary: #475569;
+      --shadow-light: rgba(0, 0, 0, 0.3);
+      --shadow-medium: rgba(0, 0, 0, 0.4);
+      --shadow-heavy: rgba(0, 0, 0, 0.6);
+      --card-bg: #1E293B;
+      --navbar-bg: #0F172A;
+      --sidebar-bg: #1E293B;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    }
+
+    body {
+      background: var(--bg-secondary) !important;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--text-primary) !important;
+    }
+
+    .container-scroller {
+      background: var(--bg-secondary) !important;
+    }
+
+    .page-body-wrapper {
+      background: var(--bg-secondary) !important;
+    }
+
+    .main-panel {
+      background: var(--bg-secondary) !important;
+    }
+
+    .content-wrapper {
+      background: var(--bg-secondary) !important;
+    }
+
+    /* Modern Contact Us Styling */
+    
+    /* Hero Section */
+    .contact-hero-section {
+      position: relative;
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+      border-radius: 24px;
+      padding: 60px 20px;
+      text-align: center;
+      margin-bottom: 40px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px var(--shadow-medium);
+    }
+
+  #starRating i:hover,
+  #starRating i.hovered,
+  #starRating i.selected {
+    color: #fbbf24 !important;
+    transform: scale(1.1);
+  }
+
+  #starRating i.fa-solid {
+    color: #fbbf24 !important;
+  }
+
+  #starRating i {
+    transition: all 0.2s ease;
+  }
+
+  .form-control:focus {
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+  }
+
+  textarea.form-control::placeholder {
+    color: #adb5bd;
+  }
+
+
+    .hero-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-icon {
+      width: 80px;
+      height: 80px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .hero-icon i {
+      font-size: 36px;
+      color: white;
+    }
+
+    .hero-title {
+      font-size: 3rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 16px;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .hero-subtitle {
+      font-size: 1.2rem;
+      color: rgba(255, 255, 255, 0.9);
+      margin: 0;
+    }
+
+    /* Contact Cards Container */
+    .contact-cards-container {
+      padding: 0 20px;
+      margin-bottom: 40px;
+    }
+
+    /* Contact Cards */
+    .contact-card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 32px 24px;
+      text-align: center;
+      border: 1px solid var(--border-primary);
+      transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+      position: relative;
+      overflow: hidden;
+      height: 100%;
+      box-shadow: 0 4px 20px var(--shadow-light);
+    }
+
+    .contact-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+      transform: scaleX(0);
+      transition: transform 0.4s ease;
+    }
+
+    .contact-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .contact-card:hover {
+      transform: translateY(-12px);
+      box-shadow: 0 20px 40px var(--shadow-medium);
+    }
+
+    .card-header {
+      margin-bottom: 24px;
+    }
+
+    .contact-card-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .contact-card-icon::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 50%;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .contact-card:hover .contact-card-icon::before {
+      opacity: 1;
+    }
+
+    .contact-card-icon i {
+      font-size: 32px;
+      z-index: 2;
+      position: relative;
+      transition: all 0.4s ease;
+    }
+
+    .contact-card:hover .contact-card-icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    /* Individual card colors */
+    .whatsapp-card .contact-card-icon {
+      background: linear-gradient(135deg, #25D366, #128C7E);
+    }
+
+    .whatsapp-card .contact-card-icon i {
+      color: white;
+    }
+
+    .phone-card .contact-card-icon {
+      background: linear-gradient(135deg, #4F46E5, #7C3AED);
+    }
+
+    .phone-card .contact-card-icon i {
+      color: white;
+    }
+
+    .location-card .contact-card-icon {
+      background: linear-gradient(135deg, #EF4444, #DC2626);
+    }
+
+    .location-card .contact-card-icon i {
+      color: white;
+    }
+
+    .support-card .contact-card-icon {
+      background: linear-gradient(135deg, #F59E0B, #D97706);
+    }
+
+    .support-card .contact-card-icon i {
+      color: white;
+    }
+
+    .feedback-card .contact-card-icon {
+      background: linear-gradient(135deg, #10B981, #059669);
+    }
+
+    .feedback-card .contact-card-icon i {
+      color: white;
+    }
+
+    .chat-card .contact-card-icon {
+      background: linear-gradient(135deg, #3B82F6, #2563EB);
+    }
+
+    .chat-card .contact-card-icon i {
+      color: white;
+    }
+
+    .contact-card-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .contact-card-subtitle {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+
+    .card-content {
+      padding-top: 16px;
+    }
+
+    .contact-info {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 20px;
+    }
+
+    .contact-card-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 28px;
+      border-radius: 50px;
+      font-weight: 600;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 1rem;
+      min-width: 160px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .contact-card-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.6s ease;
+    }
+
+    .contact-card-btn:hover::before {
+      left: 100%;
+    }
+
+    /* Button specific colors */
+    .whatsapp-btn {
+      background: linear-gradient(135deg, #25D366, #128C7E);
+      color: white;
+    }
+
+    .whatsapp-btn:hover {
+      background: linear-gradient(135deg, #128C7E, #075E54);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(37, 211, 102, 0.3);
+    }
+
+    .phone-btn {
+      background: linear-gradient(135deg, #4F46E5, #7C3AED);
+      color: white;
+    }
+
+    .phone-btn:hover {
+      background: linear-gradient(135deg, #3730A3, #6D28D9);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+    }
+
+    .location-btn {
+      background: linear-gradient(135deg, #EF4444, #DC2626);
+      color: white;
+    }
+
+    .location-btn:hover {
+      background: linear-gradient(135deg, #DC2626, #B91C1C);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(239, 68, 68, 0.3);
+    }
+
+    .support-btn {
+      background: linear-gradient(135deg, #F59E0B, #D97706);
+      color: white;
+    }
+
+    .support-btn:hover {
+      background: linear-gradient(135deg, #D97706, #B45309);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3);
+    }
+
+    .feedback-btn {
+      background: linear-gradient(135deg, #10B981, #059669);
+      color: white;
+    }
+
+    .feedback-btn:hover {
+      background: linear-gradient(135deg, #059669, #047857);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+    }
+
+    .chat-btn {
+      background: linear-gradient(135deg, #3B82F6, #2563EB);
+      color: white;
+    }
+
+    .chat-btn:hover {
+      background: linear-gradient(135deg, #2563EB, #1D4ED8);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+    }
+
+    /* Phone Modal Styling */
+    .modern-modal {
+      background: var(--card-bg);
+      border: 1px solid var(--border-primary);
+      border-radius: 20px;
+      box-shadow: 0 20px 40px var(--shadow-medium);
+    }
+
+    .modern-modal-header {
+      background: var(--bg-tertiary);
+      border-bottom: 1px solid var(--border-primary);
+      border-radius: 20px 20px 0 0;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .modal-icon {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #4F46E5, #7C3AED);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+    }
+
+    .phone-modal-icon i {
+      font-size: 24px;
+      color: white;
+    }
+
+    .modal-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 0;
+    }
+
+    .modern-close-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: rgba(0, 0, 0, 0.1);
+      border-radius: 50%;
+      padding: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .modern-close-btn:hover {
+      background: rgba(239, 68, 68, 0.1);
+      transform: scale(1.1);
+    }
+
+    .phone-display {
+      padding: 20px;
+    }
+
+    .phone-icon-large {
+      font-size: 48px;
+      color: var(--primary-color);
+      margin-bottom: 16px;
+    }
+
+    .phone-number {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+    }
+
+    .phone-description {
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+    }
+
+    .business-hours {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      padding: 12px 20px;
+      background: var(--bg-tertiary);
+      border-radius: 12px;
+      margin: 0 auto;
+      max-width: fit-content;
+    }
+
+    .business-hours i {
+      color: var(--primary-color);
+    }
+
+    /* Social Media Section */
+    .social-section {
+      background: var(--card-bg);
+      border-radius: 24px;
+      padding: 40px 20px;
+      margin: 40px 20px;
+      border: 1px solid var(--border-primary);
+      box-shadow: 0 8px 32px var(--shadow-light);
+    }
+
+    .social-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .social-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .social-subtitle {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+
+    .social-icons-modern {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+
+    .social-link {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none;
+      transition: all 0.4s ease;
+      padding: 20px;
+      border-radius: 16px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      min-width: 120px;
+    }
+
+    .social-link:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 24px var(--shadow-medium);
+    }
+
+    .social-icon-wrapper {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+      transition: all 0.4s ease;
+    }
+
+    .social-icon-wrapper i {
+      font-size: 28px;
+      color: white;
+    }
+
+    .social-label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      transition: color 0.3s ease;
+    }
+
+    /* Individual social media colors */
+    .social-link.facebook .social-icon-wrapper {
+      background: linear-gradient(135deg, #1877F2, #166FE5);
+    }
+
+    .social-link.facebook:hover .social-icon-wrapper {
+      background: linear-gradient(135deg, #166FE5, #1464D6);
+    }
+
+    .social-link.instagram .social-icon-wrapper {
+      background: linear-gradient(135deg, #E4405F, #C13584, #833AB4);
+    }
+
+    .social-link.instagram:hover .social-icon-wrapper {
+      background: linear-gradient(135deg, #C13584, #833AB4, #5851DB);
+    }
+
+    .social-link.youtube .social-icon-wrapper {
+      background: linear-gradient(135deg, #FF0000, #CC0000);
+    }
+
+    .social-link.youtube:hover .social-icon-wrapper {
+      background: linear-gradient(135deg, #CC0000, #990000);
+    }
+
+    .social-link.linkedin .social-icon-wrapper {
+      background: linear-gradient(135deg, #0A66C2, #004182);
+    }
+
+    .social-link.linkedin:hover .social-icon-wrapper {
+      background: linear-gradient(135deg, #004182, #003366);
+    }
+
+    .social-link.tiktok .social-icon-wrapper {
+      background: linear-gradient(135deg, #000000, #333333);
+    }
+
+    .social-link.tiktok:hover .social-icon-wrapper {
+      background: linear-gradient(135deg, #333333, #FF0050);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 2.2rem;
+      }
+      
+      .hero-subtitle {
+        font-size: 1rem;
+      }
+      
+      .contact-hero-section {
+        padding: 40px 15px;
+        margin: 0 10px 30px;
+      }
+      
+      .contact-cards-container {
+        padding: 0 10px;
+      }
+      
+      .contact-card {
+        padding: 24px 16px;
+        margin-bottom: 20px;
+      }
+      
+      .contact-card-title {
+        font-size: 1.3rem;
+      }
+      
+      .contact-card-btn {
+        padding: 12px 24px;
+        min-width: 140px;
+        font-size: 0.9rem;
+      }
+      
+      .social-section {
+        margin: 30px 10px;
+        padding: 30px 15px;
+      }
+      
+      .social-title {
+        font-size: 1.7rem;
+      }
+      
+      .social-icons-modern {
+        gap: 16px;
+      }
+      
+      .social-link {
+        min-width: 100px;
+        padding: 16px 12px;
+      }
+      
+      .social-icon-wrapper {
+        width: 50px;
+        height: 50px;
+      }
+      
+      .social-icon-wrapper i {
+        font-size: 24px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .hero-title {
+        font-size: 1.8rem;
+      }
+      
+      .contact-card:hover {
+        transform: translateY(-6px);
+      }
+      
+      .social-icons-modern {
+        gap: 12px;
+      }
+      
+      .social-link {
+        min-width: 80px;
+        padding: 12px 8px;
+      }
+      
+      .social-icon-wrapper {
+        width: 45px;
+        height: 45px;
+      }
+      
+      .social-icon-wrapper i {
+        font-size: 20px;
+      }
+      
+      .social-label {
+        font-size: 0.8rem;
+      }
+    }
+
+    /* Prevent horizontal scrolling */
+    .container-fluid {
+      overflow-x: hidden;
+    }
+    
+    .row {
+      margin-left: 0;
+      margin-right: 0;
+    }
+    
+    .col-lg-4, .col-md-6, .col-sm-6 {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+
+    /* Card styling for dark theme */
+    .card {
+      background: var(--card-bg) !important;
+      border: 1px solid var(--border-primary) !important;
+      color: var(--text-primary) !important;
+    }
+
+    .card-header {
+      background: var(--bg-tertiary) !important;
+      border-bottom: 1px solid var(--border-primary) !important;
+      color: var(--text-primary) !important;
+    }
+
+    .card-body {
+      background: var(--card-bg) !important;
+      color: var(--text-primary) !important;
+    }
+
+    /* Form elements dark theme */
+    .form-control {
+      background: var(--bg-tertiary) !important;
+      border: 1px solid var(--border-primary) !important;
+      color: var(--text-primary) !important;
+    }
+
+    .form-control:focus {
+      background: var(--bg-tertiary) !important;
+      border-color: var(--primary-color) !important;
+      color: var(--text-primary) !important;
+      box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.25) !important;
+    }
+     
+    .contact-btn {
+      width: 100%;
+      border: none;
+      font-weight: bold;
+      color: red;
+      padding: 10px;
+      border-radius: 5px;
+      display: block;
+      text-align: center;
+      text-decoration: none;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .social-icons {
+      text-align: center;
+    }
+
+    .social-icons a {
+      color: white;
+      font-size: 24px;
+      margin: 0 10px;
+    }
+
+    .shadow-box {
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+      padding: 20px;
+      background: white;
+
+    }
+
+    .contact-icon {
+      width: 70px;
+      height: 70px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 15px;
+      background: white;
+      box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+      margin: auto;
+    }
+
+    .social-container {
+      background: #e9ecef;
+      border-radius: 15px;
+      padding: 15px;
+      text-align: center;
+    }
+
+    .social-icons a {
+      font-size: 24px;
+      margin: 10px;
+      color: #333;
+      transition: 0.3s;
+    }
+
+    .social-icons a:hover {
+      color: #007bff;
+    }
+
+
+
+    #phone-number {
+      display: none;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      margin-top: 10px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    #phone-number.show {
+      display: block;
+      opacity: 1;
+      animation: fadeInScale 0.5s ease;
+    }
+
+    @keyframes fadeInScale {
+      from {
+        transform: scale(0.9);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .button-wrapper {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: nowrap;
+    }
+
+    /* Ensure they stay side by side on all screen sizes */
+    @media (max-width: 576px) {
+      .button-wrapper {
+        flex-direction: row !important;
+        margin-left: 153px;
+      }
+
+      .button-wrapper .btn {
+        width: auto !important;
+      }
+    }
+
+    :root {
+      --primary: #6c5ce7;
+      --primary-light: #a29bfe;
+      --secondary: #00cec9;
+      --success: #00b894;
+      --warning: #fdcb6e;
+      --danger: #d63031;
+      --dark: #2d3436;
+      --light: #f5f6fa;
+      --gray: #dfe6e9;
+      --card-bg: rgba(255, 255, 255, 0.9);
+      --glass-effect: rgba(255, 255, 255, 0.15);
+    }
+
+    /* Professional Complaint Modal Styling */
+    .professional-complaint-modal {
+      background: var(--card-bg);
+      border: none;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px var(--shadow-heavy);
+      overflow: visible;
+      max-height: 90vh;
+    }
+
+    .professional-modal-header {
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+      color: white;
+      padding: 24px;
+      border-bottom: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    /* Ensure close button is positioned correctly */
+    .professional-modal-header .professional-close-btn {
+      position: absolute;
+      top: 50%;
+      right: 24px;
+      transform: translateY(-50%);
+      transform-origin: center;
+      flex-shrink: 0;
+    }
+
+    .modal-title-container {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .complaint-modal-icon {
+      width: 56px;
+      height: 56px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .complaint-modal-icon i {
+      font-size: 24px;
+      color: white;
+    }
+
+    .modal-title-text h4 {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: white;
+    }
+
+    .modal-subtitle {
+      margin: 0;
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .professional-close-btn {
+      background: rgba(255, 255, 255, 0.3) !important;
+      border-radius: 50% !important;
+      padding: 10px !important;
+      transition: all 0.3s ease !important;
+      border: 2px solid rgba(255, 255, 255, 0.5) !important;
+      width: 40px !important;
+      height: 40px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      color: white !important;
+      font-size: 18px !important;
+      font-weight: bold !important;
+      z-index: 1000 !important;
+      backdrop-filter: blur(10px) !important;
+    }
+
+    .professional-close-btn:hover {
+      background: rgba(239, 68, 68, 0.9) !important;
+      border-color: rgba(239, 68, 68, 0.8) !important;
+      transform: translateY(-50%) scale(1.1) !important;
+      color: white !important;
+      box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4) !important;
+    }
+
+    .professional-modal-body {
+      padding: 32px;
+      background: var(--card-bg);
+      overflow-y: auto;
+      max-height: calc(90vh - 160px);
+    }
+
+    .complaint-form-container {
+      max-width: 100%;
+    }
+
+    .professional-complaint-form {
+      width: 100%;
+    }
+
+    /* Form Sections */
+    .form-section {
+      margin-bottom: 32px;
+      padding: 24px;
+      background: var(--bg-tertiary);
+      border-radius: 16px;
+      border: 1px solid var(--border-primary);
+      transition: all 0.3s ease;
+    }
+
+    .form-section:hover {
+      box-shadow: 0 4px 12px var(--shadow-light);
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--border-secondary);
+    }
+
+    .section-title i {
+      color: var(--primary-color);
+      font-size: 1.1rem;
+    }
+
+    /* Form Groups */
+    .professional-form-group {
+      margin-bottom: 20px;
+    }
+
+    .professional-form-label {
+      display: block;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+    }
+
+    /* Input Wrappers */
+    .input-wrapper, .select-wrapper, .textarea-wrapper {
+      position: relative;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-secondary);
+      font-size: 1rem;
+      z-index: 2;
+    }
+
+    .select-arrow {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-secondary);
+      pointer-events: none;
+      font-size: 0.8rem;
+    }
+
+    /* Form Controls */
+    .professional-form-control, .professional-form-select {
+      width: 100%;
+      padding: 14px 16px 14px 48px;
+      border: 2px solid var(--border-primary);
+      border-radius: 12px;
+      background: var(--card-bg);
+      color: var(--text-primary);
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      outline: none;
+    }
+
+    .professional-form-select {
+      padding-right: 48px;
+      appearance: none;
+      cursor: pointer;
+    }
+
+    .professional-form-textarea {
+      width: 100%;
+      padding: 16px;
+      border: 2px solid var(--border-primary);
+      border-radius: 12px;
+      background: var(--card-bg);
+      color: var(--text-primary);
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      outline: none;
+      resize: vertical;
+      min-height: 120px;
+      font-family: inherit;
+    }
+
+    .professional-form-control:focus, 
+    .professional-form-select:focus, 
+    .professional-form-textarea:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    .professional-form-control::placeholder,
+    .professional-form-textarea::placeholder {
+      color: var(--text-secondary);
+      opacity: 0.7;
+    }
+
+    /* Character Count */
+    .character-count {
+      text-align: right;
+      margin-top: 8px;
+    }
+
+    .character-count small {
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+    }
+
+    /* Submit Section */
+    .submit-section {
+      background: var(--bg-secondary) !important;
+      border: 2px dashed var(--border-secondary);
+      text-align: center;
+    }
+
+    .submit-info {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 20px;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .submit-info i {
+      color: var(--primary-color);
+    }
+
+    .professional-submit-btn {
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+      color: white;
+      border: none;
+      padding: 16px 32px;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 200px;
+      justify-content: center;
+    }
+
+    .professional-submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4);
+    }
+
+    .professional-submit-btn:active {
+      transform: translateY(0);
+    }
+
+    .professional-submit-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.6s ease;
+    }
+
+    .professional-submit-btn:hover::before {
+      left: 100%;
+    }
+
+    /* Fix Modal Width - Override External CSS */
+    #myModal .modal-dialog,
+    #myModal.modal .modal-dialog,
+    .modal#myModal .modal-dialog,
+    #myModal .complaint-modal-dialog,
+    .complaint-modal-dialog,
+    #feedbackModal .modal-dialog,
+    #feedbackModal.modal .modal-dialog,
+    .modal#feedbackModal .modal-dialog {
+      max-width: 650px !important;
+      width: auto !important;
+      margin: 1.75rem auto !important;
+      left: auto !important;
+      right: auto !important;
+      position: relative !important;
+      flex: 0 1 auto !important;
+      transform: none !important;
+    }
+
+    /* Ensure modal is properly centered */
+    #myModal.modal.fade .modal-dialog,
+    #myModal.modal.show .modal-dialog {
+      transform: translate(0, 0) !important;
+      -webkit-transform: translate(0, 0) !important;
+    }
+
+    /* Force container constraints */
+    #myModal .modal-dialog-centered {
+      display: flex !important;
+      align-items: center !important;
+      min-height: calc(100% - 3.5rem) !important;
+    }
+
+    /* Remove scroll from modal - Fix overflow issues */
+    #myModal.modal,
+    #feedbackModal.modal {
+      overflow: hidden !important;
+    }
+
+    #myModal .modal-dialog,
+    #myModal .complaint-modal-dialog,
+    #feedbackModal .modal-dialog {
+      max-height: 95vh !important;
+      overflow: visible !important;
+    }
+
+    #myModal .modal-content,
+    #feedbackModal .modal-content {
+      overflow: visible !important;
+      max-height: 95vh !important;
+    }
+
+    /* Nuclear CSS Override for Feedback Modal - Override External CSS */
+    #feedbackModal .modal-dialog,
+    #feedbackModal .modal-content {
+      background: transparent !important;
+      border: none !important;
+    }
+    
+    #feedbackModal .card,
+    #feedbackModal .card-body {
+      background: transparent !important;
+      color: #333 !important;
+      border: none !important;
+      box-shadow: none !important;
+    }
+
+    /* Remove all white backgrounds and shadows */
+    #feedbackModal .container,
+    #feedbackModal .form-floating,
+    #feedbackModal .form-floating > label,
+    #feedbackModal .col-12,
+    #feedbackModal .col-md-6,
+    #feedbackModal .row,
+    #feedbackModal .alert,
+    #feedbackModal .alert-light,
+    #feedbackModal .btn,
+    #feedbackModal .btn-success {
+      background: transparent !important;
+      box-shadow: none !important;
+      border: none !important;
+    }
+
+    /* Make sure button has proper background */
+    #feedbackModal .btn-success {
+      background: linear-gradient(135deg, #10b981, #34d399) !important;
+      color: white !important;
+    }
+
+    /* Force proper positioning for feedback modal elements */
+    #feedbackModal .card-header {
+      background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
+      color: white !important;
+      position: relative !important;
+      z-index: 1 !important;
+    }
+
+    #feedbackModal .card-body {
+      background: transparent !important;
+      color: #333 !important;
+      position: relative !important;
+      z-index: 1 !important;
+    }
+
+    /* Fix star rating positioning */
+    #feedbackModal #starRating {
+      position: relative !important;
+      z-index: 10 !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+      margin: 10px 0 !important;
+    }
+
+    /* Fix form labels and inputs */
+    #feedbackModal .form-label,
+    #feedbackModal label {
+      color: #333 !important;
+      font-weight: 600 !important;
+      margin-bottom: 8px !important;
+    }
+
+    #feedbackModal .form-control,
+    #feedbackModal input,
+    #feedbackModal textarea {
+      background: transparent !important;
+      color: #333 !important;
+      border: none !important;
+      border-radius: 8px !important;
+    }
+
+    #feedbackModal .form-control:focus,
+    #feedbackModal input:focus,
+    #feedbackModal textarea:focus {
+      border: none !important;
+      outline: none !important;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.3) !important;
+    }
+
+    /* Fix feedback modal close button - Force red hover */
+    #feedbackModal .btn-close,
+    #feedbackModal button[data-bs-dismiss="modal"] {
+      background: rgba(255, 255, 255, 0.3) !important;
+      border: none !important;
+      border-radius: 50% !important;
+      width: 40px !important;
+      height: 40px !important;
+      padding: 12px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      transition: all 0.3s ease !important;
+      color: #333 !important;
+      font-size: 18px !important;
+      position: absolute !important;
+      top: 20px !important;
+      right: 20px !important;
+      z-index: 1050 !important;
+      opacity: 1 !important;
+    }
+
+    #feedbackModal .btn-close:hover,
+    #feedbackModal button[data-bs-dismiss="modal"]:hover {
+      background: rgba(239, 68, 68, 0.9) !important;
+      color: white !important;
+      transform: scale(1.1) !important;
+      opacity: 1 !important;
+    }
+
+    /* Professional Close Button Styling - Enhanced Visibility */
+    .professional-close-btn {
+      position: relative;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.25) !important;
+      border: 2px solid rgba(255, 255, 255, 0.4) !important;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      opacity: 1 !important;
+      z-index: 10;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Override any btn-close styles */
+    .professional-close-btn.btn-close {
+      padding: 0 !important;
+      margin: 0 !important;
+      font-size: 0 !important;
+      background: rgba(255, 255, 255, 0.25) !important;
+      border: 2px solid rgba(255, 255, 255, 0.4) !important;
+      border-radius: 50% !important;
+      opacity: 1 !important;
+      width: 36px !important;
+      height: 36px !important;
+    }
+
+    .professional-close-btn:hover {
+      background: rgba(255, 255, 255, 0.4) !important;
+      border-color: rgba(255, 255, 255, 0.6) !important;
+      transform: scale(1.1);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .professional-close-btn:focus {
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5) !important;
+      outline: none !important;
+    }
+
+    /* Custom X icon using pseudo-elements */
+    .professional-close-btn::before,
+    .professional-close-btn::after {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 2px;
+      background: white;
+      border-radius: 1px;
+      transition: all 0.2s ease;
+    }
+
+    .professional-close-btn::before {
+      transform: rotate(45deg);
+    }
+
+    .professional-close-btn::after {
+      transform: rotate(-45deg);
+    }
+
+    .professional-close-btn:hover::before,
+    .professional-close-btn:hover::after {
+      width: 18px;
+      background: rgba(255, 255, 255, 0.95);
+      height: 2.5px;
+    }
+
+    /* Hide default Bootstrap close icon */
+    .professional-close-btn.btn-close:not(:disabled):not(.disabled):hover,
+    .professional-close-btn.btn-close:not(:disabled):not(.disabled):focus {
+      opacity: 1 !important;
+    }
+
+    /* Dark Theme Support for Modal */
+    [data-theme="dark"] .professional-complaint-modal {
+      background: var(--card-bg);
+    }
+
+    [data-theme="dark"] .form-section {
+      background: var(--bg-tertiary);
+      border-color: var(--border-primary);
+    }
+
+    [data-theme="dark"] .professional-form-control,
+    [data-theme="dark"] .professional-form-select,
+    [data-theme="dark"] .professional-form-textarea {
+      background: var(--bg-primary);
+      border-color: var(--border-primary);
+      color: var(--text-primary);
+    }
+
+    [data-theme="dark"] .input-icon,
+    [data-theme="dark"] .select-arrow {
+      color: var(--text-secondary);
+    }
+    [data-theme="dark"] p, [data-theme="dark"] span, [data-theme="dark"] .font-weight-bold{
+        
+    color: white !important;
+
+      }
+
+    /* Responsive Design for Modal */
+    @media (max-width: 768px) {
+      #myModal .modal-dialog,
+      #myModal .complaint-modal-dialog,
+      .complaint-modal-dialog {
+        max-width: 95% !important;
+        margin: 1rem auto !important;
+      }
+      
+      .professional-modal-body {
+        padding: 20px;
+      }
+      
+      .form-section {
+        padding: 16px;
+        margin-bottom: 20px;
+      }
+      
+      .professional-form-control, 
+      .professional-form-select {
+        padding: 12px 16px 12px 40px;
+      }
+      
+      .professional-submit-btn {
+        width: 100%;
+        padding: 14px 24px;
+      }
+      
+      .modal-title-container {
+        gap: 12px;
+      }
+      
+      .complaint-modal-icon {
+        width: 48px;
+        height: 48px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      #myModal .modal-dialog,
+      #myModal .complaint-modal-dialog,
+      .complaint-modal-dialog {
+        max-width: 98% !important;
+        margin: 0.5rem auto !important;
+      }
+      
+      .professional-modal-header {
+        padding: 20px;
+      }
+      
+      .modal-title-text h4 {
+        font-size: 1.3rem;
+      }
+      
+      .form-section {
+        padding: 12px;
+      }
+    }
+
+    .container-fluid.page-body-wrapper {
+      display: flex;
+      flex-direction: row;
+    }
+
+    .main-panel {
+      flex-grow: 1;
+      padding: 20px;
+      margin-left: 110px;
+      transition: margin-left 0.3s ease;
+    }
+
+    @media (max-width: 991px) {
+      .main-panel {
+        margin-left: 0;
+      }
+    }
+
+    .form-card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      animation: slideUp 0.8s ease forwards;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(50px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .form-header {
+      background: linear-gradient(90deg, var(--primary), var(--primary-light));
+      color: white;
+      padding: 12px;
+      border-radius: 15px;
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 23px;
+      font-weight: 600;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .form-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      animation: shine 2s infinite;
+    }
+
+    @keyframes shine {
+      0% {
+        left: -100%;
+      }
+
+      100% {
+        left: 100%;
+      }
+    }
+
+    .form-group {
+      position: relative;
+      margin-bottom: 30px;
+    }
+
+    .form-control,
+    .form-select {
+      width: 100%;
+      border: none;
+      border-bottom: 2px solid var(--gray);
+      background: transparent;
+      padding: 12px 0;
+      font-size: 1rem;
+      color: var(--dark);
+      transition: all 0.3s ease;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+      border-bottom-color: var(--primary);
+      outline: none;
+    }
+
+    .form-label {
+      position: absolute;
+      top: 12px;
+      left: 0;
+      font-weight: 500;
+      color: black;
+      pointer-events: none;
+      transition: all 0.3s ease;
+    }
+
+    .form-control:focus~.form-label,
+    .form-control:not(:placeholder-shown)~.form-label,
+    .form-select:focus~.form-label,
+    .form-select:not([value=""])~.form-label {
+      top: -20px;
+      left: 0;
+      font-size: 0.85rem;
+      color: var(--primary);
+    }
+
+    .form-control:focus~.form-label::after,
+    .form-control:not(:placeholder-shown)~.form-label::after,
+    .form-select:focus~.form-label::after,
+    .form-select:not([value=""])~.form-label::after {
+      content: '*';
+      color: var(--danger);
+      margin-left: 5px;
+    }
+
+    .form-select option {
+      background: var(--light);
+      color: var(--dark);
+    }
+
+    .btn-primary {
+      background: linear-gradient(90deg, var(--primary), var(--primary-light));
+      border: none;
+      padding: 15px;
+      border-radius: 50px;
+      font-weight: 600;
+      color: white;
+      width: 100%;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(108, 92, 231, 0.3);
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      animation: shine 2s infinite;
+    }
+
+    .error-message {
+      color: var(--danger);
+      font-size: 0.85rem;
+      margin-top: 5px;
+      display: none;
+    }
+
+    .input-error .error-message {
+      display: block;
+    }
+
+    .input-error .form-control,
+    .input-error .form-select {
+      border-bottom-color: var(--danger);
+    }
+
+    .form-icon {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray);
+      transition: color 0.3s ease;
+    }
+
+    .form-control:focus~.form-icon,
+    .form-select:focus~.form-icon {
+      color: var(--primary);
+    }
+
+    .form-header {
+      font-size: 1.5rem;
+      /* default size */
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      /* space between icon and text */
+      padding: 10px 15px;
+    }
+
+    /* Responsive adjustment for smaller screens */
+    @media (max-width: 576px) {
+      .form-header {
+        font-size: 1.2rem;
+        justify-content: center;
+        /* center on mobile */
+        text-align: center;
+      }
+    }
+  /* Comprehensive Mobile Fixes for Contact Us Page */
+  @media (max-width: 480px) {
+    /* Fix container spacing issues */
+    .container-scroller {
+      padding: 0 !important;
+    }
+    
+    .container-fluid {
+      padding: 8px !important;
+      margin: 0 !important;
+    }
+    
+    .page-body-wrapper {
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+      margin-top: 70px !important; /* Fix top spacing */
+      margin-bottom: 60px !important; /* Fix bottom spacing */
+    }
+    
+    /* Main content fixes */
+    .main-panel {
+      padding: 8px !important;
+      margin: 0 !important;
+    }
+    
+    .content-wrapper {
+      padding: 8px !important;
+      margin-bottom: 50px !important;
+    }
+    
+    /* Card and content fixes */
+    .card {
+      margin: 8px 0 20px 0 !important;
+      padding: 0 !important;
+    }
+    
+    .card-body {
+      padding: 12px !important;
+    }
+    
+    /* Fix form elements */
+    .form-group {
+      margin-bottom: 15px !important;
+    }
+    
+    .row {
+      margin: 0 !important;
+      padding: 0 4px !important;
+    }
+    
+    .col-md-6, .col-sm-6, .col-12 {
+      padding: 0 4px !important;
+      margin-bottom: 10px !important;
+    }
+    
+    /* Contact form specific fixes */
+    .contact-form {
+      padding: 12px !important;
+      margin-bottom: 40px !important;
+    }
+    
+    /* Bottom spacing for last elements */
+    .contact-info, .contact-details {
+      margin-bottom: 40px !important;
+      padding-bottom: 20px !important;
+    }
+  }
+
+  /* iPhone 5 SE and smaller screens specific fixes */
+  @media (max-width: 320px) {
+    .container-fluid {
+      padding: 4px !important;
+      max-width: 100% !important;
+      overflow-x: hidden !important;
+    }
+    
+    .page-body-wrapper {
+      margin-top: 80px !important; /* More top space */
+      margin-bottom: 80px !important; /* More bottom space */
+      padding: 0 2px !important; /* Minimal left-right padding */
+      width: 100% !important;
+      max-width: 320px !important;
+      overflow-x: hidden !important;
+    }
+    
+    .main-panel {
+      padding: 4px !important;
+      width: 100% !important;
+      max-width: 312px !important; /* Account for 4px padding each side */
+    }
+    
+    .content-wrapper {
+      padding: 4px !important;
+      margin-bottom: 60px !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+    }
+    
+    .card {
+      margin: 6px 0 25px 0 !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+    }
+    
+    .card-body {
+      padding: 8px !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+    }
+    
+    .row {
+      padding: 0 2px !important;
+      margin: 0 !important;
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+    
+    .col-md-6, .col-sm-6, .col-12 {
+      padding: 0 2px !important;
+      margin-bottom: 12px !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      flex: 0 0 100% !important;
+    }
+    
+    /* Fix buttons and form controls */
+    .btn {
+      font-size: 0.8rem !important;
+      padding: 6px 10px !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+      margin-bottom: 8px !important;
+    }
+    
+    .form-control {
+      font-size: 0.85rem !important;
+      padding: 6px !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+    }
+    
+    .form-group {
+      margin-bottom: 12px !important;
+      width: 100% !important;
+    }
+    
+    /* Fix form labels */
+    .form-label, label {
+      font-size: 0.8rem !important;
+      margin-bottom: 4px !important;
+    }
+    
+    /* Text sizing adjustments */
+    h1, h2, h3, h4, h5, h6 {
+      font-size: 0.9rem !important;
+      line-height: 1.2 !important;
+      margin-bottom: 8px !important;
+      word-wrap: break-word !important;
+    }
+    
+    p, span, small {
+      font-size: 0.75rem !important;
+      line-height: 1.3 !important;
+      word-wrap: break-word !important;
+    }
+    
+    /* Contact specific elements */
+    .contact-form {
+      padding: 6px !important;
+      margin-bottom: 50px !important;
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+    
+    .contact-info, .contact-details {
+      margin-bottom: 50px !important;
+      padding: 6px 6px 30px 6px !important;
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+    
+    /* Ensure last elements have proper bottom spacing */
+    .content-wrapper > *:last-child {
+      margin-bottom: 50px !important;
+    }
+  }
+
+  /* Additional fixes for medium mobile devices */
+  @media (max-width: 768px) and (min-width: 481px) {
+    .page-body-wrapper {
+      margin-top: 75px !important;
+      margin-bottom: 50px !important;
+      padding: 0 8px !important;
+    }
+    
+    .main-panel {
+      padding: 10px !important;
+    }
+    
+    .content-wrapper {
+      margin-bottom: 45px !important;
+      padding-bottom: 25px !important;
+    }
+  }
+
+  </style>
+
+<body style="background-color: #F3F3F9;">
+  <div class="container-scroller">
+     
+
+    <!-- Navbar Start -->
+    <%- include('../par/header.ejs') %>
+    <!-- Navbar End -->
+      <!-- partial -->
+      <div class="container-fluid page-body-wrapper" style="padding-left: 0 !important; padding-right: 0 !important;">
+        <!-- partial:partials/_settings-panel.html -->
+
+          <!-- partial:partials/_sidebar.html Start-->
+           <%- include('../par/sidebar.ejs') %>
+
+    
+    
+
+            <!-- partial -->
+
+        <div class="container">
+
+              <!-- sss --> <!-- sss --> <!-- sss --> <!-- sss -->
+              <% if (messages.success) { %>
+                <div class="position-relative" style="z-index: 1055;">
+                  <div class="d-flex justify-content-end position-absolute w-100"
+                    style="top: 10px; right: 0; z-index: 1055;">
+                    <div id="pusher-message-box" class="alert alert-success alert-dismissible fade show mt-3"
+                      role="alert" style="color: white;">
+                      <strong>Success:</strong>
+                      <%= messages.success %>
+                    </div>
+                  </div>
+                </div>
+                <% } %>
+
+                  <script>
+                    window.addEventListener('DOMContentLoaded', () => {
+                      const msgBox = document.getElementById('pusher-message-box');
+                      if (msgBox) {
+                        setTimeout(() => {
+                          msgBox.classList.remove('show');
+                          msgBox.classList.add('fade');
+                          setTimeout(() => msgBox.style.display = "none", 500);
+                        }, 4000);
+                      }
+                    });
+                  </script>
+
+                  <!-- Modern Contact Us Section -->
+                 <div class="container mt-4">
+
+                    <!-- Hero Section -->
+                    <div class="contact-hero-section">
+                      <div class="hero-background"></div>
+                      <div class="hero-content">
+                        <div class="hero-icon">
+                          <i class="fas fa-comments"></i>
+                        </div>
+                        <h1 class="hero-title">Get in Touch</h1>
+                        <p class="hero-subtitle">We're here to help and answer any question you might have</p>
+                      </div>
+                    </div>
+
+                    <!-- Contact Cards Section -->
+                    <div class="contact-cards-container">
+                      <div class="row g-4 justify-content-center">
+                        
+                        <!-- WhatsApp Card -->
+                        <div class="col-lg-4 col-md-6 col-sm-6">
+                          <div class="contact-card whatsapp-card">
+                            <div class="card-header">
+                              <div class="contact-card-icon whatsapp-icon">
+                                <i class="fab fa-whatsapp"></i>
+                              </div>
+                              <h3 class="contact-card-title">WhatsApp</h3>
+                              <p class="contact-card-subtitle">Quick messaging support</p>
+                            </div>
+                            <div class="card-content">
+                              <p class="contact-info">+44 7751 553879</p>
+                              <a href="https://api.whatsapp.com/send?phone=447751553879" class="contact-card-btn whatsapp-btn">
+                                <i class="fab fa-whatsapp"></i>
+                                <span>Send Message</span>
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Phone Card -->
+                        <div class="col-lg-4 col-md-6 col-sm-6">
+                          <div class="contact-card phone-card">
+                            <div class="card-header">
+                              <div class="contact-card-icon phone-icon">
+                                <i class="fas fa-phone"></i>
+                              </div>
+                              <h3 class="contact-card-title">Call Us</h3>
+                              <p class="contact-card-subtitle">Speak directly with our team</p>
+                            </div>
+                            <div class="card-content">
+                              <p class="contact-info">0306-9753003</p>
+                              <button class="contact-card-btn phone-btn" data-bs-toggle="modal" data-bs-target="#phoneModal">
+                                <i class="fas fa-phone"></i>
+                                <span>View Number</span>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Location Card -->
+                        <div class="col-lg-4 col-md-6 col-sm-6">
+                          <div class="contact-card location-card">
+                            <div class="card-header">
+                              <div class="contact-card-icon location-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                              </div>
+                              <h3 class="contact-card-title">Visit Us</h3>
+                              <p class="contact-card-subtitle">Find our office location</p>
+                            </div>
+                            <div class="card-content">
+                              <p class="contact-info">ClickTake Technologies</p>
+                              <a href="https://www.google.com/maps/place/ClickTake+Technologies/@30.0070286,71.5400609,17z/data=!3m1!4b1!4m6!3m5!1s0x393b3fb4470ae1c5:0x95b5e7dd986d4241!8m2!3d30.0070286!4d71.5400609!16s%2Fg%2F11s99_fc9t?entry=ttu&g_ep=EgoyMDI1MDIyNi4xIKXMDSoASAFQAw%3D%3D" 
+                                 class="contact-card-btn location-btn" target="_blank">
+                                <i class="fas fa-directions"></i>
+                                <span>Get Directions</span>
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Support Cards Row -->
+                        <div class="col-lg-4 col-md-6 col-sm-6">
+                          <div class="contact-card support-card">
+                            <div class="card-header">
+                              <div class="contact-card-icon support-icon">
+                                <i class="fas fa-exclamation-triangle"></i>
+                              </div>
+                              <h3 class="contact-card-title">Report Issue</h3>
+                              <p class="contact-card-subtitle">Submit your complaints</p>
+                            </div>
+                            <div class="card-content">
+                              <p class="contact-info">Technical & Billing Issues</p>
+                              <button class="contact-card-btn support-btn" data-bs-toggle="modal" data-bs-target="#myModal">
+                                <i class="fas fa-file-alt"></i>
+                                <span>Submit Complaint</span>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Feedback Card -->
+                        <div class="col-lg-4 col-md-6 col-sm-6">
+                          <div class="contact-card feedback-card">
+                            <div class="card-header">
+                              <div class="contact-card-icon feedback-icon">
+                                <i class="fas fa-star"></i>
+                              </div>
+                              <h3 class="contact-card-title">Feedback</h3>
+                              <p class="contact-card-subtitle">Share your experience</p>
+                            </div>
+                            <div class="card-content">
+                              <p class="contact-info">Rate & Review Our Service</p>
+                              <button class="contact-card-btn feedback-btn" data-bs-toggle="modal" data-bs-target="#feedbackModal">
+                                <i class="fas fa-comment-dots"></i>
+                                <span>Give Feedback</span>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Live Chat Card -->
+                        <div class="col-lg-4 col-md-6 col-sm-6">
+                          <div class="contact-card chat-card">
+                            <div class="card-header">
+                              <div class="contact-card-icon chat-icon">
+                                <i class="fas fa-comments"></i>
+                              </div>
+                              <h3 class="contact-card-title">Live Chat</h3>
+                              <p class="contact-card-subtitle">Instant support online</p>
+                            </div>
+                            <div class="card-content">
+                              <p class="contact-info">24/7 Chat Support</p>
+                              <a href="https://tawk.to/chat/659fdbaf0ff6374032bedfad/1hjs74a1c" target="_blank" class="contact-card-btn chat-btn">
+                                <i class="fas fa-comment"></i>
+                                <span>Start Chat</span>
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Phone Number Modal -->
+                  <div class="modal fade" id="phoneModal" tabindex="-1" aria-labelledby="phoneModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                      <div class="modal-content modern-modal">
+                        <div class="modal-header modern-modal-header">
+                          <div class="modal-icon phone-modal-icon">
+                            <i class="fas fa-phone"></i>
+                          </div>
+                          <h5 class="modal-title" id="phoneModalLabel">Contact Number</h5>
+                          <button type="button" class="btn-close modern-close-btn" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body text-center">
+                          <div class="phone-display">
+                            <i class="fas fa-phone phone-icon-large"></i>
+                            <h3 class="phone-number">0306-9753003</h3>
+                            <p class="phone-description">Call us during business hours for immediate assistance</p>
+                            <div class="business-hours">
+                              <i class="fas fa-clock"></i>
+                              <span>Monday - Friday: 9:00 AM - 6:00 PM</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered complaint-modal-dialog">
+                      <div class="modal-content professional-complaint-modal">
+                        
+                        <!-- Professional Modal Header -->
+                        <div class="modal-header professional-modal-header">
+                          <div class="modal-title-container">
+                            <div class="modal-icon complaint-modal-icon">
+                              <i class="fas fa-exclamation-circle"></i>
+                            </div>
+                            <div class="modal-title-text">
+                              <h4 class="modal-title" id="myModalLabel">Submit Complaint</h4>
+                              <p class="modal-subtitle">We're here to help resolve your concerns</p>
+                            </div>
+                          </div>
+                         <button type="button" class="btn-close btn-close-white professional-close-btn" data-bs-dismiss="modal" aria-label="Close" style="
+           background: rgba(255, 255, 255, 0.3) !important;
+           border-radius: 50% !important;
+           padding: 12px !important;
+           width: 40px !important;
+           height: 40px !important;
+           display: flex !important;
+           align-items: center !important;
+           justify-content: center !important;
+           transition: all 0.3s ease !important;
+           color: white !important;
+           font-size: 18px !important;
+           border: none !important;
+         " onmouseover="this.style.background='rgba(239, 68, 68, 0.9)'; this.style.color='white'; this.style.transform='scale(1.1)'" 
+           onmouseout="this.style.background='rgba(255, 255, 255, 0.3)'; this.style.color='white'; this.style.transform='scale(1)'"></button>
+
+                        </div>
+
+                        <!-- Professional Modal Body -->
+                        <div class="modal-body professional-modal-body">
+                          <div class="complaint-form-container">
+
+                            <form action="/complaint" method="POST" class="professional-complaint-form">
+                              
+                              <!-- Personal Information Section -->
+                              <div class="form-section">
+                                <h5 class="section-title">
+                                  <i class="fas fa-user"></i>
+                                  Personal Information
+                                </h5>
+                                <div class="row">
+                                  <div class="col-md-6">
+                                    <div class="professional-form-group">
+                                      <label for="username" class="professional-form-label">Full Name *</label>
+                                      <div class="input-wrapper">
+                                        <i class="fas fa-user input-icon"></i>
+                                        <input type="text" name="username" id="username" class="professional-form-control" 
+                                               required placeholder="Enter your full name">
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="col-md-6">
+                                    <div class="professional-form-group">
+                                      <label for="number" class="professional-form-label">Phone Number *</label>
+                                      <div class="input-wrapper">
+                                        <i class="fas fa-phone input-icon"></i>
+                                        <input type="number" name="number" id="number" class="professional-form-control" 
+                                               required placeholder="Enter your phone number">
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <!-- Complaint Details Section -->
+                              <div class="form-section">
+                                <h5 class="section-title">
+                                  <i class="fas fa-info-circle"></i>
+                                  Complaint Details
+                                </h5>
+                                <div class="row">
+                                  <div class="col-md-6">
+                                    <div class="professional-form-group">
+                                      <label for="department" class="professional-form-label">Department *</label>
+                                      <div class="select-wrapper">
+                                        <i class="fas fa-building input-icon"></i>
+                                        <select name="department" id="department" class="professional-form-select" required>
+                                          <option value="" disabled selected>Select Department</option>
+                                          <option value="Billing">Billing & Payments</option>
+                                          <option value="Sales">Sales & Packages</option>
+                                          <option value="Support">Technical Support</option>
+                                          <option value="New Connection">New Connection</option>
+                                          <option value="Other">Other Issues</option>
+                                        </select>
+                                        <i class="fas fa-chevron-down select-arrow"></i>
+                                      </div>
+                                    </div>cd
+                                  </div>
+                                  <div class="col-md-6">
+                                    <div class="professional-form-group">
+                                      <label for="Address" class="professional-form-label">Service Address *</label>
+                                      <div class="input-wrapper">
+                                        <i class="fas fa-map-marker-alt input-icon"></i>
+                                        <input type="text" name="Address" id="Address" class="professional-form-control" 
+                                               required placeholder="Enter your service address">
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <!-- Complaint Message Section -->
+                              <div class="form-section">
+                                <h5 class="section-title">
+                                  <i class="fas fa-comment-alt"></i>
+                                  Describe Your Issue
+                                </h5>
+                                <div class="professional-form-group">
+                                  <label for="Complaint" class="professional-form-label">Complaint Details *</label>
+                                  <div class="textarea-wrapper">
+                                    <textarea name="Complaint" id="Complaint" class="professional-form-textarea" 
+                                              required rows="5" placeholder="Please describe your issue in detail. The more information you provide, the better we can assist you."></textarea>
+                                  </div>
+                                  <div class="character-count">
+                                    <small class="text-muted">
+                                      <span id="charCount">0</span>/500 characters
+                                    </small>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <!-- Submit Section -->
+                              <div class="form-section submit-section">
+                                <div class="submit-info">
+                                  <i class="fas fa-clock"></i>
+                                  <span>We typically respond within 24-48 hours</span>
+                                </div>
+                                <button type="submit" class="professional-submit-btn">
+                                  <i class="fas fa-paper-plane"></i>
+                                  <span>Submit Complaint</span>
+                                  <div class="btn-loading" style="display: none;">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                  </div>
+                                </button>
+                              </div>
+
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                        <script>
+                          // Professional Complaint Modal JavaScript
+                          document.addEventListener('DOMContentLoaded', function() {
+                            
+                            // Character counter for complaint textarea
+                            const complaintTextarea = document.getElementById('Complaint');
+                            const charCountSpan = document.getElementById('charCount');
+                            
+                            if (complaintTextarea && charCountSpan) {
+                              complaintTextarea.addEventListener('input', function() {
+                                const currentLength = this.value.length;
+                                charCountSpan.textContent = currentLength;
+                                
+                                // Change color based on character count
+                                if (currentLength > 450) {
+                                  charCountSpan.style.color = 'var(--danger-color)';
+                                } else if (currentLength > 350) {
+                                  charCountSpan.style.color = 'var(--warning-color)';
+                                } else {
+                                  charCountSpan.style.color = 'var(--text-secondary)';
+                                }
+                              });
+                            }
+
+                            // Form submission with loading state
+                            const complaintForm = document.querySelector('.professional-complaint-form');
+                            const submitBtn = document.querySelector('.professional-submit-btn');
+                            const btnText = submitBtn ? submitBtn.querySelector('span') : null;
+                            const btnLoading = submitBtn ? submitBtn.querySelector('.btn-loading') : null;
+                            
+                            if (complaintForm && submitBtn) {
+                              complaintForm.addEventListener('submit', function(e) {
+                                // Show loading state
+                                if (btnText) btnText.style.display = 'none';
+                                if (btnLoading) btnLoading.style.display = 'flex';
+                                submitBtn.disabled = true;
+                                submitBtn.style.opacity = '0.7';
+                                
+                                // Add a slight delay to show the loading state
+                                setTimeout(() => {
+                                  // The form will submit naturally after this
+                                }, 500);
+                              });
+                            }
+
+                            // Enhanced form validation feedback
+                            const formInputs = document.querySelectorAll('.professional-form-control, .professional-form-select, .professional-form-textarea');
+                            formInputs.forEach(input => {
+                              // Add focus effects
+                              input.addEventListener('focus', function() {
+                                this.parentElement.classList.add('focused');
+                              });
+                              
+                              input.addEventListener('blur', function() {
+                                this.parentElement.classList.remove('focused');
+                                
+                                // Add validation styling
+                                if (this.hasAttribute('required') && !this.value.trim()) {
+                                  this.style.borderColor = 'var(--danger-color)';
+                                } else {
+                                  this.style.borderColor = 'var(--border-primary)';
+                                }
+                              });
+                              
+                              // Real-time validation
+                              input.addEventListener('input', function() {
+                                if (this.hasAttribute('required') && this.value.trim()) {
+                                  this.style.borderColor = 'var(--success-color)';
+                                }
+                              });
+                            });
+
+                            // Animate form sections on modal show
+                            const modal = document.getElementById('myModal');
+                            if (modal) {
+                              modal.addEventListener('shown.bs.modal', function() {
+                                const formSections = document.querySelectorAll('.form-section');
+                                formSections.forEach((section, index) => {
+                                  setTimeout(() => {
+                                    section.style.opacity = '0';
+                                    section.style.transform = 'translateY(20px)';
+                                    section.style.transition = 'all 0.5s ease';
+                                    
+                                    setTimeout(() => {
+                                      section.style.opacity = '1';
+                                      section.style.transform = 'translateY(0)';
+                                    }, 50);
+                                  }, index * 100);
+                                });
+                              });
+                            }
+                          });
+
+                          // Original functionality preservation
+                          const urlParams = new URLSearchParams(window.location.search);
+                          if (urlParams.get("submitted") === "true") {
+                            // Enhanced success message
+                            const modal = new bootstrap.Modal(document.getElementById('myModal'));
+                            
+                            // Show a better success message
+                            const successAlert = document.createElement('div');
+                            successAlert.className = 'alert alert-success alert-dismissible fade show position-fixed';
+                            successAlert.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+                            successAlert.innerHTML = `
+                              <div class="d-flex align-items-center">
+                                <i class="fas fa-check-circle me-2"></i>
+                                <div>
+                                  <strong>Success!</strong><br>
+                                  <small>Your complaint has been submitted successfully. We'll respond within 24-48 hours.</small>
+                                </div>
+                                <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+                              </div>
+                            `;
+                            document.body.appendChild(successAlert);
+                            
+                            // Auto remove after 6 seconds
+                            setTimeout(() => {
+                              if (successAlert.parentNode) {
+                                successAlert.parentNode.removeChild(successAlert);
+                              }
+                            }, 6000);
+                          }
+                        </script>
+
+
+
+                    <!-- feedback pop -->
+                    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel"
+                      aria-hidden="true" style="padding-right: 0% !important;">
+                      <div class="modal-dialog modal-lg modal-dialog-centered">
+                        <div class="modal-content p-4"
+                          style="background-color: #e9ecef00 !important; border: none; padding: 0% !important;">
+                          <div class="main-panel position-relative" style="padding: 0% !important;">
+
+                            <!-- Close Icon with Professional Styling -->
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+
+                            <div class="content-wrapper">
+                              <div class="form-card" style="margin-top: -39px; color: white;">
+
+                               <div class="container my-5">
+  <div class="card border-0 shadow-lg rounded-4">
+    <div class="card-header bg-primary text-white py-3 d-flex align-items-center rounded-top-4">
+      <i class="bi bi-bookmark-star-fill me-2 fs-5"></i>
+      <h5 class="mb-0">We Value Your Feedback</h5>
+    </div>
+
+    <div class="card-body px-4 py-5">
+      <form action="/submit-feedback" method="POST" class="row g-4">
+
+        <!-- User Info -->
+        <div class="col-md-6">
+          <div class="form-floating">
+            <input type="text" name="feedback_first_name" id="feedback_first_name" class="form-control" placeholder="Enter your first name" required>
+            <label for="feedback_first_name">First Name</label>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-floating">
+            <input type="text" name="feedback_last_name" id="feedback_last_name" class="form-control" placeholder="Enter your last name" required>
+            <label for="feedback_last_name">Last Name</label>
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="col-12">
+          <div class="form-floating">
+            <input type="email" name="feedback_email" id="feedback_email" class="form-control" placeholder="Enter your email address" required>
+            <label for="feedback_email">Email Address</label>
+          </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="col-12">
+          <div class="alert alert-light border fw-light small mb-0">
+            We would love to hear your thoughts, suggestions, concerns, or issues to help us improve.
+          </div>
+        </div>
+
+        <!-- Star Rating -->
+        <div class="col-12">
+          <label class="form-label fw-semibold mb-3">Rate Your Experience:</label>
+          <div id="starRating" class="d-flex align-items-center" style="cursor: pointer; gap: 8px;">
+            <i class="fa-regular fa-star text-warning" data-rating="1" style="font-size: 1.8rem; transition: all 0.2s ease;"></i>
+            <i class="fa-regular fa-star text-warning" data-rating="2" style="font-size: 1.8rem; transition: all 0.2s ease;"></i>
+            <i class="fa-regular fa-star text-warning" data-rating="3" style="font-size: 1.8rem; transition: all 0.2s ease;"></i>
+            <i class="fa-regular fa-star text-warning" data-rating="4" style="font-size: 1.8rem; transition: all 0.2s ease;"></i>
+            <i class="fa-regular fa-star text-warning" data-rating="5" style="font-size: 1.8rem; transition: all 0.2s ease;"></i>
+            <span class="ms-3 text-muted" id="ratingText">(Click to rate)</span>
+          </div>
+          <input type="hidden" name="rating" id="rating" value="0">
+        </div>
+
+        <!-- Feedback Textarea -->
+        <div class="col-12">
+          <label for="feedback_text" class="form-label fw-semibold">Your Detailed Feedback</label>
+          <textarea name="feedback_text" id="feedback_text" class="form-control" rows="4"
+            placeholder="Please share your thoughts, suggestions, or concerns about our service..." style="resize: none;" required></textarea>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="col-12 text-end">
+          <button type="submit" class="btn btn-success px-4 py-2">
+            <i class="bi bi-check2-circle me-1"></i> Submit Feedback
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+                              </div>
+                            </div>
+                          </div> <!-- End .main-panel -->
+                        </div>
+                      </div>
+                    </div>
+
+
+
+                    <script>
+                      const stars = document.querySelectorAll('#starRating i');
+                      const ratingInput = document.getElementById('rating');
+                      const ratingText = document.getElementById('ratingText');
+
+                      // Rating text messages
+                      const ratingMessages = [
+                        '(Click to rate)',
+                        '⭐ Poor',
+                        '⭐⭐ Fair', 
+                        '⭐⭐⭐ Good',
+                        '⭐⭐⭐⭐ Very Good',
+                        '⭐⭐⭐⭐⭐ Excellent'
+                      ];
+
+                      // Initialize with no rating selected
+                      ratingInput.value = 0;
+                      ratingText.textContent = ratingMessages[0];
+
+                      // Star click functionality
+                      stars.forEach((star, index) => {
+                        star.addEventListener('click', () => {
+                          const ratingValue = index + 1;
+                          ratingInput.value = ratingValue;
+
+                          // Update visual stars
+                          stars.forEach((s, i) => {
+                            if (i < ratingValue) {
+                              s.classList.remove('fa-regular');
+                              s.classList.add('fa-solid');
+                            } else {
+                              s.classList.remove('fa-solid');
+                              s.classList.add('fa-regular');
+                            }
+                          });
+
+                          // Update rating text
+                          ratingText.textContent = ratingMessages[ratingValue];
+                        });
+
+                        // Add hover effects
+                        star.addEventListener('mouseenter', () => {
+                          const hoverValue = index + 1;
+                          stars.forEach((s, i) => {
+                            if (i < hoverValue) {
+                              s.classList.add('hovered');
+                            } else {
+                              s.classList.remove('hovered');
+                            }
+                          });
+                        });
+
+                        star.addEventListener('mouseleave', () => {
+                          stars.forEach(s => s.classList.remove('hovered'));
+                        });
+                      });
+                    </script>
+
+                    <!-- Social Media Section -->
+                    <div class="social-section">
+                      <div class="social-header">
+                        <h2 class="social-title">Connect With Us</h2>
+                        <p class="social-subtitle">Follow us on social media for updates and support</p>
+                      </div>
+                      <div class="social-icons-modern">
+                        <a href="https://www.facebook.com/clicktaketechnologies" class="social-link facebook" target="_blank">
+                          <div class="social-icon-wrapper">
+                            <i class="fab fa-facebook-f"></i>
+                          </div>
+                          <span class="social-label">Facebook</span>
+                        </a>
+                        <a href="https://www.instagram.com/clicktaketech/" class="social-link instagram" target="_blank">
+                          <div class="social-icon-wrapper">
+                            <i class="fab fa-instagram"></i>
+                          </div>
+                          <span class="social-label">Instagram</span>
+                        </a>
+                        <a href="https://www.youtube.com/@clicktaketechnologies/featured" class="social-link youtube" target="_blank">
+                          <div class="social-icon-wrapper">
+                            <i class="fab fa-youtube"></i>
+                          </div>
+                          <span class="social-label">YouTube</span>
+                        </a>
+                        <a href="https://pk.linkedin.com/company/click-take-technologies" class="social-link linkedin" target="_blank">
+                          <div class="social-icon-wrapper">
+                            <i class="fab fa-linkedin-in"></i>
+                          </div>
+                          <span class="social-label">LinkedIn</span>
+                        </a>
+                        <a href="https://www.tiktok.com/@clicktaketechnologiesuk" class="social-link tiktok" target="_blank">
+                          <div class="social-icon-wrapper">
+                            <i class="fab fa-tiktok"></i>
+                          </div>
+                          <span class="social-label">TikTok</span>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
+            </div>
+      </div>
+  </div>
+
+
+
+
+    <!-- plugins:js -->
+     </script>
+  <!-- JavaScript Libraries -->
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+ <!-- Template Javascript -->
+  <script src="js/main.js"></script>
+
+</body>
+
+</html>

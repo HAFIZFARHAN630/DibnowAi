@@ -1,0 +1,183 @@
+<!-- User Notification Container -->
+<% if (isUser) { %>
+<div class="dropdown-menu dropdown-menu-end notification-container border-0 shadow-lg rounded-4 m-0" id="userNotificationDropdown">
+    <!-- Header -->
+    <div class="notification-header d-flex justify-content-between align-items-center px-4 py-3">
+        <div class="d-flex align-items-center">
+            <i class="fas fa-bell text-white me-2"></i>
+            <h6 class="mb-0 text-white fw-bold">My Notifications</h6>
+        </div>
+        <div class="d-flex gap-2 align-items-center">
+            <button class="btn btn-sm btn-success rounded-pill px-3 text-white" id="markAllUserRead" title="Mark All Read">
+                <i class="fas fa-check-double me-1"></i>Read All
+            </button>
+            <button class="btn btn-sm btn-danger rounded-circle text-white" id="closeUserNotifications" title="Close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Notification List -->
+    <div class="notification-list" id="userNotificationList">
+        <% if (typeof userNotifications !== 'undefined' && userNotifications.length > 0) { %>
+            <% userNotifications.forEach(notification => { %>
+                <div class="notification-item <%= !notification.isRead ? 'unread' : '' %>" data-id="<%= notification._id %>">
+                    <div class="d-flex align-items-start p-3">
+                        <!-- Avatar -->
+                        <div class="notification-avatar me-3">
+                            <div class="avatar-circle bg-info text-white d-flex align-items-center justify-content-center">
+                                <%= notification.userName.charAt(0).toUpperCase() %>
+                            </div>
+                        </div>
+
+                        <!-- Content -->
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-start mb-1">
+                                <h6 class="notification-user fw-bold mb-0 text-dark">System</h6>
+                                <div class="d-flex align-items-center gap-2">
+                                    <% if (!notification.isRead) { %>
+                                        <span class="badge bg-primary rounded-pill px-2 py-1">New</span>
+                                    <% } %>
+                                </div>
+                            </div>
+                            <p class="notification-action mb-1 text-secondary"><%= notification.action %></p>
+                            <small class="notification-time text-muted">
+                                <i class="fas fa-clock me-1"></i>
+                                <%= new Date(notification.timestamp).toLocaleString() %>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        <% } else { %>
+            <div class="empty-notifications text-center py-5">
+                <i class="fas fa-bell-slash fa-3x text-muted mb-3"></i>
+                <h6 class="text-muted mb-2">No notifications yet</h6>
+                <p class="text-muted small mb-0">You'll see your notifications here when you perform actions</p>
+            </div>
+        <% } %>
+    </div>
+</div>
+
+<!-- User Notification Styles -->
+<style>
+.notification-container {
+    width: 420px;
+    max-height: 500px;
+    background: #ffffff;
+    border-radius: 16px !important;
+    overflow: hidden;
+}
+
+.notification-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 16px 16px 0 0;
+}
+
+.notification-list {
+    max-height: 400px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e0 #f7fafc;
+}
+
+.notification-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.notification-list::-webkit-scrollbar-track {
+    background: #f7fafc;
+}
+
+.notification-list::-webkit-scrollbar-thumb {
+    background: #cbd5e0;
+    border-radius: 3px;
+}
+
+.notification-item {
+    border-bottom: 1px solid #f1f5f9;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.notification-item:hover {
+    background-color: #f8fafc;
+}
+
+.notification-item.unread {
+    background: linear-gradient(90deg, #eff6ff 0%, #ffffff 100%);
+    border-left: 4px solid #3b82f6;
+}
+
+.notification-item:last-child {
+    border-bottom: none;
+}
+
+.avatar-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.notification-user {
+    color: #1e293b;
+    font-size: 14px;
+}
+
+.notification-action {
+    color: #64748b;
+    font-size: 13px;
+    margin: 0;
+}
+
+.notification-time {
+    font-size: 11px;
+    color: #94a3b8;
+}
+
+.empty-notifications {
+    padding: 3rem 2rem;
+}
+
+#closeUserNotifications {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    background: #dc2626 !important;
+    border: none;
+    color: white !important;
+}
+
+#closeUserNotifications:hover {
+    background: #b91c1c !important;
+    transform: scale(1.1);
+    color: white !important;
+}
+
+@media (max-width: 768px) {
+    .notification-container {
+        width: 320px;
+        max-height: 400px;
+    }
+
+    .notification-header {
+        padding: 1rem;
+    }
+
+    .notification-header h6 {
+        font-size: 14px;
+    }
+
+    .btn-sm {
+        font-size: 11px;
+        padding: 0.25rem 0.75rem;
+    }
+}
+</style>
+<% } %>

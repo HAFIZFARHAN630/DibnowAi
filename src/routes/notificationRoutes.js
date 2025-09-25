@@ -1,10 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const { getNotifications, markAsRead } = require("../controllers/notificationController");
+const { getNotifications, markAsRead, markUserAsRead } = require("../controllers/notificationController");
 const { isAuthenticated, isAdmin } = require("../middlewares/authMiddleware");
 
 router.get("/api/notifications", isAuthenticated, isAdmin, getNotifications);
 router.post("/api/notifications/mark-read", isAuthenticated, isAdmin, markAsRead);
+router.post("/api/notifications/mark-user-read", isAuthenticated, markUserAsRead);
 router.delete("/api/notifications/:id", isAuthenticated, isAdmin, async (req, res) => {
   try {
     const Notification = require("../models/notification");

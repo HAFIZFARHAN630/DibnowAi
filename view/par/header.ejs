@@ -65,26 +65,20 @@
                                 <% } else if (isAdmin) { %>
                                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none" id="notificationBadge">0</span>
                                 <% } %>
+                                <% if (isUser && typeof userUnreadCount !== 'undefined' && userUnreadCount > 0) { %>
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="userNotificationBadge">
+                                        <%= userUnreadCount %>
+                                    </span>
+                                <% } else if (isUser) { %>
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none" id="userNotificationBadge">0</span>
+                                <% } %>
                             </i>
                             <span class="d-none d-lg-inline-flex text-dark">Notifications</span>
                         </a>
-                        
+
                         <%- include('notifications.ejs') %>
                         <% if (isUser) { %>
-                            <div class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0">
-                                <hr class="dropdown-divider">
-                               <a href="#" class="dropdown-item">
-                                   <h6 class="fw-normal mb-0"> </h6>
-                                   <small><%= typeof status !== 'undefined' ? status : '' %></small>
-                               </a>
-                               <hr class="dropdown-divider">
-                               <a href="#" class="dropdown-item">
-                                   <h6 class="fw-normal mb-0"> Denied</h6>
-                                   <small><%= typeof reson !== 'undefined' ? reson : '' %></small>
-                                </a>
-                            <hr class="dropdown-divider">
-                            <a href="#" class="dropdown-item text-center">See all notifications</a>
-                        </div>
+                            <%- include('userNotifications.ejs') %>
                         <% } %>
                     </div>
                     <div class="nav-item dropdown">
@@ -493,7 +487,51 @@
             attachEvents();
         });
         <% } %>
-        
+
+        // User Notification Management
+        <% if (isUser) { %>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mark all user notifications as read
+            document.getElementById('markAllUserRead')?.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                fetch('/api/notifications/mark-user-read', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'}
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        const badge = document.getElementById('userNotificationBadge');
+                        if (badge) {
+                            badge.textContent = '0';
+                            badge.classList.add('d-none');
+                        }
+                        document.querySelectorAll('#userNotificationList .notification-item.unread').forEach(item => {
+                            item.classList.remove('unread');
+                            const b = item.querySelector('.badge');
+                            if (b) b.remove();
+                        });
+                    }
+                });
+            });
+
+            // Close user notifications
+            document.getElementById('closeUserNotifications')?.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const dropdown = document.querySelector('#userNotificationDropdown');
+                const dropdownToggle = document.getElementById('notificationDropdown');
+                if (dropdown && dropdownToggle) {
+                    dropdown.classList.remove('show');
+                    dropdownToggle.setAttribute('aria-expanded', 'false');
+                    dropdownToggle.classList.remove('show');
+                    document.body.click();
+                }
+            });
+        });
+        <% } %>
+
         document.addEventListener('DOMContentLoaded', function() {
             const confirmText = document.getElementById('confirmText');
             const logoutBtn = document.getElementById('logoutBtn');

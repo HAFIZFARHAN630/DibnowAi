@@ -27,8 +27,9 @@ const inventoryRoutes = require("./src/routes/inventoryRoutes");
 const indexRoutes = require("./src/routes/indexRoutes");
 const pricingRoutes = require("./src/routes/pricingRoutes");
 const SellRoutes = require("./src/routes/sellRoutes");
-const TeamsRoutes = require("./src/routes/TeamsRoutes");
-const requestRoutes = require("./src/routes/requestRoutes");
+const AdminTeamsRoutes = require("./src/routes/AdminTeamsRoutes");
+const UserTeamsRoutes = require("./src/routes/UserTeamsRoutes");
+const requestRoutes = require("./src/routes/adminRequestroute");
 const notificationRoutes = require("./src/routes/notificationRoutes");
 const walletRoutes = require("./src/routes/walletRoutes");
 
@@ -37,6 +38,9 @@ const quranRoutes = require("./src/routes/quranRoutes");
 const prayerRoutes = require("./src/routes/prayerRoutes");
 const tasbeehRoutes = require("./src/routes/tasbeehRoutes");
 const weatherRoutes = require("./src/routes/weatherRoutes");
+const contactusRoutes = require("./src/routes/contactusRoutes");
+const ComplaintRoutes = require("./src/routes/ComplaintRoutes");
+const reviewRoutes = require("./src/routes/reviewRoutes");
 
 // Initialize Express app
 const app = express();
@@ -164,14 +168,25 @@ app.use("/", quranRoutes);
 app.use("/", prayerRoutes);
 app.use("/", tasbeehRoutes);
 app.use("/", weatherRoutes);
+app.use("/", contactusRoutes);
+app.use("/", ComplaintRoutes);
+app.use("/", reviewRoutes);
 
-// Add Teams routes with explicit logging
+// Add Admin Teams routes with explicit logging
 app.use("/", (req, res, next) => {
-  if (req.url.includes('team')) {
-    console.log('Teams route intercepted:', req.method, req.url);
+  if (req.url.includes('Team')) {
+    console.log('Admin Teams route intercepted:', req.method, req.url);
   }
   next();
-}, TeamsRoutes);
+}, AdminTeamsRoutes);
+
+// Add User Teams routes with explicit logging
+app.use("/", (req, res, next) => {
+  if (req.url.includes('team')) {
+    console.log('User Teams route intercepted:', req.method, req.url);
+  }
+  next();
+}, UserTeamsRoutes);
 
 // 404 Middleware with logging
 app.use((req, res) => {
