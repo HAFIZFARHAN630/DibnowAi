@@ -1,127 +1,556 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>User Complaint</title>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="" name="keywords">
-    <meta content="" name="description">
+     <meta charset="utf-8">
+     <title>Wallet Management</title>
+     <meta content="width=device-width, initial-scale=1.0" name="viewport">
+     <meta content="" name="keywords">
+     <meta content="" name="description">
 
-    <!-- Icon Font Stylesheet -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+     <!-- Favicon -->
+     <link rel="icon" href="public\images\DIB-NOW-512.png" type="image/x-icon">
 
-    <!-- Customized Bootstrap Stylesheet -->
-    <link href="\bootstrap.css" rel="stylesheet">
-    <!-- Template Stylesheet -->
-    <link href="\styles.css" rel="stylesheet">
-    <link href="\styles1.css" rel="stylesheet">
+     <!-- Icon Font Stylesheet -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
 
-  
-</head>
-<style>
-        .summary-card { background: #f8f9fa; border-radius: 10px; padding: 1.5rem; margin-bottom: 1.5rem; text-align: center; }
-        .table th { background-color: #e9ecef; }
-        .low-balance { background-color: #fff3cd; }
-        .btn-admin { border-radius: 5px; }
-    </style>
+     <!-- Customized Bootstrap Stylesheet -->
+     <link href="/bootstrap.css" rel="stylesheet">
+     <!-- Template Stylesheet -->
+     <link href="/styles.css" rel="stylesheet">
+     <link href="/styles1.css" rel="stylesheet">
+
+     <style>
+         .body-wrapper {
+             min-height: 100%;
+             display: flex;
+             flex-direction: column;
+         }
+
+         .btn-gradient {
+             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+             border: 2px solid rgba(16, 185, 129, 0.3);
+             border-radius: 15px;
+             color: white;
+             font-weight: 700;
+             padding: 12px 25px;
+             transition: all 0.3s ease;
+             box-shadow: 0 10px 30px rgba(16, 185, 129, 0.2);
+             text-transform: uppercase;
+             letter-spacing: 1px;
+         }
+
+         .btn-gradient:hover {
+             background: linear-gradient(135deg, #059669 0%, #047857 100%);
+             transform: translateY(-3px);
+             box-shadow: 0 15px 40px rgba(16, 185, 129, 0.3);
+             color: white;
+         }
+
+         /* Summary Cards */
+         .summary-card {
+             background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+             border-radius: 15px;
+             padding: 2rem;
+             margin-bottom: 1.5rem;
+             text-align: center;
+             border: 2px solid rgba(255, 255, 255, 0.8);
+             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+             transition: all 0.3s ease;
+         }
+
+         .summary-card:hover {
+             transform: translateY(-5px);
+             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+         }
+
+         .summary-card h5 {
+             color: #64748b;
+             font-size: 14px;
+             font-weight: 600;
+             text-transform: uppercase;
+             letter-spacing: 0.5px;
+             margin-bottom: 10px;
+         }
+
+         .summary-card h3 {
+             color: #1e293b;
+             font-size: 28px;
+             font-weight: 700;
+             margin: 0;
+         }
+
+         /* Search functionality */
+         #walletSearch {
+             border-radius: 25px;
+             background-color: #f8f9fa;
+             border: 2px solid #e9ecef;
+             color: #212529;
+             padding: 10px 20px;
+             font-size: 14px;
+             transition: all 0.3s ease;
+         }
+
+         #walletSearch:focus {
+             background-color: #ffffff;
+             border-color: #10b981;
+             box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25);
+             color: #212529;
+         }
+
+         #walletSearch::placeholder {
+             color: #6c757d;
+         }
+
+         .search-container {
+             position: relative;
+             margin-bottom: 20px;
+         }
+
+         .search-icon {
+             position: absolute;
+             left: 15px;
+             top: 50%;
+             transform: translateY(-50%);
+             color: #6c757d;
+             z-index: 10;
+         }
+
+         .search-input-wrapper {
+             position: relative;
+         }
+
+         .search-input-wrapper input {
+             padding-left: 45px;
+         }
+
+         /* Enhanced Table Design */
+         .table {
+             border-radius: 15px;
+             overflow: hidden;
+             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+             border: none;
+         }
+
+         .table thead th {
+             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+             color: white;
+             font-weight: 600;
+             text-transform: uppercase;
+             letter-spacing: 0.5px;
+             border: none;
+             padding: 20px 15px;
+             font-size: 14px;
+         }
+
+         .table tbody tr {
+             transition: all 0.3s ease;
+             border: none;
+         }
+
+         .table tbody tr:hover {
+             background-color: #f8f9ff;
+             transform: translateY(-2px);
+             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+         }
+
+         .table tbody td {
+             padding: 18px 15px;
+             border: none;
+             border-bottom: 1px solid #f0f0f0;
+             vertical-align: middle;
+         }
+
+         /* Plan Badges */
+         .plan-badge {
+             padding: 8px 16px;
+             border-radius: 20px;
+             font-weight: 600;
+             font-size: 12px;
+             text-transform: uppercase;
+             letter-spacing: 0.5px;
+             display: inline-block;
+             text-align: center;
+             min-width: 100px;
+         }
+
+         .plan-free-trial {
+             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+             color: white;
+             box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+         }
+
+         .plan-basic {
+             background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+             color: white;
+             box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+         }
+
+         .plan-standard {
+             background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+             color: white;
+             box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+         }
+
+         .plan-premium {
+             background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+             color: white;
+             box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+         }
+
+         .plan-default {
+             background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+             color: white;
+             box-shadow: 0 4px 15px rgba(107, 114, 128, 0.3);
+         }
+
+         /* Balance and Quota Badges */
+         .balance-badge {
+             padding: 6px 12px;
+             border-radius: 15px;
+             font-weight: 600;
+             font-size: 14px;
+         }
+
+         .balance-positive {
+             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+             color: white;
+         }
+
+         .balance-low {
+             background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+             color: white;
+         }
+
+         .balance-negative {
+             background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+             color: white;
+         }
+
+         .quota-badge {
+             padding: 6px 12px;
+             border-radius: 15px;
+             font-weight: 600;
+             font-size: 12px;
+         }
+
+         .quota-available {
+             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+             color: white;
+         }
+
+         .quota-exhausted {
+             background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+             color: white;
+         }
+
+         /* User Info Styling */
+         .user-name {
+             font-weight: 600;
+             color: #1f2937;
+             margin-bottom: 2px;
+         }
+
+         .user-email {
+             color: #6b7280;
+             font-size: 13px;
+         }
+
+         /* Button Styling */
+         .btn-action {
+             border-radius: 8px;
+             font-weight: 600;
+             padding: 8px 16px;
+             transition: all 0.3s ease;
+         }
+
+         .btn-action:hover {
+             transform: translateY(-2px);
+             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+         }
+
+         .table tbody tr.search-hidden {
+             display: none;
+         }
+
+         .no-results {
+             text-align: center;
+             padding: 40px;
+             color: #6b7280;
+         }
+
+         .no-results i {
+             font-size: 48px;
+             margin-bottom: 15px;
+             opacity: 0.5;
+         }
+
+         /* Responsive Design */
+         @media (max-width: 768px) {
+             .summary-card {
+                 margin-bottom: 1rem;
+                 padding: 1.5rem;
+             }
+
+             .summary-card h3 {
+                 font-size: 24px;
+             }
+
+             .table-responsive {
+                 font-size: 14px;
+             }
+         }
+     </style>
 <body>
-      <%- include('../par/sidebar.ejs') %>
+    <%- include('../par/sidebar.ejs') %>
 
-        <!-- Navbar Start -->
-        <%- include('../par/header.ejs') %>
-        <!-- Navbar End -->
+    <!-- Navbar Start -->
+    <%- include('../par/header.ejs') %>
+    <!-- Navbar End -->
 
-
-        <div class="row">
-            <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                <h2 class="mt-4 mb-4">Wallet Management</h2>
-                <% if (typeof success_msg !== 'undefined' && success_msg) { %>
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        <%= success_msg %>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                <% } %>
-                <% if (typeof error_msg !== 'undefined' && error_msg) { %>
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <%= error_msg %>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                <% } %>
-                <div class="row mb-4">
-                    <div class="col-md-3">
-                        <div class="summary-card">
-                            <h5>Total Users with Wallets</h5>
-                            <h3><%= totalWallets %></h3>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="summary-card">
-                            <h5>Total Balance</h5>
-                            <h3>£<%= totalBalance.toFixed(2) %></h3>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="summary-card">
-                            <h5>Low Balance Users</h5>
-                            <h3><%= lowBalanceUsers %></h3>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="summary-card">
-                            <h5>Total Transactions</h5>
-                            <h3><%= totalTransactions %></h3>
+    <div class="body-wrapper" style="position: relative;">
+        <div class="container-fluid">
+            <div class="card card-body py-3">
+                <div class="row align-items-center">
+                    <div class="col-md-12">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4 class="mb-4 mb-sm-0 card-title">Wallet Management <i class="bi bi-wallet2"></i></h4>
+                            <a href="/admin" class="btn btn-gradient">Back to Dashboard</a>
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- Flash Messages -->
+            <% if (typeof success_msg !== 'undefined' && success_msg) { %>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <%= success_msg %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <% } %>
+            <% if (typeof error_msg !== 'undefined' && error_msg) { %>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <%= error_msg %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <% } %>
+
+            <!-- Summary Cards -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="summary-card">
+                        <h5><i class="bi bi-people me-2"></i>Total Users</h5>
+                        <h3><%= totalWallets %></h3>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="summary-card">
+                        <h5><i class="bi bi-cash-coin me-2"></i>Total Balance</h5>
+                        <h3>£<%= totalBalance.toFixed(2) %></h3>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="summary-card">
+                        <h5><i class="bi bi-exclamation-triangle me-2"></i>Low Balance</h5>
+                        <h3><%= lowBalanceUsers %></h3>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="summary-card">
+                        <h5><i class="bi bi-receipt me-2"></i>Transactions</h5>
+                        <h3><%= totalTransactions %></h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Wallet Users Table -->
+            <div class="card card-body">
+                <div class="search-container">
+                    <div class="search-input-wrapper">
+                        <i class="bi bi-search search-icon"></i>
+                        <input type="text" id="walletSearch" class="form-control" placeholder="Search users by name, email, plan...">
+                    </div>
+                </div>
+
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover">
+                    <table class="table align-middle text-nowrap" id="walletUsersTable">
                         <thead>
                             <tr>
-                                <th>User</th>
-                                <th>Plan</th>
-                                <th>Balance</th>
-                                <th>Quota Limit</th>
-                                <th>Quota Used</th>
-                                <th>Remaining Quota</th>
-                                <th>Actions</th>
+                                <th><i class="bi bi-person me-2"></i>User</th>
+                                <th><i class="bi bi-credit-card me-2"></i>Plan</th>
+                                <th><i class="bi bi-cash-coin me-2"></i>Balance</th>
+                                <th><i class="bi bi-speedometer2 me-2"></i>Quota Limit</th>
+                                <th><i class="bi bi-graph-up me-2"></i>Used</th>
+                                <th><i class="bi bi-check-circle me-2"></i>Remaining</th>
+                                <th><i class="bi bi-gear me-2"></i>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             <% if (usersWithWallets && usersWithWallets.length > 0) { %>
                                 <% usersWithWallets.forEach(user => { %>
-                                    <tr class="<%= user.balance < 10 ? 'low-balance' : '' %>">
-                                        <td><%= user.first_name %> <%= user.last_name %> <br><small><%= user.email %></small></td>
-                                        <td><span class="badge bg-secondary"><%= user.plan_name %></span></td>
-                                        <td><strong>£<%= user.balance.toFixed(2) %></strong></td>
-                                        <td><%= user.plan_limit %></td>
-                                        <td><%= user.quota_used %></td>
-                                        <td><span class="badge <%= (user.plan_limit - user.quota_used > 0) ? 'bg-success' : 'bg-danger' %>"><%= user.plan_limit - user.quota_used %></span></td>
+                                    <tr>
                                         <td>
-                                            <a href="/admin/update/<%= user._id %>" class="btn btn-sm btn-primary btn-admin">Edit</a>
-                                            <a href="/admin/wallet-transactions/<%= user._id %>" class="btn btn-sm btn-outline-info btn-admin">View Transactions</a>
+                                            <div>
+                                                <div class="user-name"><%= user.first_name %> <%= user.last_name %></div>
+                                                <div class="user-email"><%= user.email %></div>
+                                            </div>
+                                        </td>
+                                        <td class="text-center">
+                                            <% let planClass = 'plan-default'; %>
+                                            <% if (user.plan_name && user.plan_name.toLowerCase().includes('free')) { %>
+                                                <% planClass = 'plan-free-trial'; %>
+                                            <% } else if (user.plan_name && user.plan_name.toLowerCase().includes('basic')) { %>
+                                                <% planClass = 'plan-basic'; %>
+                                            <% } else if (user.plan_name && user.plan_name.toLowerCase().includes('standard')) { %>
+                                                <% planClass = 'plan-standard'; %>
+                                            <% } else if (user.plan_name && user.plan_name.toLowerCase().includes('premium')) { %>
+                                                <% planClass = 'plan-premium'; %>
+                                            <% } %>
+                                            <span class="plan-badge <%= planClass %>"><%= user.plan_name || 'No Plan' %></span>
+                                        </td>
+                                        <td class="text-center">
+                                            <% let balanceClass = 'balance-positive'; %>
+                                            <% if (user.balance < 10) { %>
+                                                <% balanceClass = 'balance-low'; %>
+                                            <% } else if (user.balance < 0) { %>
+                                                <% balanceClass = 'balance-negative'; %>
+                                            <% } %>
+                                            <span class="balance-badge <%= balanceClass %>">£<%= user.balance.toFixed(2) %></span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-light text-dark"><%= user.plan_limit || 0 %></span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-info"><%= user.quota_used || 0 %></span>
+                                        </td>
+                                        <td class="text-center">
+                                            <% let quotaClass = 'quota-available'; %>
+                                            <% if ((user.plan_limit - user.quota_used) <= 0) { %>
+                                                <% quotaClass = 'quota-exhausted'; %>
+                                            <% } %>
+                                            <span class="quota-badge <%= quotaClass %>"><%= user.plan_limit - user.quota_used %></span>
+                                        </td>
+                                        <td class="text-center">
+                                            <a href="/admin/update/<%= user._id %>" class="btn btn-sm btn-primary btn-action me-2">
+                                                <i class="bi bi-pencil me-1"></i>Edit
+                                            </a>
+                                            <a href="/admin/wallet-transactions/<%= user._id %>" class="btn btn-sm btn-outline-info btn-action">
+                                                <i class="bi bi-eye me-1"></i>Transactions
+                                            </a>
                                         </td>
                                     </tr>
                                 <% }) %>
                             <% } else { %>
-                                <tr><td colspan="7" class="text-center">No users with wallets.</td></tr>
+                                <tr>
+                                    <td colspan="7" class="text-center">
+                                        <div class="no-results">
+                                            <i class="bi bi-wallet2"></i>
+                                            <h5 class="mt-3">No Wallet Users</h5>
+                                            <p>Users with wallet balances will appear here.</p>
+                                        </div>
+                                    </td>
+                                </tr>
                             <% } %>
                         </tbody>
                     </table>
                 </div>
-                <div class="text-end mt-3">
-                    <a href="/admin" class="btn btn-secondary">Back to Admin Dashboard</a>
-                </div>
             </div>
         </div>
     </div>
-    
-     <%- include('../par/footer.ejs') %>
- <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-  
- <!-- Template Javascript -->
-  <script src="js/main.js"></script>
- 
+
+    <%- include('../par/footer.ejs') %>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="/js/main.js"></script>
+
+    <script>
+        // Wallet Search Functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('walletSearch');
+            const table = document.getElementById('walletUsersTable');
+
+            if (searchInput && table) {
+                searchInput.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase().trim();
+                    const rows = table.querySelectorAll('tbody tr');
+                    let visibleRows = 0;
+
+                    rows.forEach(row => {
+                        // Skip the "No wallet users" row
+                        if (row.cells.length === 1 && row.cells[0].getAttribute('colspan') === '7') {
+                            return;
+                        }
+
+                        const name = row.cells[0].textContent.toLowerCase();
+                        const email = row.cells[0].textContent.toLowerCase();
+                        const plan = row.cells[1].textContent.toLowerCase();
+
+                        // Check if search term matches any of the fields
+                        const matches = name.includes(searchTerm) ||
+                                      email.includes(searchTerm) ||
+                                      plan.includes(searchTerm);
+
+                        if (matches) {
+                            row.style.display = '';
+                            row.classList.remove('search-hidden');
+                            visibleRows++;
+                        } else {
+                            row.style.display = 'none';
+                            row.classList.add('search-hidden');
+                        }
+                    });
+
+                    // Show/hide "No results" message
+                    updateNoResultsMessage(visibleRows);
+                });
+            }
+
+            function updateNoResultsMessage(visibleRows) {
+                // Remove existing "No results" message
+                const existingNoResults = table.querySelector('.no-results-row');
+                if (existingNoResults) {
+                    existingNoResults.remove();
+                }
+
+                // If no rows are visible and there's a search term, show "No results" message
+                const searchTerm = searchInput.value.toLowerCase().trim();
+                if (visibleRows === 0 && searchTerm !== '') {
+                    const tbody = table.querySelector('tbody');
+                    const noResultsRow = document.createElement('tr');
+                    noResultsRow.className = 'no-results-row';
+                    noResultsRow.innerHTML = `
+                        <td colspan="7" class="text-center">
+                            <div class="no-results">
+                                <i class="bi bi-search"></i>
+                                <h5 class="mt-3 text-muted">No matching users found</h5>
+                                <p class="text-muted">Try adjusting your search terms or clearing the search box</p>
+                                <button class="btn btn-outline-primary btn-sm mt-2" onclick="document.getElementById('walletSearch').value=''">
+                                    <i class="bi bi-x-circle me-1"></i>Clear Search
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(noResultsRow);
+                }
+            }
+
+            // Clear search when input is empty
+            searchInput.addEventListener('keyup', function(e) {
+                if (e.key === 'Escape' || this.value === '') {
+                    this.value = '';
+                    const rows = table.querySelectorAll('tbody tr');
+                    rows.forEach(row => {
+                        row.style.display = '';
+                        row.classList.remove('search-hidden');
+                    });
+                    updateNoResultsMessage(rows.length);
+                }
+            });
+        });
+    </script>
 </body>
 </html>

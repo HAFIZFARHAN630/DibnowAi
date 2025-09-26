@@ -411,10 +411,27 @@ exports.activeUsers = async (req, res) => {
 
     // Fetch active payments
     const currentDate = new Date();
-    const activeUsers = await Payments.find({
+    const activePayments = await Payments.find({
       expiryDate: { $gt: currentDate },
       status: 'active'
     }).populate('user', 'first_name last_name email').lean();
+
+    // Fetch active Free Trial users from PlanRequest
+    const PlanRequest = require("../models/planRequest");
+    const activeFreeTrials = await PlanRequest.find({
+      expiryDate: { $gt: currentDate },
+      status: 'Active',
+      planName: 'Free Trial'
+    }).populate('user', 'first_name last_name email').lean();
+
+    // Combine both arrays and remove duplicates based on user._id
+    const allActiveUsers = [...activePayments, ...activeFreeTrials];
+    const uniqueActiveUsers = allActiveUsers.filter((item, index, self) =>
+      index === self.findIndex(t => t.user && t.user._id.toString() === item.user._id.toString())
+    );
+
+    console.log(`Found ${activePayments.length} active payment users and ${activeFreeTrials.length} active Free Trial users`);
+    console.log(`Total unique active users: ${uniqueActiveUsers.length}`);
 
     // Get notification data
     const Notification = require("../models/notification");
@@ -424,7 +441,7 @@ exports.activeUsers = async (req, res) => {
     res.render("admin/activeUsers", {
       profileImagePath,
       firstName: user.first_name,
-      activeUsers,
+      activeUsers: uniqueActiveUsers,
       notifications,
       unreadCount,
       success_msg: req.flash("success_msg"),

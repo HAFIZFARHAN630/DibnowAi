@@ -13,12 +13,12 @@ const {
 } = require("../controllers/UserTeamsController");
 
 // User team management routes
-router.get("/team/add", isAuthenticated, addTeamForm);
-router.post("/team/add", isAuthenticated, createTeam);
-router.get("/team/list", isAuthenticated, listTeams);
+router.get("/userteam/add", isAuthenticated, addTeamForm);
+router.post("/userteam/add", isAuthenticated, createTeam);
+router.get("/userteam/list", isAuthenticated, listTeams);
 
 // User team update and delete routes
-router.post("/userteam/update", isAuthenticated, updateUserTeam);
+router.post("/userteam/update/:id", isAuthenticated, updateUserTeam); // ✅ Fixed (added :id param)
 router.post("/userteam/delete/:id", isAuthenticated, deleteUserTeam);
 
 module.exports = router;

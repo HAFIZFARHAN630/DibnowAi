@@ -172,21 +172,11 @@ app.use("/", contactusRoutes);
 app.use("/", ComplaintRoutes);
 app.use("/", reviewRoutes);
 
-// Add Admin Teams routes with explicit logging
-app.use("/", (req, res, next) => {
-  if (req.url.includes('Team')) {
-    console.log('Admin Teams route intercepted:', req.method, req.url);
-  }
-  next();
-}, AdminTeamsRoutes);
+// Add User Teams routes directly (moved before AdminTeamsRoutes)
+app.use("/", UserTeamsRoutes);
 
-// Add User Teams routes with explicit logging
-app.use("/", (req, res, next) => {
-  if (req.url.includes('team')) {
-    console.log('User Teams route intercepted:', req.method, req.url);
-  }
-  next();
-}, UserTeamsRoutes);
+// Add Admin Teams routes directly
+app.use("/", AdminTeamsRoutes);
 
 // 404 Middleware with logging
 app.use((req, res) => {

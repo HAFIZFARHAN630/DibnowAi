@@ -1,4 +1,4 @@
-// authController.js
+
 const User = require("../models/user");
 const PlanRequest = require("../models/planRequest");
 const bcrypt = require("bcrypt");
@@ -66,7 +66,8 @@ exports.signup = [
       });
 
       await freeTrialPlan.save();
-      console.log(`Free Trial plan assigned to user: ${newUser.email}`);
+      console.log(`✅ Free Trial plan assigned to new user: ${newUser.email}`);
+      console.log(`📅 Trial expires: ${trialExpiryDate.toLocaleDateString()}`);
 
       // Create notification for registration
       if (req.app.locals.notificationService) {
@@ -192,6 +193,12 @@ exports.signin = [
       // Check if user has a plan, if not assign Free Trial
       const existingPlan = await PlanRequest.findOne({ user: user._id });
       if (!existingPlan) {
+        console.log(`🔍 User ${user.email} has no existing plan, assigning Free Trial...`);
+      } else {
+        console.log(`✅ User ${user.email} already has a plan: ${existingPlan.planName}`);
+      }
+
+      if (!existingPlan) {
         const trialExpiryDate = new Date();
         trialExpiryDate.setDate(trialExpiryDate.getDate() + 7); // 7 days trial
 
@@ -207,7 +214,8 @@ exports.signin = [
         });
 
         await freeTrialPlan.save();
-        console.log(`Free Trial plan assigned to existing user: ${user.email}`);
+        console.log(`✅ Free Trial plan assigned to existing user: ${user.email}`);
+        console.log(`📅 Trial expires: ${trialExpiryDate.toLocaleDateString()}`);
       }
 
       // Create notification for login

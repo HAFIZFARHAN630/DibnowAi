@@ -257,7 +257,7 @@
                     <% if (plan_name === 'PREMIUM') { %>unlimited team members<% } %>
                 </div>
 
-                <form action="/team/add" method="POST" id="addUserTeamForm">
+                <form action="/userteam/add" method="POST" id="addUserTeamForm">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -339,7 +339,7 @@ document.getElementById('addUserTeamForm').addEventListener('submit', function(e
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Creating...';
     submitBtn.disabled = true;
 
-    fetch('/team/add', {
+    fetch('/userteam/add', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -353,29 +353,46 @@ document.getElementById('addUserTeamForm').addEventListener('submit', function(e
         })
     })
     .then(response => {
+        console.log('Response status:', response.status);
+        console.log('Response headers:', response.headers);
+
         // Check if the response is a redirect (status 300-399)
         if (response.status >= 300 && response.status < 400) {
-            // Success - redirect to team list
-            window.location.href = '/team/list';
+            console.log('Redirect response detected, redirecting to team list');
+            window.location.href = '/userteam/list';
         } else if (response.ok) {
-            // Success - redirect to team list
-            window.location.href = '/team/list';
+            console.log('Success response, redirecting to team list');
+            window.location.href = '/userteam/list';
         } else {
+            console.log('Error response:', response.status);
             // Error - show error message
-            return response.text().then(text => {
-                if (text.includes('error_msg')) {
-                    alert('Error creating team member. Please check your input and try again.');
+            return response.json().then(data => {
+                console.log('Error response data:', data);
+                if (data && data.message) {
+                    alert(data.message);
                 } else {
-                    alert('An error occurred while creating the team member.');
+                    alert('Error creating team member. Please check your input and try again.');
                 }
                 submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;
+            }).catch(() => {
+                // If we can't parse JSON, try text
+                return response.text().then(text => {
+                    console.log('Error response text:', text);
+                    if (text.includes('error_msg')) {
+                        alert('Error creating team member. Please check your input and try again.');
+                    } else {
+                        alert('An error occurred while creating the team member.');
+                    }
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                });
             });
         }
     })
     .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred while creating the team member.');
+        console.error('Network error:', error);
+        alert('Network error occurred. Please check your connection and try again.');
         submitBtn.innerHTML = originalText;
         submitBtn.disabled = false;
     });

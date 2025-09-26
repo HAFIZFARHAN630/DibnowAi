@@ -9,14 +9,15 @@ const {
   getPayments,
   sendRespit,
   updatePlanRequest,
-  deletePlanRequest
+  deletePlanRequest,
+  getPackageRequests
 } = require("../controllers/adminrequestController");
 
 // GET user request page
 router.get("/request", isAuthenticated, getPayments);
 
-// GET package request page (renders PlanRequest view)
-router.get("/package-request", isAuthenticated, getPayments);
+// GET package request page (renders Request view)
+router.get("/package-request", isAuthenticated, getPackageRequests);
 
 // ✅ Use the correct controller for admin update form
 router.post("/update-plan", isAuthenticated, isAdmin, updatePlan);

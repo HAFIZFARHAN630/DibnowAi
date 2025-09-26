@@ -417,4 +417,117 @@ exports.deletePlanRequest = async (req, res) => {
   }
 };
 
+// Get Package Requests - renders Request/request.ejs
+exports.getPackageRequests = async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    if (!userId) {
+      console.error("User ID is missing in the session.");
+      return res.redirect("/");
+    }
+
+    // Get the user data and role
+    const user = await User.findById(userId);
+    if (!user) {
+      console.error("User not found.");
+      return res.redirect("/");
+    }
+
+    const isAdmin = user.role === "admin";
+    const isUser = user.role === "user";
+
+    // Build query based on user role
+    let paymentsQuery = {};
+    if (!isAdmin) {
+      paymentsQuery.user = userId;
+    }
+
+    // Get payments with user data using aggregation
+    const payments = await Payments.aggregate([
+      { $match: paymentsQuery },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'user',
+          foreignField: '_id',
+          as: 'userDetails'
+        }
+      },
+      { $unwind: '$userDetails' },
+      {
+        $project: {
+          _id: 1,
+          user: 1,
+          plan: 1,
+          gateway: 1,
+          amount: 1,
+          createdAt: 1,
+          expiryDate: 1,
+          status: 1,
+          startDate: 1,
+          username: '$userDetails.first_name',
+          user_phone: '$userDetails.phone_number',
+          user_address: '$userDetails.address',
+          // Set default values for fields that don't exist in the model
+          discount: { $literal: 0 },
+          remaining_amount: '$amount',
+          package_status: '$status',
+          invoice_status: '$status',
+          home_collection: { $literal: 0 },
+          collection_address: { $literal: '' },
+          contact_number: { $literal: '' },
+          preferred_time: { $literal: '' },
+          special_instructions: { $literal: '' },
+          payment_screenshot: { $literal: '' },
+          custom_amount: '$amount'
+        }
+      },
+      { $sort: { createdAt: -1 } }
+    ]);
+
+    // Get plan requests for admin view
+    const planRequests = await PlanRequest.find({})
+      .populate('user', 'first_name last_name email')
+      .sort({ createdAt: -1 });
+
+    // Get notifications count (last 2 days)
+    const twoDaysAgo = new Date();
+    twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+
+    const totalNotifactions = await require("../models/notification").countDocuments({
+      is_read: false,
+      created_at: { $gte: twoDaysAgo }
+    });
+
+    const password_data = await require("../models/notification").find({
+      is_read: false,
+      created_at: { $gte: twoDaysAgo }
+    }).sort({ created_at: -1 });
+
+    const successMsg = req.flash("success");
+
+    // Get profile image path
+    const profileImagePath = user.user_img || "/img/dumi img.png";
+
+    res.render("Request/request", {
+      user,
+      message: null,
+      isAdmin,
+      payments: payments || [],
+      planRequests: planRequests || [],
+      bg_result: [], // Not needed for MongoDB
+      messages: {
+        success: successMsg.length > 0 ? successMsg[0] : null,
+      },
+      totalNotifactions,
+      password_data: password_data,
+      isUser,
+      profileImagePath,
+    });
+  } catch (error) {
+    console.error("Database query error:", error);
+    return res.status(500).send("Internal Server Error");
+  }
+};
+
 
