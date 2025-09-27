@@ -787,12 +787,12 @@
       background-color: white;
       transition: all 0.2s ease;
     }
-    
+
     .card-action-btn:hover {
       transform: translateY(-2px);
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
-    
+
     .card-action-btn.edit {
       color: #1a73e8;
       border-color: #1a73e8;
@@ -858,10 +858,10 @@
   </style>
 
 <body>
+  <%- include ('../par/sidebar.ejs') %>
+  <%- include ('../par/header.ejs') %>
   <div class="container-scroller">
-    <%- include ('../par/header.ejs') %>
       <div class="container-fluid page-body-wrapper">
-          <%- include ('../par/sidebar.ejs') %>
             <div class="main-panel">
               <% if (messages.success) { %>
                 <div class="position-relative" style="z-index: 1055;">
@@ -876,11 +876,7 @@
                 </div>
                 <% } %>
                   <div class="content-wrapper">
-                    <div class="card">
-                      <div class="card-header"> Package Request
-                        <div class="header-actions"></div>
-                      </div>
-                      <div class="card-body">
+                   
 
                         <!-- Plan Requests Section -->
                         <div class="card mt-5">
@@ -985,7 +981,8 @@
         </button>
       </div>
 
-      <form action="/update-plan" method="POST">
+
+      <form action="/update-plan" method="POST" class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel">
   <input type="hidden" name="user_id" id="user_id">
   <input type="hidden" name="transaction_id" id="TransactionId">
   <input type="hidden" name="package_name" id="PreviousPackage">
@@ -1015,19 +1012,19 @@
   <div class="modal-footer">
     <button type="submit" class="btn btn-primary">Update Plan</button>
   </div>
-</form>
+      </form>
 
     </div>
   </div>
 </div>
 
 <!-- Edit Plan Request Modal -->
-<div class="modal fade" id="editPlanModal" tabindex="-1" role="dialog" aria-labelledby="editPlanModalLabel">
+<div class="modal fade" id="editPlanModal" tabindex="-1" role="dialog" aria-labelledby="editPlanModalLabel" style="padding: 20px 25px !important;">
   <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content" style="margin-top: -145px;">
-      <div class="modal-header d-flex justify-content-between" style="position: relative; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 15px 15px 0 0;">
+    <div class="modal-content">
+      <div class="modal-header d-flex justify-content-between" style="position: relative; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 35px 25px; border-radius: 15px 15px 0 0;">
         <h4 class="modal-title" id="myModalLabel">Edit Plan Request <i class="ti-calendar"></i></h4>
-        <button type="button" class="btn-close-professional" data-dismiss="modal" aria-label="Close"
+        <button type="button" class="btn-close-professional" data-bs-dismiss="modal" aria-label="Close"
           style="position: absolute; top: 15px; right: 15px; width: 32px; height: 32px; background: #dc3545; color: white; border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: bold; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3); z-index: 1060;">
           <i class="fas fa-times"></i>
         </button>
@@ -1036,9 +1033,9 @@
       <form action="/update-plan-request" method="POST" onsubmit="console.log('Form submitted with data:', new FormData(this))">
         <input type="hidden" name="planRequestId" id="planRequestId">
 
-        <div class="form-group">
+        <div class="form-group p-4">
           <label for="plan_status">Plan Status</label>
-          <select class="form-control" id="plan_status" name="status" required>
+          <select class="form-control p-2" id="plan_status" name="status" required>
             <option value="Active">Active</option>
             <option value="Expired">Expired</option>
             <option value="Pending">Pending</option>
@@ -1047,21 +1044,21 @@
           </select>
         </div>
 
-        <div class="form-group">
+        <div class="form-group p-4">
           <label for="invoice_status">Invoice Status</label>
-          <select class="form-control" id="invoice_status" name="invoiceStatus" required>
+          <select class="form-control p-2" id="invoice_status" name="invoiceStatus" required>
             <option value="Paid">Paid</option>
             <option value="Unpaid">Unpaid</option>
           </select>
         </div>
 
-        <div class="form-group">
+        <div class="form-group p-4">
           <label for="expiry_date">Expiry Date</label>
-          <input type="date" class="form-control" id="expiry_date" name="expiryDate" required>
+          <input type="date" class="form-control p-2" id="expiry_date" name="expiryDate" required>
         </div>
 
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <div class="modal-footer p-4" style="display: flex; gap: 14px; flex-wrap: wrap;">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
           <button type="submit" class="btn btn-primary">Update Plan Request</button>
         </div>
       </form>
@@ -1074,61 +1071,7 @@
 
 
                   <!-- Edit Equipment Modal (Retained as is) -->
-                  <div class="modal fade" id="editEquipmentModal" tabindex="-1"
-                    aria-labelledby="editEquipmentModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                      <div class="modal-content form-card">
-                        <div class="form-header">
-                          <h5 class="modal-title" id="editEquipmentModalLabel">Edit Equipment</h5>
-                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                          <form action="/updateEquipment" method="POST" enctype="multipart/form-data">
-                            <input type="hidden" name="id" id="edit-id">
-                            <div class="form-group">
-                              <select name="type" id="edit-type" class="form-select" required>
-                                <option value="fibre">Fibre</option>
-                                <option value="wireless">Wireless</option>
-                              </select>
-                              <label for="edit-type" class="form-label">Type</label>
-                              <i class="fas fa-chevron-down form-icon"></i>
-                            </div>
-                            <div class="form-group">
-                              <input type="text" name="name" id="edit-name" class="form-control" placeholder=" "
-                                required>
-                              <label for="edit-name" class="form-label">Equipment Name</label>
-                              <i class="fas fa-tag form-icon"></i>
-                            </div>
-                            <div class="form-group">
-                              <input type="text" name="quantity" id="edit-quantity" class="form-control" placeholder=" "
-                                required>
-                              <label for="edit-quantity" class="form-label">Quantity</label>
-                              <i class="fas fa-box form-icon"></i>
-                            </div>
-                            <div class="form-group">
-                              <input type="text" name="category" id="edit-category" class="form-control" placeholder=" "
-                                readonly>
-                              <label for="edit-category" class="form-label">Category</label>
-                              <i class="fas fa-list form-icon"></i>
-                            </div>
-                            <div class="form-group">
-                              <label for="edit-image" class="form-label">Image (optional)</label>
-                              <input type="file" name="image" id="edit-image" class="form-file" accept="image/*">
-                              <div id="current-image-container" class="mt-2">
-                                <img id="current-image" class="equipment-image" alt="Current Equipment Image">
-                              </div>
-                            </div>
-                            <button type="submit" class="btn-success">
-                              <i class="fas fa-save mr-2"></i> Update Equipment
-                            </button>
-                          </form>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-            </div>
-      </div>
-  </div>
+             
 
  
 
@@ -1399,6 +1342,35 @@ document.querySelectorAll(".edit-plan").forEach(button => {
     if (expiryDateField) expiryDateField.value = expiry;
 
     console.log('Modal fields populated successfully');
+
+    // === Minimal addition: show the modal after populating ===
+    try {
+      const modalEl = document.getElementById('editPlanModal');
+      if (modalEl) {
+        if (typeof bootstrap !== 'undefined' && typeof bootstrap.Modal === 'function') {
+          // Bootstrap 5
+          const bsModal = new bootstrap.Modal(modalEl);
+          bsModal.show();
+        } else if (typeof jQuery !== 'undefined' && typeof jQuery(modalEl).modal === 'function') {
+          // Bootstrap 4/jQuery
+          jQuery(modalEl).modal('show');
+        } else {
+          // Simple fallback: make modal visible (basic)
+          modalEl.style.display = 'block';
+          modalEl.classList.add('show');
+          document.body.classList.add('modal-open');
+          if (!document.querySelector('.modal-backdrop')) {
+            const backdrop = document.createElement('div');
+            backdrop.className = 'modal-backdrop fade show';
+            document.body.appendChild(backdrop);
+          }
+        }
+      }
+    } catch (err) {
+      console.error('Error while trying to show modal:', err);
+    }
+    // === end addition ===
+
   });
 });
 

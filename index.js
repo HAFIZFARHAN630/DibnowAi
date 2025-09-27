@@ -29,9 +29,14 @@ const pricingRoutes = require("./src/routes/pricingRoutes");
 const SellRoutes = require("./src/routes/sellRoutes");
 const AdminTeamsRoutes = require("./src/routes/AdminTeamsRoutes");
 const UserTeamsRoutes = require("./src/routes/UserTeamsRoutes");
-const requestRoutes = require("./src/routes/adminRequestroute");
+
+const planRequestRoutes = require("./src/routes/adminRequestroute");
+const requestRoutes = require("./src/routes/requestRoutes");
+
 const notificationRoutes = require("./src/routes/notificationRoutes");
 const walletRoutes = require("./src/routes/walletRoutes");
+const ticketRoutes = require("./src/routes/ticketRoutes");
+const trackingRoutes = require("./src/routes/trackingRoutes");
 
 // Import new MongoDB-based routes
 const quranRoutes = require("./src/routes/quranRoutes");
@@ -41,6 +46,8 @@ const weatherRoutes = require("./src/routes/weatherRoutes");
 const contactusRoutes = require("./src/routes/contactusRoutes");
 const ComplaintRoutes = require("./src/routes/ComplaintRoutes");
 const reviewRoutes = require("./src/routes/reviewRoutes");
+const infoModel = require("./src/models/info");
+const planRoutes = require("./src/routes/planRoutes");
 
 // Initialize Express app
 const app = express();
@@ -145,6 +152,35 @@ app.use((req, res, next) => {
   next();
 });
 
+
+
+
+
+// Pass information service to routes
+app.use(async (req, res, next) => {
+  try {
+    const setting = await infoModel.findOne();
+    res.locals.info = setting || {};
+    res.locals.description = setting ? setting.description : "";
+    res.locals.title = setting ? setting.title : "";
+    res.locals.favicon = setting ? setting.favicon : "";
+    res.locals.footer = setting ? setting.footer_text : "";
+    res.locals.navbar_color = setting ? setting.navbar_color : "";
+    res.locals.welcome_description = setting ? setting.welcome_description : "";
+  } catch (err) {
+    res.locals.info = {};
+    res.locals.description = "";
+    res.locals.title = "";
+    res.locals.favicon = "";
+    res.locals.footer = "";
+    res.locals.navbar_color = "";
+    res.locals.welcome_description = "";
+  }
+  next();
+});
+
+
+
 // Routes
 app.use("/", notificationRoutes);
 app.use("/", authRoutes);
@@ -161,7 +197,10 @@ app.use("/", indexRoutes);
 app.use("/", pricingRoutes);
 app.use("/", SellRoutes);
 app.use("/", requestRoutes);
+app.use("/", planRequestRoutes);
 app.use("/", walletRoutes);
+app.use("/", ticketRoutes);
+app.use("/", planRoutes);
 
 // Add new MongoDB-based routes
 app.use("/", quranRoutes);
@@ -171,6 +210,7 @@ app.use("/", weatherRoutes);
 app.use("/", contactusRoutes);
 app.use("/", ComplaintRoutes);
 app.use("/", reviewRoutes);
+app.use("/", trackingRoutes);
 
 // Add User Teams routes directly (moved before AdminTeamsRoutes)
 app.use("/", UserTeamsRoutes);

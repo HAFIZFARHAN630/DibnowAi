@@ -1,11 +1,19 @@
+<style>
+    @media screen and (max-width: 768px) {
+            .sm-hide{
+        display: none;
+    }
+    }
+</style>
+
 
         <!-- Navbar Start -->
         <div class="content">
-            <nav class="navbar navbar-expand sticky-top px-4 py-0" style="background-color: #F3F3F9; box-shadow: 5px 9px 10px rgba(0, 0, 0, 0.1);">
+            <nav style="background-color: <%= navbar_color %> !important;" class="navbar navbar-expand sticky-top px-4 py-0" style="background-color: #F3F3F9; box-shadow: 5px 9px 10px rgba(0, 0, 0, 0.1);">
 
 
                 <a href="/index" class="navbar-brand d-flex d-lg-none me-4">
-                    <img src="/images\DIB-NOW-512.png" alt="Logo" style="width: 82px; height: auto; border: none; border-radius: 0;">
+                    <img  src="<%= info?.favicon ? '/uploads/' + info.favicon : '/images/DIB-NOW-512.png' %>"  alt="Profile Image" alt="Logo" style="width: 82px; height: auto; border: none; border-radius: 0;">
                 </a>
                 
                 
@@ -14,7 +22,7 @@
                 </a>
                 
                 <% if (isUser) { %>
-                <form class="d-md-flex ms-4">
+                <form class="d-md-flex ms-4 sm-hide">
                     <div class="patient-card-body p-4 position-relative" 
                         style="font-size: 2rem; font-weight: bold; padding: 0%; color: #333; text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);">
                         <%= typeof plan_name !== "undefined" ? plan_name : "No Plan" %>

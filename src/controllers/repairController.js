@@ -80,6 +80,153 @@ exports.addProduct = async (req, res) => {
     });
 
     await newRepair.save();
+
+
+
+        const trackingId = newRepair._id.toString();
+
+    // Send email with tracking id (Gmail via nodemailer)
+    try {
+      const nodemailer = require("nodemailer");
+
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.EMAIL_USER, // set in env
+          pass: process.env.EMAIL_PASS, // app password recommended
+        },
+      });
+
+      const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: userEmail,
+        subject: `Repair Registered — Tracking ID ${trackingId}`,
+        html: `
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Repair Registered</title>
+  <style>
+    /* Light, email-safe inline styles kept minimal for portability */
+    body { margin:0; padding:0; background:#f4f6f8; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
+    .wrapper { width:100%; padding:24px 0; }
+    .container { max-width:680px; margin:0 auto; background:#ffffff; border-radius:12px; overflow:hidden; box-shadow: 0 6px 30px rgba(2,6,23,0.12); }
+    .header { padding:28px 36px; background: linear-gradient(90deg,#0f172a,#0b1220); color:#fff; display:flex; align-items:center; gap:16px; }
+    .logo { width:56px; height:56px; border-radius:10px; background:rgba(255,255,255,0.06); display:inline-flex; align-items:center; justify-content:center; font-weight:700; font-size:18px; color:#fff; }
+    .title { font-size:20px; font-weight:700; margin:0; }
+    .body { padding:28px 36px; color:#0b1220; }
+    .greeting { font-size:16px; margin:0 0 12px 0; color:#0b1220; }
+    .card { background:#f8fafc; border:1px solid #e6eef4; padding:16px; border-radius:10px; margin:14px 0; }
+    .muted { color:#6b7280; font-size:14px; }
+    .row { display:flex; justify-content:space-between; align-items:center; margin:8px 0; }
+    .label { color:#6b7280; font-size:13px; }
+    .value { font-weight:600; color:#0b1220; }
+    .tracking { font-family: monospace; background:#0b1220; color:#fff; padding:8px 12px; border-radius:8px; display:inline-block; }
+    .cta { display:block; text-decoration:none; text-align:center; margin:22px auto 8px; padding:12px 20px; border-radius:10px; background:linear-gradient(90deg,#ef4444,#fb923c); color:#fff; font-weight:700; width:fit-content; }
+    .steps { margin-top:12px; }
+    .step { margin:10px 0; display:flex; gap:12px; align-items:flex-start; }
+    .dot { width:10px; height:10px; border-radius:50%; background:#0b1220; margin-top:6px; }
+    .footer { padding:20px 36px; font-size:13px; color:#6b7280; border-top:1px solid #eef2f7; background:#fbfdff; }
+    @media (max-width:480px){ .header{padding:18px}; .body{padding:18px}; .container{margin:0 12px} }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="container" role="article" aria-roledescription="email">
+      <div class="header">
+        <div class="logo">DIB</div>
+        <div>
+          <p class="title">Repair Request Registered</p>
+          <p class="muted" style="margin:4px 0 0 0;">We’ve logged your device and started the repair process.</p>
+        </div>
+      </div>
+
+      <div class="body">
+        <p class="greeting">Hi ${fullName || "Customer"},</p>
+
+        <p class="muted">Thanks — your repair request is in our system. Below are the details and the tracking ID you can use to check status anytime.</p>
+
+        <div class="card" role="group" aria-label="Repair summary">
+          <div class="row">
+            <div class="label">Tracking ID</div>
+            <div class="tracking">${trackingId}</div>
+          </div>
+
+          <div class="row">
+            <div class="label">Device</div>
+            <div class="value">${device || "N/A"}</div>
+          </div>
+
+          <div class="row">
+            <div class="label">Reported issue</div>
+            <div class="value">${gadgetProblem || "N/A"}</div>
+          </div>
+
+          <div class="row">
+            <div class="label">Estimated cost</div>
+            <div class="value">$${typeof price === "number" ? price.toFixed(2) : price || "0.00"}</div>
+          </div>
+        </div>
+
+        <a class="cta" href="${process.env.APP_URL || 'https://yourapp.com'}/track?trackingId=${trackingId}" target="_blank" rel="noopener">Track your repair</a>
+
+        <div class="steps">
+          <div class="step">
+            <div class="dot" style="background:#60a5fa"></div>
+            <div>
+              <div style="font-weight:700">We inspect</div>
+              <div class="muted">Our technician inspects your device and provides a diagnostic.</div>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="dot" style="background:#fbbf24"></div>
+            <div>
+              <div style="font-weight:700">We repair</div>
+              <div class="muted">Parts replaced or repaired. We keep you updated during the process.</div>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="dot" style="background:#34d399"></div>
+            <div>
+              <div style="font-weight:700">We deliver</div>
+              <div class="muted">Once complete, we’ll notify you and mark the repair as delivered.</div>
+            </div>
+          </div>
+        </div>
+
+        <p class="muted" style="margin-top:18px;">If you have questions, reply to this email or contact support at <a href="mailto:support@yourapp.com">support@yourapp.com</a>. Keep your tracking ID handy for faster help.</p>
+
+        <p style="margin-top:18px;">Thanks for trusting us — we’ll take good care of your device.</p>
+
+        <p style="margin-top:18px; font-weight:700">— The DIB Team</p>
+      </div>
+
+      <div class="footer">
+        <div>Need to change anything? Visit <a href="${process.env.APP_URL || 'https://yourapp.com'}" target="_blank" style="color:#0b1220; text-decoration:none;">your dashboard</a> and update the request.</div>
+        <div style="margin-top:8px;">This is an automated message — do not share the tracking id publicly.</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+`,
+
+      };
+
+      await transporter.sendMail(mailOptions);
+      console.log("Tracking email sent to:", userEmail, " TrackingId:", trackingId);
+    } catch (emailErr) {
+      console.error("Failed to send tracking email:", emailErr);
+      // don't block user flow if email fails
+    }
+
+
+
+
     
     // Create notification for adding repair customer
     if (req.app.locals.notificationService) {

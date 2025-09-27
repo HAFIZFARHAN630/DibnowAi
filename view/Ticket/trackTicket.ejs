@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Ticket - DIB-NOW</title>
+    <link rel="icon" href="\images\DIB-NOW-512.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
+    <link href="bootstrap.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+    <link href="styles1.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+      }
+      .fade-in-up { animation: fadeInUp 0.6s ease-out; }
+      .pulse-animation { animation: pulse 2s infinite; }
+      .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+      .glass-morphism { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 min-h-screen">
+<%- include('../par/sidebar.ejs') %>
+<%- include('../par/header.ejs') %>
+
+<!-- Hero Section -->
+<div class="relative overflow-hidden bg-gradient-to-r from-indigo-600 to-purple-600 mt-16">
+  <div class="absolute inset-0 bg-black opacity-10"></div>
+  <div class="relative w-full mx-auto px-4 sm:px-6 lg:px-8 py-24">
+    <div class="text-center">
+      <h1 class="text-4xl md:text-6xl font-bold text-white mb-6 fade-in-up">
+        <i class="fas fa-search mr-4"></i>Track Your Ticket
+      </h1>
+      <p class="text-xl md:text-2xl text-indigo-100 mb-8 fade-in-up" style="animation-delay: 0.2s;">
+        Enter your ticket ID to view detailed status and information
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Search Form -->
+<div class="max-w-4xl mx-auto -mt-16 px-4 relative z-10 fade-in-up" style="animation-delay: 0.4s;">
+  <div class="glass-morphism rounded-3xl shadow-2xl p-8 border border-white/20">
+    <form action="/track-ticket-post" method="POST" class="space-y-6">
+      <div class="relative">
+        <label for="ticketId" class="block text-sm font-semibold text-gray-700 mb-3">
+          <i class="fas fa-ticket-alt mr-2 text-indigo-600"></i>Ticket ID
+        </label>
+        <div class="relative">
+          <input
+            type="text"
+            name="ticketId"
+            id="ticketId"
+            placeholder="Enter your ticket ID (e.g., TCK-20241201-ABC123)"
+            required
+            class="w-full rounded-2xl border-2 border-gray-200 px-6 py-4 text-lg text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-300 bg-white/80 backdrop-blur-sm"
+          />
+          <i class="fas fa-hashtag absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        class="w-full group relative px-8 py-4 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-lg font-bold shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 overflow-hidden"
+      >
+        <div class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+        <span class="relative flex items-center justify-center">
+          <i class="fas fa-search mr-3"></i>
+          Track Ticket
+          <i class="fas fa-arrow-right ml-3 group-hover:translate-x-1 transition-transform duration-300"></i>
+        </span>
+      </button>
+    </form>
+
+    <!-- Quick Tips -->
+    <div class="mt-6 p-4 bg-indigo-50/80 rounded-xl border border-indigo-100">
+      <h3 class="text-sm font-semibold text-indigo-800 mb-2 flex items-center">
+        <i class="fas fa-lightbulb mr-2"></i>Quick Tips
+      </h3>
+      <ul class="text-xs text-indigo-700 space-y-1">
+        <li>• Ticket ID format: TCK-YYYYMMDD-XXXXXX</li>
+        <li>• Check your email for the ticket ID after creation</li>
+        <li>• Real-time status updates available</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<% if (ticket) { %>
+  <!-- Ticket Details Card -->
+  <div class="max-w-6xl mx-auto mt-12 px-4 fade-in-up" style="animation-delay: 0.6s;">
+    <div class="glass-morphism rounded-3xl shadow-2xl p-8 border border-white/20">
+      <!-- Header -->
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-8">
+        <div class="flex items-center space-x-4">
+          <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+            <i class="fas fa-ticket-alt text-2xl text-white"></i>
+          </div>
+          <div>
+            <h2 class="text-3xl font-bold text-gray-800 mb-1">Ticket Details</h2>
+            <p class="text-gray-600">Complete information about your support request</p>
+          </div>
+        </div>
+
+        <!-- Status Badge -->
+        <div class="flex items-center space-x-3">
+          <span class="px-4 py-2 text-sm font-bold rounded-full shadow-lg <%= ticket.status === 'Open' ? 'bg-gradient-to-r from-green-400 to-green-600 text-white pulse-animation' :
+            ticket.status === 'In-Progress' ? 'bg-gradient-to-r from-amber-400 to-orange-500 text-white' :
+            'bg-gradient-to-r from-gray-400 to-gray-600 text-white' %>">
+            <i class="fas fa-<%= ticket.status === 'Open' ? 'play' : ticket.status === 'In-Progress' ? 'clock' : 'check' %> mr-2"></i>
+            <%= ticket.status %>
+          </span>
+        </div>
+      </div>
+
+      <!-- Ticket Information Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Left Column -->
+        <div class="space-y-6">
+          <!-- Ticket ID -->
+          <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
+            <div class="flex items-center justify-between mb-3">
+              <label class="text-sm font-semibold text-blue-700 uppercase tracking-wide">Ticket ID</label>
+              <i class="fas fa-hashtag text-blue-500"></i>
+            </div>
+            <p class="text-xl font-bold text-blue-800 font-mono"><%= ticket.ticketId %></p>
+          </div>
+
+          <!-- Title -->
+          <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl p-6 border border-purple-100">
+            <div class="flex items-center justify-between mb-3">
+              <label class="text-sm font-semibold text-purple-700 uppercase tracking-wide">Title</label>
+              <i class="fas fa-heading text-purple-500"></i>
+            </div>
+            <p class="text-lg font-semibold text-purple-800 leading-relaxed"><%= ticket.title %></p>
+          </div>
+
+          <!-- Category & Priority -->
+          <div class="grid grid-cols-2 gap-4">
+            <div class="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl p-4 border border-emerald-100 text-center">
+              <label class="text-xs font-semibold text-emerald-700 uppercase tracking-wide mb-2 block">Category</label>
+              <span class="inline-flex items-center px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-sm font-semibold">
+                <i class="fas fa-tag mr-2"></i><%= ticket.category %>
+              </span>
+            </div>
+
+            <div class="bg-gradient-to-r from-<%= ticket.priority === 'High' ? 'red' : ticket.priority === 'Medium' ? 'amber' : 'green' %>-50 to-<%= ticket.priority === 'High' ? 'rose' : ticket.priority === 'Medium' ? 'orange' : 'emerald' %>-50 rounded-2xl p-4 border border-<%= ticket.priority === 'High' ? 'red' : ticket.priority === 'Medium' ? 'amber' : 'green' %>-100 text-center">
+              <label class="text-xs font-semibold <%= ticket.priority === 'High' ? 'text-red-700' : ticket.priority === 'Medium' ? 'text-amber-700' : 'text-green-700' %> uppercase tracking-wide mb-2 block">Priority</label>
+              <span class="inline-flex items-center px-3 py-1 rounded-full bg-<%= ticket.priority === 'High' ? 'red' : ticket.priority === 'Medium' ? 'amber' : 'green' %>-100 text-<%= ticket.priority === 'High' ? 'red' : ticket.priority === 'Medium' ? 'amber' : 'green' %>-700 text-sm font-bold">
+                <i class="fas fa-<%= ticket.priority === 'High' ? 'exclamation-triangle' : ticket.priority === 'Medium' ? 'exclamation-circle' : 'check-circle' %> mr-2"></i>
+                <%= ticket.priority.toUpperCase() %>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="space-y-6">
+          <!-- Description -->
+          <div class="bg-gradient-to-r from-gray-50 to-slate-50 rounded-2xl p-6 border border-gray-100">
+            <div class="flex items-center justify-between mb-3">
+              <label class="text-sm font-semibold text-gray-700 uppercase tracking-wide">Description</label>
+              <i class="fas fa-align-left text-gray-500"></i>
+            </div>
+            <p class="text-gray-700 leading-relaxed whitespace-pre-wrap"><%= ticket.description %></p>
+          </div>
+
+          <!-- Timeline -->
+          <div class="space-y-4">
+            <h3 class="text-lg font-semibold text-gray-800 flex items-center">
+              <i class="fas fa-clock mr-3 text-indigo-600"></i>Timeline
+            </h3>
+
+            <!-- Created At -->
+            <div class="flex items-start space-x-3">
+              <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                <i class="fas fa-plus text-green-600 text-xs"></i>
+              </div>
+              <div class="flex-1">
+                <p class="text-sm font-semibold text-gray-800">Ticket Created</p>
+                <p class="text-xs text-gray-600"><%= new Date(ticket.createdAt).toLocaleDateString() %></p>
+                <p class="text-xs text-gray-500"><%= new Date(ticket.createdAt).toLocaleTimeString() %></p>
+              </div>
+            </div>
+
+            <!-- Updated At -->
+            <div class="flex items-start space-x-3">
+              <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                <i class="fas fa-edit text-blue-600 text-xs"></i>
+              </div>
+              <div class="flex-1">
+                <p class="text-sm font-semibold text-gray-800">Last Updated</p>
+                <p class="text-xs text-gray-600"><%= new Date(ticket.updatedAt).toLocaleDateString() %></p>
+                <p class="text-xs text-gray-500"><%= new Date(ticket.updatedAt).toLocaleTimeString() %></p>
+              </div>
+            </div>
+
+            <!-- Closed At (only if closed) -->
+            <% if (ticket.status === 'Closed') { %>
+            <div class="flex items-start space-x-3">
+              <div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                <i class="fas fa-check text-gray-600 text-xs"></i>
+              </div>
+              <div class="flex-1">
+                <p class="text-sm font-semibold text-gray-800">Ticket Closed</p>
+                <p class="text-xs text-gray-600"><%= new Date(ticket.closedAt).toLocaleDateString() %></p>
+                <p class="text-xs text-gray-500"><%= new Date(ticket.closedAt).toLocaleTimeString() %></p>
+              </div>
+            </div>
+            <% } %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-col sm:flex-row gap-4 mt-8 pt-6 border-t border-gray-200">
+        <button onclick="window.print()" class="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+          <i class="fas fa-print mr-3"></i>Print Details
+        </button>
+        <button onclick="window.location.href='/show-tickets'" class="flex-1 bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-semibold py-3 px-6 rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+          <i class="fas fa-list mr-3"></i>View All Tickets
+        </button>
+      </div>
+    </div>
+  </div>
+<% } else { %>
+  <!-- No Ticket Found -->
+  <div class="max-w-4xl mx-auto mt-12 px-4">
+    <div class="glass-morphism rounded-3xl shadow-2xl p-12 border border-white/20 text-center">
+      <div class="w-24 h-24 bg-gradient-to-br from-red-100 to-pink-100 rounded-full flex items-center justify-center mx-auto mb-6">
+        <i class="fas fa-search text-3xl text-red-500"></i>
+      </div>
+      <h3 class="text-2xl font-bold text-gray-800 mb-4">No Ticket Found</h3>
+      <p class="text-gray-600 mb-8">We couldn't find a ticket with the provided ID. Please check your ticket ID and try again.</p>
+      <div class="space-y-3">
+        <p class="text-sm text-gray-500">Make sure you entered the correct ticket ID</p>
+        <p class="text-sm text-gray-500">Ticket ID format: <code class="bg-gray-100 px-2 py-1 rounded">TCK-YYYYMMDD-XXXXXX</code></p>
+      </div>
+      <button onclick="document.querySelector('input[name=ticketId]').focus()" class="mt-6 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+        <i class="fas fa-arrow-left mr-3"></i>Try Again
+      </button>
+    </div>
+  </div>
+<% } %>
+
+
+
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

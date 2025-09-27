@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+     <link rel="icon" href="public\images\DIB-NOW-512.png" type="image/x-icon">
+    
+    <!-- Icon Font Stylesheet -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="/bootstrap.css" rel="stylesheet">
+    <!-- Template Stylesheet -->
+    <link href="/styles.css" rel="stylesheet">
+    <link href="/styles1.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+     <%- include('../par/sidebar.ejs') %>
+      <%- include('../par/header.ejs') %>
+
+
+
+
+     <!-- Tailwind CDN (put this in the <head> of your page) -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Converted to Tailwind CSS with form fields updated to match your model (posts to /post-plan) -->
+<div class="main-panel max-w-7xl mx-auto px-4 py-6">
+  <div class="page-title mb-6">
+    <h1 class="flex items-center gap-3 text-2xl font-semibold text-gray-800">
+      <i class="fas fa-box"></i>
+      Package Management
+    </h1>
+    <p class="text-sm text-gray-500 mt-1">Create and manage internet packages for your customers</p>
+  </div>
+
+  <!-- Add New Package Form -->
+  <div class="form-container bg-white shadow-sm rounded-lg p-5 mb-8">
+    <div class="form-title flex items-center gap-2 text-lg font-medium text-gray-800 mb-4">
+      <i class="fas fa-plus-circle"></i>
+      Add New Package
+    </div>
+
+    <!-- ACTION changed to /post-plan as requested -->
+    <form action="/post-plan" method="POST" class="space-y-4">
+      <div class="form-grid grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- plan_name (simple input) -->
+        <div class="form-group">
+          <label for="plan_name" class="block text-sm font-medium text-gray-700 mb-1">Package Name *</label>
+          <input
+            type="text"
+            name="plan_name"
+            id="plan_name"
+            required
+            placeholder="e.g., Premium Fiber 100GB"
+            class="w-full border-gray-200 rounded-md shadow-sm focus:ring-2 focus:ring-green-400 focus:border-green-400 px-3 py-2"
+          >
+        </div>
+
+        <!-- plan_price (simple input) -->
+        <div class="form-group">
+          <label for="plan_price" class="block text-sm font-medium text-gray-700 mb-1">Price (PKR) *</label>
+          <input
+            type="text"
+            name="plan_price"
+            id="plan_price"
+            required
+            placeholder="2999"
+            class="w-full border-gray-200 rounded-md shadow-sm focus:ring-2 focus:ring-green-400 focus:border-green-400 px-3 py-2"
+          >
+        </div>
+
+        <!-- plan_limit (simple input) -->
+        <div class="form-group">
+          <label for="plan_limit" class="block text-sm font-medium text-gray-700 mb-1">Limit *</label>
+          <input
+            type="text"
+            name="plan_limit"
+            id="plan_limit"
+            required
+            placeholder="100 days"
+            class="w-full border-gray-200 rounded-md shadow-sm focus:ring-2 focus:ring-green-400 focus:border-green-400 px-3 py-2"
+          >
+        </div>
+
+        <!-- repairCustomer (number input) -->
+        <div class="form-group">
+          <label for="repairCustomer" class="block text-sm font-medium text-gray-700 mb-1">Repair Customer (number)</label>
+          <input
+            type="number"
+            name="repairCustomer"
+            id="repairCustomer"
+            step="1"
+            min="0"
+            placeholder="0"
+            class="w-full border-gray-200 rounded-md shadow-sm focus:ring-2 focus:ring-green-400 focus:border-green-400 px-3 py-2"
+          >
+        </div>
+
+        <!-- inStock (number input) -->
+        <div class="form-group">
+          <label for="inStock" class="block text-sm font-medium text-gray-700 mb-1">In Stock (number)</label>
+          <input
+            type="number"
+            name="inStock"
+            id="inStock"
+            step="1"
+            min="0"
+            placeholder="0"
+            class="w-full border-gray-200 rounded-md shadow-sm focus:ring-2 focus:ring-green-400 focus:border-green-400 px-3 py-2"
+          >
+        </div>
+
+        <!-- inventory (number input) -->
+        <div class="form-group">
+          <label for="inventory" class="block text-sm font-medium text-gray-700 mb-1">Inventory (number)</label>
+          <input
+            type="number"
+            name="inventory"
+            id="inventory"
+            step="1"
+            min="0"
+            placeholder="0"
+            class="w-full border-gray-200 rounded-md shadow-sm focus:ring-2 focus:ring-green-400 focus:border-green-400 px-3 py-2"
+          >
+        </div>
+
+        <!-- teams (number input) -->
+        <div class="form-group">
+          <label for="teams" class="block text-sm font-medium text-gray-700 mb-1">Teams (number)</label>
+          <input
+            type="number"
+            name="teams"
+            id="teams"
+            step="1"
+            min="0"
+            placeholder="0"
+            class="w-full border-gray-200 rounded-md shadow-sm focus:ring-2 focus:ring-green-400 focus:border-green-400 px-3 py-2"
+          >
+        </div>
+
+        <!-- sportTicket (checkbox). hidden input ensures false is posted when unchecked -->
+        <div class="form-group flex items-center space-x-3">
+          <input type="hidden" name="sportTicket" value="false">
+          <input
+            type="checkbox"
+            name="sportTicket"
+            id="sportTicket"
+            value="true"
+            class="h-4 w-4 border-gray-300 rounded text-green-600 focus:ring-green-500"
+          >
+          <label for="sportTicket" class="text-sm font-medium text-gray-700">Sport Ticket</label>
+        </div>
+      </div>
+
+      <div>
+        <button
+          type="submit"
+          class="btn-create inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-md px-4 py-2 shadow"
+        >
+          <i class="fas fa-plus"></i>
+          Create Package
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- All Packages Table -->
+  <div class="packages-section">
+    <div class="section-title flex items-center gap-2 text-lg font-semibold text-gray-800 mb-4">
+      <i class="fas fa-list"></i>
+      All Packages
+    </div>
+
+    <% if (plans && plans.length > 0) { %>
+      <!-- Desktop Table (hidden on small screens) -->
+      <div class="hidden md:block bg-white shadow-sm rounded-lg overflow-x-auto">
+        <table class="packages-table w-full min-w-[900px] table-auto divide-y divide-gray-100">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Package Name</th>
+              <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Price</th>
+              <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Limit</th>
+              <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Repair Customer</th>
+              <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">In Stock</th>
+              <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Inventory</th>
+              <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Teams</th>
+              <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Action</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-100">
+            <% plans.forEach(function(package) { %>
+              <tr>
+                <td class="px-4 py-3 text-sm text-gray-800"><strong><%= package.plan_name %></strong></td>
+                <td class="px-4 py-3 text-sm text-gray-700"><span class="package-price">Rs. <%= package.plan_price %></span></td>
+                <td class="px-4 py-3 text-sm text-gray-700"><%= package.plan_limit %></td>
+                <td class="px-4 py-3 text-sm text-gray-700"><%= package.repairCustomer %></td>
+                <td class="px-4 py-3 text-sm text-gray-700"><%= package.inStock %></td>
+                <td class="px-4 py-3 text-sm text-gray-700"><%= package.inventory %></td>
+                <td class="px-4 py-3 text-sm text-gray-700"><%= package.teams %></td>
+                <td class="px-4 py-3 text-sm text-gray-700">
+                  <form action="/delete-plan/<%= package._id %>" method="POST"
+                        onsubmit="return confirm('Are you sure you want to delete this package?')" style="display:inline;">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button type="submit" class="btn-delete inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium px-3 py-1 rounded">
+                      <i class="fas fa-trash"></i> Delete
+                    </button>
+                  </form>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Mobile Cards (visible on small screens) -->
+      <div class="md:hidden space-y-4">
+        <% plans.forEach(function(package) { %>
+          <div class="mobile-package-card bg-white shadow-sm rounded-lg p-4">
+            <h4 class="text-lg font-semibold text-gray-800 mb-2"><%= package.plan_name %></h4>
+
+            <div class="mobile-card-row flex justify-between text-sm text-gray-700 py-1">
+              <span class="mobile-card-label font-medium">Price:</span>
+              <span class="mobile-card-value mobile-price">Rs. <%= package.plan_price %></span>
+            </div>
+
+            <div class="mobile-card-row flex justify-between text-sm text-gray-700 py-1">
+              <span class="mobile-card-label font-medium">Speed:</span>
+              <span class="mobile-card-value"><%= package.plan_limit %></span>
+            </div>
+
+            <div class="mobile-card-row flex justify-between text-sm text-gray-700 py-1">
+              <span class="mobile-card-label font-medium">Data:</span>
+              <span class="mobile-card-value"><%= package.repairCustomer %></span>
+            </div>
+
+            <div class="mobile-card-row flex justify-between text-sm text-gray-700 py-1">
+              <span class="mobile-card-label font-medium">Valid Until:</span>
+              <span class="mobile-card-value"><%= package.inStock %></span>
+            </div>
+
+            <div class="mobile-card-row flex justify-between text-sm text-gray-700 py-1">
+              <span class="mobile-card-label font-medium">Device Limit:</span>
+              <span class="mobile-card-value"><%= package.inventory %></span>
+            </div>
+
+            <div class="mobile-card-row flex justify-between text-sm text-gray-700 py-1">
+              <span class="mobile-card-label font-medium">Active Users:</span>
+              <span class="mobile-card-value"><%= package.supportTicket || 0 %></span>
+            </div>
+
+            <div class="mobile-card-row mt-3">
+              <form action="/package/<%= package.id %>?_method=DELETE" method="POST"
+                    onsubmit="return confirm('Are you sure you want to delete this package?')" style="width: 100%;">
+                <input type="hidden" name="_method" value="DELETE">
+                <button type="submit" class="btn-delete w-full inline-flex justify-center items-center gap-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium px-4 py-2 rounded">
+                  <i class="fas fa-trash"></i> Delete Package
+                </button>
+              </form>
+            </div>
+          </div>
+        <% }); %>
+      </div>
+
+    <% } else { %>
+      <div class="no-packages bg-white shadow-sm rounded-lg p-6 text-center">
+        <i class="fas fa-box-open text-3xl text-gray-400"></i>
+        <h4 class="mt-3 text-lg font-semibold text-gray-800">No packages created yet</h4>
+        <p class="text-sm text-gray-500 mt-1">Create your first package using the form above</p>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+
+
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Template Javascript -->
+<script src="/js/main.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+

@@ -70,22 +70,33 @@ exports.signup = [
       console.log(`📅 Trial expires: ${trialExpiryDate.toLocaleDateString()}`);
 
       // Create notification for registration
-      if (req.app.locals.notificationService) {
-        await req.app.locals.notificationService.createNotification(
-          newUser._id,
-          newUser.first_name,
-          "Register"
-        );
-      }
-   try {
-     await sendConfirmationEmail(email, first_name, otp);
-     console.log("Signup OTP sent to:", email);
-   } catch (mailError) {
-     console.error("Failed to send signup OTP:", mailError.message);
-   }
+       if (req.app.locals.notificationService) {
+         try {
+           await req.app.locals.notificationService.createNotification(
+             newUser._id,
+             newUser.first_name,
+             "Register"
+           );
+           console.log("✅ Registration notification created");
+         } catch (notificationError) {
+           console.error("❌ Failed to create registration notification:", notificationError.message);
+         }
+       }
 
-    // Redirect to login page
-    return res.redirect("/sign_in?message=Account created successfully! Please check your email for confirmation and login.");
+      // Try to send confirmation email (don't fail signup if email fails)
+      try {
+        await sendConfirmationEmail(email, first_name, otp);
+        console.log("✅ Signup OTP sent to:", email);
+      } catch (mailError) {
+        console.error("❌ Failed to send signup OTP:", mailError.message);
+        console.error("❌ Email sending failed, but user account was created successfully");
+        // Continue with signup process even if email fails
+      }
+
+      console.log("✅ User account created successfully, redirecting to sign_in page");
+      console.log("📧 Email sending status: OTP email may have failed due to Gmail authentication");
+      // Redirect to login page
+      return res.redirect("/sign_in?message=Account created successfully! Please check your email for confirmation and login.");
 
   } catch (error) {
     console.error("Signup error:", error);
@@ -191,14 +202,12 @@ exports.signin = [
       res.cookie("auth_token", token, { httpOnly: true });
 
       // Check if user has a plan, if not assign Free Trial
+      console.log(`🔍 Checking plan for user: ${user.email} (ID: ${user._id})`);
       const existingPlan = await PlanRequest.findOne({ user: user._id });
-      if (!existingPlan) {
-        console.log(`🔍 User ${user.email} has no existing plan, assigning Free Trial...`);
-      } else {
-        console.log(`✅ User ${user.email} already has a plan: ${existingPlan.planName}`);
-      }
 
       if (!existingPlan) {
+        console.log(`🔍 User ${user.email} has no existing plan, assigning Free Trial...`);
+
         const trialExpiryDate = new Date();
         trialExpiryDate.setDate(trialExpiryDate.getDate() + 7); // 7 days trial
 
@@ -213,9 +222,45 @@ exports.signin = [
           description: "Free Trial Plan - 7 days access"
         });
 
-        await freeTrialPlan.save();
-        console.log(`✅ Free Trial plan assigned to existing user: ${user.email}`);
+        const savedPlan = await freeTrialPlan.save();
+
+        // Also update the User model to maintain consistency
+        await User.findByIdAndUpdate(user._id, {
+          plan_name: "Free Trial",
+          plan_limit: 30
+        });
+
+        console.log(`✅ Free Trial plan assigned to NEW user: ${user.email}`);
         console.log(`📅 Trial expires: ${trialExpiryDate.toLocaleDateString()}`);
+        console.log(`💾 Plan saved with ID: ${savedPlan._id}`);
+      } else {
+        console.log(`✅ User ${user.email} already has a plan: ${existingPlan.planName} (Status: ${existingPlan.status})`);
+
+        // Check if existing plan is expired, cancelled, or needs renewal
+        const now = new Date();
+        const shouldRenewPlan =
+          existingPlan.status === 'Expired' ||
+          existingPlan.status === 'Cancelled' ||
+          (existingPlan.expiryDate && now > existingPlan.expiryDate);
+
+        if (shouldRenewPlan) {
+          console.log(`🔄 Existing plan needs renewal (${existingPlan.status}), renewing Free Trial for user: ${user.email}`);
+          const trialExpiryDate = new Date();
+          trialExpiryDate.setDate(trialExpiryDate.getDate() + 7);
+
+          existingPlan.status = 'Active';
+          existingPlan.expiryDate = trialExpiryDate;
+          existingPlan.description = 'Free Trial Plan - Renewed';
+          await existingPlan.save();
+
+          // Also update the User model
+          await User.findByIdAndUpdate(user._id, {
+            plan_name: "Free Trial",
+            plan_limit: 30
+          });
+
+          console.log(`✅ Plan renewed for user: ${user.email}`);
+        }
       }
 
       // Create notification for login

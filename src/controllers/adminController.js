@@ -4,6 +4,10 @@ const Transaction = require("../models/transaction");
 const PaymentSettings = require("../models/paymentSettings");
 const Payments = require("../models/payments");
 const bcrypt = require("bcrypt");
+const infoModel = require("../models/info");
+const upload = require("../middlewares/uploadMiddleware");
+const mongoose = require("mongoose");
+
 
 // Render admin page with the list of users
 exports.admin = async (req, res) => {
@@ -498,5 +502,181 @@ exports.expiredUsers = async (req, res) => {
     console.error("Error fetching expired users:", error.message);
     req.flash("error_msg", "Unable to load expired users.");
     res.redirect("/admin");
+  }
+};
+
+
+
+
+
+
+
+exports.settings = async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    
+    // Fetch all users
+    const allUsers = await User.find().select(
+      "first_name email phone_number role user_img plan_name company plan_limit"
+    );
+    
+    // Find the logged-in user
+    const loggedInUser = allUsers.find((user) => user._id.toString() === userId);
+    if (!loggedInUser) {
+      return res.redirect("/sign_in");
+    }
+    
+    const profileImagePath = loggedInUser.user_img || "/uploads/default.png";
+    
+    // Filter out the logged-in user from the list
+    const users = allUsers.filter((user) => user._id.toString() !== userId);
+    // Create a new collection name info and save title and description and favicon in that
+    const infoCollection = await mongoose.connection.createCollection("info");
+    const infoData = await infoModel.findOne({});
+
+    // Provide default values if no info document exists
+    const info = infoData || {
+      title: '',
+      favicon: '',
+      description: '',
+      welcome_description: '',
+      navbar_color: '#3B82F6'
+    };
+
+    res.render("admin/adminSettings", {
+      info:info,
+      message: "",
+      profileImagePath,
+      firstName: loggedInUser.first_name,
+      isUser: loggedInUser.role === "user",
+      users: users,
+      title: "Website title",
+      description: "Website description",
+    });
+  } catch (error) {
+    console.log(error)
+    res.send("error in settings page")
+  }
+}
+
+
+exports.notificationSettingsPage = async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    
+    // Fetch all users
+    const allUsers = await User.find().select(
+      "first_name email phone_number role user_img plan_name company plan_limit"
+    );
+    
+    // Find the logged-in user
+    const loggedInUser = allUsers.find((user) => user._id.toString() === userId);
+    if (!loggedInUser) {
+      return res.redirect("/sign_in");
+    }
+    
+    const profileImagePath = loggedInUser.user_img || "/uploads/default.png";
+    
+    // Filter out the logged-in user from the list
+    const users = allUsers.filter((user) => user._id.toString() !== userId);
+    // Create a new collection name info and save title and description and favicon in that
+    const infoCollection = await mongoose.connection.createCollection("info");
+    const infoData = await infoModel.findOne({});
+    const notificationSettings = await NotificationSettings.findOne({});
+
+    // Provide default values if no info document exists
+    const info = infoData || {
+      title: '',
+      favicon: '',
+      description: '',
+      welcome_description: '',
+      navbar_color: '#3B82F6'
+    };
+
+    res.render("admin/notificationSettings", {
+      notificationSettings: notificationSettings,
+      info:info,
+      message: "",
+      profileImagePath,
+      firstName: loggedInUser.first_name,
+      isUser: loggedInUser.role === "user",
+      users: users,
+      title: "Website title",
+      description: "Website description",
+    });
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+
+
+
+exports.saveNotificationSettingsPage = async (req, res) => {
+  try {
+    const {
+      emailNotification,
+      systemImportantChange,
+      outOfStockItems,
+      repairDeviceTracking,
+      newDeviceSignupEmail,
+      dailyProfitReport,
+    } = req.body;
+
+    await NotificationSettings.findOneAndUpdate(
+      {}, // find any (since you only have one settings doc)
+      {
+        emailNotification: emailNotification === "on",
+        systemImportantChange: systemImportantChange === "on",
+        outOfStockItems: outOfStockItems === "on",
+        repairDeviceTracking: repairDeviceTracking === "on",
+        newDeviceSignupEmail: newDeviceSignupEmail === "on",
+        dailyProfitReport: dailyProfitReport === "on",
+      },
+      { upsert: true, new: true } // create if none exists, else update
+    );
+
+    req.flash("success_msg", "Notification Settings saved successfully!");
+    res.redirect("/notification-settings");
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
+
+
+
+
+exports.saveSettings = async (req, res) => {
+  try {
+    const title = req.body.title;
+    const favicon = req.file?.filename;
+
+    const newInfo = await infoModel.findOneAndUpdate(
+      {},
+      {
+        $set: {
+          title: title,
+          favicon: favicon ? favicon : req.body.existingFavicon,
+          description: req.body.description,
+          navbar_color: req.body.navbar_color,
+          welcome_description: req.body.welcome_description
+        }
+      },
+      { new: true, upsert: true }
+    );
+
+    if (!newInfo) {
+      req.flash("error_msg", "Failed to update settings. Please try again.");
+      return res.redirect("/admin-settings");
+    }
+
+    req.flash("success_msg", "Settings updated successfully!");
+    res.redirect("/admin-settings");
+  } catch (error) {
+    console.error("Error updating settings:", error.message);
+    req.flash("error_msg", "An error occurred. Please try again.");
+    res.redirect("/admin-settings");
   }
 };

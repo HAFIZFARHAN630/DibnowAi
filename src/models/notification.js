@@ -15,7 +15,7 @@ const notificationSchema = new mongoose.Schema({
     required: true,
     enum: [
       "Login",
-      "Register", 
+      "Register",
       "Add Inventory",
       "Add Repair Customer",
       "Change Repair Status",
@@ -25,7 +25,8 @@ const notificationSchema = new mongoose.Schema({
       "Buy Plan",
       "Logout",
       "Add Brand",
-      "Add Category"
+      "Add Category",
+      "Team Limit Exceeded"
     ]
   },
   timestamp: {

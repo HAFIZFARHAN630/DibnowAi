@@ -5,12 +5,14 @@
     <div class="navbar-nav w-100">
       <a href="/index" class="nav-item nav-link active"><i class="bi bi-tv dynamic-color-icon"></i>Dashboard</a>
       <% if (isAdmin) { %>
-        
+
         <a href="/admin" class="nav-item nav-link"><i class="bi bi-people-fill dynamic-color-icon"></i>All User</a>
-        <a href="/addadmin" class="nav-item nav-link"><i class="fa-solid fa-user-tie dynamic-color-icon"></i>Add Admin</a>
+        <a href="/addadmin" class="nav-item nav-link"><i class="fa-solid fa-user-tie dynamic-color-icon"></i>Add
+          Admin</a>
         <a href="/AdminTeam" class="nav-item nav-link"><i class="fas fa-users-cog dynamic-color-icon"></i>Add Team</a>
         <a href="/Teams" class="nav-item nav-link"><i class="fa-solid fa-users dynamic-color-icon"></i>All Teams</a>
-        <a href="/request" class="nav-item nav-link"><i class="fa-solid fa-code-pull-request dynamic-color-icon"></i>Request</a>
+        <a href="/request" class="nav-item nav-link"><i
+            class="fa-solid fa-code-pull-request dynamic-color-icon"></i>Request</a>
         <a href="/admin/payment-settings" class="nav-item nav-link">
           <i class="bi bi-credit-card dynamic-color-icon"></i>Billing Settings
         </a>
@@ -27,28 +29,69 @@
           <i class="bi bi-chat-right-quote dynamic-color-icon"></i>
           <span class="menu-title pl-2">User Complaint</span>
         </a>
-                <a class="nav-link" href="/review">
+        <a class="nav-link" href="/review">
           <i class="bi bi-star dynamic-color-icon"></i>
           <span class="menu-title pl-2">Reviews</span>
         </a>
-         <a class="nav-link" href="/package-request">
-               <i class="mdi mdi-inbox-arrow-down dynamic-color-icon"></i>
-               <span class="menu-title pl-2">Package Requests</span>
-             </a>
-        <a href="https://dashboard.tawk.to/#/dashboard/659fdbaf0ff6374032bedfad" class="nav-item nav-link" target="_blank"><i class="bi bi-chat-text-fill dynamic-color-icon"></i>Chat</a>
-      <% } %>
-      <% if (isUser) { %>
-        <a href="/inventory" class="nav-item nav-link"><i class="bi bi-clipboard-data dynamic-color-icon"></i>Inventory</a>
-        <a href="/repair" class="nav-item nav-link"><i class="bi bi-tools dynamic-color-icon"></i>Repair</a>
-        <a href="/in_stock" class="nav-item nav-link"><i class="bi bi-shop-window dynamic-color-icon"></i>In Stock</a>
-        <a href="/Clients" class="nav-item nav-link"><i class="bi bi-people dynamic-color-icon"></i>Clients</a>
-        <a href="/userteam/add" class="nav-item nav-link"><i class="bi bi-person-plus dynamic-color-icon"></i>Add Team</a>
-        <a href="/userteam/list" class="nav-item nav-link"><i class="bi bi-people-fill dynamic-color-icon"></i>My Teams</a>
-        <a href="/pricing" class="nav-item nav-link"><i class="bi bi-wallet2 dynamic-color-icon"></i>Plans</a>
-        <a href="/wallet" class="nav-item nav-link"><i class="bi bi-credit-card dynamic-color-icon"></i>Wallet</a>
-        <a href="/sell" class="nav-item nav-link"><i class="bi bi-cash-stack dynamic-color-icon"></i>Item History</a>
-        <a href="/Help" class="nav-item nav-link"><i class="bi bi-chat-dots dynamic-color-icon"></i>Help</a>
-      <% } %>
+        <a class="nav-link" href="/package-request">
+          <i class="bi bi-inbox dynamic-color-icon"></i>
+          <span class="menu-title pl-2">Plan Requests</span>
+        </a>
+
+        <!-- Settings -->
+        <a class="nav-link" href="/admin-settings">
+          <i class="bi bi-gear dynamic-color-icon"></i>
+          <span class="menu-title pl-2">Settings</span>
+        </a>
+
+        <!-- Create Plan -->
+        <a class="nav-link" href="/create-plan">
+          <i class="bi bi-box dynamic-color-icon"></i>
+          <span class="menu-title pl-2">Create Plan</span>
+        </a>
+
+        <a href="https://dashboard.tawk.to/#/dashboard/659fdbaf0ff6374032bedfad" class="nav-item nav-link"
+          target="_blank"><i class="bi bi-chat-text-fill dynamic-color-icon"></i>Chat</a>
+
+
+
+        <% } %>
+          <% if (isUser) { %>
+            <a href="/inventory" class="nav-item nav-link"><i
+                class="bi bi-clipboard-data dynamic-color-icon"></i>Inventory</a>
+            <a href="/repair" class="nav-item nav-link"><i class="bi bi-tools dynamic-color-icon"></i>Repair</a>
+            <a href="/in_stock" class="nav-item nav-link"><i class="bi bi-shop-window dynamic-color-icon"></i>In
+              Stock</a>
+            <a href="/Clients" class="nav-item nav-link"><i class="bi bi-people dynamic-color-icon"></i>Clients</a>
+            <a href="/userteam/add" class="nav-item nav-link"><i class="bi bi-person-plus dynamic-color-icon"></i>Add
+              Team</a>
+            <a href="/userteam/list" class="nav-item nav-link"><i class="bi bi-people-fill dynamic-color-icon"></i>My
+              Teams</a>
+            <a href="/pricing" class="nav-item nav-link"><i class="bi bi-wallet2 dynamic-color-icon"></i>Plans</a>
+            <a href="/wallet" class="nav-item nav-link"><i class="bi bi-credit-card dynamic-color-icon"></i>Wallet</a>
+            <a href="/sell" class="nav-item nav-link"><i class="bi bi-cash-stack dynamic-color-icon"></i>Item
+              History</a>
+            <a href="/Help" class="nav-item nav-link"><i class="bi bi-chat-dots dynamic-color-icon"></i>Help</a>
+            <a href="/ticket" class="nav-item nav-link"><i class="bi bi-chat-dots dynamic-color-icon"></i>Generate
+              Ticket</a>
+           <!-- Show Tickets -->
+<a href="/show-tickets" class="nav-item nav-link">
+  <i class="bi bi-card-text dynamic-color-icon"></i>
+  Show Tickets
+</a>
+
+<!-- Track Ticket -->
+<a href="/track-ticket" class="nav-item nav-link">
+  <i class="bi bi-search dynamic-color-icon"></i>
+  Track Ticket
+</a>
+
+<!-- Track Repair -->
+<a href="/tracking" class="nav-item nav-link">
+  <i class="bi bi-tools dynamic-color-icon"></i>
+  Track Repair
+</a>
+            <% } %>
     </div>
     <br>
 
@@ -56,17 +99,18 @@
     <div class="sidebar-user d-flex align-items-center ms-4 mb-4">
       <a href="/Setting" class="d-flex align-items-center text-decoration-none">
         <div class="position-relative">
-          <img class="rounded-circle" src="<%- profileImagePath %>" alt="Profile Image" style="width: 40px; height: 40px;" onerror="this.onerror=null; this.src='/img/dumi img.png';">
+          <img class="rounded-circle" src="<%- profileImagePath %>" alt="Profile Image"
+            style="width: 40px; height: 40px;" onerror="this.onerror=null; this.src='/img/dumi img.png';">
           <div class="online-dot position-absolute end-0 top-0"></div>
         </div>
         <div class="ms-3">
-          <h6 class="mb-0 fw-bold"><%- typeof firstName !== 'undefined' ? firstName : 'User' %></h6>
-          <p class="mb-0 small"><%- typeof email !== 'undefined' ? email : 'user@example.com' %></p>
+          <h6 class="mb-0 fw-bold"><%- typeof firstName !=='undefined' ? firstName : 'User' %></h6>
+          <p class="mb-0 small"><%- typeof email !=='undefined' ? email : 'user@example.com' %></p>
         </div>
       </a>
     </div>
   </nav>
- </div>
+</div>
 
 <script>
   // Function to generate random rgba color

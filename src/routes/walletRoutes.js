@@ -8,7 +8,8 @@ const {
   topupSuccess,
   getSavedCards,
   addSavedCard,
-  deleteSavedCard
+  deleteSavedCard,
+  topupWithSavedCard
 } = require("../controllers/walletController");
 
 // GET /wallet - render wallet page
@@ -34,5 +35,8 @@ router.post("/wallet/saved-cards", addSavedCard);
 
 // DELETE /wallet/saved-cards/:id - delete saved card
 router.delete("/wallet/saved-cards/:id", deleteSavedCard);
+
+// POST /wallet/topup-saved - top-up with saved payment method
+router.post("/wallet/topup-saved", topupWithSavedCard);
 
 module.exports = router;

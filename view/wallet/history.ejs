@@ -75,13 +75,13 @@
             <!-- content -->
 
             <div class="card card-body">
-                <% if (typeof success_msg !== 'undefined' && success_msg) { %>
+                <% if (typeof success_msg !== 'undefined' && success_msg.length>0) { %>
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
                         <%= success_msg %>
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 <% } %>
-                <% if (typeof error_msg !== 'undefined' && error_msg) { %>
+                <% if (typeof error_msg !== 'undefined' && error_msg.length>0) { %>
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         <%= error_msg %>
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -93,7 +93,7 @@
                 </div>
                 <div class="table-responsive">
                     <table class="table table-striped table-hover history-table">
-                        <thead class="table-dark">
+                        <thead class="">
                             <tr>
                                 <th>Type</th>
                                 <th>Amount</th>

@@ -264,7 +264,7 @@ exports.getSavedCards = [
 
       res.render("wallet/saved-cards", {
         savedCards,
-        publishableKey: process.env.STRIPE_PUBLISHABLE_KEY,
+        stripePublishKey: process.env.STRIPE_PUBLISHABLE_KEY,
         clientSecret,
         profileImagePath,
         firstName: user.first_name,
@@ -300,12 +300,20 @@ exports.addSavedCard = [
       }
 
       const stripeInstance = Stripe(process.env.STRIPE_SECRET_KEY);
+
+      // Attach payment method to customer
       await stripeInstance.paymentMethods.attach(payment_method_id, {
         customer: user.stripe_customer_id,
       });
 
-      req.flash("success_msg", "Card saved successfully!");
-      res.redirect("/wallet/saved-cards");
+      // Set as default payment method
+      await stripeInstance.customers.update(user.stripe_customer_id, {
+        invoice_settings: {
+          default_payment_method: payment_method_id,
+        },
+      });
+
+      res.json({ success: true, message: "Card saved successfully!" });
     } catch (error) {
       console.error("Error adding saved card:", error.message);
       res.status(400).json({ success: false, error: "Failed to save card." });
@@ -329,11 +337,89 @@ exports.deleteSavedCard = [
       const stripeInstance = Stripe(process.env.STRIPE_SECRET_KEY);
       await stripeInstance.paymentMethods.detach(id);
 
-      req.flash("success_msg", "Card deleted successfully!");
-      res.redirect("/wallet/saved-cards");
+      res.json({ success: true, message: "Card deleted successfully!" });
     } catch (error) {
       console.error("Error deleting saved card:", error.message);
       res.status(400).json({ success: false, error: "Failed to delete card." });
+    }
+  }
+];
+
+// Top-up with saved payment method
+exports.topupWithSavedCard = [
+  ensureLoggedIn,
+  async (req, res) => {
+    try {
+      const userId = req.session.userId;
+      const { amount, paymentMethodId } = req.body;
+
+      if (!amount || amount <= 0) {
+        return res.status(400).json({ success: false, error: "Invalid amount." });
+      }
+
+      if (!paymentMethodId) {
+        return res.status(400).json({ success: false, error: "Payment method required." });
+      }
+
+      const user = await User.findById(userId);
+      if (!user.stripe_customer_id) {
+        return res.status(400).json({ success: false, error: "Customer not set up." });
+      }
+
+      const stripeInstance = Stripe(process.env.STRIPE_SECRET_KEY);
+
+      // Create payment intent with saved payment method
+      const paymentIntent = await stripeInstance.paymentIntents.create({
+        amount: Math.round(parseFloat(amount) * 100), // Convert to pence
+        currency: "gbp",
+        customer: user.stripe_customer_id,
+        payment_method: paymentMethodId,
+        off_session: true,
+        confirm: true,
+        metadata: {
+          user_id: userId.toString(),
+          type: 'wallet_topup'
+        }
+      });
+
+      // Update wallet balance
+      let wallet = await Wallet.findOne({ user: userId });
+      if (!wallet) {
+        wallet = new Wallet({ user: userId, balance: 0 });
+        await wallet.save();
+      }
+
+      wallet.balance += parseFloat(amount);
+      await wallet.save();
+
+      // Create transaction record
+      const newTransaction = new Transaction({
+        user: userId,
+        type: 'topup',
+        amount: parseFloat(amount),
+        status: paymentIntent.status === 'succeeded' ? 'success' : 'failed',
+        payment_intent_id: paymentIntent.id
+      });
+      await newTransaction.save();
+
+      if (paymentIntent.status === 'succeeded') {
+        res.json({
+          success: true,
+          message: `Successfully added £${amount} to your wallet!`,
+          newBalance: wallet.balance
+        });
+      } else {
+        res.status(400).json({
+          success: false,
+          error: "Payment failed. Please try again."
+        });
+      }
+    } catch (error) {
+      console.error("Error in topup with saved card:", error.message);
+      res.status(400).json({
+        success: false,
+        error: "Failed to process payment. Please try again."
+      });
     }
   }
 ];

@@ -19,6 +19,8 @@
     <link href="bootstrap.css" rel="stylesheet">
     <!-- Template Stylesheet -->
     <link href="styles.css" rel="stylesheet">
+    <!-- Tempus Dominus CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tempusdominus-bootstrap-4@5.39.0/build/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet">
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -91,6 +93,472 @@
                       .table tbody tr {
                           background-color: transparent !important; /* Transparent background for rows */
                       }
+        .cont{
+            display: flex !important;
+            flex-direction: column !important;
+        }
+
+        /* Modern Plan & Subscription Cards */
+        .modern-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .modern-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .modern-card .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modern-card .card-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.05)"/><circle cx="10" cy="60" r="0.5" fill="rgba(255,255,255,0.05)"/><circle cx="90" cy="40" r="0.5" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .modern-card .header-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .modern-card .header-icon i {
+            font-size: 1.5rem;
+        }
+
+        .modern-card .card-title {
+            margin: 0;
+            font-size: 1.3rem;
+            font-weight: 600;
+            position: relative;
+            z-index: 1;
+        }
+
+        .modern-card .card-body {
+            padding: 30px;
+        }
+
+        /* Plan Overview Section */
+        .plan-overview {
+            margin-bottom: 25px;
+        }
+
+        .plan-main-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .plan-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin: 0;
+        }
+
+        .plan-status-badge {
+            position: relative;
+        }
+
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .status-badge.active {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+        }
+
+        .status-badge.expired {
+            background: linear-gradient(135deg, #f56565, #e53e3e);
+            color: white;
+        }
+
+        .status-badge.pending {
+            background: linear-gradient(135deg, #ed8936, #dd6b20);
+            color: white;
+        }
+
+        .status-badge.paid {
+            background: linear-gradient(135deg, #4299e1, #3182ce);
+            color: white;
+        }
+
+        .status-badge.unknown {
+            background: linear-gradient(135deg, #a0aec0, #718096);
+            color: white;
+        }
+
+        .plan-expiry {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .plan-expiry i {
+            color: #667eea;
+        }
+
+        /* Plan Details Grid */
+        .plan-details-grid {
+            display: grid;
+            gap: 15px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .detail-label i {
+            color: #667eea;
+            width: 16px;
+        }
+
+        .detail-value {
+            font-weight: 600;
+            color: #1a202c;
+        }
+
+        .value-badge {
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .value-badge.success {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .value-badge.danger {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .value-badge.warning {
+            background: #feebc8;
+            color: #744210;
+        }
+
+        .value-badge.info {
+            background: #bee3f8;
+            color: #2a4365;
+        }
+
+        .value-badge.secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .description {
+            font-size: 0.9rem;
+            color: #64748b;
+            font-weight: 400;
+        }
+
+        /* No Plan State */
+        .no-plan-state {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .no-plan-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #fed7d7, #feb2b2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .no-plan-icon i {
+            font-size: 2rem;
+            color: #e53e3e;
+        }
+
+        .no-plan-state h4 {
+            color: #1a202c;
+            margin-bottom: 10px;
+        }
+
+        .no-plan-state p {
+            color: #64748b;
+        }
+
+        /* Subscription Status */
+        .subscription-status {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .subscription-status .status-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .subscription-status .status-content h4 {
+            margin: 0 0 5px 0;
+            font-size: 1.2rem;
+        }
+
+        .subscription-status .status-content p {
+            margin: 0;
+            color: #64748b;
+        }
+
+        .subscription-status.active-unpaid {
+            background: linear-gradient(135deg, #fff5cd, #fde68a);
+        }
+
+        .subscription-status.active-unpaid .status-icon {
+            background: #f59e0b;
+        }
+
+        .subscription-status.active-unpaid .status-icon i {
+            color: white;
+        }
+
+        .subscription-status.active-unpaid .status-content h4 {
+            color: #92400e;
+        }
+
+        .subscription-status.expired {
+            background: linear-gradient(135deg, #fecaca, #fca5a5);
+        }
+
+        .subscription-status.expired .status-icon {
+            background: #ef4444;
+        }
+
+        .subscription-status.expired .status-icon i {
+            color: white;
+        }
+
+        .subscription-status.expired .status-content h4 {
+            color: #7f1d1d;
+        }
+
+        .subscription-status.active-valid {
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+        }
+
+        .subscription-status.active-valid .status-icon {
+            background: #10b981;
+        }
+
+        .subscription-status.active-valid .status-icon i {
+            color: white;
+        }
+
+        .subscription-status.active-valid .status-content h4 {
+            color: #065f46;
+        }
+
+        .subscription-status.pending {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+        }
+
+        .subscription-status.pending .status-icon {
+            background: #f59e0b;
+        }
+
+        .subscription-status.pending .status-icon i {
+            color: white;
+        }
+
+        .subscription-status.pending .status-content h4 {
+            color: #92400e;
+        }
+
+        /* No Subscription State */
+        .no-subscription-state {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .no-subscription-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .no-subscription-icon i {
+            font-size: 2rem;
+            color: #6366f1;
+        }
+
+        .no-subscription-state h4 {
+            color: #1a202c;
+            margin-bottom: 10px;
+        }
+
+        .no-subscription-state p {
+            color: #64748b;
+        }
+
+        .choose-plan-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .choose-plan-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+
+        /* Equal height cards - Enhanced */
+        .cards-container {
+            display: flex;
+            gap: 20px;
+            align-items: stretch;
+            margin-bottom: 20px;
+        }
+
+        .plan-card-container,
+        .subscription-card-container {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .plan-card-container .modern-card,
+        .subscription-card-container .modern-card {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .plan-card-container .modern-card .card-body,
+        .subscription-card-container .modern-card .card-body {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Ensure consistent card heights */
+        .modern-card {
+            min-height: 100%;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .modern-card .card-body {
+                padding: 20px;
+            }
+
+            .cards-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .plan-main-info {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+
+            .plan-name {
+                font-size: 1.5rem;
+            }
+
+            .subscription-status {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+
+            .subscription-status .status-icon {
+                width: 50px;
+                height: 50px;
+            }
+
+            .detail-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+
+            .detail-label {
+                font-size: 0.9rem;
+            }
+        }
     </style>
 </head>
 
@@ -141,121 +609,262 @@
             
        
 
-<!-- Updated Second Row -->
-<div class="container-fluid pt-4 px-4" style="background-color:#E8F5E9; padding-top: 0%;">
-    <div class="row justify-content-center">
-        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-            <div class="patient-card position-relative" style="background-color: #FFEBEE;">
-                <div class="patient-card-header text-white" style="background-color: #D32F2F;">Pending Orders</div>
-                <div class="patient-card-body"><%= pendingOrders %></div>
-                <i class="bi bi-clock-fill position-absolute" style="font-size: 4.5rem; color: rgba(211, 47, 47, 0.2); bottom: -13px; right: 12px; z-index: 1;"></i>
-            </div>
-        </div>
-        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-            <div class="patient-card position-relative" style="background-color: #E0F2F1;">
-                <div class="patient-card-header text-white" style="background-color: #00796B;">Completed Repair Products</div>
-                <div class="patient-card-body"><%= completedRepairs %> </div>
-                <i class="bi bi-tools position-absolute" style="font-size: 4rem; color: rgba(0, 121, 107, 0.2); bottom: -8px; right: 13px; z-index: 1;"></i>
-            </div>
-        </div>
-        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-            <div class="patient-card position-relative" style="background-color: #FFF3E0;">
-                <div class="patient-card-header text-white" style="background-color: #3909d7ba;">Repair Total Sales</div>
-                <div class="patient-card-body"> <%= totalSales ? totalSales : 0 %></div>
-                <i class="bi bi-bar-chart-fill position-absolute" style="font-size: 4.5rem; color: rgba(245, 124, 0, 0.2); bottom: -15px; right: 14px; z-index: 1;"></i>
-            </div>
-        </div>
-        
-        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-            <div class="patient-card position-relative" style="background-color: #F3E5F5; overflow: hidden; border-radius: 10px;">
-                <div class="patient-card-header text-white p-2" style="background-color: #7B1FA2; font-weight: bold;">Your Current Plan</div>
-                <div class="patient-card-body p-4 position-relative" style="font-size: 2rem; font-weight: bold;"> <%= plan_name %></div>
-                <i class="bi bi-layers-fill position-absolute" style="font-size: 6.5rem; color: rgba(123, 31, 162, 0.2); bottom: -36px; right: 10px; z-index: 1;"></i>
-            </div>
-        </div>
-        </div>
-        </div>
-
-
-        <!-- Plan Status Card -->
-       <% if (isUser) { %>
-<div class="container mt-4">
-    <div class="row">
-        <!-- Plan Status Block -->
-        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-            <div class="patient-card position-relative plan-status-card" style="background-color: #E8F5E8; overflow: hidden; border-radius: 10px;">
-                <div class="patient-card-header text-white p-2" style="background-color: #4CAF50; font-weight: bold;">Plan Status</div>
-                <div class="patient-card-body p-4 position-relative" style="font-size: 1.2rem; font-weight: bold;">
-                    <% if (userPlan && userPlan.planName) { %>
-                        <div class="plan-info">
-                            <div class="plan-name" style="color: #2E7D32; font-size: 1.1rem; margin-bottom: 8px;">
-                                <%= userPlan.planName %>
-                            </div>
-                            <div class="plan-status">
-                                <% if (userPlan.status === 'Active') { %>
-                                    <span class="badge bg-success">Active</span>
-                                <% } else if (userPlan.status === 'Expired') { %>
-                                    <span class="badge bg-danger">Expired</span>
-                                <% } else if (userPlan.status === 'Pending') { %>
-                                    <span class="badge bg-warning text-dark">Pending</span>
-                                <% } else if (userPlan.status === 'Paid') { %>
-                                    <span class="badge bg-info">Paid</span>
-                                <% } else { %>
-                                    <span class="badge bg-secondary"><%= userPlan.status %></span>
-                                <% } %>
-                            </div>
-                            <div class="plan-expiry text-muted mt-2" style="font-size: 0.8rem;">
-                                Expires: <%= new Date(userPlan.expiryDate).toLocaleDateString() %>
-                            </div>
-                        </div>
-                    <% } else { %>
-                        <div class="no-plan text-center text-muted">
-                            <div>No plan assigned yet</div>
-                            <small>Contact admin for plan assignment</small>
-                        </div>
-                    <% } %>
+        <!-- Updated Second Row -->
+        <div class="container-fluid pt-4 px-4" style="background-color:#E8F5E9; padding-top: 0%;">
+            <div class="row justify-content-center">
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <div class="patient-card position-relative" style="background-color: #FFEBEE;">
+                        <div class="patient-card-header text-white" style="background-color: #D32F2F;">Pending Orders</div>
+                        <div class="patient-card-body"><%= pendingOrders %></div>
+                        <i class="bi bi-clock-fill position-absolute" style="font-size: 4.5rem; color: rgba(211, 47, 47, 0.2); bottom: -13px; right: 12px; z-index: 1;"></i>
+                    </div>
                 </div>
-                <i class="bi bi-calendar-check position-absolute" style="font-size: 4rem; color: rgba(76, 175, 80, 0.2); bottom: -20px; right: 10px;"></i>
-            </div>
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <div class="patient-card position-relative" style="background-color: #E0F2F1;">
+                        <div class="patient-card-header text-white" style="background-color: #00796B;">Completed Repair Products</div>
+                        <div class="patient-card-body"><%= completedRepairs %> </div>
+                        <i class="bi bi-tools position-absolute" style="font-size: 4rem; color: rgba(0, 121, 107, 0.2); bottom: -8px; right: 13px; z-index: 1;"></i>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <div class="patient-card position-relative" style="background-color: #FFF3E0;">
+                        <div class="patient-card-header text-white" style="background-color: #3909d7ba;">Repair Total Sales</div>
+                        <div class="patient-card-body"> <%= totalSales ? totalSales : 0 %></div>
+                        <i class="bi bi-bar-chart-fill position-absolute" style="font-size: 4.5rem; color: rgba(245, 124, 0, 0.2); bottom: -15px; right: 14px; z-index: 1;"></i>
+                    </div>
+                </div>
+                
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <div class="patient-card position-relative" style="background-color: #F3E5F5; overflow: hidden; border-radius: 10px;">
+                        <div class="patient-card-header text-white p-2" style="background-color: #7B1FA2; font-weight: bold;">Your Current Plan</div>
+                        <div class="patient-card-body p-4 position-relative" style="font-size: 2rem; font-weight: bold;"> <%= plan_name %></div>
+                        <i class="bi bi-layers-fill position-absolute" style="font-size: 6.5rem; color: rgba(123, 31, 162, 0.2); bottom: -36px; right: 10px; z-index: 1;"></i>
+                    </div>
+                </div>
+                </div>
         </div>
 
-        <!-- Subscription Status Block -->
-        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-            <div class="patient-card position-relative subscription-status-card" style="background-color: #E8F5E8; overflow: hidden; border-radius: 10px;">
-                <div class="patient-card-header text-white p-2" style="background-color: #4CAF50; font-weight: bold;">Subscription Status</div>
-                <div class="patient-card-body p-4 position-relative" style="font-size: 1.2rem; font-weight: bold;">
-                    <% if (subscription && subscription.status === 'active') { %>
-                        <% if (subscription.invoice_status === 'unpaid') { %>
-                            <div style="color: #FF9800;">Active + Unpaid</div>
-                            <small class="text-muted">Please complete payment</small>
-                        <% } else if (subscription.invoice_status === 'paid') { %>
-                            <% const now = new Date(); %>
-                            <% const expiryDate = new Date(subscription.expiryDate); %>
-                            <% if (now > expiryDate) { %>
-                                <div style="color: #F44336;">Active + Paid + Expired</div>
-                                <small class="text-muted">Renew subscription</small>
+        <!-- Enhanced Plan Status & Subscription Cards -->
+        <% if (isUser) { %>
+        <div class="container-fluid mt-4">
+            <div class="cards-container">
+                <!-- Plan Status Card -->
+                <div class="plan-card-container">
+                    <div class="plan-card modern-card">
+                        <div class="card-header">
+                            <div class="header-icon">
+                                <i class="bi bi-star-fill"></i>
+                            </div>
+                            <h5 class="card-title">Plan Status</h5>
+                        </div>
+                        <div class="card-body">
+                            <% if (userPlan && userPlan.planName) { %>
+                                <div class="plan-overview">
+                                    <div class="plan-main-info">
+                                        <h3 class="plan-name"><%= userPlan.planName %></h3>
+                                        <div class="plan-status-badge">
+                                            <% if (userPlan.status === 'Active') { %>
+                                                <span class="status-badge active">
+                                                    <i class="bi bi-check-circle-fill"></i>
+                                                    Active
+                                                </span>
+                                            <% } else if (userPlan.status === 'Expired') { %>
+                                                <span class="status-badge expired">
+                                                    <i class="bi bi-x-circle-fill"></i>
+                                                    Expired
+                                                </span>
+                                            <% } else if (userPlan.status === 'Pending') { %>
+                                                <span class="status-badge pending">
+                                                    <i class="bi bi-clock-fill"></i>
+                                                    Pending
+                                                </span>
+                                            <% } else if (userPlan.status === 'Paid') { %>
+                                                <span class="status-badge paid">
+                                                    <i class="bi bi-check-circle-fill"></i>
+                                                    Paid
+                                                </span>
+                                            <% } else { %>
+                                                <span class="status-badge unknown">
+                                                    <i class="bi bi-question-circle-fill"></i>
+                                                    <%= userPlan.status %>
+                                                </span>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                    <div class="plan-expiry">
+                                        <i class="bi bi-calendar-event"></i>
+                                        <span>Expires: <%= userPlan.expiryDate ? new Date(userPlan.expiryDate).toLocaleDateString() : 'No expiry date' %></span>
+                                    </div>
+                                </div>
+
+                                <!-- Plan Details Grid -->
+                                <div class="plan-details-grid">
+                                    <div class="detail-row">
+                                        <div class="detail-label">
+                                            <i class="bi bi-tag"></i>
+                                            <span>Plan Name</span>
+                                        </div>
+                                        <div class="detail-value"><%= userPlan.planName %></div>
+                                    </div>
+                                    <div class="detail-row">
+                                        <div class="detail-label">
+                                            <i class="bi bi-activity"></i>
+                                            <span>Status</span>
+                                        </div>
+                                        <div class="detail-value">
+                                            <% if (userPlan.status === 'Active') { %>
+                                                <span class="value-badge success">Active</span>
+                                            <% } else if (userPlan.status === 'Expired') { %>
+                                                <span class="value-badge danger">Expired</span>
+                                            <% } else if (userPlan.status === 'Pending') { %>
+                                                <span class="value-badge warning">Pending</span>
+                                            <% } else if (userPlan.status === 'Paid') { %>
+                                                <span class="value-badge info">Paid</span>
+                                            <% } else { %>
+                                                <span class="value-badge secondary"><%= userPlan.status %></span>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                    <div class="detail-row">
+                                        <div class="detail-label">
+                                            <i class="bi bi-receipt"></i>
+                                            <span>Invoice Status</span>
+                                        </div>
+                                        <div class="detail-value">
+                                            <% if (userPlan.invoiceStatus === 'Paid') { %>
+                                                <span class="value-badge success">Paid</span>
+                                            <% } else { %>
+                                                <span class="value-badge warning">Unpaid</span>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                    <div class="detail-row">
+                                        <div class="detail-label">
+                                            <i class="bi bi-calendar-plus"></i>
+                                            <span>Start Date</span>
+                                        </div>
+                                        <div class="detail-value"><%= new Date(userPlan.startDate || userPlan.createdAt).toLocaleDateString() %></div>
+                                    </div>
+                                    <div class="detail-row">
+                                        <div class="detail-label">
+                                            <i class="bi bi-calendar-x"></i>
+                                            <span>Expiry Date</span>
+                                        </div>
+                                        <div class="detail-value"><%= userPlan.expiryDate ? new Date(userPlan.expiryDate).toLocaleDateString() : 'No expiry date' %></div>
+                                    </div>
+                                    <div class="detail-row">
+                                        <div class="detail-label">
+                                            <i class="bi bi-cash"></i>
+                                            <span>Amount</span>
+                                        </div>
+                                        <div class="detail-value">£<%= userPlan.amount || 0 %></div>
+                                    </div>
+                                    <% if (userPlan.description) { %>
+                                    <div class="detail-row">
+                                        <div class="detail-label">
+                                            <i class="bi bi-info-circle"></i>
+                                            <span>Description</span>
+                                        </div>
+                                        <div class="detail-value description"><%= userPlan.description %></div>
+                                    </div>
+                                    <% } %>
+                                </div>
                             <% } else { %>
-                                <div style="color: #4CAF50;">Active + Paid + Valid</div>
-                                <small class="text-muted">Expires: <%= expiryDate.toLocaleDateString() %></small>
+                                <div class="no-plan-state">
+                                    <div class="no-plan-icon">
+                                        <i class="bi bi-exclamation-triangle"></i>
+                                    </div>
+                                    <h4>No Plan Assigned</h4>
+                                    <p>Contact your administrator for plan assignment</p>
+                                </div>
                             <% } %>
-                        <% } %>
-                    <% } else if (subscription && subscription.status === 'expired') { %>
-                        <div style="color: #F44336;">Expired</div>
-                        <small class="text-muted">Subscription expired</small>
-                    <% } else if (subscription && subscription.status === 'pending') { %>
-                        <div style="color: #FF9800;">Pending Payment</div>
-                        <small class="text-muted">Payment under review</small>
-                    <% } else { %>
-                        <div class="text-muted">No Subscription</div>
-                        <small>Choose a plan</small>
-                    <% } %>
+                        </div>
+                    </div>
                 </div>
-                <i class="bi bi-credit-card position-absolute" style="font-size: 4rem; color: rgba(76, 175, 80, 0.2); bottom: -20px; right: 10px;"></i>
+
+                <!-- Subscription Status Card -->
+                <div class="subscription-card-container">
+                    <div class="subscription-card modern-card">
+                        <div class="card-header">
+                            <div class="header-icon">
+                                <i class="bi bi-credit-card"></i>
+                            </div>
+                            <h5 class="card-title">Subscription Status</h5>
+                        </div>
+                        <div class="card-body">
+                            <% if (subscription && subscription.status === 'active') { %>
+                                <% if (subscription.invoice_status === 'unpaid') { %>
+                                    <div class="subscription-status active-unpaid">
+                                        <div class="status-icon">
+                                            <i class="bi bi-exclamation-triangle"></i>
+                                        </div>
+                                        <div class="status-content">
+                                            <h4>Active + Unpaid</h4>
+                                            <p>Please complete your payment to continue</p>
+                                        </div>
+                                    </div>
+                                <% } else if (subscription.invoice_status === 'paid') { %>
+                                    <% const now = new Date(); %>
+                                    <% const expiryDate = new Date(subscription.expiryDate); %>
+                                    <% if (now > expiryDate) { %>
+                                        <div class="subscription-status expired">
+                                            <div class="status-icon">
+                                                <i class="bi bi-x-circle"></i>
+                                            </div>
+                                            <div class="status-content">
+                                                <h4>Active + Paid + Expired</h4>
+                                                <p>Your subscription has expired. Please renew.</p>
+                                            </div>
+                                        </div>
+                                    <% } else { %>
+                                        <div class="subscription-status active-valid">
+                                            <div class="status-icon">
+                                                <i class="bi bi-check-circle"></i>
+                                            </div>
+                                            <div class="status-content">
+                                                <h4>Active + Paid + Valid</h4>
+                                                <p>Expires: <%= expiryDate.toLocaleDateString() %></p>
+                                            </div>
+                                        </div>
+                                    <% } %>
+                                <% } %>
+                            <% } else if (subscription && subscription.status === 'expired') { %>
+                                <div class="subscription-status expired">
+                                    <div class="status-icon">
+                                        <i class="bi bi-x-circle"></i>
+                                    </div>
+                                    <div class="status-content">
+                                        <h4>Subscription Expired</h4>
+                                        <p>Your subscription has expired</p>
+                                    </div>
+                                </div>
+                            <% } else if (subscription && subscription.status === 'pending') { %>
+                                <div class="subscription-status pending">
+                                    <div class="status-icon">
+                                        <i class="bi bi-clock"></i>
+                                    </div>
+                                    <div class="status-content">
+                                        <h4>Payment Pending</h4>
+                                        <p>Your payment is under review</p>
+                                    </div>
+                                </div>
+                            <% } else { %>
+                                <div class="no-subscription-state">
+                                    <div class="no-subscription-icon">
+                                        <i class="bi bi-credit-card"></i>
+                                    </div>
+                                    <h4>No Active Subscription</h4>
+                                    <p><a href="/pricing" class="choose-plan-btn">Choose a Plan</a></p>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
-<% } %>
+        <% } %>
+
+
 
     
 
@@ -631,7 +1240,7 @@
   <!-- JavaScript Libraries -->
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tempusdominus-bootstrap-4@5.39.0/build/js/tempusdominus-bootstrap-4.min.js"></script>
 
   <!-- Template Javascript -->
   <script src="js/main.js"></script>

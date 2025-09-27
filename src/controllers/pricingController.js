@@ -5,7 +5,7 @@ const paypal = require("paypal-rest-sdk");
 const Stripe = require("stripe");
 const Wallet = require("../models/wallet");
 const Transaction = require("../models/transaction");
-
+const planModel = require("../models/plan.model");
 // Middleware to ensure user is logged in
 function ensureLoggedIn(req, res, next) {
   if (!req.session.userId) {
@@ -99,7 +99,9 @@ exports.allUsers = [
         });
       }
 
+      const plans = await planModel.find()
       res.render("pricing/pricing", {
+        plans,
         profileImagePath,
         firstName: user.first_name,
         lastName: user.last_name,
@@ -124,7 +126,7 @@ exports.allUsers = [
       return res.render("pricing/pricing", {
         users: [],
         error_msg: "Unable to load pricing data. Please try again.",
-        success_msg: ""
+        success_msg: "",
       });
     }
   },

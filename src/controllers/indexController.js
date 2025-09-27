@@ -26,10 +26,8 @@ exports.allusers = async (req, res) => {
       return res.redirect("/sign_in");
     }
 
-
-
     // Fetch all data concurrently
-    const [
+    let [
       repairs,
       inventory,
       productCount,
@@ -40,7 +38,7 @@ exports.allusers = async (req, res) => {
       teams,
       teamCount,
       deliveredRepairs,
-      subscription,
+      subscription,       // ✅ FIXED: Now fetching subscription from PlanRequest
       matchedPackage,
       latestPayment,
       userPlan
@@ -55,11 +53,50 @@ exports.allusers = async (req, res) => {
       AddUser.find().select('name'),
       AddUser.countDocuments(),
       Repair.find({ status: 'Delivered' }).select('Price'),
+      PlanRequest.findOne({ user: userId }).sort({ createdAt: -1 }), // ✅ Correct subscription
       Payments.findOne({ user: userId }).sort({ createdAt: -1 }),
       Payments.findOne({ user: userId }).sort({ createdAt: -1 }),
-      Payments.findOne({ user: userId }).sort({ createdAt: -1 }),
-      PlanRequest.findOne({ user: userId }).sort({ createdAt: -1 })
+      Payments.findOne({ user: userId }).sort({ createdAt: -1 })
     ]);
+
+    // Enhanced logging for plan debugging
+    console.log(`🔍 Dashboard data fetched for user: ${user.email} (ID: ${userId})`);
+    if (userPlan) {
+      console.log(`📋 User plan found: ${userPlan.planName} (Status: ${userPlan.status})`);
+      console.log(`📅 Plan expires: ${userPlan.expiryDate ? new Date(userPlan.expiryDate).toLocaleDateString() : 'No expiry date'}`);
+    } else {
+      console.log(`⚠️ No user plan found for user: ${user.email}`);
+
+      // Auto-assign Free Trial plan if user has no plan
+      console.log(`🔄 Attempting to assign Free Trial plan to user: ${user.email}`);
+      const trialExpiryDate = new Date();
+      trialExpiryDate.setDate(trialExpiryDate.getDate() + 7);
+
+      const freeTrialPlan = new PlanRequest({
+        user: userId,
+        planName: "Free Trial",
+        status: "Active",
+        startDate: new Date(),
+        expiryDate: trialExpiryDate,
+        invoiceStatus: "Unpaid",
+        amount: 0,
+        description: "Free Trial Plan - 7 days access"
+      });
+
+      const savedPlan = await freeTrialPlan.save();
+
+      // Also update the User model
+      await User.findByIdAndUpdate(userId, {
+        plan_name: "Free Trial",
+        plan_limit: 30
+      });
+
+      console.log(`✅ Free Trial plan auto-assigned to user: ${user.email} on dashboard access`);
+      console.log(`💾 New plan saved with ID: ${savedPlan._id}`);
+
+      // Refresh the userPlan data
+      userPlan = savedPlan;
+    }
 
     // Calculate totals
     const totalSales = deliveredRepairs.reduce((sum, repair) => sum + (repair.Price || 0), 0);

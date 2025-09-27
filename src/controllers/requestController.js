@@ -32,7 +32,7 @@ exports.allusers = async (req, res) => {
       unreadCount = await Notification.countDocuments({ isRead: false });
     }
 
-    res.render("Request/request", {
+    res.render("Request/request", { 
       message: "",
       profileImagePath,
       firstName: loggedInUser.first_name,

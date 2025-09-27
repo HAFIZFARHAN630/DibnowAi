@@ -8,8 +8,14 @@ const {
   updateUser,
   addUser,
   activeUsers,
-  expiredUsers
+  expiredUsers,
+  settings,
+  saveSettings,
+  notificationSettingsPage,
+  saveNotificationSettingsPage
 } = require("../controllers/adminController");
+const upload = require("../middlewares/uploadMiddleware");
+const mongoose = require("mongoose");
 
 const { getPaymentSettings, savePaymentSettings } = require("../controllers/adminPaymentController");
 const { isAuthenticated, isAdmin } = require("../middlewares/authMiddleware");
@@ -47,5 +53,28 @@ router.get("/admin/active-users", isAuthenticated, isAdmin, activeUsers);
 router.get("/admin/expired-users", isAuthenticated, isAdmin, expiredUsers);
 
 router.get("/admin/wallet", isAuthenticated, isAdmin, require("../controllers/adminController").walletManagement);
+
+
+
+
+
+
+
+
+
+router.get("/admin-settings",settings)
+
+// Save settings
+router.post("/save-settings",isAuthenticated,upload.single("favicon"),saveSettings)
+
+
+// Reder the Notification Settings Page
+router.get("/notification-settings", isAuthenticated, isAdmin,notificationSettingsPage)
+
+// Save Notification Settings
+router.post("/save-notification-settings", isAuthenticated, isAdmin,saveNotificationSettingsPage)
+
+
+
 
 module.exports = router;

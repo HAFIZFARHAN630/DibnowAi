@@ -509,7 +509,7 @@ exports.getPackageRequests = async (req, res) => {
     // Get profile image path
     const profileImagePath = user.user_img || "/img/dumi img.png";
 
-    res.render("Request/request", {
+    res.render("PlanRequest/request", {
       user,
       message: null,
       isAdmin,

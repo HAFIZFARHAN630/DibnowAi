@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const AddUser = require("../models/adduser");
+const Notification = require("../models/notification");
 
 // Show Add Team Form for Users
 exports.addTeamForm = async (req, res) => {
@@ -24,6 +25,28 @@ exports.addTeamForm = async (req, res) => {
       userUnreadCount = await Notification.countDocuments({ userId: userId, isRead: false });
     }
 
+    // Get current team count for plan limit display
+    const currentTeamCount = await AddUser.countDocuments({ user_id: userId });
+    const planLimits = {
+      'FREE': 2,
+      'FREE TRIAL': 2,
+      'BASIC': 6,
+      'STANDARD': 10,
+      'PREMIUM': Infinity
+    };
+    const userPlanKey = user.plan_name?.toUpperCase();
+    const userLimit = planLimits[userPlanKey] || 0;
+
+    // Create plan limit message
+    let planLimitMessage = null;
+    if (userLimit > 0 && userLimit !== Infinity) {
+      planLimitMessage = `Your ${user.plan_name} plan allows up to ${userLimit} team members. You currently have ${currentTeamCount} team members.`;
+    } else if (userLimit === Infinity) {
+      planLimitMessage = `Your ${user.plan_name} plan has unlimited team members.`;
+    } else {
+      planLimitMessage = `Your current plan does not allow team members. Please upgrade to add team members.`;
+    }
+
     console.log("Rendering userTeam/add-team view");
     res.render("userTeam/add-team", {
       profileImagePath: user.user_img || "/uploads/default.png",
@@ -35,7 +58,10 @@ exports.addTeamForm = async (req, res) => {
       reson: user.denial_reason,
       userNotifications: userNotifications,
       userUnreadCount: userUnreadCount,
-      message: null
+      message: null,
+      planLimitMessage: planLimitMessage,
+      currentTeamCount: currentTeamCount,
+      teamLimit: userLimit
     });
   } catch (error) {
     console.error("Error loading add team form:", error.message);
@@ -97,7 +123,9 @@ exports.createTeam = async (req, res) => {
       'STANDARD': 10,
       'PREMIUM': Infinity
     };
-    const userLimit = planLimits[user.plan_name] || 0;
+    // Case-insensitive plan name matching
+    const userPlanKey = user.plan_name?.toUpperCase();
+    const userLimit = planLimits[userPlanKey] || 0;
 
     // Count existing team members for this user
     console.log('Counting existing members with userId:', userIdString);
@@ -140,7 +168,20 @@ exports.createTeam = async (req, res) => {
         'PREMIUM': 'PREMIUM'
       };
       const planDisplayName = planNames[user.plan_name] || user.plan_name;
-      req.flash("error_msg", `Your current plan (${planDisplayName}) allows only ${userLimit} teams.`);
+
+      let restrictionMessage = `Your current plan (${planDisplayName}) allows only ${userLimit} team members. `;
+
+      // Add specific guidance for Free Trial users
+      if (user.plan_name?.toUpperCase() === 'FREE TRIAL' || user.plan_name?.toUpperCase() === 'FREE') {
+        restrictionMessage += `To add more team members, please upgrade to a paid plan. `;
+        restrictionMessage += `Basic plan allows 6 members, Standard allows 10 members, and Premium has unlimited members.`;
+      } else {
+        restrictionMessage += `Please upgrade to a higher plan to increase your team limit.`;
+      }
+
+      // Notification creation removed as requested
+
+      req.flash("error_msg", restrictionMessage);
       return res.redirect("/userteam/add");
     }
 
@@ -327,6 +368,26 @@ exports.listTeams = async (req, res) => {
      console.log('Debug: Users to render count:', usersToRender.length);
      console.log('Debug: Users to render type:', typeof usersToRender);
 
+     // Add plan limit information to the team list view
+     const planLimits = {
+       'FREE': 2,
+       'FREE TRIAL': 2,
+       'BASIC': 6,
+       'STANDARD': 10,
+       'PREMIUM': Infinity
+     };
+     const userPlanKey = user.plan_name?.toUpperCase();
+     const userLimit = planLimits[userPlanKey] || 0;
+
+     let planLimitInfo = null;
+     if (userLimit > 0 && userLimit !== Infinity) {
+       planLimitInfo = `Your ${user.plan_name} plan allows up to ${userLimit} team members. You currently have ${usersToRender.length} team members.`;
+     } else if (userLimit === Infinity) {
+       planLimitInfo = `Your ${user.plan_name} plan has unlimited team members.`;
+     } else {
+       planLimitInfo = `Your current plan does not allow team members. Please upgrade to add team members.`;
+     }
+
      res.render("userTeam/userAllTeam", {
       users: usersToRender,
       profileImagePath: user.user_img || "/uploads/default.png",
@@ -337,7 +398,10 @@ exports.listTeams = async (req, res) => {
       status: user.status,
       reson: user.denial_reason,
       userNotifications: userNotifications,
-      userUnreadCount: userUnreadCount
+      userUnreadCount: userUnreadCount,
+      planLimitInfo: planLimitInfo,
+      currentTeamCount: usersToRender.length,
+      teamLimit: userLimit
     });
   } catch (error) {
     console.error("Error fetching user teams:", error.message);
