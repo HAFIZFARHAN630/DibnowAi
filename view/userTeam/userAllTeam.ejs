@@ -48,14 +48,81 @@
       #teamSearch::placeholder {
         color: #6c757d;
       }
-    .footer {
+
+      /* Enhanced Table Design */
+      .table {
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        border: none;
+      }
+
+      .table thead th {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border: none;
+        padding: 20px 15px;
+        font-size: 14px;
+      }
+
+      .table tbody tr {
+        transition: all 0.3s ease;
+        border: none;
+      }
+
+      .table tbody tr:hover {
+        background-color: #f8f9ff;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .table tbody td {
+        padding: 18px 15px;
+        border: none;
+        border-bottom: 1px solid #f0f0f0;
+        vertical-align: middle;
+      }
+
+      /* Button Styling */
+      .btn-action {
+        border-radius: 8px;
+        font-weight: 600;
+        padding: 8px 16px;
+        transition: all 0.3s ease;
+      }
+
+      .btn-action:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .table tbody tr.search-hidden {
+        display: none;
+      }
+
+      .no-results {
+        text-align: center;
+        padding: 40px;
+        color: #6b7280;
+      }
+
+      .no-results i {
+        font-size: 48px;
+        margin-bottom: 15px;
+        opacity: 0.5;
+      }
+
+      .footer {
         margin-top: auto;
         padding:5px 11px 5px 95px;
         background-color: #dadae0;
         text-align: center;
         width: 109%;
         margin-left: -35px;
-          }
+      }
 
       .btn-add-team {
         background: linear-gradient(135deg, #10b981 0%, #059669 100%);
@@ -393,7 +460,12 @@
                             </small>
                         </div>
                         <div class="d-flex align-items-center gap-2">
-                            <input type="text" id="teamSearch" class="form-control" style="width: 250px;" placeholder="Search team members...">
+                            <div class="search-container">
+                              <div class="search-input-wrapper">
+                                <i class="bi bi-search search-icon"></i>
+                                <input type="text" id="teamSearch" class="form-control" placeholder="Search team members...">
+                              </div>
+                            </div>
                             <a href="/userteam/add" class="btn-add-team">
                                 <i class="fas fa-user-plus"></i> Add Team Member
                             </a>

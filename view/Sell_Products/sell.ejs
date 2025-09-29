@@ -37,6 +37,59 @@
     width: 109%;
     margin-left: -35px;
 }
+
+/* Enhanced Table Design - Same as adminfile.ejs */
+.table {
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: none;
+}
+
+.table thead th {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: none;
+  padding: 20px 15px;
+  font-size: 14px;
+}
+
+.table tbody tr {
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.table tbody tr:hover {
+  background-color: #f8f9ff;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.table tbody td {
+  padding: 18px 15px;
+  border: none;
+  border-bottom: 1px solid #f0f0f0;
+  vertical-align: middle;
+}
+
+.table tbody tr.search-hidden {
+  display: none;
+}
+
+.no-results {
+  text-align: center;
+  padding: 40px;
+  color: #6b7280;
+}
+
+.no-results i {
+  font-size: 48px;
+  margin-bottom: 15px;
+  opacity: 0.5;
+}
 </style>
 <body>
    
@@ -119,15 +172,15 @@
 <% products.forEach((product) => { %>
   <div class="modal fade" id="confirmModal<%= product.id %>" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-      <div class="modal-content gadget-form-modal" style="margin-top: -23px;">
+      <div class="modal-content gadget-form-modal" style="margin-top: 110px;">
         <div class="modal-header">
-          <h3 class="modal-title text-dark" id="gadgetRepairModalLabel" style="margin-left: auto; font-size: xx-large;margin-bottom: -17px;">Return Product</h3>
-          <button type="button" class="btn-close gadget-close-btn" data-bs-dismiss="modal" aria-label="Close">               
+          <h5 class="modal-title" id="gadgetRepairModalLabel" style="margin-left: auto; font-size: xx-large;margin-bottom: -17px;">Return Product</h5>
+          <button type="button" class="btn-close gadget-close-btn" data-bs-dismiss="modal" aria-label="Close">
             <i class="fas fa-times gadget-close-btn" data-bs-dismiss="modal" aria-label="Close"></i>
           </button>
         </div>
-        <div class="modal-body" style="padding-top: 17px;">
-          <form action="/sells/update/<%= product.id %>" method="POST" class="gadget-form">
+        <form class="gadget-form mt-4" action="/sells/update/<%= product.id %>" method="POST">
+          <div class="form-group">
             <div class="row">
               <div class="col-md-6">
                 <label for="fullName" class="form-label">Full Name</label>
@@ -138,12 +191,14 @@
                 <input type="number" class="form-control gadget-input" name="Number" value="<%= product.Number %>" required>
               </div>
             </div>
+          </div>
+          <div class="form-group">
             <div class="row">
-              <div class="col-md-6 mt-n2">
+              <div class="col-md-6">
                 <label for="Price" class="form-label">Price</label>
                 <input type="number" class="form-control gadget-input" name="Price" value="<%= product.Price %>" required>
               </div>
-              <div class="col-md-6 mt-n2">
+              <div class="col-md-6">
                 <label for="Type" class="form-label">Type</label>
                 <select class="form-select gadget-select" name="Type" required>
                   <option value="New" <%= product.Type === 'New' ? 'selected' : '' %>>New Product</option>
@@ -152,18 +207,13 @@
                 </select>
               </div>
             </div>
-            <div class="row">
-              <div class="col-md-6 mt-n2">
-                <label for="Product" class="form-label">Product Name</label>
-                <input type="text" class="form-control gadget-input" name="Product" value="<%= product.Product %>" readonly required>
-              </div>
-            </div>
-            <div class="modal-footer gap-3">
-              <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-              <button type="submit" class="btn btn-success">Confirm</button>
-            </div>
-          </form>
-        </div>
+          </div>
+          <div class="form-group">
+            <label for="Product" class="form-label">Product Name</label>
+            <input type="text" class="form-control gadget-input" name="Product" value="<%= product.Product %>" readonly required>
+          </div>
+          <button type="submit" class="gadget-submit-btn">Confirm</button>
+        </form>
       </div>
     </div>
   </div>

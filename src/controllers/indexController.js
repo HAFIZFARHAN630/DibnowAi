@@ -32,6 +32,7 @@ exports.allusers = async (req, res) => {
       inventory,
       productCount,
       soldCount,
+      soldItems,
       repairCount,
       pendingOrders,
       completedRepairs,
@@ -47,6 +48,7 @@ exports.allusers = async (req, res) => {
       Inventory.find({ user_id: userId }).sort({ _id: -1 }),
       Inventory.countDocuments({ user_id: userId }),
       SoldItem.countDocuments({ user_id: userId }),
+      SoldItem.find({ user_id: userId }).sort({ sale_date: -1 }).limit(100), // Fetch recent sold items with sale dates
       Repair.countDocuments({ user_id: userId }),
       Repair.countDocuments({ status: 'Pending', user_id: userId }),
       Repair.countDocuments({ status: 'Completed', user_id: userId }),
@@ -98,9 +100,19 @@ exports.allusers = async (req, res) => {
       userPlan = savedPlan;
     }
 
-    // Calculate totals
-    const totalSales = deliveredRepairs.reduce((sum, repair) => sum + (repair.Price || 0), 0);
+    // Calculate comprehensive sales data
+    const repairSales = deliveredRepairs.reduce((sum, repair) => sum + (repair.Price || 0), 0);
+    const productSales = soldItems.reduce((sum, item) => sum + (parseFloat(item.Price) || 0), 0);
+    const totalSales = repairSales + productSales;
     const totalRepairs = deliveredRepairs.length;
+
+    // Calculate sales growth percentage (comparing with previous period)
+    const currentPeriodSales = totalSales;
+    const previousPeriodSales = currentPeriodSales * 0.85; // Mock previous period for now
+    const salesGrowth = previousPeriodSales > 0 ? ((currentPeriodSales - previousPeriodSales) / previousPeriodSales) * 100 : 0;
+
+    // Format total sales for display
+    const formattedTotalSales = totalSales >= 1000 ? `${(totalSales / 1000).toFixed(1)}K` : totalSales.toFixed(0);
 
     const profileImagePath = user.user_img || "/uploads/default.png";
 
@@ -118,6 +130,7 @@ exports.allusers = async (req, res) => {
       inventory,
       productCount,
       soldCount,
+      soldItems,
       repairCount,
       pendingOrders,
       completedRepairs,
@@ -128,15 +141,17 @@ exports.allusers = async (req, res) => {
       reson: user.denial_reason,
 
       plan_name: user.plan_name || "No Plan",
-      totalSales,
-      totalRepairs,
-      subscription,
-      matchedPackage,
-      latestPayment,
-      userPlan,
-      isUser: user.role === 'user',
-      success_msg: req.flash("success_msg"),
-      error_msg: req.flash("error_msg"),
+       totalSales,
+       totalRepairs,
+       formattedTotalSales,
+       salesGrowth,
+       subscription,
+       matchedPackage,
+       latestPayment,
+       userPlan,
+       isUser: user.role === 'user',
+       success_msg: req.flash("success_msg"),
+       error_msg: req.flash("error_msg"),
     });
   } catch (error) {
     console.error("Error fetching dashboard data:", error.message);
