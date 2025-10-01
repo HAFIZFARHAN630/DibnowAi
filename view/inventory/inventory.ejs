@@ -91,8 +91,65 @@
   margin-bottom: 15px;
   opacity: 0.5;
 }
+ .action-buttons-b{
+        display: flex;
+        align-items: center;
+        margin-top: 20px;
+        gap: 15px;
+        margin-left: 30px;
+      }
+      @media screen and (max-width: 768px) {
+        .action-buttons-b {
+          flex-direction: column;
+          gap: 10px;
+        }
+        .action-buttons-b button{
+          width: 100% !important;
+        }
+      }
+      /* Reduce default container spacing */
+.container-fluid {
+  padding-left: 5px !important;
+  padding-right: 5px !important;
+}
+
+/* Card adjustments */
+.card {
+  border-radius: 10px;
+  /* padding: 10px !important; */
+}
+
+/* Fix cards on very small screens */
+@media (max-width: 400px) {
+  .card {
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .card-body {
+    padding: 5px !important;
+  }
+  .card-body img {
+    width: 35px !important;
+    height: 35px !important;
+  }
+  .card-body h6 {
+    font-size: 14px;
+  }
+  .card-body p {
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+  .card-body .fw-bold {
+    font-size: 13px;
+  }
+}
+.body-wrapper{
+  max-width: 100vw !important;
+  overflow-x: hidden !important;
+}
+
 </style>
-<body>
+<body style="max-width: 100vw !important; overflow-x: hidden !important;">
    
   <!--  -->
 <%- include('../par/Add_Repair.ejs') %>
@@ -104,7 +161,7 @@
       <%- include('../par/header.ejs') %>
  
       
-  <div class="action-buttons" style="display:flex; justify-content: end; margin-top: 10px; gap: 5px; margin-right: 23px;">
+  <div class="action-buttons-b">
     <button class="btn btn-action btn-primary" data-bs-toggle="modal" data-bs-target="#gadgetrModal"><i class="bi bi-clipboard-data"></i> Add Inventory</button>
     <button class="btn btn-action btn-success" data-bs-toggle="modal" data-bs-target="#categoriesModal"><i class="bi bi-tags"></i> Add Category</button>                    
     <button class="btn btn-action btn-info" data-bs-toggle="modal" data-bs-target="#brandModal"><i class="bi bi-box"></i>  Add Brand   </button>    
@@ -258,65 +315,98 @@
   </script>
     
       <div class="body-wrapper" style="margin-top: 8rem !important;">
-        <div class="container-fluid">
-          <div class="card card-body py-3">
-            <div class="row align-items-center">
-              <div class="col-md-12">
-                <div class="d-flex justify-content-between align-items-center">
-                  <h4 class="mb-4 mb-sm-0 card-title">Inventory</h4>
-                  <i class="bi bi-clipboard-data"style="font-size:17px;padding-left:5px;"></i>
-                      <form class="position-relative ms-auto">
-                    <input type="text" id="searchInput" class="form-control search-chat py-2 ps-5" placeholder="Search Product">
-                    <i class="fa-solid fa-magnifying-glass position-absolute top-50 start-0 translate-middle-y fs-6 text-dark ms-3"></i>
-                  </form>
-                </div>
-              </div>
-            </div>
-          </div>
+        <div class="container">
+<div class="card card-body py-3">
+  <div class="row align-items-center">
+    <div class="col-12">
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+        
+        <!-- Title + Icon -->
+        <div class="d-flex align-items-center gap-2">
+          <h4 class="mb-0 card-title">Inventory</h4>
+          <i class="bi bi-clipboard-data" style="font-size:17px;"></i>
+        </div>
+        
+        <!-- Search -->
+        <form class="position-relative flex-grow-1" style="min-width:200px;">
+          <input 
+            type="text" 
+            id="searchInput" 
+            class="form-control search-chat py-2 ps-5 w-100" 
+            placeholder="Search Product"
+          >
+          <i class="fa-solid fa-magnifying-glass position-absolute top-50 start-0 translate-middle-y fs-6 text-dark ms-3"></i>
+        </form>
+
+      </div>
+    </div>
+  </div>
+</div>
+
       
           <div class="card card-body">
-            <div class="table-responsive">
-              <table class="table search-table align-middle text-nowrap" id="paginatedTable">
-                <thead class="header-item text-center">
-                  <tr>
-                    <th>Image</th>
-                    <th>Product Name</th>
-                    <th>Details</th>
-                    <th>Sale Price</th>
-                    <th>Retail Price</th>
-                  </tr>
-                </thead>
-                <tbody id="table-body" class="text-center">
-                  <% if (typeof products !== 'undefined' && Array.isArray(products) && products.length > 0) { %>
-                    <% products.forEach(product => { %>
-      
-                      <tr class="search-items" data-user-id="<%= product.id %>">
-                        <td>
-                          <span class="user-name mb-0 text-dark">
-                            <img src="/uploads/<%= product.device_image %>" alt="Device Icon" style="width: 30px; height: 30px; object-fit: cover">
-                          </span>
-                        </td>
-                        <td>
-                          <span class="usr-location text-dark"><%= product.product_name %></span>
-                        </td>
-                        <td>
-                          <span class="usr-location text-dark text-wrap" style="word-wrap: break-word; white-space: normal;">
-                            <%= product.gadget_problem %>
-                          </span>
-                        </td>
-                        <td>
-                          <span class="usr-location text-dark"> <%= product.Sale_Price %></span>
-                        </td>
-                        <td>
-                          <span class="usr-location text-dark"> <%= product.Retail_Price %></span>
-                        </td>
-                      </tr>
-      
-                    <% }) %>
-                  <% } %>
-                </tbody>
-              </table>
-            </div>
+<!-- Hide table on small screens -->
+<div class="table-responsive d-none d-md-block">
+  <table class="table search-table align-middle text-nowrap" id="paginatedTable">
+    <thead class="header-item text-center">
+      <tr>
+        <th>Image</th>
+        <th>Product Name</th>
+        <th>Details</th>
+        <th>Sale Price</th>
+        <th>Retail Price</th>
+      </tr>
+    </thead>
+    <tbody id="table-body" class="text-center">
+      <% if (typeof products !== 'undefined' && Array.isArray(products) && products.length > 0) { %>
+        <% products.forEach(product => { %>
+          <tr class="search-items" data-user-id="<%= product.id %>">
+            <td>
+              <span class="user-name mb-0 text-dark">
+                <img src="/uploads/<%= product.device_image %>" alt="Device Icon" style="width: 30px; height: 30px; object-fit: cover">
+              </span>
+            </td>
+            <td><span class="usr-location text-dark"><%= product.product_name %></span></td>
+            <td>
+              <span class="usr-location text-dark text-wrap" style="word-wrap: break-word; white-space: normal;">
+                <%= product.gadget_problem %>
+              </span>
+            </td>
+            <td><span class="usr-location text-dark"><%= product.Sale_Price %></span></td>
+            <td><span class="usr-location text-dark"><%= product.Retail_Price %></span></td>
+          </tr>
+        <% }) %>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+
+<!-- Responsive Cards for small screens -->
+<div class="d-md-none">
+  <% if (typeof products !== 'undefined' && Array.isArray(products) && products.length > 0) { %>
+    <% products.forEach(product => { %>
+      <div class="card mb-3 shadow-sm">
+        <div class="card-body">
+          <div class="d-flex align-items-center mb-2">
+            <!-- <img src="/uploads/<%= product.device_image %>" 
+                 alt="Device Icon" 
+                 class="rounded me-2" 
+                 style="width: 40px; height: 40px; object-fit: cover;"> -->
+            <h6 class="mb-0"><%= product.product_name %></h6>
+          </div>
+          <p class="mb-2 text-muted" style="word-wrap: break-word; white-space: normal;">
+            <%= product.gadget_problem %>
+          </p>
+          <div class="d-flex justify-content-between">
+            <span class="fw-bold text-success">Sale: <%= product.Sale_Price %></span>
+            <span class="fw-bold text-primary">Retail: <%= product.Retail_Price %></span>
+          </div>
+        </div>
+      </div>
+    <% }) %>
+  <% } %>
+</div>
+
           </div>
         </div>
       </div>

@@ -52,6 +52,8 @@
             color: white;
         }
     </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+
 <body>
 
     <%- include('../par/sidebar.ejs') %>
@@ -91,32 +93,69 @@
                     <h4>All Transactions</h4>
                     <a href="/wallet" class="btn btn-outline-primary btn-back">Back to Wallet</a>
                 </div>
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover history-table">
-                        <thead class="">
-                            <tr>
-                                <th>Type</th>
-                                <th>Amount</th>
-                                <th>Date</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% if (transactions && transactions.length > 0) { %>
-                                <% transactions.forEach(txn => { %>
-                                    <tr>
-                                        <td><span class="badge bg-secondary"><%= txn.type.charAt(0).toUpperCase() + txn.type.slice(1) %></span></td>
-                                        <td><strong>£<%= txn.amount.toFixed(2) %></strong></td>
-                                        <td><%= new Date(txn.date).toLocaleString() %></td>
-                                        <td><span class="badge <%= txn.status === 'success' ? 'bg-success' : 'bg-danger' %>"><%= txn.status.toUpperCase() %></span></td>
-                                    </tr>
-                                <% }) %>
-                            <% } else { %>
-                                <tr><td colspan="4" class="text-center">No transactions found.</td></tr>
-                            <% } %>
-                        </tbody>
-                    </table>
-                </div>
+
+
+               
+
+                <!-- Table (show only on md and up) -->
+<div class="table-responsive hidden md:block">
+  <table class="table table-striped table-hover history-table">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Amount</th>
+        <th>Date</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (transactions && transactions.length > 0) { %>
+        <% transactions.forEach(txn => { %>
+          <tr>
+            <td><span class="badge bg-secondary"><%= txn.type.charAt(0).toUpperCase() + txn.type.slice(1) %></span></td>
+            <td><strong>£<%= txn.amount.toFixed(2) %></strong></td>
+            <td><%= new Date(txn.date).toLocaleString() %></td>
+            <td><span class="badge <%= txn.status === 'success' ? 'bg-success' : 'bg-danger' %>"><%= txn.status.toUpperCase() %></span></td>
+          </tr>
+        <% }) %>
+      <% } else { %>
+        <tr><td colspan="4" class="text-center">No transactions found.</td></tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+
+<!-- Card view (show only on small screens) -->
+<div class="space-y-4 md:hidden">
+  <% if (transactions && transactions.length > 0) { %>
+    <% transactions.forEach(txn => { %>
+      <div class="bg-white shadow rounded-lg p-4 border border-gray-200">
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-sm font-semibold text-gray-600">Type:</span>
+          <span class="px-2 py-1 text-xs rounded bg-gray-200"><%= txn.type.charAt(0).toUpperCase() + txn.type.slice(1) %></span>
+        </div>
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-sm font-semibold text-gray-600">Amount:</span>
+          <span class="text-base font-bold text-gray-800">£<%= txn.amount.toFixed(2) %></span>
+        </div>
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-sm font-semibold text-gray-600">Date:</span>
+          <span class="text-xs text-gray-700"><%= new Date(txn.date).toLocaleString() %></span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-sm font-semibold text-gray-600">Status:</span>
+          <span class="px-2 py-1 text-xs rounded <%= txn.status === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
+            <%= txn.status.toUpperCase() %>
+          </span>
+        </div>
+      </div>
+    <% }) %>
+  <% } else { %>
+    <div class="text-center text-gray-500 text-sm">No transactions found.</div>
+  <% } %>
+</div>
+
+
                 <% if (transactions && transactions.length > 10) { %>
                     <nav aria-label="Transaction pagination">
                         <ul class="pagination justify-content-center">
@@ -129,6 +168,7 @@
 
         </div>
     </div>
+
     <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>

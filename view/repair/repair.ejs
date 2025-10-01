@@ -183,6 +183,22 @@
         box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25);
         color: #212529;
       }
+      .action-buttons-b{
+        display: flex;
+        align-items: center;
+        margin-top: 20px;
+        gap: 15px;
+        margin-left: 30px;
+      }
+      @media screen and (max-width: 768px) {
+        .action-buttons-b {
+          flex-direction: column;
+          gap: 10px;
+        }
+        .action-buttons-b button{
+          width: 100% important;
+        }
+      }
     </style>
 </head>
 <body>
@@ -210,7 +226,7 @@
     </div>
 <% } %>
 
-<div  class="action-buttons" style="display:flex; justify-content: end; margin-top: 10px; gap: 5px; margin-right: 23px;">
+<div  class="action-buttons-b">
   <button class="btn btn-action btn-danger" data-bs-toggle="modal" data-bs-target="#gadgetRepairModal"><i class="bi bi-tools"></i> Add Repair Customer </button> 
   <button class="btn btn-action btn-primary" data-bs-toggle="modal" data-bs-target="#gadgetrModal"><i class="bi bi-clipboard-data"></i> Add Inventory</button>
 </div>
@@ -298,91 +314,133 @@ initializeChart();
 
 <div class="body-wrapper" style="margin-top: 8rem !important;">
   <div class="container-fluid">
-    <div class="card card-body py-3">
-      <div class="row align-items-center">
-        <div class="col-md-12">
-          <div class="d-flex justify-content-between align-items-center">
-            <h4 class="mb-4 mb-sm-0 card-title">Repair</h4>
-            <i class="icon fa-solid fa-screwdriver-wrench" style="font-size:17px;padding-left:5px;"></i>
-            <div class="search-container">
-              <div class="search-input-wrapper">
-                <i class="bi bi-search search-icon"></i>
-                <input type="text" id="text-srh" class="form-control" placeholder="Search Product">
-              </div>
-            </div>
-            <!-- Status Filter Dropdown -->
-            <div class="filter-container ms-3">
-              <select id="statusFilter" class="form-selects" onchange="filterTable()">
-                <option value="All">All</option>
-                <option value="Pending">Pending</option>
-                <option value="Cancelled">Cancelled</option>
-                <option value="Progress">Progress</option>
-                <option value="Completed">Completed</option>
-                <option value="Delivered">Delivered</option>
-              </select>
-            </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
+<div class="card card-body py-3">
+  <div class="row align-items-center">
+    <div class="col-md-12">
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <h4 class="mb-4 mb-sm-0 card-title">Repair</h4>
+        <i class="icon fa-solid fa-screwdriver-wrench" style="font-size:17px;padding-left:5px;"></i>
+        
+        <div class="search-container flex-grow-1" style="min-width:200px;">
+          <div class="search-input-wrapper w-100">
+            <input type="text" id="text-srh" class="form-control" placeholder="Search Product">
+          </div>
+        </div>
+        
+        <!-- Status Filter Dropdown -->
+        <div class="filter-container ms-sm-3 w-auto flex-grow-1" style="min-width:150px;">
+          <select id="statusFilter" class="form-selects w-100" onchange="filterTable()">
+            <option value="All">All</option>
+            <option value="Pending">Pending</option>
+            <option value="Cancelled">Cancelled</option>
+            <option value="Progress">Progress</option>
+            <option value="Completed">Completed</option>
+            <option value="Delivered">Delivered</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
                         
     <div class="card card-body" >
-      <div class="table-responsive">
-        <table class="table search-table align-middle text-nowrap" id="paginatedTable">
-          <thead class="header-item text-center" >
-            <tr>
-              <th>Full Name</th>
-              <th>Product Name</th> 
-              <th>Price</th>
-              <th>Status</th>
-              <th class="text-center">Action</th>
-            </tr>
-          </thead>
-          <tbody id="table-body" class="text-center">
-            <% products.forEach(product => { %>
-            <tr class="search-items" data-user-id="<%= product.id %>">
-              <td><span class="usr-name mb-0 text-dark"><%= product.fullName %></span></td>
-              <td><span class="usr-location text-dark"><%= product.brand %></span></td>
-              <td><span class="usr-price text-dark"> <%= product.Price %></span></td>
-              <td style="display: none;"><span class="usr-select <%= product.mobileNumber %>"><%= product.mobileNumber %></span></td>
-              <td>
-                <select class="status-select <%= product.status %>" onchange="updateStatus('<%= product.id %>', this.value)">
-                  <option value="Pending" <%= product.status === 'Pending' ? 'selected' : '' %>>Pending</option>
-                  <option value="Cancelled" <%= product.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
-                  <option value="Progress" <%= product.status === 'Progress' ? 'selected' : '' %>>Progress</option>
-                  <option value="Completed" <%= product.status === 'Completed' ? 'selected' : '' %>>Completed</option>
-                  <option value="Delivered" <%= product.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
-                </select>
-              </td>
-              <td>
-                <div class="action-btn d-flex justify-content-center">
-                  <button class="btn text-black" onclick="printTable('<%= product.id %>')">
-                    <i class="fa fa-print"></i> Print
-                  </button>
-                  
-                  <form action="/repair/<%= product.id %>" method="POST">
-                    <button type="submit" class="btn btn-link text-danger">
-                      <i class="fa-solid fa-trash-can text-danger"></i>
-                    </button>
-                  </form>
-                  
-                  <button class="btn text-primary" onclick="generateQRCode('[<%= product.random_id%>, <%= product.fullName %>,<%= product.brand %>,<%= product.status %>]')">
-                    <i class="fas fa-qrcode"></i> Generate QR
-                  </button>
-                  
-                  <!-- Edit Button -->
-                </button>
-                <button type="button" class="btn btn-link text-primary edit" data-bs-toggle="modal" data-bs-target="#editUserModal<%= product.id %>"> 
-                  <i class="fs-4 fa-solid fa-pen-to-square text-primary"></i>
-                </button>
-                  
-                </div>
-              </td>
-            </tr>
-            <% }); %>
-          </tbody>
-        </table>
-      </div>
+<!-- Table (shown on md+ screens) -->
+<div class="table-responsive d-none d-md-block">
+  <table class="table search-table align-middle text-nowrap" id="paginatedTable">
+    <thead class="header-item text-center">
+      <tr>
+        <th>Full Name</th>
+        <th>Product Name</th>
+        <th>Price</th>
+        <th>Status</th>
+        <th class="text-center">Action</th>
+      </tr>
+    </thead>
+    <tbody id="table-body" class="text-center">
+      <% products.forEach(product => { %>
+      <tr class="search-items" data-user-id="<%= product.id %>">
+        <td><span class="usr-name mb-0 text-dark"><%= product.fullName %></span></td>
+        <td><span class="usr-location text-dark"><%= product.brand %></span></td>
+        <td><span class="usr-price text-dark"><%= product.Price %></span></td>
+        <td>
+          <select class="status-select <%= product.status %>" onchange="updateStatus('<%= product.id %>', this.value)">
+            <option value="Pending" <%= product.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+            <option value="Cancelled" <%= product.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+            <option value="Progress" <%= product.status === 'Progress' ? 'selected' : '' %>>Progress</option>
+            <option value="Completed" <%= product.status === 'Completed' ? 'selected' : '' %>>Completed</option>
+            <option value="Delivered" <%= product.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+          </select>
+        </td>
+        <td>
+          <div class="action-btn d-flex justify-content-center flex-wrap gap-2">
+            <button class="btn text-black" onclick="printTable('<%= product.id %>')">
+              <i class="fa fa-print"></i> Print
+            </button>
+
+            <form action="/repair/<%= product.id %>" method="POST">
+              <button type="submit" class="btn btn-link text-danger">
+                <i class="fa-solid fa-trash-can text-danger"></i>
+              </button>
+            </form>
+
+            <button class="btn text-primary" onclick="generateQRCode('[<%= product.random_id%>, <%= product.fullName %>,<%= product.brand %>,<%= product.status %>]')">
+              <i class="fas fa-qrcode"></i> Generate QR
+            </button>
+
+            <button type="button" class="btn btn-link text-primary edit" data-bs-toggle="modal" data-bs-target="#editUserModal<%= product.id %>">
+              <i class="fs-4 fa-solid fa-pen-to-square text-primary"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</div>
+
+<!-- Card layout (shown on small screens) -->
+<div class="d-block d-md-none">
+  <% products.forEach(product => { %>
+  <div class="card mb-3 p-3">
+    <h5 class="mb-2"><i class="fa fa-user me-2"></i><%= product.fullName %></h5>
+    <p class="mb-1"><strong>Product:</strong> <%= product.brand %></p>
+    <p class="mb-1"><strong>Price:</strong> <%= product.Price %></p>
+    <div class="mb-2">
+      <strong>Status:</strong>
+      <select class="status-select <%= product.status %>" onchange="updateStatus('<%= product.id %>', this.value)">
+        <option value="Pending" <%= product.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+        <option value="Cancelled" <%= product.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+        <option value="Progress" <%= product.status === 'Progress' ? 'selected' : '' %>>Progress</option>
+        <option value="Completed" <%= product.status === 'Completed' ? 'selected' : '' %>>Completed</option>
+        <option value="Delivered" <%= product.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+      </select>
+    </div>
+    <div class="d-flex flex-wrap gap-2">
+      <button class="btn btn-sm btn-outline-dark" onclick="printTable('<%= product.id %>')">
+        <i class="fa fa-print"></i>
+      </button>
+
+      <form action="/repair/<%= product.id %>" method="POST">
+        <button type="submit" class="btn btn-sm btn-outline-danger">
+          <i class="fa-solid fa-trash-can"></i>
+        </button>
+      </form>
+
+      <button class="btn btn-sm btn-outline-primary" onclick="generateQRCode('[<%= product.random_id%>, <%= product.fullName %>,<%= product.brand %>,<%= product.status %>]')">
+        <i class="fas fa-qrcode"></i>
+      </button>
+
+      <button type="button" class="btn btn-sm btn-outline-primary edit" data-bs-toggle="modal" data-bs-target="#editUserModal<%= product.id %>">
+        <i class="fa-solid fa-pen-to-square"></i>
+      </button>
+    </div>
+  </div>
+  <% }); %>
+</div>
+```
+
     </div>
   </div>
 </div>

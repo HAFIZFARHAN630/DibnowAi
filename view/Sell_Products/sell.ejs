@@ -90,12 +90,69 @@
   margin-bottom: 15px;
   opacity: 0.5;
 }
+/* --- Mobile cards & show/hide rules --- */
+@media (max-width: 449px) {
+  /* hide desktop table/card */
+  .product-table-desktop { display: none !important; }
+
+  /* show mobile cards */
+  .product-cards-mobile { display: block !important; padding: 0.75rem; }
+}
+
+@media (min-width: 450px) {
+  .product-cards-mobile { display: block !important; }
+}
+
+/* Card look & spacing */
+.product-card {
+  border-radius: 12px;
+  background: linear-gradient(90deg,#ffffff,#f8fafc);
+  box-shadow: 0 6px 18px rgba(15,23,42,0.06);
+  padding: 12px;
+  margin-bottom: 12px;
+  border: 1px solid #eef2f7;
+  overflow: hidden;
+}
+
+/* small labels and values */
+.product-card .label {
+  font-size: 11px;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.product-card .value {
+  font-size: 14px;
+  color: #0f172a;
+  font-weight: 600;
+  word-break: break-word;
+}
+
+/* actions layout */
+.product-card .actions { display:flex; gap:8px; align-items:center; }
+
+/* tighten spacing for very small screens */
+@media (max-width: 320px) {
+  .product-card { padding:10px; }
+  .product-card .value { font-size:13px; }
+}
+@media screen and (max-width: 768px) {
+  .hide-on-small{
+    display: none !important;
+  }
+}
+
+
+
+
 </style>
+
+
 <body>
    
 
    <%- include('../par/sidebar.ejs') %>
-<%- include('../par/header.ejs') %>
+    <%- include('../par/header.ejs') %>
 
 <% if (success_msg.length > 0) { %>
   <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -116,7 +173,7 @@
     <div class="card card-body py-3">
       <div class="row align-items-center">
         <div class="col-md-12">
-          <div class="d-flex justify-content-between align-items-center">
+          <div class="d-flex justify-content-between align-items-center flex-wrap">
             <h4 class="mb-4 mb-sm-0 card-title">Sold Products</h4>
             <i class="bi bi-cash-stack" style="font-size:17px; padding-left:5px;"></i>
             <form class="position-relative ms-auto">
@@ -129,7 +186,7 @@
     </div>
 
     <!-- Table Section -->
-    <div class="card card-body">
+    <div class="card card-body hide-on-small">
       <div class="table-responsive">
         <table class="table search-table align-middle text-nowrap" id="paginatedTable">
           <thead class="header-item text-center">
@@ -164,6 +221,62 @@
         </table>
       </div>
     </div>
+
+<!-- Display this on small screens!!! -->
+    <!-- MOBILE CARD LIST (visible on <450px) -->
+<div class="product-cards-mobile">
+  <% products.forEach((product) => { %>
+    <div class="product-card">
+      <!-- row 1: name + price -->
+      <div class="d-flex justify-content-between align-items-start" style="gap:8px;">
+        <div style="flex:1; min-width:0;">
+          <div class="label">Full Name</div>
+          <div class="value" style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+            <%- product.fullName %>
+          </div>
+        </div>
+        <div style="margin-left:8px; text-align:right; min-width:80px;">
+          <div class="label">Price</div>
+          <div class="value"><%- product.Price %></div>
+        </div>
+      </div>
+
+      <!-- row 2: product + number -->
+      <div class="d-flex justify-content-between align-items-start mt-2" style="gap:8px;">
+        <div style="flex:1; min-width:0;">
+          <div class="label">Product</div>
+          <div class="value" style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+            <%- product.Product %>
+          </div>
+        </div>
+        <div style="margin-left:8px; text-align:right; min-width:80px;">
+          <div class="label">Number</div>
+          <div class="value"><%- product.Number %></div>
+        </div>
+      </div>
+
+      <!-- row 3: type + actions -->
+      <div class="d-flex justify-content-between align-items-center mt-2" style="gap:8px; flex-wrap:wrap;">
+        <div>
+          <div class="label">Type</div>
+          <div class="value"><%- product.Type %></div>
+        </div>
+
+        <div class="actions">
+          <!-- keep same modal target so nothing server-side changes -->
+          <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#confirmModal<%= product.id %>">Edit</button>
+
+          <form action="/sells/delete/<%- product.id %>" method="POST" style="display:inline;">
+            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  <% }) %>
+</div>
+
+
+
   </div>
 </div>
 
@@ -339,4 +452,6 @@ document.getElementById("searchInput").addEventListener("keyup", function() {
  <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
 <!-- Template Javascript -->
  <script src="js/main.js"></script>
+ 
 </html>
+

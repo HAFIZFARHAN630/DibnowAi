@@ -161,29 +161,36 @@ exports.createTeam = async (req, res) => {
     console.log('Debug: Current team count:', existingMembersCount);
 
     if (existingMembersCount >= userLimit) {
-      const planNames = {
-        'FREE': 'FREE TRIAL',
-        'BASIC': 'BASIC',
-        'STANDARD': 'STANDARD',
-        'PREMIUM': 'PREMIUM'
-      };
-      const planDisplayName = planNames[user.plan_name] || user.plan_name;
+       const planNames = {
+         'FREE': 'FREE TRIAL',
+         'BASIC': 'BASIC',
+         'STANDARD': 'STANDARD',
+         'PREMIUM': 'PREMIUM'
+       };
+       const planDisplayName = planNames[user.plan_name] || user.plan_name;
 
-      let restrictionMessage = `Your current plan (${planDisplayName}) allows only ${userLimit} team members. `;
+       let restrictionMessage = `Your current plan (${planDisplayName}) allows only ${userLimit} team members. `;
 
-      // Add specific guidance for Free Trial users
-      if (user.plan_name?.toUpperCase() === 'FREE TRIAL' || user.plan_name?.toUpperCase() === 'FREE') {
-        restrictionMessage += `To add more team members, please upgrade to a paid plan. `;
-        restrictionMessage += `Basic plan allows 6 members, Standard allows 10 members, and Premium has unlimited members.`;
-      } else {
-        restrictionMessage += `Please upgrade to a higher plan to increase your team limit.`;
-      }
+       // Add specific guidance for Free Trial users
+       if (user.plan_name?.toUpperCase() === 'FREE TRIAL' || user.plan_name?.toUpperCase() === 'FREE') {
+         restrictionMessage += `To add more team members, please upgrade to a paid plan. `;
+         restrictionMessage += `Basic plan allows 6 members, Standard allows 10 members, and Premium has unlimited members.`;
+       } else {
+         restrictionMessage += `Please upgrade to a higher plan to increase your team limit.`;
+       }
 
-      // Notification creation removed as requested
+       // Create notification for plan limit exceeded
+       if (req.app.locals.notificationService) {
+         await req.app.locals.notificationService.createNotification(
+           userIdString,
+           user.first_name || 'User',
+           `Team Limit Exceeded - ${planDisplayName} allows only ${userLimit} members`
+         );
+       }
 
-      req.flash("error_msg", restrictionMessage);
-      return res.redirect("/userteam/add");
-    }
+       req.flash("error_msg", restrictionMessage);
+       return res.redirect("/userteam/add");
+     }
 
     // Create new team member
     console.log('Creating team member with data:', {
@@ -208,11 +215,20 @@ exports.createTeam = async (req, res) => {
     console.log('Team member object before save:', newTeamMember);
 
     try {
-      await newTeamMember.save();
-      console.log("✅ Team member saved successfully:", newTeamMember);
-      console.log("✅ Saved team member ID:", newTeamMember._id);
-      console.log("✅ Saved team member data:", JSON.stringify(newTeamMember.toObject(), null, 2));
-    } catch (saveError) {
+       await newTeamMember.save();
+       console.log("✅ Team member saved successfully:", newTeamMember);
+       console.log("✅ Saved team member ID:", newTeamMember._id);
+       console.log("✅ Saved team member data:", JSON.stringify(newTeamMember.toObject(), null, 2));
+
+       // Create notification for successful team member addition
+       if (req.app.locals.notificationService) {
+         await req.app.locals.notificationService.createNotification(
+           userIdString,
+           user.first_name || 'User',
+           `Team Member Added - ${name} joined your team`
+         );
+       }
+     } catch (saveError) {
       console.error('❌ Save error details:', saveError);
       console.error('❌ Save error name:', saveError.name);
       console.error('❌ Save error message:', saveError.message);

@@ -188,165 +188,187 @@
         <!--  -->
   <%- include('../par/Add_Repair.ejs') %>
   <!--  -->
-  <div  class="action-buttons" style="display:flex; justify-content: end; margin-top: 10px; gap: 5px; margin-right:41px;">
-    <button class="btn btn-action btn-danger" data-bs-toggle="modal" data-bs-target="#gadgetRepairModal"><i class="bi bi-tools"></i> Add Repair Customer </button> 
-    <button class="btn btn-action btn-primary" data-bs-toggle="modal" data-bs-target="#gadgetrModal"><i class="bi bi-clipboard-data"></i> Add Inventory</button>
+  <div  class="action-buttons" style="display:flex; justify-content: end; margin-top: 10px; gap: 5px; margin-right:41px; flex-wrap: wrap;">
+    <button class="btn btn-action btn-danger" style="width: 100%;" data-bs-toggle="modal" data-bs-target="#gadgetRepairModal"><i class="bi bi-tools"></i> Add Repair Customer </button> 
+    <button class="btn btn-action btn-primary" style="width: 100%;" data-bs-toggle="modal" data-bs-target="#gadgetrModal"><i class="bi bi-clipboard-data"></i> Add Inventory</button>
   </div>
 <!-- content -->
 <div class="body-wrapper">
-    <div class="container-fluid">
-      <div class="card card-body py-3">
-        <div class="row align-items-center">
-          <div class="col-md-12 ">
-            <div class="d-sm-flex  align-items-center">
-              <h4 class="mb-4 mb-sm-0 card-title me-1">Clients</h4>
-                 <i class="fa-solid fa-user-group"></i>
-                    <div class="action-buttons" style="margin-left: auto; margin-right: 10px;">
-                      <button class="btn btn-action btn-primary" onclick="generatePDF()"> <i class="fa fa-file-pdf"></i> PDF </button>
-                      <button class="btn btn-action btn-success" onclick="generateExcel()"><i class="fa fa-file-excel"></i> Excel</button>                    
-                      <button class="btn btn-action btn-info" onclick="printTable()"><i class="fa fa-print"></i> Print</button>    
-                      <button
-                      class="btn btn-action btn-danger"
-                      onclick="deleteSelected()"
-                    >
-                      <i class="fa fa-trash"></i> Delete
-                    </button>                 
-                   </div>
-                   
+  <div class="container-fluid">
+    <div class="card card-body py-3">
+    <div class="row align-items-center">
+      <div class="col-12">
+      <!-- Flex wrapper that stacks on xs, row on sm+ -->
+      <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center gap-3">
+        
+        <!-- Left: Title + Icon -->
+        <div class="d-flex align-items-center gap-2">
+          <h4 class="mb-0 card-title">Clients</h4>
+          <i class="fa-solid fa-user-group"></i>
+        </div>
 
+        <!-- Middle: Action Buttons -->
+        <div class="d-flex flex-wrap gap-2 ms-sm-auto">
+          <button class="btn btn-action btn-primary" onclick="generatePDF()">
+            <i class="fa fa-file-pdf"></i> PDF
+          </button>
+          <button class="btn btn-action btn-success" onclick="generateExcel()">
+            <i class="fa fa-file-excel"></i> Excel
+          </button>
+          <button class="btn btn-action btn-info" onclick="printTable()">
+            <i class="fa fa-print"></i> Print
+          </button>
+          <button class="btn btn-action btn-danger" onclick="deleteSelected()">
+            <i class="fa fa-trash"></i> Delete
+          </button>
+        </div>
 
-             <!-- Search Form -->
-             <div class="search-container">
-               <div class="search-input-wrapper">
-                 <i class="bi bi-search search-icon"></i>
-                 <input
-                     type="text"
-                     class="form-control"
-                     id="text-srh"
-                     placeholder="Search Product"
-                     oninput="filterTable()"
-                 />
-               </div>
-             </div>
-                
-            </div>
+        <!-- Right: Search -->
+        <div class="search-container w-100 w-sm-auto">
+          <div class="search-input-wrapper w-100">
+            <!-- <i class="bi bi-search search-icon"></i> -->
+            <input
+              type="text"
+              class="form-control"
+              id="text-srh"
+              placeholder="Search Product"
+              oninput="filterTable()"
+            />
           </div>
         </div>
+
       </div>
+    </div>
+  </div>
+</div>
+```
+
 <!-- content -->
 
       <!-- Clients -->
       <div class="card card-body">
-        <div class="table-responsive">
-          <table
-          class="table search-table align-middle text-nowrap"
-          id="paginatedTable"
-        >
-          <thead class="header-item text-center">
-            <tr>
-              <th>
-                <div class="n-chk align-self-center text-center">
-                  <div class="form-check">
-                    <input
-                      type="checkbox"
-                      class="form-check-input primary"
-                      id="contact-check-all"
-                      onclick="toggleSelectAll(this)"
-                    />
-                    <label class="form-check-label" for="contact-check-all"></label>
-                  </div>
-                </div>
-              </th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Brand</th>
-              <th>Status</th>
-              <th class="text-center">Action</th>
-            </tr>
-          </thead>
-          <tbody class="text-center">
-            <% products.forEach(product => { %>
-            <tr class="search-items" data-user-id="<%= product.id %>">
-              <td>
-                <div class="n-chk align-self-center text-center">
-                  <div class="form-check">
-                    <input
-                      type="checkbox"
-                      class="form-check-input contact-chkbox primary"
-                      value="<%= product.id %>"
-                    />
-                    <label class="form-check-label"></label>
-                  </div>
-                </div>
-              </td>
-              <td>
-                <div class="d-flex align-items-center">
-                    <img
-                        src="<%= product.deviceImage %>"
-                        alt="avatar"
-                        class="rounded-circle"
-                        style="width: 30px; height: 30px; object-fit: cover"
-                    />
-                    <div class="ms-3">
-                        <span class="user-name mb-0 text-dark"><%= product.fullName %></span>
-                    </div>
-                </div>
-            </td>
-              <td><span class="usr-email-addr text-dark"><%= product.email %></span></td>
-              <td><span class="usr-location text-dark"><%= product.brand %></span></td>
-              <td style="display: none;" ><span class="usr-price text-dark "> <%= product.Price %></span></td>
-              <td style="display: none;"><span class="usr-select <%= product.mobileNumber %>"><%= product.mobileNumber %></span></td>
-              <td>
-                <select
-                  class="status-select <%= product.status %>"
-                  onchange="updateStatus('<%= product.id %>', this.value)"
-                >
-                  <option value="Pending" <%= product.status === 'Pending' ? 'selected' : '' %>>
-                    Pending
-                  </option>
-                  <option value="Cancelled" <%= product.status === 'Cancelled' ? 'selected' : '' %>>
-                    Cancelled
-                  </option>
-                  <option value="Progress" <%= product.status === 'Progress' ? 'selected' : '' %>>
-                    Progress
-                  </option>
-                  <option value="Completed" <%= product.status === 'Completed' ? 'selected' : '' %>>
-                    Completed
-                  </option>
-                  <option value="Delivered" <%= product.status === 'Delivered' ? 'selected' : '' %>>
-                    Delivered
-                  </option>
-                </select>
-              </td>
-              <td class="d-flex justify-content-end">
-                <div class="action-btn d-flex">
-                  <button
-                    class="btn text-black"
-                    onclick="printTable('<%= product.id %>')"
-                  >
-                    <i class="fa fa-print"></i> Print
-                  </button>
-                  <button
-                    type="button"
-                    class="btn btn-link text-primary edit"
-                    data-bs-toggle="modal"
-                    data-bs-target="#editUserModal<%= product.id %>"
-                  >
-                    <i class="fs-4 fa-solid fa-pen-to-square text-primary"></i>
-                  </button>
-                  <form
-                  action="/Clients/<%= product.id %>"
-                  method="POST"
-                >
-                  <button type="submit"class="btn btn-link text-danger"><i class="fa-solid fa-trash-can text-danger"></i> </button>
-                </form> 
-                </div>
-              </td>
-            </tr>
-            <% }); %>
-          </tbody>
-        </table>
+<!-- Table (desktop only) -->
+<div class="table-responsive d-none d-md-block">
+  <table class="table search-table align-middle text-nowrap" id="paginatedTable">
+    <thead class="header-item text-center">
+      <tr>
+        <th>
+          <div class="n-chk align-self-center text-center">
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input primary" id="contact-check-all" onclick="toggleSelectAll(this)" />
+              <label class="form-check-label" for="contact-check-all"></label>
+            </div>
+          </div>
+        </th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Brand</th>
+        <th>Status</th>
+        <th class="text-center">Action</th>
+      </tr>
+    </thead>
+    <tbody class="text-center">
+      <% products.forEach(product => { %>
+      <tr class="search-items" data-user-id="<%= product.id %>">
+        <td>
+          <div class="n-chk align-self-center text-center">
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input contact-chkbox primary" value="<%= product.id %>" />
+              <label class="form-check-label"></label>
+            </div>
+          </div>
+        </td>
+        <td>
+          <div class="d-flex align-items-center">
+            <img src="<%= product.deviceImage %>" alt="avatar" class="rounded-circle" style="width: 30px; height: 30px; object-fit: cover" />
+            <div class="ms-3">
+              <span class="user-name mb-0 text-dark"><%= product.fullName %></span>
+            </div>
+          </div>
+        </td>
+        <td><%= product.email %></td>
+        <td><%= product.brand %></td>
+        <td>
+          <select class="status-select <%= product.status %>" onchange="updateStatus('<%= product.id %>', this.value)">
+            <option value="Pending" <%= product.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+            <option value="Cancelled" <%= product.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+            <option value="Progress" <%= product.status === 'Progress' ? 'selected' : '' %>>Progress</option>
+            <option value="Completed" <%= product.status === 'Completed' ? 'selected' : '' %>>Completed</option>
+            <option value="Delivered" <%= product.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+          </select>
+        </td>
+        <td class="d-flex justify-content-end">
+          <div class="action-btn d-flex">
+            <button class="btn text-black" onclick="printTable('<%= product.id %>')">
+              <i class="fa fa-print"></i> Print
+            </button>
+            <button type="button" class="btn btn-link text-primary edit" data-bs-toggle="modal" data-bs-target="#editUserModal<%= product.id %>">
+              <i class="fs-4 fa-solid fa-pen-to-square text-primary"></i>
+            </button>
+            <form action="/Clients/<%= product.id %>" method="POST">
+              <button type="submit" class="btn btn-link text-danger">
+                <i class="fa-solid fa-trash-can text-danger"></i>
+              </button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</div>
+
+<!-- Cards (mobile only) -->
+<div class="d-md-none">
+  <div class="row g-3">
+    <% products.forEach(product => { %>
+    <div class="col-12">
+      <div class="card shadow-sm border rounded h-100">
+        <div class="card-body d-flex flex-column gap-3">
+          <!-- Header -->
+          <div class="d-flex align-items-center gap-3">
+            <input type="checkbox" class="form-check-input contact-chkbox primary" value="<%= product.id %>" />
+            <div>
+              <h6 class="mb-0 text-dark fw-semibold"><%= product.fullName %></h6>
+              <small class="text-muted" style="font-size: x-small;"><%= product.email %></small>
+            </div>
+          </div>
+
+          <!-- Details -->
+          <div class="text-dark small">
+            <p class="mb-1"><strong>Brand:</strong> <%= product.brand %></p>
+            <p class="mb-1"><strong>Status:</strong></p>
+            <select class="form-select form-select-sm status-select <%= product.status %>" onchange="updateStatus('<%= product.id %>', this.value)">
+              <option value="Pending" <%= product.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+              <option value="Cancelled" <%= product.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+              <option value="Progress" <%= product.status === 'Progress' ? 'selected' : '' %>>Progress</option>
+              <option value="Completed" <%= product.status === 'Completed' ? 'selected' : '' %>>Completed</option>
+              <option value="Delivered" <%= product.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+            </select>
+          </div>
+
+          <!-- Actions -->
+          <div class="d-flex justify-content-end gap-2">
+            <button class="btn btn-sm btn-outline-dark" onclick="printTable('<%= product.id %>')">
+              <i class="fa fa-print"></i>
+            </button>
+            <button type="button" class="btn btn-sm btn-outline-primary edit" data-bs-toggle="modal" data-bs-target="#editUserModal<%= product.id %>">
+              <i class="fa-solid fa-pen-to-square"></i>
+            </button>
+            <form action="/Clients/<%= product.id %>" method="POST">
+              <button type="submit" class="btn btn-sm btn-outline-danger">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </form>
+          </div>
         </div>
+      </div>
+    </div>
+    <% }); %>
+  </div>
+</div>
+```
+
       </div>
 
         <!-- Pagination -->

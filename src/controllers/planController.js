@@ -69,6 +69,26 @@ exports.postPlan = async (req, res) => {
 
     console.log('Saved plan document:', saved);
 
+    // Notify all logged-in users about the new plan
+    if (req.app.locals.notificationService) {
+      try {
+        // Get all users to notify them about the new plan
+        const User = require("../models/user");
+        const allUsers = await User.find({}).select("first_name _id");
+
+        for (const user of allUsers) {
+          await req.app.locals.notificationService.createNotification(
+            user._id,
+            user.first_name,
+            `New Plan Available - ${plan_name} plan has been added`
+          );
+        }
+        console.log(`✅ Notifications sent to ${allUsers.length} users about new plan: ${plan_name}`);
+      } catch (notificationError) {
+        console.error("❌ Failed to send new plan notifications:", notificationError.message);
+      }
+    }
+
     res.redirect('/create-plan');
   } catch (error) {
     console.error('Error saving plan:', error);

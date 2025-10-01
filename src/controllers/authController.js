@@ -69,6 +69,20 @@ exports.signup = [
       console.log(`✅ Free Trial plan assigned to new user: ${newUser.email}`);
       console.log(`📅 Trial expires: ${trialExpiryDate.toLocaleDateString()}`);
 
+      // Create notification for Free Trial plan assignment
+      if (req.app.locals.notificationService) {
+        try {
+          await req.app.locals.notificationService.createNotification(
+            newUser._id,
+            newUser.first_name,
+            `Free Trial Plan Assigned - 7 days access granted`
+          );
+          console.log("✅ Free Trial plan assignment notification created");
+        } catch (notificationError) {
+          console.error("❌ Failed to create Free Trial plan assignment notification:", notificationError.message);
+        }
+      }
+
       // Create notification for registration
        if (req.app.locals.notificationService) {
          try {
@@ -233,6 +247,20 @@ exports.signin = [
         console.log(`✅ Free Trial plan assigned to NEW user: ${user.email}`);
         console.log(`📅 Trial expires: ${trialExpiryDate.toLocaleDateString()}`);
         console.log(`💾 Plan saved with ID: ${savedPlan._id}`);
+
+        // Create notification for Free Trial plan assignment
+        if (req.app.locals.notificationService) {
+          try {
+            await req.app.locals.notificationService.createNotification(
+              user._id,
+              user.first_name,
+              `Free Trial Plan Assigned - 7 days access granted`
+            );
+            console.log("✅ Free Trial plan assignment notification created for new user");
+          } catch (notificationError) {
+            console.error("❌ Failed to create Free Trial plan assignment notification:", notificationError.message);
+          }
+        }
       } else {
         console.log(`✅ User ${user.email} already has a plan: ${existingPlan.planName} (Status: ${existingPlan.status})`);
 
@@ -260,6 +288,20 @@ exports.signin = [
           });
 
           console.log(`✅ Plan renewed for user: ${user.email}`);
+
+          // Create notification for Free Trial plan renewal
+          if (req.app.locals.notificationService) {
+            try {
+              await req.app.locals.notificationService.createNotification(
+                user._id,
+                user.first_name,
+                `Free Trial Plan Renewed - 7 days access granted`
+              );
+              console.log("✅ Free Trial plan renewal notification created");
+            } catch (notificationError) {
+              console.error("❌ Failed to create Free Trial plan renewal notification:", notificationError.message);
+            }
+          }
         }
       }
 
@@ -271,6 +313,27 @@ exports.signin = [
           user.first_name,
           "Login"
         );
+
+        // Check for free trial notifications
+        if (existingPlan && existingPlan.planName === "Free Trial" && existingPlan.status === "Active") {
+          const now = new Date();
+          const trialEndDate = new Date(existingPlan.expiryDate);
+          const daysLeft = Math.ceil((trialEndDate - now) / (1000 * 60 * 60 * 24));
+
+          if (daysLeft > 0) {
+            await req.app.locals.notificationService.createNotification(
+              user._id,
+              user.first_name,
+              `Free Trial Active - ${daysLeft} days remaining`
+            );
+          } else {
+            await req.app.locals.notificationService.createNotification(
+              user._id,
+              user.first_name,
+              "Free Trial Expired - Please upgrade your plan"
+            );
+          }
+        }
       } else {
         console.log('Notification service not available');
       }

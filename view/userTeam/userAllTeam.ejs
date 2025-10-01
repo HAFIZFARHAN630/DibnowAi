@@ -427,6 +427,8 @@
 
 
     </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+
 </head>
 
 <body>
@@ -438,42 +440,49 @@
 
   <div class="body-wrapper" style=" position: relative;">
     <div class="container-fluid">
-     <div class="card card-body py-3">
-            <div class="row align-items-center">
-                <div class="col-md-12">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h4 class="mb-4 mb-sm-0 card-title">My Team Members <i class="bi bi-people-fill"></i></h4>
-                            <small class="text-muted">
-                                Plan: <strong><%= plan_name %></strong> |
-                                <% if (plan_name === 'FREE' || plan_name === 'FREE TRIAL') { %>
-                                    Limit: 2 members
-                                <% } else if (plan_name === 'BASIC') { %>
-                                    Limit: 6 members
-                                <% } else if (plan_name === 'STANDARD') { %>
-                                    Limit: 10 members
-                                <% } else if (plan_name === 'PREMIUM') { %>
-                                    Limit: Unlimited members
-                                <% } else { %>
-                                    No plan assigned
-                                <% } %>
-                            </small>
-                        </div>
-                        <div class="d-flex align-items-center gap-2">
-                            <div class="search-container">
-                              <div class="search-input-wrapper">
-                                <i class="bi bi-search search-icon"></i>
-                                <input type="text" id="teamSearch" class="form-control" placeholder="Search team members...">
-                              </div>
-                            </div>
-                            <a href="/userteam/add" class="btn-add-team">
-                                <i class="fas fa-user-plus"></i> Add Team Member
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<div class="card card-body py-3">
+  <div class="row align-items-center">
+    <div class="col-12">
+      <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-3">
+        <!-- Left Section -->
+        <div>
+          <h4 class="mb-2 card-title">
+            My Team Members <i class="bi bi-people-fill"></i>
+          </h4>
+          <small class="text-muted d-block">
+            Plan: <strong><%= plan_name %></strong> |
+            <% if (plan_name === 'FREE' || plan_name === 'FREE TRIAL') { %>
+                Limit: 2 members
+            <% } else if (plan_name === 'BASIC') { %>
+                Limit: 6 members
+            <% } else if (plan_name === 'STANDARD') { %>
+                Limit: 10 members
+            <% } else if (plan_name === 'PREMIUM') { %>
+                Limit: Unlimited members
+            <% } else { %>
+                No plan assigned
+            <% } %>
+          </small>
         </div>
+
+        <!-- Right Section -->
+        <div class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center gap-2 w-100 w-sm-auto">
+          <div class="search-container flex-grow-1">
+            <div class="search-input-wrapper w-100">
+              <!-- <i class="bi bi-search search-icon"></i> -->
+              <input type="text" id="teamSearch" class="form-control" placeholder="Search team members...">
+            </div>
+          </div>
+          <a href="/userteam/add" class="btn-add-team text-center">
+            <i class="fas fa-user-plus"></i> Add Team Member
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
 
         <div class="card card-body">
             <div class="d-flex justify-content-end">
@@ -489,83 +498,125 @@
                     </select>
                 </div>
             </div>
-            <div class="table-responsive mt-3">
-                <table class="table search-table align-middle text-nowrap" id="paginatedTable">
-                    <thead class="header-item">
-                        <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Department</th>
-                            <th>Role</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% if (users && users.length > 0) { %>
-                            <% users.forEach(user => { %>
-                            <tr class="search-items" data-department="<%= user.department || '' %>">
-                                <td style="color: #1f2324;">
-                                    <div class="d-flex align-items-center">
-                                        <img src="https://img.icons8.com/3d-fluency/94/user-male--v4.png" alt="user-male--v4"/>
-                                        <div class="ms-3">
-                                            <div class="user-meta-info">
-                                                <h6 class="user-name mb-0 text-dark"><%= user.name %></h6>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td style="color: #1f2324;"><span class="usr-email-addr"><%= user.email %></span></td>
-                                <td style="color: #1f2324;"><span class="usr-ph-no"><%= user.phone || 'N/A' %></span></td>
-                                <td style="color: #1f2324;">
-                                    <span class="usr-department
-                                        <% if (user.department === 'Billing') { %>dept-billing
-                                        <% } else if (user.department === 'Sales') { %>dept-sales
-                                        <% } else if (user.department === 'Support') { %>dept-support
-                                        <% } else if (user.department === 'Technical') { %>dept-technical
-                                        <% } else if (user.department === 'Management') { %>dept-management
-                                        <% } else { %>dept-na<% } %>">
-                                        <%= user.department || 'N/A' %>
-                                    </span>
-                                </td>
-                                <td style="color: #1f2324;"><span class="usr-role"><%= user.role || 'N/A' %></span></td>
-                                <td>
-                                    <div class="action-btn">
-                                        <button type="button" class="btn btn-link text-success edit"
-                                                data-id="<%= user._id %>"
-                                                data-name="<%= user.name %>"
-                                                data-email="<%= user.email %>"
-                                                data-phone="<%= user.phone || '' %>"
-                                                data-department="<%= user.department || '' %>"
-                                                data-role="<%= user.role || '' %>"
-                                                onclick="openEditModal(this)">
-                                            <i class="fa-solid fa-pen-to-square text-success"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-link text-danger p-0"
-                                                data-id="<%= user._id %>"
-                                                data-name="<%= user.name %>"
-                                                onclick="deleteTeamMember(this)">
-                                            <i class="fa-solid fa-trash-can text-danger"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <% }); %>
-                        <% } else { %>
-                            <tr>
-                                <td colspan="6" class="text-center py-5">
-                                    <i class="bi bi-people display-1 text-muted"></i>
-                                    <h4 class="mt-3 text-muted">No Team Members Yet</h4>
-                                    <p class="text-muted">Start building your team by adding your first team member.</p>
-                                    <a href="/userteam/add" class="btn btn-primary">
-                                        <i class="bi bi-person-plus me-2"></i>Add Your First Team Member
-                                    </a>
-                                </td>
-                            </tr>
-                        <% } %>
-                    </tbody>
-                </table>
+
+        
+
+
+              
+<!-- Table (visible on md and larger) -->
+<div class="table-responsive mt-3 hidden md:block">
+  <table class="table search-table align-middle text-nowrap w-full border">
+    <thead class="header-item bg-gray-100">
+      <tr>
+        <th class="px-4 py-2">Name</th>
+        <th class="px-4 py-2">Email</th>
+        <th class="px-4 py-2">Phone</th>
+        <th class="px-4 py-2">Department</th>
+        <th class="px-4 py-2">Role</th>
+        <th class="px-4 py-2">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (users && users.length > 0) { %>
+        <% users.forEach(user => { %>
+        <tr class="search-items" data-department="<%= user.department || '' %>">
+          <td class="px-4 py-2">
+            <div class="flex items-center gap-3">
+              <img src="https://img.icons8.com/3d-fluency/94/user-male--v4.png" alt="user" class="w-10 h-10" />
+              <h6 class="text-gray-900"><%= user.name %></h6>
             </div>
+          </td>
+          <td class="px-4 py-2"><%= user.email %></td>
+          <td class="px-4 py-2"><%= user.phone || 'N/A' %></td>
+          <td class="px-4 py-2"><%= user.department || 'N/A' %></td>
+          <td class="px-4 py-2"><%= user.role || 'N/A' %></td>
+          <td class="px-4 py-2">
+            <div class="flex gap-2">
+              <button type="button" class="text-green-600"
+                data-id="<%= user._id %>"
+                data-name="<%= user.name %>"
+                data-email="<%= user.email %>"
+                data-phone="<%= user.phone || '' %>"
+                data-department="<%= user.department || '' %>"
+                data-role="<%= user.role || '' %>"
+                onclick="openEditModal(this)">
+                <i class="fa-solid fa-pen-to-square"></i>
+              </button>
+              <button type="button" class="text-red-600"
+                data-id="<%= user._id %>"
+                data-name="<%= user.name %>"
+                onclick="deleteTeamMember(this)">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        <% }); %>
+      <% } else { %>
+        <tr>
+          <td colspan="6" class="text-center py-5 text-gray-500">
+            <i class="bi bi-people text-6xl"></i>
+            <h4 class="mt-3">No Team Members Yet</h4>
+            <a href="/userteam/add" class="btn btn-primary mt-2">
+              <i class="bi bi-person-plus me-2"></i>Add Your First Team Member
+            </a>
+          </td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+
+<!-- Cards (visible below md) -->
+<div class="grid gap-4 sm:grid-cols-2 md:hidden mt-3">
+  <% if (users && users.length > 0) { %>
+    <% users.forEach(user => { %>
+    <div class="bg-white rounded-xl shadow-md p-4 flex flex-col gap-3 border">
+      <div class="flex items-center gap-3">
+        <img src="https://img.icons8.com/3d-fluency/94/user-male--v4.png" alt="user" class="w-12 h-12" />
+        <div>
+          <h6 class="text-gray-900 font-semibold"><%= user.name %></h6>
+          <p class="text-sm text-gray-600"><%= user.email %></p>
+        </div>
+      </div>
+      <div class="text-sm text-gray-700 space-y-1">
+        <p><span class="font-medium">Phone:</span> <%= user.phone || 'N/A' %></p>
+        <p><span class="font-medium">Department:</span> <%= user.department || 'N/A' %></p>
+        <p><span class="font-medium">Role:</span> <%= user.role || 'N/A' %></p>
+      </div>
+      <div class="flex justify-end gap-3">
+        <button type="button" class="text-green-600"
+          data-id="<%= user._id %>"
+          data-name="<%= user.name %>"
+          data-email="<%= user.email %>"
+          data-phone="<%= user.phone || '' %>"
+          data-department="<%= user.department || '' %>"
+          data-role="<%= user.role || '' %>"
+          onclick="openEditModal(this)">
+          <i class="fa-solid fa-pen-to-square"></i>
+        </button>
+        <button type="button" class="text-red-600"
+          data-id="<%= user._id %>"
+          data-name="<%= user.name %>"
+          onclick="deleteTeamMember(this)">
+          <i class="fa-solid fa-trash-can"></i>
+        </button>
+      </div>
+    </div>
+    <% }); %>
+  <% } else { %>
+    <div class="col-span-full text-center text-gray-500 py-5">
+      <i class="bi bi-people text-6xl"></i>
+      <h4 class="mt-3">No Team Members Yet</h4>
+      <a href="/userteam/add" class="btn btn-primary mt-2">
+        <i class="bi bi-person-plus me-2"></i>Add Your First Team Member
+      </a>
+    </div>
+  <% } %>
+</div>
+```
+
+
         </div>
     </div>
 </div>

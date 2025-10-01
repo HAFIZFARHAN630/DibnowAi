@@ -254,6 +254,24 @@
       .search-input-wrapper input::placeholder {
         color: #6c757d !important;
       }
+      .flex-res{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 10px !important;
+      }
+      .hehe{
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      @media screen and (max-width: 767px) {
+        .hehe-btn{
+          width: 100% !important;
+        }
+      }
     </style>
 
 </head>
@@ -283,7 +301,10 @@
       <div class="card card-body py-3">
         <div class="row align-items-center">
           <div class="col-12">
-            <div class="d-sm-flex align-items-center justify-space-between">
+
+
+
+            <div class="flex-res">
               <h4 class="mb-4 mb-sm-0 card-title"> In Stock</h4>
                 <i class="icon fa-solid fa-shop" style="font-size:17px;padding-left:5px;"></i>
               <nav aria-label="breadcrumb" class="ms-auto">
@@ -293,10 +314,10 @@
                       <iconify-icon icon="solar:home-2-line-duotone" class="fs-6"></iconify-icon>
                     </a>
                   </li>
-                  <li class="breadcrumb-item" aria-current="page">
-                    <button class="btn btn-action btn-primary" data-bs-toggle="modal" data-bs-target="#gadgetrModal"><i class="bi bi-clipboard-data"></i> Add Inventory</button>
-                    <button class="btn btn-action btn-success" data-bs-toggle="modal" data-bs-target="#categoriesModal"><i class="bi bi-tags"></i> Add Category</button>                    
-                    <button class="btn btn-action btn-dark" data-bs-toggle="modal" data-bs-target="#brandModal"><i class="bi bi-box"></i> Add Brand</button>                    
+                  <li class="breadcrumb-item hehe" aria-current="page">
+                    <button class="btn btn-action btn-primary hehe-btn" data-bs-toggle="modal" data-bs-target="#gadgetrModal"><i class="bi bi-clipboard-data"></i> Add Inventory</button>
+                    <button class="btn btn-action btn-success hehe-btn" data-bs-toggle="modal" data-bs-target="#categoriesModal"><i class="bi bi-tags"></i> Add Category</button>                    
+                    <button class="btn btn-action btn-dark hehe-btn" data-bs-toggle="modal" data-bs-target="#brandModal"><i class="bi bi-box"></i> Add Brand</button>                    
                   </li>
                 </ol>
               </nav>

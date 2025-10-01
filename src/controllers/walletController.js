@@ -196,21 +196,40 @@ exports.topupSuccess = [
       await wallet.save();
 
       // Create transaction
-      const newTransaction = new Transaction({
-        user: userId,
-        type: 'topup',
-        amount: parseFloat(amount),
-        status: 'success'
-      });
-      await newTransaction.save();
+       const newTransaction = new Transaction({
+         user: userId,
+         type: 'topup',
+         amount: parseFloat(amount),
+         status: 'success'
+       });
+       await newTransaction.save();
 
-      req.flash("success_msg", `Top-up successful! Added £${amount} to your wallet.`);
-      res.redirect("/wallet");
+       // Create payment success notification
+       if (req.app.locals.notificationService) {
+         await req.app.locals.notificationService.createNotification(
+           userId,
+           user.first_name,
+           `Payment Successful - £${amount} added to wallet`
+         );
+       }
+
+       req.flash("success_msg", `Top-up successful! Added £${amount} to your wallet.`);
+       res.redirect("/wallet");
     } catch (error) {
-      console.error("Top-up success error:", error.message);
-      req.flash("error_msg", "Failed to update wallet. Please contact support.");
-      res.redirect("/wallet");
-    }
+       console.error("Top-up success error:", error.message);
+
+       // Create payment failure notification
+       if (req.app.locals.notificationService) {
+         await req.app.locals.notificationService.createNotification(
+           userId,
+           user.first_name || 'User',
+           `Payment Failed - £${amount} top-up unsuccessful`
+         );
+       }
+
+       req.flash("error_msg", "Failed to update wallet. Please contact support.");
+       res.redirect("/wallet");
+     }
   }
 ];
 
@@ -403,17 +422,35 @@ exports.topupWithSavedCard = [
       await newTransaction.save();
 
       if (paymentIntent.status === 'succeeded') {
-        res.json({
-          success: true,
-          message: `Successfully added £${amount} to your wallet!`,
-          newBalance: wallet.balance
-        });
-      } else {
-        res.status(400).json({
-          success: false,
-          error: "Payment failed. Please try again."
-        });
-      }
+         // Create payment success notification
+         if (req.app.locals.notificationService) {
+           await req.app.locals.notificationService.createNotification(
+             userId,
+             user.first_name,
+             `Payment Successful - £${amount} added to wallet via saved card`
+           );
+         }
+
+         res.json({
+           success: true,
+           message: `Successfully added £${amount} to your wallet!`,
+           newBalance: wallet.balance
+         });
+       } else {
+         // Create payment failure notification
+         if (req.app.locals.notificationService) {
+           await req.app.locals.notificationService.createNotification(
+             userId,
+             user.first_name || 'User',
+             `Payment Failed - £${amount} top-up unsuccessful via saved card`
+           );
+         }
+
+         res.status(400).json({
+           success: false,
+           error: "Payment failed. Please try again."
+         });
+       }
     } catch (error) {
       console.error("Error in topup with saved card:", error.message);
       res.status(400).json({
