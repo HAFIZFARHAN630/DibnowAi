@@ -16,6 +16,9 @@
     <!-- Template Stylesheet -->
     <link href="/styles.css" rel="stylesheet">
     <link href="/styles1.css" rel="stylesheet">
+    <!-- Tailwind Play CDN (paste in <head>) -->
+<script src="https://cdn.tailwindcss.com"></script>
+
     
    <style>
         .btn-gradient {
@@ -227,6 +230,69 @@
             color: #374151;
             font-weight: 500;
         }
+
+        /* ========== ADDED: Responsive table behavior ========== */
+        /* make tables horizontally scrollable on small screens */
+        .table-responsive {
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+        }
+
+        /* stacked card-like rows for very small screens (<=400px) */
+        @media (max-width: 400px) {
+          .table {
+            display: block;
+            width: 100%;
+            min-width: 0;
+            border-radius: 0;
+            box-shadow: none;
+          }
+          .table thead {
+            display: none;
+          }
+          .table tbody {
+            display: block;
+            width: 100%;
+          }
+          .table tbody tr {
+            display: block;
+            width: 100%;
+            margin: 0 0 12px 0;
+            padding: 10px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.03);
+          }
+          .table tbody td {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 6px;
+            border-bottom: none;
+            white-space: normal;
+            word-break: break-word;
+          }
+          /* label insertion using nth-child to avoid changing HTML */
+          .table tbody tr td:nth-child(1)::before { content: "Name"; font-weight:600; color:#6b7280; margin-right:8px; }
+          .table tbody tr td:nth-child(2)::before { content: "Email"; font-weight:600; color:#6b7280; margin-right:8px; }
+          .table tbody tr td:nth-child(3)::before { content: "Plan"; font-weight:600; color:#6b7280; margin-right:8px; }
+          .table tbody tr td:nth-child(4)::before { content: "Start"; font-weight:600; color:#6b7280; margin-right:8px; }
+          .table tbody tr td:nth-child(5)::before { content: "Expiry"; font-weight:600; color:#6b7280; margin-right:8px; }
+          .table tbody tr td:nth-child(6)::before { content: "Status"; font-weight:600; color:#6b7280; margin-right:8px; }
+
+          .table tbody td::before {
+            display: inline-block;
+            flex: 0 0 40%;
+            text-align: left;
+            font-size: 12px;
+          }
+          .table tbody td > * {
+            flex: 1 1 auto;
+            text-align: right;
+          }
+        }
+        /* ========== end added block ========== */
+
     </style>
 </head>
 <body>
@@ -259,6 +325,8 @@
                         <input type="text" id="userSearch" class="form-control" placeholder="Search active users by name, email, plan...">
                     </div>
                 </div>
+
+
                 <div class="table-responsive">
                     <table class="table align-middle text-nowrap" id="activeUsersTable">
                         <thead class="text-center">
@@ -353,6 +421,8 @@
                         </tbody>
                     </table>
                 </div>
+                
+                
             </div>  
         <!-- Content End -->
 

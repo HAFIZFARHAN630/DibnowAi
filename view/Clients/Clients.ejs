@@ -164,9 +164,15 @@
     margin-bottom: 15px;
     opacity: 0.5;
   }
+  @media screen and (max-width:786px){
+    .j-c-m-s{
+      justify-content: center !important;
+      align-items: center !important;
+    }
+  }
 </style>
 </head>
-<body>  
+<body style="max-width: 100vw !important; overflow-x: hidden !important;">  
       <%- include('../par/sidebar.ejs') %>
 
 <!-- Navbar Start -->
@@ -188,7 +194,7 @@
         <!--  -->
   <%- include('../par/Add_Repair.ejs') %>
   <!--  -->
-  <div  class="action-buttons" style="display:flex; justify-content: end; margin-top: 10px; gap: 5px; margin-right:41px; flex-wrap: wrap;">
+  <div  class="action-buttons j-c-m-s" style="display:flex; justify-content: end; margin-top: 10px; gap: 5px; margin-right:41px; flex-wrap: wrap;">
     <button class="btn btn-action btn-danger" style="width: 100%;" data-bs-toggle="modal" data-bs-target="#gadgetRepairModal"><i class="bi bi-tools"></i> Add Repair Customer </button> 
     <button class="btn btn-action btn-primary" style="width: 100%;" data-bs-toggle="modal" data-bs-target="#gadgetrModal"><i class="bi bi-clipboard-data"></i> Add Inventory</button>
   </div>

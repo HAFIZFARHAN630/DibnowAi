@@ -375,14 +375,14 @@
      <div class="card card-body py-3">
             <div class="row align-items-center">
                 <div class="col-md-12">
-                    <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap">
                         <div>
                             <h4 class="mb-4 mb-sm-0 card-title">All Team Members <i class="bi bi-people-fill"></i></h4>
                             <small class="text-muted">
                                 Admin Access: <strong>Unlimited Members</strong> | Total: <%= users ? users.length : 0 %> members
                             </small>
                         </div>
-                        <div class="d-flex align-items-center gap-2">
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
                             <input type="text" id="teamSearch" class="form-control" style="width: 250px;" placeholder="Search team members...">
                             <a href="/AdminTeam" class="btn-add-team">
                                 <i class="fas fa-user-plus"></i> Add Team Member

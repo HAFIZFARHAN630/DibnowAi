@@ -21,10 +21,27 @@
     <link href="/styles.css" rel="stylesheet">
     <link href="/styles1.css" rel="stylesheet">
     <style>
+      body{
+        max-width: 100vw;
+        overflow-x: hidden;
+      }
       .body-wrapper {
-      min-height: 100%;
+      /* min-height: 100%; */
+      /* max-width: 90vw; */
+      /* overflow-x: hidden; */
       display: flex;
       flex-direction: column;
+    }
+    .container-fluid{
+      /* max-width: 85vw !important; */
+    }
+    .card-body{
+      padding: 32px;
+    }
+    @media screen and (max-width:786px) {
+      .card-body{
+        padding: 14px 20px 14px 14px !important;
+      }
     }
 
       #teamSearch {
@@ -35,7 +52,7 @@
         padding: 10px 20px;
         font-size: 14px;
         transition: all 0.3s ease;
-        width: 250px;
+        width: 100%;
       }
 
       #teamSearch:focus {
@@ -48,13 +65,18 @@
       #teamSearch::placeholder {
         color: #6c757d;
       }
-
+      @media screen and (max-width:786px){
+        .container-fluid{
+          width: 100vw !important;
+        }
+      }
       /* Enhanced Table Design */
       .table {
         border-radius: 15px;
         overflow: hidden;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         border: none;
+
       }
 
       .table thead th {
@@ -120,8 +142,8 @@
         padding:5px 11px 5px 95px;
         background-color: #dadae0;
         text-align: center;
-        width: 109%;
-        margin-left: -35px;
+        width: 100%;
+        /* margin-left: -35px; */
       }
 
       .btn-add-team {
@@ -257,7 +279,7 @@
         margin-top: 60px;
         border-radius: 25px;
         box-shadow: 0 30px 100px rgba(0, 0, 0, 0.2);
-        width: 100%;
+        width: 80%;
         position: relative;
         backdrop-filter: blur(15px);
         border: 2px solid rgba(255, 255, 255, 0.3);
@@ -321,7 +343,7 @@
       }
 
       .form-control {
-        width: 100%;
+        width: 80%;
         height: 50px;
         border: 2px solid rgba(255, 255, 255, 0.3);
         border-radius: 15px;
@@ -375,7 +397,7 @@
       @media (max-width: 768px) {
         .form-container {
           padding: 30px 25px;
-          max-width: 100%;
+          max-width: 90%;
         }
         
         .form-title {
@@ -423,11 +445,32 @@
         .filter-select {
           width: 100%;
         }
+        .card-body, card{
+          width: 90vw;
+        }
+        .content{
+          overflow-x: hidden;
+        }
+      }
+      .card-title{
+        display: flex;
+      }
+      @media screen and (max-width:786px){
+        .modal-dialog-centered{
+          width: 95vw !important;
+          margin: 0 auto !important;
+        }
+        .modal-dialog{
+          width: 95vw !important;
+          margin: 0 auto !important;
+        }
+        #updateTeamModal{
+          width: 95vw !important;
+          margin: 0 auto !important;
+        }
       }
 
-
     </style>
-    <script src="https://cdn.tailwindcss.com"></script>
 
 </head>
 
@@ -436,10 +479,11 @@
               <%- include('../par/sidebar.ejs') %>
 
   <!-- Navbar Start -->
-  <%- include('../par/header.ejs') %>
+     <%- include('../par/header.ejs') %>
+
 
   <div class="body-wrapper" style=" position: relative;">
-    <div class="container-fluid">
+    <div class="container-fluid" style="width: 100% !important;">
 <div class="card card-body py-3">
   <div class="row align-items-center">
     <div class="col-12">
@@ -513,7 +557,7 @@
         <th class="px-4 py-2">Phone</th>
         <th class="px-4 py-2">Department</th>
         <th class="px-4 py-2">Role</th>
-        <th class="px-4 py-2">Action</th>
+        <th class="px-4 py-2"></th>
       </tr>
     </thead>
     <tbody>
@@ -572,11 +616,11 @@
   <% if (users && users.length > 0) { %>
     <% users.forEach(user => { %>
     <div class="bg-white rounded-xl shadow-md p-4 flex flex-col gap-3 border">
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2 flex-wrap">
         <img src="https://img.icons8.com/3d-fluency/94/user-male--v4.png" alt="user" class="w-12 h-12" />
-        <div>
+        <div >
           <h6 class="text-gray-900 font-semibold"><%= user.name %></h6>
-          <p class="text-sm text-gray-600"><%= user.email %></p>
+          <p class="text-xs text-gray-600"><%= user.email %></p>
         </div>
       </div>
       <div class="text-sm text-gray-700 space-y-1">
@@ -614,7 +658,6 @@
     </div>
   <% } %>
 </div>
-```
 
 
         </div>
@@ -697,13 +740,8 @@
 
 <%- include('../par/footer.ejs') %>
 
-</body>
-<!-- JavaScript Libraries -->
-<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- Template Javascript -->
-<script src="/js/main.js"></script>
+
 <script>
     // Team search functionality
     document.addEventListener('DOMContentLoaded', function() {
@@ -858,4 +896,14 @@ function deleteTeamMember(button) {
     }
 }
 </script>
+<!-- JavaScript Libraries -->
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Template Javascript -->
+<script src="/js/main.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+  
+</body>
 </html>
