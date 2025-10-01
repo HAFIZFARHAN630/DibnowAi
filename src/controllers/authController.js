@@ -75,7 +75,7 @@ exports.signup = [
           await req.app.locals.notificationService.createNotification(
             newUser._id,
             newUser.first_name,
-            `Free Trial Plan Assigned - 7 days access granted`
+            "Buy Plan"
           );
           console.log("✅ Free Trial plan assignment notification created");
         } catch (notificationError) {
@@ -254,7 +254,7 @@ exports.signin = [
             await req.app.locals.notificationService.createNotification(
               user._id,
               user.first_name,
-              `Free Trial Plan Assigned - 7 days access granted`
+              "Buy Plan"
             );
             console.log("✅ Free Trial plan assignment notification created for new user");
           } catch (notificationError) {
@@ -295,7 +295,7 @@ exports.signin = [
               await req.app.locals.notificationService.createNotification(
                 user._id,
                 user.first_name,
-                `Free Trial Plan Renewed - 7 days access granted`
+                "Buy Plan"
               );
               console.log("✅ Free Trial plan renewal notification created");
             } catch (notificationError) {
@@ -324,13 +324,13 @@ exports.signin = [
             await req.app.locals.notificationService.createNotification(
               user._id,
               user.first_name,
-              `Free Trial Active - ${daysLeft} days remaining`
+              "Buy Plan"
             );
           } else {
             await req.app.locals.notificationService.createNotification(
               user._id,
               user.first_name,
-              "Free Trial Expired - Please upgrade your plan"
+              "Buy Plan"
             );
           }
         }
