@@ -54,8 +54,15 @@ async function sendConfirmationEmail(userEmail, userName, otp) {
     console.log("   - Template file exists:", fs.existsSync(templatePath));
     console.log("   - Template path:", templatePath);
 
+    console.log("🔍 [DEBUG] About to send email with options:", JSON.stringify(mailOptions, null, 2));
+
     const result = await transporter.sendMail(mailOptions);
     console.log("✅ [DEBUG] Email sent successfully:", result.messageId);
+    console.log("🔍 [DEBUG] Email result details:", {
+      messageId: result.messageId,
+      response: result.response,
+      envelope: result.envelope
+    });
     return result;
 
   } catch (error) {
@@ -145,6 +152,7 @@ async function testEmailService() {
     console.log("✅ [TEST] Confirmation email test passed");
   } catch (error) {
     console.error("❌ [TEST] Confirmation email test failed:", error.message);
+    console.error("❌ [TEST] Error stack:", error.stack);
   }
 
   try {
@@ -154,6 +162,7 @@ async function testEmailService() {
     console.log("✅ [TEST] Forgot password email test passed");
   } catch (error) {
     console.error("❌ [TEST] Forgot password email test failed:", error.message);
+    console.error("❌ [TEST] Error stack:", error.stack);
   }
 
   try {
@@ -163,6 +172,7 @@ async function testEmailService() {
     console.log("✅ [TEST] Logout email test passed");
   } catch (error) {
     console.error("❌ [TEST] Logout email test failed:", error.message);
+    console.error("❌ [TEST] Error stack:", error.stack);
   }
 }
 

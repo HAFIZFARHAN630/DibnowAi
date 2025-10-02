@@ -6,9 +6,10 @@ require("dotenv").config();
 // Handlebars template engine setup
 const handlebarOptions = {
   viewEngine: {
-    extName: ".hbs",
-    partialsDir: path.resolve("./email-temp/partials"),
+    extname: ".hbs",
+    layoutsDir: path.resolve("./email-temp"),
     defaultLayout: false,
+    partialsDir: path.resolve("./email-temp/partials"),
   },
   viewPath: path.resolve("./email-temp"),
   extName: ".hbs",
@@ -28,11 +29,18 @@ const transporter = nodemailer.createTransport({
 try {
   // Fix for ES6 module - use default export
   const hbsFunction = hbs.default || hbs;
+  console.log("🔍 [DEBUG] hbs function type:", typeof hbsFunction);
+  console.log("🔍 [DEBUG] hbs function:", hbsFunction);
+
   const hbsInstance = hbsFunction(handlebarOptions);
+  console.log("🔍 [DEBUG] hbs instance type:", typeof hbsInstance);
+  console.log("🔍 [DEBUG] hbs instance:", hbsInstance);
 
   if (typeof hbsInstance === 'function') {
     transporter.use("compile", hbsInstance);
     console.log("✅ [DEBUG] Handlebars engine initialized successfully");
+    console.log("🔍 [DEBUG] ViewPath:", handlebarOptions.viewPath);
+    console.log("🔍 [DEBUG] Extension:", handlebarOptions.extName);
   } else {
     console.error("❌ [DEBUG] hbs instance is not a function:", typeof hbsInstance);
   }
