@@ -99,7 +99,7 @@ exports.signup = [
 
       // Try to send confirmation email (don't fail signup if email fails)
       try {
-        await sendConfirmationEmail(email, first_name, otp);
+        await sendConfirmationEmail(email, otp);
         console.log("✅ Signup OTP sent to:", email);
       } catch (mailError) {
         console.error("❌ Failed to send signup OTP:", mailError.message);

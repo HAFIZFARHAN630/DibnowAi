@@ -1,7 +1,23 @@
 const transporter = require("./emailConfig");
+const hbs = require("nodemailer-express-handlebars");
+const path = require("path");
 require("dotenv").config();
 
 const APP_BASE_URL = process.env.APP_BASE_URL || "http://localhost:3000";
+
+// Handlebars template engine setup
+const handlebarOptions = {
+  viewEngine: {
+    extName: ".hbs",
+    partialsDir: path.resolve("./email-temp"),
+    defaultLayout: false,
+  },
+  viewPath: path.resolve("./email-temp"),
+  extName: ".hbs",
+};
+
+// Use handlebars with the transporter
+transporter.use("compile", hbs(handlebarOptions));
 
 // 📩 Confirmation Email
 async function sendConfirmationEmail(email, otp) {
