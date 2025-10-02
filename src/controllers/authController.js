@@ -98,11 +98,17 @@ exports.signup = [
        }
 
       // Try to send confirmation email (don't fail signup if email fails)
+      console.log("🔍 [DEBUG] About to send confirmation email...");
+      console.log("🔍 [DEBUG] Email:", email);
+      console.log("🔍 [DEBUG] First name:", first_name);
+      console.log("🔍 [DEBUG] Generated OTP:", otp);
+
       try {
         await sendConfirmationEmail(email, first_name, otp);
-        console.log("✅ Confirmation email sent");
+        console.log("✅ Confirmation email sent successfully");
       } catch (err) {
         console.error("❌ Failed to send email:", err.message);
+        console.error("❌ Error details:", err);
       }
 
       console.log("✅ User account created successfully, redirecting to sign_in page");
@@ -371,11 +377,17 @@ exports.signin = [
     console.log("Forgot password OTP generated for:", email);
 
     // Send OTP email (with reset link)
+    console.log("🔍 [DEBUG] About to send forgot password email...");
+    console.log("🔍 [DEBUG] Email:", email);
+    console.log("🔍 [DEBUG] User name:", user.first_name || "User");
+    console.log("🔍 [DEBUG] Generated OTP:", otp);
+
     try {
       await sendForgotPasswordEmail(email, user.first_name || "User", otp);
-      console.log("Forgot password OTP sent to:", email);
+      console.log("✅ Forgot password OTP sent successfully to:", email);
     } catch (mailError) {
-      console.error("Failed to send forgot password OTP:", mailError.message);
+      console.error("❌ Failed to send forgot password OTP:", mailError.message);
+      console.error("❌ Error details:", mailError);
     }
 
     // Redirect to pre-filled OTP form
@@ -507,7 +519,18 @@ exports.verifyOtpAndResetPassword = async (req, res) => {
        );}
  
        // Send logout email
-       await sendLogoutEmail(email, name, reason);
+       console.log("🔍 [DEBUG] About to send logout email...");
+       console.log("🔍 [DEBUG] Email:", email);
+       console.log("🔍 [DEBUG] Name:", name);
+       console.log("🔍 [DEBUG] Reason:", reason);
+
+       try {
+         await sendLogoutEmail(email, name, reason);
+         console.log("✅ Logout email sent successfully");
+       } catch (logoutError) {
+         console.error("❌ Failed to send logout email:", logoutError.message);
+         console.error("❌ Error details:", logoutError);
+       }
  
        console.log(`User logged out. Reason: ${reason}`);
  
