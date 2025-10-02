@@ -21,8 +21,8 @@ const transporter = nodemailer.createTransport({
   port: Number(process.env.EMAIL_PORT) || 587,
   secure: process.env.EMAIL_SECURE === "true" || false, // false for port 587
   auth: {
-    user: process.env.EMAIL_USER || "no-reply@dibnow.com",
-    pass: process.env.EMAIL_PASS || "t;XvIRE{E=qNn$#T",
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
   },
   // Add connection timeout and retry options
   connectionTimeout: 60000, // 60 seconds
@@ -66,7 +66,7 @@ async function testSMTPConnection() {
   console.log("   - Host:", process.env.EMAIL_HOST || "smtp-relay.brevo.com");
   console.log("   - Port:", Number(process.env.EMAIL_PORT) || 587);
   console.log("   - Secure:", process.env.EMAIL_SECURE === "true" || false);
-  console.log("   - User:", process.env.EMAIL_USER || "no-reply@dibnow.com");
+  console.log("   - User:", process.env.EMAIL_USER);
   console.log("   - Password/API Key:", process.env.EMAIL_PASS ? "****" + process.env.EMAIL_PASS.slice(-4) : "Not set");
 
   return new Promise((resolve, reject) => {
@@ -91,7 +91,7 @@ async function testEmailSending() {
   console.log("🔧 [EMAIL TEST] Testing email sending capability...");
 
   const testMailOptions = {
-    from: `"${process.env.EMAIL_NAME}" <${process.env.EMAIL_USER}>`,
+    from: `"${process.env.EMAIL_NAME}" <${process.env.EMAIL_FROM || process.env.EMAIL_USER}>`,
     to: "test@example.com", // Use a test email that you can check
     subject: "SMTP Test Email - Dibnow",
     html: `

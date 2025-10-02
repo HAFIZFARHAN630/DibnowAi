@@ -98,7 +98,7 @@ exports.addProduct = async (req, res) => {
       });
 
       const mailOptions = {
-        from: process.env.EMAIL_USER,
+        from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
         to: userEmail,
         subject: `Repair Registered — Tracking ID ${trackingId}`,
         html: `

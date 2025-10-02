@@ -32,7 +32,7 @@ async function sendConfirmationEmail(userEmail, userName, otp) {
 
   try {
     const mailOptions = {
-      from: `"${process.env.EMAIL_NAME}" <${process.env.EMAIL_USER}>`,
+      from: `"${process.env.EMAIL_NAME}" <${process.env.EMAIL_FROM || process.env.EMAIL_USER}>`,
       to: userEmail,
       subject: "Confirm Your Email - Dibnow",
       template: "Email_Confirmation",
@@ -108,7 +108,7 @@ async function sendForgotPasswordEmail(userEmail, userName, otp) {
 
   try {
     const mailOptions = {
-      from: `"${process.env.EMAIL_NAME}" <${process.env.EMAIL_USER}>`,
+      from: `"${process.env.EMAIL_NAME}" <${process.env.EMAIL_FROM || process.env.EMAIL_USER}>`,
       to: userEmail,
       subject: "Password Reset Request - Dibnow",
       template: "forgot_password",
@@ -174,7 +174,7 @@ async function sendLogoutEmail(userEmail, userName, reason = "Manual logout") {
 
   try {
     const mailOptions = {
-      from: `"${process.env.EMAIL_NAME}" <${process.env.EMAIL_USER}>`,
+      from: `"${process.env.EMAIL_NAME}" <${process.env.EMAIL_FROM || process.env.EMAIL_USER}>`,
       to: userEmail,
       subject: "Logout Notification - Dibnow",
       template: "logout_email",
