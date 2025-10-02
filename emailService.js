@@ -1,90 +1,57 @@
-const nodemailer = require('nodemailer');
-const hbsModule = require('nodemailer-express-handlebars');
-const hbs = hbsModule.default;
-const path = require('path');
-require('dotenv').config();
+const transporter = require("./emailConfig");
+require("dotenv").config();
 
-// Gmail SMTP Configuration
-const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST,
-  port: process.env.EMAIL_PORT,
-  secure: process.env.EMAIL_SECURE === 'true',
-  auth: {
-    user: process.env.EMAIL_USER ? process.env.EMAIL_USER.replace(/"/g, '') : '',
-    pass: process.env.EMAIL_PASS ? process.env.EMAIL_PASS.replace(/"/g, '') : ''
-  }
-});
+const APP_BASE_URL = process.env.APP_BASE_URL || "http://localhost:3000";
 
-// Handlebars Configuration
-transporter.use('compile', hbs({
-  viewEngine: {
-    extname: '.hbs',
-    defaultLayout: false
-  },
-  viewPath: path.join(__dirname, 'email-temp'),
-  extName: '.hbs'
-}));
-
-// Email Functions
-async function sendConfirmationEmail(userEmail, userName, otp) {
-  const baseUrl = process.env.APP_BASE_URL || 'http://localhost:3000';
-  const context = {
-    name: userName,
-    otp: otp,
-    confirmationLink: `${baseUrl}/verify-email?email=${userEmail}&otp=${otp}`,
-    loginUrl: `${baseUrl}/sign_in`,
-    year: new Date().getFullYear()
-  };
-
-  return await transporter.sendMail({
-    from: `${process.env.EMAIL_NAME ? process.env.EMAIL_NAME.replace(/"/g, '') : 'ClickTake Technologies'} <${process.env.EMAIL_USER ? process.env.EMAIL_USER.replace(/"/g, '') : ''}>`,
-    to: userEmail,
-    subject: 'Welcome! Confirm Your Email',
-    template: 'Email_Confirmation',
-    context: context
+// 📩 Confirmation Email
+async function sendConfirmationEmail(email, otp) {
+  return transporter.sendMail({
+    from: `"${process.env.EMAIL_NAME}" <${process.env.EMAIL_USER}>`,
+    to: email,
+    subject: "Confirm Your Email - Dibnow",
+    template: "Email_Confirmation",
+    context: {
+      otp,
+      confirmationLink: `${APP_BASE_URL}/verify-email?email=${email}&otp=${otp}`,
+      loginUrl: `${APP_BASE_URL}/sign_in`,
+      year: new Date().getFullYear(),
+    },
   });
 }
 
-async function sendForgotPasswordEmail(userEmail, userName, otp) {
-  const baseUrl = process.env.APP_BASE_URL || 'http://localhost:3000';
-  const context = {
-    name: userName,
-    otp: otp,
-    email: userEmail,
-    resetUrl: `${baseUrl}/forgot-password?email=${userEmail}&otp=${otp}`,
-    year: new Date().getFullYear()
-  };
-
-  return await transporter.sendMail({
-    from: `${process.env.EMAIL_NAME ? process.env.EMAIL_NAME.replace(/"/g, '') : 'ClickTake Technologies'} <${process.env.EMAIL_USER ? process.env.EMAIL_USER.replace(/"/g, '') : ''}>`,
-    to: userEmail,
-    subject: 'Password Reset OTP',
-    template: 'forgot_password',
-    context: context
+// 📩 Forgot Password Email
+async function sendForgotPasswordEmail(email, otp) {
+  return transporter.sendMail({
+    from: `"${process.env.EMAIL_NAME}" <${process.env.EMAIL_USER}>`,
+    to: email,
+    subject: "Password Reset Request - Dibnow",
+    template: "forgot_password",
+    context: {
+      otp,
+      resetUrl: `${APP_BASE_URL}/reset-password?email=${email}&otp=${otp}`,
+      year: new Date().getFullYear(),
+    },
   });
 }
 
-async function sendLogoutEmail(userEmail, userName, reason = 'Manual logout') {
-  const baseUrl = process.env.APP_BASE_URL || 'http://localhost:3000';
-  const context = {
-    name: userName,
-    logoutTime: new Date().toLocaleString('en-US', {
-      timeZone: 'Asia/Karachi',
-      dateStyle: 'full',
-      timeStyle: 'short'
-    }),
-    link: `${baseUrl}/login`,
-    reason: reason,
-    year: new Date().getFullYear()
-  };
-
-  return await transporter.sendMail({
-    from: `${process.env.EMAIL_NAME ? process.env.EMAIL_NAME.replace(/"/g, '') : 'ClickTake Technologies'} <${process.env.EMAIL_USER ? process.env.EMAIL_USER.replace(/"/g, '') : ''}>`,
-    to: userEmail,
-    subject: 'Logout Confirmation',
-    template: 'logout_email',
-    context: context
+// 📩 Logout Email
+async function sendLogoutEmail(email, reason = "Manual logout") {
+  return transporter.sendMail({
+    from: `"${process.env.EMAIL_NAME}" <${process.env.EMAIL_USER}>`,
+    to: email,
+    subject: "Logout Notification - Dibnow",
+    template: "logout_email",
+    context: {
+      logoutTime: new Date().toLocaleString("en-US", { timeZone: "Asia/Karachi" }),
+      link: `${APP_BASE_URL}/sign_in`,
+      reason,
+      year: new Date().getFullYear(),
+    },
   });
 }
 
-module.exports = { sendConfirmationEmail, sendForgotPasswordEmail, sendLogoutEmail };
+module.exports = {
+  sendConfirmationEmail,
+  sendForgotPasswordEmail,
+  sendLogoutEmail,
+};

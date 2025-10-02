@@ -109,8 +109,9 @@ exports.signup = [
 
       console.log("✅ User account created successfully, redirecting to sign_in page");
       console.log("📧 Email sending status: OTP email may have failed due to Gmail authentication");
-      // Redirect to login page
-      return res.redirect("/sign_in?message=Account created successfully! Please check your email for confirmation and login.");
+      // Redirect to login page using APP_BASE_URL for live deployment compatibility
+      const APP_BASE_URL = process.env.APP_BASE_URL || "http://localhost:3000";
+      return res.redirect(`${APP_BASE_URL}/sign_in?message=Account created successfully! Please check your email for confirmation and login.`);
 
   } catch (error) {
     console.error("Signup error:", error);
