@@ -99,19 +99,15 @@ exports.signup = [
 
       // Try to send confirmation email (don't fail signup if email fails)
       try {
-        await sendConfirmationEmail(email, otp);
-        console.log("✅ Signup OTP sent to:", email);
-      } catch (mailError) {
-        console.error("❌ Failed to send signup OTP:", mailError.message);
-        console.error("❌ Email sending failed, but user account was created successfully");
-        // Continue with signup process even if email fails
+        await sendConfirmationEmail(email, first_name, otp);
+        console.log("✅ Confirmation email sent");
+      } catch (err) {
+        console.error("❌ Failed to send email:", err.message);
       }
 
       console.log("✅ User account created successfully, redirecting to sign_in page");
-      console.log("📧 Email sending status: OTP email may have failed due to Gmail authentication");
-      // Redirect to login page using APP_BASE_URL for live deployment compatibility
-      const APP_BASE_URL = process.env.APP_BASE_URL || "http://localhost:3000";
-      return res.redirect(`${APP_BASE_URL}/sign_in?message=Account created successfully! Please check your email for confirmation and login.`);
+      // Redirect to login page
+      return res.redirect('/sign_in?message=Account created successfully! Please check your email for confirmation and login.');
 
   } catch (error) {
     console.error("Signup error:", error);
