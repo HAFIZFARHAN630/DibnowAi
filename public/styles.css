@@ -178,7 +178,7 @@
     }
 
     .sidebar .navbar {
-        background-color: #111827 !important;
+        background: #F3F3F9 !important;
         border: none !important;
         box-shadow: none !important;
     }
@@ -245,7 +245,7 @@
     /*** Navbar ***/
     .sidebar .navbar .navbar-nav .nav-link {
         padding: 16px 20px;
-        color: #ffffff !important;
+        color: black !important;
         border-left: 4px solid transparent;
         outline: none;
         transition: all 0.3s ease;
