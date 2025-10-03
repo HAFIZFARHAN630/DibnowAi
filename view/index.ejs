@@ -60,7 +60,7 @@
         .chart-container {
             position: relative;
             height: 300px;
-            width: 100%;
+            width: 95%;
         }
 
         .chart-container canvas {
@@ -1024,7 +1024,7 @@
                 <!-- Revenue by Customer Type Card -->
                 <div class="col-md-9 mb-4">
                     <div class="custom-card text-white" style="background-color: #1b263b; border: none; border-radius: 15px; padding: 20px; height: 400px;">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
                             <h5>Revenue by Customer Type</h5>
                             <h4><%= formattedTotalSales %> <span class="badge bg-success"><%= salesGrowth.toFixed(1) %>% <%= salesGrowth >= 0 ? '&#x2191;' : '&#x2193;' %></span></h4>
                         </div>
