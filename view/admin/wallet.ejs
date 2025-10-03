@@ -19,6 +19,7 @@
      <!-- Template Stylesheet -->
      <link href="/styles.css" rel="stylesheet">
      <link href="/styles1.css" rel="stylesheet">
+     <script src="https://cdn.tailwindcss.com"></script>
 
      <style>
          .body-wrapper {
@@ -133,7 +134,7 @@
          }
 
          .table thead th {
-             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+             background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);
              color: white;
              font-weight: 600;
              text-transform: uppercase;
@@ -299,6 +300,14 @@
              .table-responsive {
                  font-size: 14px;
              }
+             .res-flex{
+              flex-direction: column;
+             }
+         }
+         .res-flex{
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
          }
      </style>
 <body>
@@ -313,7 +322,7 @@
             <div class="card card-body py-3">
                 <div class="row align-items-center">
                     <div class="col-md-12">
-                        <div class="d-flex justify-content-between align-items-center">
+                        <div class="res-flex">
                             <h4 class="mb-4 mb-sm-0 card-title">Wallet Management <i class="bi bi-wallet2"></i></h4>
                             <a href="/admin" class="btn btn-gradient">Back to Dashboard</a>
                         </div>
@@ -322,13 +331,13 @@
             </div>
 
             <!-- Flash Messages -->
-            <% if (typeof success_msg !== 'undefined' && success_msg) { %>
+            <% if (typeof success_msg !== 'undefined' && success_msg.lenght>0) { %>
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                     <%= success_msg %>
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             <% } %>
-            <% if (typeof error_msg !== 'undefined' && error_msg) { %>
+            <% if (typeof error_msg !== 'undefined' && error_msg.lenght>0) { %>
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <%= error_msg %>
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -365,95 +374,117 @@
 
             <!-- Wallet Users Table -->
             <div class="card card-body">
-                <div class="search-container">
-                    <div class="search-input-wrapper">
-                        <i class="bi bi-search search-icon"></i>
-                        <input type="text" id="walletSearch" class="form-control" placeholder="Search users by name, email, plan...">
-                    </div>
-                </div>
+                 <div class="w-full mb-4">
+    <label for="walletSearch" class="sr-only">Search users</label>
 
-                <div class="table-responsive">
-                    <table class="table align-middle text-nowrap" id="walletUsersTable">
-                        <thead>
-                            <tr>
-                                <th><i class="bi bi-person me-2"></i>User</th>
-                                <th><i class="bi bi-credit-card me-2"></i>Plan</th>
-                                <th><i class="bi bi-cash-coin me-2"></i>Balance</th>
-                                <th><i class="bi bi-speedometer2 me-2"></i>Quota Limit</th>
-                                <th><i class="bi bi-graph-up me-2"></i>Used</th>
-                                <th><i class="bi bi-check-circle me-2"></i>Remaining</th>
-                                <th><i class="bi bi-gear me-2"></i>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% if (usersWithWallets && usersWithWallets.length > 0) { %>
-                                <% usersWithWallets.forEach(user => { %>
-                                    <tr>
-                                        <td>
-                                            <div>
-                                                <div class="user-name"><%= user.first_name %> <%= user.last_name %></div>
-                                                <div class="user-email"><%= user.email %></div>
-                                            </div>
-                                        </td>
-                                        <td class="text-center">
-                                            <% let planClass = 'plan-default'; %>
-                                            <% if (user.plan_name && user.plan_name.toLowerCase().includes('free')) { %>
-                                                <% planClass = 'plan-free-trial'; %>
-                                            <% } else if (user.plan_name && user.plan_name.toLowerCase().includes('basic')) { %>
-                                                <% planClass = 'plan-basic'; %>
-                                            <% } else if (user.plan_name && user.plan_name.toLowerCase().includes('standard')) { %>
-                                                <% planClass = 'plan-standard'; %>
-                                            <% } else if (user.plan_name && user.plan_name.toLowerCase().includes('premium')) { %>
-                                                <% planClass = 'plan-premium'; %>
-                                            <% } %>
-                                            <span class="plan-badge <%= planClass %>"><%= user.plan_name || 'No Plan' %></span>
-                                        </td>
-                                        <td class="text-center">
-                                            <% let balanceClass = 'balance-positive'; %>
-                                            <% if (user.balance < 10) { %>
-                                                <% balanceClass = 'balance-low'; %>
-                                            <% } else if (user.balance < 0) { %>
-                                                <% balanceClass = 'balance-negative'; %>
-                                            <% } %>
-                                            <span class="balance-badge <%= balanceClass %>">£<%= user.balance.toFixed(2) %></span>
-                                        </td>
-                                        <td class="text-center">
-                                            <span class="badge bg-light text-dark"><%= user.plan_limit || 0 %></span>
-                                        </td>
-                                        <td class="text-center">
-                                            <span class="badge bg-info"><%= user.quota_used || 0 %></span>
-                                        </td>
-                                        <td class="text-center">
-                                            <% let quotaClass = 'quota-available'; %>
-                                            <% if ((user.plan_limit - user.quota_used) <= 0) { %>
-                                                <% quotaClass = 'quota-exhausted'; %>
-                                            <% } %>
-                                            <span class="quota-badge <%= quotaClass %>"><%= user.plan_limit - user.quota_used %></span>
-                                        </td>
-                                        <td class="text-center">
-                                            <a href="/admin/update/<%= user._id %>" class="btn btn-sm btn-primary btn-action me-2">
-                                                <i class="bi bi-pencil me-1"></i>Edit
-                                            </a>
-                                            <a href="/admin/wallet-transactions/<%= user._id %>" class="btn btn-sm btn-outline-info btn-action">
-                                                <i class="bi bi-eye me-1"></i>Transactions
-                                            </a>
-                                        </td>
-                                    </tr>
-                                <% }) %>
-                            <% } else { %>
-                                <tr>
-                                    <td colspan="7" class="text-center">
-                                        <div class="no-results">
-                                            <i class="bi bi-wallet2"></i>
-                                            <h5 class="mt-3">No Wallet Users</h5>
-                                            <p>Users with wallet balances will appear here.</p>
-                                        </div>
-                                    </td>
-                                </tr>
-                            <% } %>
-                        </tbody>
-                    </table>
-                </div>
+    <!-- flex container keeps icon vertically centered with input -->
+    <div class="flex items-center gap-3 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2">
+      <i class="bi bi-search text-gray-400 text-lg"></i>
+
+      <input
+        id="walletSearch"
+        type="text"
+        class="flex-1 bg-transparent text-sm placeholder-gray-500 outline-none"
+        placeholder="Search users by name, email, plan..."
+      />
+    </div>
+  </div>
+
+
+               <!-- TABLE: visible on small/medium, hidden on large+ -->
+<!-- CARDS: visible at width < 1200px (cards full-width, fixed-height buttons) -->
+<div class=" block">
+  <!-- single-column so cards are always full width -->
+  <div class="flex flex-col gap-4">
+    <% if (usersWithWallets && usersWithWallets.length > 0) { %>
+      <% usersWithWallets.forEach(user => { %>
+        <div class="w-full bg-white rounded-lg border border-gray-100 shadow-sm p-4 flex flex-col">
+          <!-- Header: user -->
+          <div class="flex items-start gap-3">
+            <i class="bi bi-person-circle text-3xl text-indigo-600 flex-shrink-0"></i>
+            <div class="min-w-0">
+              <div class="fw-bold text-sm font-semibold text-gray-800 truncate"><%= user.first_name %> <%= user.last_name %></div>
+              <div class="text-xs text-gray-500 truncate"><%= user.email %></div>
+            </div>
+          </div>
+
+          <!-- Plan & Balance -->
+          <div class="flex flex-wrap items-center gap-2 mt-3">
+            <% let planClass = 'plan-default'; %>
+            <% if (user.plan_name && user.plan_name.toLowerCase().includes('free')) { %>
+              <% planClass = 'plan-free-trial'; %>
+            <% } else if (user.plan_name && user.plan_name.toLowerCase().includes('basic')) { %>
+              <% planClass = 'plan-basic'; %>
+            <% } else if (user.plan_name && user.plan_name.toLowerCase().includes('standard')) { %>
+              <% planClass = 'plan-standard'; %>
+            <% } else if (user.plan_name && user.plan_name.toLowerCase().includes('premium')) { %>
+              <% planClass = 'plan-premium'; %>
+            <% } %>
+            <span class="plan-badge <%= planClass %> inline-flex items-center px-3 py-1 rounded-full text-xs">
+              <i class="bi bi-credit-card me-1"></i><%= user.plan_name || 'No Plan' %>
+            </span>
+
+            <% let balanceClass = 'balance-positive'; %>
+            <% if (user.balance < 10) { %>
+              <% balanceClass = 'balance-low'; %>
+            <% } else if (user.balance < 0) { %>
+              <% balanceClass = 'balance-negative'; %>
+            <% } %>
+            <span class="balance-badge <%= balanceClass %> inline-flex items-center px-3 py-1 rounded-full text-xs">
+              <i class="bi bi-cash-coin me-1"></i>£<%= user.balance.toFixed(2) %>
+            </span>
+          </div>
+
+          <!-- Quota info -->
+          <div class="mt-3 grid grid-cols-3 gap-2 text-center text-sm">
+            <div>
+              <div class="text-xs text-gray-500">Quota Limit</div>
+              <div class="mt-1 inline-block px-2 py-1 rounded text-sm bg-gray-50 border"><%= user.plan_limit || 0 %></div>
+            </div>
+            <div>
+              <div class="text-xs text-gray-500">Used</div>
+              <div class="mt-1 inline-block px-2 py-1 rounded text-sm bg-blue-50 border"><%= user.quota_used || 0 %></div>
+            </div>
+            <div>
+              <div class="text-xs text-gray-500">Remaining</div>
+              <% let quotaClass = 'quota-available'; %>
+              <% if ((user.plan_limit - user.quota_used) <= 0) { %>
+                <% quotaClass = 'quota-exhausted'; %>
+              <% } %>
+              <div class="mt-1 inline-block px-2 py-1 rounded text-sm quota-badge <%= quotaClass %>"><%= user.plan_limit - user.quota_used %></div>
+            </div>
+          </div>
+
+          <!-- Actions: fixed-height buttons to avoid height jump on tiny screens -->
+          <div class="mt-4 flex gap-2">
+            <a href="/admin/update/<%= user._id %>"
+               class="btn btn-sm btn-primary btn-action flex-1 text-center h-9 flex items-center justify-center whitespace-nowrap text-sm min-w-0 overflow-hidden">
+              <i class="bi bi-pencil me-1"></i>
+              <span class="truncate">Edit</span>
+            </a>
+
+            <a href="/admin/wallet-transactions/<%= user._1d %>"
+               class="btn btn-sm btn-outline-info btn-action flex-1 text-center h-9 flex items-center justify-center whitespace-nowrap text-sm min-w-0 overflow-hidden">
+              <i class="bi bi-eye me-1"></i>
+              <span class="truncate">Transactions</span>
+            </a>
+          </div>
+        </div>
+      <% }) %>
+    <% } else { %>
+      <div class="col-span-1">
+        <div class="w-full bg-white rounded-lg border border-gray-100 p-6 text-center text-gray-500">
+          <i class="bi bi-wallet2 text-3xl mb-2"></i>
+          <h5 class="mt-2 text-lg font-medium">No Wallet Users</h5>
+          <p class="text-sm text-gray-500">Users with wallet balances will appear here.</p>
+        </div>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+
+
             </div>
         </div>
     </div>

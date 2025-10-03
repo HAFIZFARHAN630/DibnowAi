@@ -16,6 +16,7 @@
     <!-- Template Stylesheet -->
     <link href="\styles.css" rel="stylesheet">
     <link href="\styles1.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
 
   
 </head>
@@ -503,6 +504,9 @@
 
     .progress-stat-card.progress {
       background: #3b82f6;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
     }
 
     .progress-stat-card.complete {
@@ -1254,7 +1258,21 @@
                         const progressCount = (complaints && complaints.length > 0) ? complaints.filter(u => u.status && u.status.toLowerCase() === 'progress').length : 0;
                         const completeCount = (complaints && complaints.length > 0) ? complaints.filter(u => u.status && u.status.toLowerCase() === 'complete').length : 0;
                       %>
-                        <div class="progress-stats">
+                      <style>
+                        .flex-col-on-small{
+                          /* display: flex !important; */
+                          /* align-items: center !important; */
+                          /* gap: 12px !important; */
+                          /* width: 100%; */
+                        }
+                        @media screen and (max-width:786px){
+                          .flex-col-on-small{
+                            display: flex !important;
+                            flex-direction: column !important;
+                          }
+                        }
+                      </style>
+                        <div class="progress-stats flex-col-on-small">
                           <div class="progress-stat-card pending">
                             <div class="stat-icon">
                               <i class="fas fa-clock"></i>
@@ -1316,6 +1334,13 @@
                           </div>
                         </div>
                     </div>
+
+
+
+
+
+
+
 
                     <div class="card">
                       <div class="card-header"> Users Complaint
@@ -1403,41 +1428,151 @@
 
                       <!-- table -->
 
-                      <div class="complaint-table-container">
-  <table class="equipment-table">
-    <thead>
-      <tr>
-        <th>Username</th>
-        <th>Complaint Type</th>
-        <th>Number</th>
-        <th>Address</th>
-        <th>Complaint</th>
-        <th>Status & Progress</th>
-        <th>Priority</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody id="complaint-table">
+
+
+
+
+
+                <div class="w-full">
+  <!-- TABLE VIEW (≥1200px) -->
+  <div class="hidden min-[1200px]:block">
+    <div class="overflow-hidden rounded-lg shadow-md">
+      <table class="min-w-full border-collapse bg-white" id="complaint-table">
+        <thead>
+          <tr class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-sm font-semibold uppercase">
+            <th class="px-4 py-3 text-left">Username</th>
+            <th class="px-4 py-3 text-left">Complaint Type</th>
+            <th class="px-4 py-3 text-left">Number</th>
+            <th class="px-4 py-3 text-left">Address</th>
+            <th class="px-4 py-3 text-left">Complaint</th>
+            <th class="px-4 py-3 text-left">Status & Progress</th>
+            <th class="px-4 py-3 text-left">Priority</th>
+            <th class="px-4 py-3 text-left">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (complaints && complaints.length > 0) { %>
+            <% complaints.forEach((complaint, index) => { %>
+              <tr class="border-b hover:bg-gray-50">
+                <td class="px-4 py-3 align-top">
+                  <strong><%= complaint.Username %></strong>
+                  <div class="text-xs text-gray-500 flex items-center gap-1 mt-1">
+                    <% 
+                      const createdDate = complaint.created_at ? new Date(complaint.created_at) : new Date();
+                      const daysSince = Math.floor((new Date() - createdDate) / (1000 * 60 * 60 * 24));
+                    %>
+                    <i class="fas fa-clock"></i> <%= daysSince %> days ago
+                  </div>
+                </td>
+                <td class="px-4 py-3">
+                  <span class="px-2 py-1 rounded bg-indigo-50 text-indigo-700 text-xs font-medium">
+                    <%= complaint.department %>
+                  </span>
+                </td>
+                <td class="px-4 py-3"><%= complaint.number %></td>
+                <td class="px-4 py-3"><%= complaint.Address %></td>
+                <td class="px-4 py-3 max-w-xs">
+                  <div>
+                    <span class="complaint-short">
+                      <%= complaint.Complaint.length > 80 
+                            ? complaint.Complaint.substring(0, 80) + '...' 
+                            : complaint.Complaint 
+                      %>
+                    </span>
+                    <% if (complaint.Complaint.length > 80) { %>
+                      <span class="complaint-full hidden"><%= complaint.Complaint %></span>
+                      <button type="button" class="text-indigo-600 text-xs underline ml-1" onclick="toggleComplaint(this)">
+                        Read More
+                      </button>
+                    <% } %>
+                  </div>
+                </td>
+                <td class="px-4 py-3">
+                  <div>
+                    <span class="inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium
+                      <%= complaint.status === 'Pending' ? 'bg-yellow-100 text-yellow-700' :
+                          complaint.status === 'Progress' ? 'bg-blue-100 text-blue-700' :
+                          'bg-green-100 text-green-700' %>">
+                      <% if (complaint.status === 'Pending') { %>
+                        <i class="fas fa-clock"></i>
+                      <% } else if (complaint.status === 'Progress') { %>
+                        <i class="fas fa-cogs"></i>
+                      <% } else if (complaint.status === 'Complete') { %>
+                        <i class="fas fa-check-circle"></i>
+                      <% } %>
+                      <%= complaint.status %>
+                    </span>
+                    <div class="h-2 bg-gray-200 rounded mt-2">
+                      <div class="h-2 rounded
+                        <%= complaint.status === 'Pending' ? 'w-1/4 bg-yellow-500' :
+                            complaint.status === 'Progress' ? 'w-1/2 bg-blue-500' :
+                            'w-full bg-green-500' %>">
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-4 py-3">
+                  <% 
+                    let priority = 'low';
+                    let priorityText = 'Low';
+                    if (daysSince > 7) { priority = 'high'; priorityText = 'High'; }
+                    else if (daysSince > 3) { priority = 'medium'; priorityText = 'Medium'; }
+                  %>
+                  <span class="inline-flex items-center gap-1 text-sm
+                    <%= priority === 'high' ? 'text-red-600' :
+                        priority === 'medium' ? 'text-yellow-600' :
+                        'text-green-600' %>">
+                    ● <%= priorityText %>
+                  </span>
+                </td>
+                <td class="px-4 py-3 flex items-center gap-2">
+                  <button type="button" class="text-green-600 hover:text-green-800" data-toggle="modal" data-target="#myModal<%= complaint.id %>">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <form action="/UserComplaint/<%= complaint.id %>?_method=DELETE" method="POST">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button type="submit" class="text-red-600 hover:text-red-800" title="Delete">
+                      <i class="ti-trash"></i>
+                    </button>
+                  </form>
+                </td>
+              </tr>
+            <% }) %>
+          <% } else { %>
+            <tr>
+              <td colspan="8" class="text-center py-6 text-gray-500">No complaints found.</td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- CARD VIEW (<1200px) -->
+  <div class="block min-[1200px]:hidden">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <% if (complaints && complaints.length > 0) { %>
         <% complaints.forEach((complaint, index) => { %>
-          <tr class="complaint-row <%= complaint.status.toLowerCase() %>">
-            <td data-label="Username">
-              <strong><%= complaint.Username %></strong>
-              <div class="time-tracker">
-                <% 
-                  const createdDate = complaint.created_at ? new Date(complaint.created_at) : new Date();
-                  const daysSince = Math.floor((new Date() - createdDate) / (1000 * 60 * 60 * 24));
-                %>
-                <i class="fas fa-clock"></i> <%= daysSince %> days ago
+          <div class="bg-white rounded-lg border shadow-sm p-4">
+            <div class="flex justify-between items-start">
+              <div>
+                <div class="font-semibold text-gray-800"><%= complaint.Username %></div>
+                <div class="text-xs text-gray-500 mt-1">
+                  <% 
+                    const createdDate = complaint.created_at ? new Date(complaint.created_at) : new Date();
+                    const daysSince = Math.floor((new Date() - createdDate) / (1000 * 60 * 60 * 24));
+                  %>
+                  <i class="fas fa-clock"></i> <%= daysSince %> days ago
+                </div>
               </div>
-            </td>
-            <td data-label="Department">
-              <span class="category-badge"><%= complaint.department %></span>
-            </td>
-            <td data-label="Number"><%= complaint.number %></td>
-            <td data-label="Address"><%= complaint.Address %></td>
-            <td data-label="Complaint" class="complaint-text">
-              <div class="complaint-content">
+              <span class="px-2 py-1 rounded text-xs font-medium bg-indigo-50 text-indigo-700">
+                <%= complaint.department %>
+              </span>
+            </div>
+
+            <div class="mt-3 text-sm text-gray-700">
+              <strong>Complaint:</strong>
+              <div>
                 <span class="complaint-short">
                   <%= complaint.Complaint.length > 80 
                         ? complaint.Complaint.substring(0, 80) + '...' 
@@ -1445,18 +1580,20 @@
                   %>
                 </span>
                 <% if (complaint.Complaint.length > 80) { %>
-                  <span class="complaint-full" style="display: none;">
-                    <%= complaint.Complaint %>
-                  </span>
-                  <button type="button" class="complaint-toggle" onclick="toggleComplaint(this)">
+                  <span class="complaint-full hidden"><%= complaint.Complaint %></span>
+                  <button type="button" class="text-indigo-600 text-xs underline ml-1" onclick="toggleComplaint(this)">
                     Read More
                   </button>
                 <% } %>
               </div>
-            </td>
-            <td data-label="Status & Progress">
+            </div>
+
+            <div class="mt-3 flex flex-col gap-2">
               <div>
-                <span class="status-badge status-<%= complaint.status.toLowerCase() %>">
+                <span class="inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium
+                  <%= complaint.status === 'Pending' ? 'bg-yellow-100 text-yellow-700' :
+                      complaint.status === 'Progress' ? 'bg-blue-100 text-blue-700' :
+                      'bg-green-100 text-green-700' %>">
                   <% if (complaint.status === 'Pending') { %>
                     <i class="fas fa-clock"></i>
                   <% } else if (complaint.status === 'Progress') { %>
@@ -1466,49 +1603,51 @@
                   <% } %>
                   <%= complaint.status %>
                 </span>
-                <div class="status-progress-bar">
-                  <div class="status-progress-container">
-                    <div class="status-progress-fill <%= complaint.status.toLowerCase() %>"></div>
+                <div class="h-2 bg-gray-200 rounded mt-1">
+                  <div class="h-2 rounded
+                    <%= complaint.status === 'Pending' ? 'w-1/4 bg-yellow-500' :
+                        complaint.status === 'Progress' ? 'w-1/2 bg-blue-500' :
+                        'w-full bg-green-500' %>">
                   </div>
                 </div>
               </div>
-            </td>
-            <td data-label="Priority">
-              <% 
-                let priority = 'low';
-                let priorityText = 'Low';
-                if (daysSince > 7) {
-                  priority = 'high';
-                  priorityText = 'High';
-                } else if (daysSince > 3) {
-                  priority = 'medium';
-                  priorityText = 'Medium';
-                }
-              %>
-              <span class="priority-indicator priority-<%= priority %>"></span>
-              <span class="resolution-time"><%= priorityText %></span>
-            </td>
-            <td data-label="Action" class="action-buttons">
-              <button type="button" class="btn-action" data-toggle="modal"
+              <div class="text-sm">
+                <% 
+                  let priority = 'low';
+                  let priorityText = 'Low';
+                  if (daysSince > 7) { priority = 'high'; priorityText = 'High'; }
+                  else if (daysSince > 3) { priority = 'medium'; priorityText = 'Medium'; }
+                %>
+                <span class="inline-flex items-center gap-1 text-sm
+                  <%= priority === 'high' ? 'text-red-600' :
+                      priority === 'medium' ? 'text-yellow-600' :
+                      'text-green-600' %>">
+                  ● <%= priorityText %>
+                </span>
+              </div>
+            </div>
+
+            <div class="mt-3 flex justify-end gap-2">
+              <button type="button" class="text-green-600 hover:text-green-800" data-toggle="modal"
                 data-target="#myModal<%= complaint.id %>">
-                <i class="fas fa-edit text-success"></i>
+                <i class="fas fa-edit"></i>
               </button>
               <form action="/UserComplaint/<%= complaint.id %>?_method=DELETE" method="POST">
                 <input type="hidden" name="_method" value="DELETE">
-                <button type="submit" class="btn-action" title="Delete">
-                  <i class="ti-trash" style="color:red;"></i>
+                <button type="submit" class="text-red-600 hover:text-red-800" title="Delete">
+                  <i class="ti-trash"></i>
                 </button>
               </form>
-            </td>
-          </tr>
-        <% }); %>
+            </div>
+          </div>
+        <% }) %>
       <% } else { %>
-        <tr class="no-data">
-          <td colspan="8">No complaints found.</td>
-        </tr>
+        <div class="col-span-1 text-center text-gray-500 p-6 bg-white rounded-lg shadow-sm">
+          No complaints found.
+        </div>
       <% } %>
-    </tbody>
-  </table>
+    </div>
+  </div>
 </div>
 
 

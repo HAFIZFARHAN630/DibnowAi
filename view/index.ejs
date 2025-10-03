@@ -669,6 +669,33 @@
                         <i class="bi bi-layers-fill position-absolute" style="font-size: 6.5rem; color: rgba(123, 31, 162, 0.2); bottom: -36px; right: 10px; z-index: 1;"></i>
                     </div>
                 </div>
+
+                <!-- User Count Cards - Admin Only -->
+                <% if (isAdmin) { %>
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <div class="patient-card position-relative" style="background-color: #E8F5E8; overflow: hidden; border-radius: 10px;">
+                        <div class="patient-card-header text-white p-2" style="background-color: #2E7D32; font-weight: bold;">All Users</div>
+                        <div class="patient-card-body p-4 position-relative" style="font-size: 2rem; font-weight: bold;"> <%= totalUsers || 0 %></div>
+                        <i class="bi bi-people-fill position-absolute" style="font-size: 6.5rem; color: rgba(46, 125, 50, 0.2); bottom: -36px; right: 10px; z-index: 1;"></i>
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <div class="patient-card position-relative" style="background-color: #E3F2FD; overflow: hidden; border-radius: 10px;">
+                        <div class="patient-card-header text-white p-2" style="background-color: #1565C0; font-weight: bold;">Active Users</div>
+                        <div class="patient-card-body p-4 position-relative" style="font-size: 2rem; font-weight: bold;"> <%= activeUsers || 0 %></div>
+                        <i class="bi bi-person-check-fill position-absolute" style="font-size: 6.5rem; color: rgba(21, 101, 192, 0.2); bottom: -36px; right: 10px; z-index: 1;"></i>
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <div class="patient-card position-relative" style="background-color: #FFEBEE; overflow: hidden; border-radius: 10px;">
+                        <div class="patient-card-header text-white p-2" style="background-color: #C62828; font-weight: bold;">Expired Users</div>
+                        <div class="patient-card-body p-4 position-relative" style="font-size: 2rem; font-weight: bold;"> <%= expiredUsers || 0 %></div>
+                        <i class="bi bi-person-x-fill position-absolute" style="font-size: 6.5rem; color: rgba(198, 40, 40, 0.2); bottom: -36px; right: 10px; z-index: 1;"></i>
+                    </div>
+                </div>
+                <% } %>
                 </div>
         </div>
 
@@ -1024,7 +1051,7 @@
                 <!-- Revenue by Customer Type Card -->
                 <div class="col-md-9 mb-4">
                     <div class="custom-card text-white" style="background-color: #1b263b; border: none; border-radius: 15px; padding: 20px; height: 400px;">
-                        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
                             <h5>Revenue by Customer Type</h5>
                             <h4><%= formattedTotalSales %> <span class="badge bg-success"><%= salesGrowth.toFixed(1) %>% <%= salesGrowth >= 0 ? '&#x2191;' : '&#x2193;' %></span></h4>
                         </div>
@@ -1052,16 +1079,41 @@
     <div class="row justify-content-center">
         <div class="col-md-3 mb-4">
             <div class="custom-card text-white" style="background-color: #1b263b; border: none; border-radius: 15px; padding: 20px; height: 400px; overflow-y: auto;">
-                <h5 class="mb-4">Teams</h5>
+                <h5 class="mb-4">
+                    <%= isAdmin ? 'All Teams' : 'My Team' %>
+                    <% if (teams && teams.length > 0) { %>
+                        <span class="badge bg-primary ms-2"><%= teams.length %></span>
+                    <% } %>
+                </h5>
              <% if (teams && teams.length > 0) { %>
-             <% teams.slice(-4).reverse().forEach(team => { %>
-              <div class="custom-product-item d-flex align-items-center mb-3">
-               <img src="https://img.icons8.com/3d-fluency/94/user-male--v4.png" alt="user-male--v4" class="me-3" style="width: 50px; height: 50px;"/>
-                <div>
-                <strong><%= team.name %></strong>
-                   </div>
-                </div>
-                <% }); %>
+                 <% if (isAdmin) { %>
+                     <!-- Admin: Show all team members -->
+                     <% teams.slice(-8).reverse().forEach(team => { %>
+                     <div class="custom-product-item d-flex align-items-center mb-3">
+                      <img src="https://img.icons8.com/3d-fluency/94/user-male--v4.png" alt="user-male--v4" class="me-3" style="width: 50px; height: 50px;"/>
+                       <div>
+                       <strong><%= team.name %></strong>
+                          </div>
+                       </div>
+                       <% }); %>
+                 <% } else { %>
+                     <!-- User: Show their own team members with plan limit consideration -->
+                     <% teams.forEach(team => { %>
+                     <div class="custom-product-item d-flex align-items-center mb-3">
+                      <img src="https://img.icons8.com/3d-fluency/94/user-male--v4.png" alt="user-male--v4" class="me-3" style="width: 50px; height: 50px;"/>
+                       <div>
+                       <strong><%= team.name %></strong>
+                          </div>
+                       </div>
+                       <% }); %>
+                     <!-- Show plan limit message for free users if they have limited access -->
+                     <% if ((plan_name === 'FREE TRIAL' || plan_name === 'Free Trial') && teamCount > 5) { %>
+                     <div class="alert alert-info mt-3 py-2" style="font-size: 0.8rem;">
+                         <i class="bi bi-info-circle me-1"></i>
+                         Showing 5 of <%= teamCount %> team members. Upgrade for full access.
+                     </div>
+                     <% } %>
+                 <% } %>
                  <% } else { %>
                   <p>No team members added yet.</p>
                    <% } %>
@@ -1287,7 +1339,7 @@
                             <!-- Repair Queue Section -->
                             <div class="col-md-6 mb-4">
                                 <div class="custom-card text-white" style="background-color: #1b263b; border: none; border-radius: 15px; padding: 20px; height: 400px; overflow: auto;">
-                                    <div class="d-flex justify-content-between align-items-center mb-4 flex-s">
+                                    <div class="d-flex justify-content-between align-items-center mb-4 flex-s flex-wrap gap-2">
                                         <h4 class="mb-0">Repair</h4>
                                         <div class="d-flex align-items-center">
                                             <a href="/repair" class="btn btn-action btn-success"><i class="bi bi-tools"></i> Go to Repair Customer</a>
@@ -1295,9 +1347,9 @@
                                         </div>
                                     </div>
 
-                                    <div class="table-responsive" style="overflow: auto; width: 100%;">
+                                    <div class="table-responsive hide-on-small" style="overflow: auto; width: 100%;">
                                         <table class="table table-hover mb-0" style="background-color: transparent;">
-                                            <thead class="text-center">
+                                            <thead class="text-center hide-on-small">
                                                 <tr>
                                                     <th class="text-white">Full Name</th>
                                                     <th class="text-white">Product Name</th>
@@ -1335,7 +1387,6 @@
 
   /* On small screens hide the table and show cards */
   @media (max-width: 768px) {
-    .table-responsive { display: none !important; } /* hide the table on small screens */
     .product-cards { 
       display: flex !important; 
       flex-direction: column; 
@@ -1405,6 +1456,11 @@
     .product-card .status-wrap .btn { width: auto; }
     .product-card .value { font-size: 13px; }
   }
+  @media screen and (max-width:786px){
+    .hide-on-small{
+        display: none !important;
+    }
+  }
 </style>
 
 <!-- 2) Add this card markup RIGHT AFTER your existing table block (table remains unchanged) -->
@@ -1461,48 +1517,54 @@
                             </div>
 
                             <!-- Recent Sales Section -->
-                            <div class="col-md-6 mb-4">
-                                <div class="custom-card text-white" style="background-color: #1b263b; border: none; border-radius: 15px; padding: 20px; height: 400px;">
-                                    <div class="d-flex justify-content-between align-items-center mb-4">
-                                        <h4 class="mb-0">Inventory</h4>
-                                        <div class="d-flex align-items-center">
-                                            <a href="/inventory" class="btn btn-action btn-success"><i class="bi bi-clipboard-data"></i> Go to Inventory</a>
-                                        </div>
-                                    </div>
+                          <div class="col-md-6 mb-4">
+  <div class="custom-card text-white" style="background-color: #1b263b; border: none; border-radius: 15px; padding: 20px; height: 400px;">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2>
+      <h4 class="mb-0">Inventory</h4>
+      <div class="d-flex align-items-center">
+        <a href="/inventory" class="btn btn-action btn-success">
+          <i class="bi bi-clipboard-data"></i> Go to Inventory
+        </a>
+      </div>
+    </div>
 
-                                    <div class="table-responsive" style="overflow-y: visible;">
-                                        <table class="table table-hover mb-0" style="background-color: transparent;">
-                                            <thead>
-                                                <tr>
-                                                    <th class="text-white">Image</th>
-                                                    <th class="text-white">Product Name</th>
-                                                    <th class="text-white">Details</th>
-                                                    <th class="text-white">Sale Price</th>
-                                                    <th class="text-white">Retail Price</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="text-center">
-                                                <% if (inventory && inventory.length > 0) { %>
-                                                    <% inventory.slice(0, 5).forEach(product => { %>
-                                                        <tr>
-                                                            <td><img src="/uploads/<%= product.device_image %>" alt="Device" style="width: 40px; height: 40px; object-fit: cover; border-radius: 5px;"></td>
-                                                            <td class="text-white"><%= product.product_name %></td>
-                                                            <td class="text-white text-wrap" style="word-wrap: break-word;"><%= product.gadget_problem %></td>
-                                                            <td class="text-white"> <%= product.Sale_Price %></td>
-                                                            <td class="text-white"> <%= product.Retail_Price %></td>
-                                                        </tr>
-                                                    <% }) %>
-                                                <% } else { %>
-                                                    <tr>
-                                                        <td colspan="5" class="text-center text-white">No sales records found.</td>
-                                                    </tr>
-                                                <% } %>
-                                            </tbody>
+    <!-- Scrollable table -->
+    <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+      <table class="table table-hover mb-0" style="background-color: transparent;">
+        <thead  class="hide-on-small" style="position: sticky; top: 0; background-color: #1b263b; z-index: 2;">
+          <tr>
+            <th class="text-white">Image</th>
+            <th class="text-white">Product Name</th>
+            <th class="text-white">Details</th>
+            <th class="text-white">Sale Price</th>
+            <th class="text-white">Retail Price</th>
+          </tr>
+        </thead>
+        <tbody class="text-center">
+          <% if (inventory && inventory.length > 0) { %>
+            <% inventory.slice(0, 5).forEach(product => { %>
+              <tr>
+                <td>
+                  <img src="/uploads/<%= product.device_image %>" alt="Device"
+                       style="width: 40px; height: 40px; object-fit: cover; border-radius: 5px;">
+                </td>
+                <td class="text-white"><%= product.product_name %></td>
+                <td class="text-white text-wrap" style="word-wrap: break-word;"><%= product.gadget_problem %></td>
+                <td class="text-white"><%= product.Sale_Price %></td>
+                <td class="text-white"><%= product.Retail_Price %></td>
+              </tr>
+            <% }) %>
+          <% } else { %>
+            <tr>
+              <td colspan="5" class="text-center text-white">No sales records found.</td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
 
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
 
                         </div>
                     </div>

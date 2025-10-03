@@ -329,7 +329,11 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
             border-radius: 10px;
         }
-        
+        @media screen and (max-width:786px) {
+          .center-on-small{
+            justify-content: center !important;
+          }
+        }
 </style>
 
 </head>
@@ -345,10 +349,10 @@
             <div class="card card-body py-3">
               <div class="row align-items-center">
                 <div class="col-12">
-                  <div class="d-sm-flex align-items-center justify-space-between">
+                  <div class="d-sm-flex align-items-center justify-space-between center-on-small">
                     <h4 class="mb-4 mb-sm-0 card-title">Choose Your Plan</h4>
                     <nav aria-label="breadcrumb" class="ms-auto">
-                      <ol class="breadcrumb">
+                      <ol class="breadcrumb center-on-small">
                         <button type="button" class="btn btn-primary btn-3d" data-bs-toggle="modal" data-bs-target="#transferModal">
                           Transfer Money
                       </button>
@@ -455,7 +459,7 @@
 <% /* Pricing Plans - dynamic from backend (plans) */ %>
 
 <% if (plans && plans.length > 0) { %>
-  <div class="card-container" style="display: flex !important; gap: 100px !important; flex-wrap: wrap !important;">
+  <div class="card-container" style="display: flex !important; gap: 100px !important; flex-wrap: wrap !important; align-items: center !important; justify-content: center !important;">
     <% plans.forEach(function(plan, i) {
          const name = plan.plan_name || 'PLAN';
          const price = plan.plan_price || '0';
@@ -469,7 +473,7 @@
          const variant = ['free-trial','basic','standard','premium'][i % 4];
     %>
 
-      <div class="col-12 col-sm-6 col-lg-2">
+      <div class="col-12 col-sm-6 col-lg-2" style="display: flex !important; align-items: center !important; justify-content: center !important;">
         <div class="card <%= variant %> h-100 text-center p-3" data-plan="BASIC" aria-label="plan-card-<%= name %>">
           <div class="card-body d-flex flex-column">
             <div class="title h6 text-uppercase fw-bold mb-2"><%= name %></div>

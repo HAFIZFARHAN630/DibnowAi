@@ -42,7 +42,11 @@ exports.allusers = async (req, res) => {
       subscription,       // ✅ FIXED: Now fetching subscription from PlanRequest
       matchedPackage,
       latestPayment,
-      userPlan
+      userPlan,
+      // New user count queries for admin
+      totalUsers,
+      activeUsers,
+      expiredUsers
     ] = await Promise.all([
       Repair.find({ user_id: userId }).sort({ _id: -1 }),
       Inventory.find({ user_id: userId }).sort({ _id: -1 }),
@@ -52,13 +56,22 @@ exports.allusers = async (req, res) => {
       Repair.countDocuments({ user_id: userId }),
       Repair.countDocuments({ status: 'Pending', user_id: userId }),
       Repair.countDocuments({ status: 'Completed', user_id: userId }),
-      AddUser.find().select('name'),
-      AddUser.countDocuments(),
+      // Role-based team filtering
+      user.role === 'admin'
+        ? AddUser.find().select('name') // Admin sees all team members
+        : AddUser.find({ user_id: userId }).select('name'), // User sees only their own team members
+      user.role === 'admin'
+        ? AddUser.countDocuments() // Admin sees total team count
+        : AddUser.countDocuments({ user_id: userId }), // User sees their own team count
       Repair.find({ status: 'Delivered' }).select('Price'),
       PlanRequest.findOne({ user: userId }).sort({ createdAt: -1 }), // ✅ Correct subscription
       Payments.findOne({ user: userId }).sort({ createdAt: -1 }),
       Payments.findOne({ user: userId }).sort({ createdAt: -1 }),
-      Payments.findOne({ user: userId }).sort({ createdAt: -1 })
+      Payments.findOne({ user: userId }).sort({ createdAt: -1 }),
+      // User count queries for admin dashboard
+      User.countDocuments(),
+      User.countDocuments({ status: 'Accepted' }),
+      User.countDocuments({ status: 'Expired' })
     ]);
 
     // Enhanced logging for plan debugging
@@ -114,6 +127,18 @@ exports.allusers = async (req, res) => {
     // Format total sales for display
     const formattedTotalSales = totalSales >= 1000 ? `${(totalSales / 1000).toFixed(1)}K` : totalSales.toFixed(0);
 
+    // Apply plan limit restrictions for teams display
+    const userPlanLimit = user.plan_limit || 30;
+    const isFreePlan = user.plan_name === 'FREE TRIAL' || user.plan_name === 'Free Trial';
+    const maxTeamsToShow = isFreePlan ? Math.min(5, userPlanLimit) : teams.length;
+
+    // Apply role-based filtering and plan limits to teams
+    let filteredTeams = teams;
+    if (user.role === 'user') {
+      // For regular users, limit based on plan
+      filteredTeams = teams.slice(0, maxTeamsToShow);
+    }
+
     const profileImagePath = user.user_img || "/uploads/default.png";
 
     res.render("index", {
@@ -135,7 +160,7 @@ exports.allusers = async (req, res) => {
       pendingOrders,
       completedRepairs,
       teamCount,
-      teams,
+      teams: filteredTeams, // Use filtered teams with plan limits applied
 
       status: user.status,
       reson: user.denial_reason,
@@ -150,6 +175,11 @@ exports.allusers = async (req, res) => {
        latestPayment,
        userPlan,
        isUser: user.role === 'user',
+       isAdmin: user.role === 'admin', // Add admin check for template
+       // User count data for admin dashboard
+       totalUsers,
+       activeUsers,
+       expiredUsers,
        success_msg: req.flash("success_msg"),
        error_msg: req.flash("error_msg"),
     });

@@ -186,7 +186,7 @@
 
       /* Modal Styles - Same as verify-otp.ejs */
       .form-container {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+        background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);
         padding: 50px 40px 30px 40px;
         margin-top: 60px;
         border-radius: 25px;
@@ -358,6 +358,37 @@
           width: 100%;
         }
       }
+      @media screen and (max-width: 768px) {
+        .hide-on-small{
+          display: none;
+        }
+      }
+      @media screen and (max-width: 1024px) {  /* wraps earlier */
+  #paginatedTable {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  #paginatedTable thead {
+    display: none; /* hide table header */
+  }
+
+  #paginatedTable tr {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    padding: 12px;
+    background: #fff;
+  }
+
+  #paginatedTable td {
+    border: none;
+    padding: 6px 0;
+  }
+}
 
 
     </style>
@@ -424,7 +455,7 @@
             </div>
             <div class="table-responsive mt-3">
                 <table class="table search-table align-middle text-nowrap" id="paginatedTable">
-                    <thead class="header-item">
+                    <thead class="header-item hide-on-small">
                         <tr>
                             <th>Name</th>
                             <th>Email</th>

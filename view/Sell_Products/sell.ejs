@@ -47,7 +47,7 @@
 }
 
 .table thead th {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);
   color: white;
   font-weight: 600;
   text-transform: uppercase;
@@ -284,10 +284,10 @@
 <!--  -->
 <% products.forEach((product) => { %>
   <div class="modal fade" id="confirmModal<%= product.id %>" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content gadget-form-modal" style="margin-top: 110px;">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="max-width: 95%; margin: auto;">
+      <div class="modal-content gadget-form-modal" style="margin-top: 20px; max-height: 90vh; overflow-y: auto; padding: 50px">
         <div class="modal-header">
-          <h5 class="modal-title" id="gadgetRepairModalLabel" style="margin-left: auto; font-size: xx-large;margin-bottom: -17px;">Return Product</h5>
+          <h5 class="modal-title" id="gadgetRepairModalLabel" style="margin-left: auto; font-size: xx-large; margin-bottom: -17px;">Return Product</h5>
           <button type="button" class="btn-close gadget-close-btn" data-bs-dismiss="modal" aria-label="Close">
             <i class="fas fa-times gadget-close-btn" data-bs-dismiss="modal" aria-label="Close"></i>
           </button>
@@ -295,23 +295,23 @@
         <form class="gadget-form mt-4" action="/sells/update/<%= product.id %>" method="POST">
           <div class="form-group">
             <div class="row">
-              <div class="col-md-6">
+              <div class="col-12 col-md-6">
                 <label for="fullName" class="form-label">Full Name</label>
                 <input type="text" class="form-control gadget-input" name="fullName" value="<%= product.fullName %>" required>
               </div>
-              <div class="col-md-6">
+              <div class="col-12 col-md-6 mt-3 mt-md-0">
                 <label for="Number" class="form-label">Mobile Number</label>
                 <input type="number" class="form-control gadget-input" name="Number" value="<%= product.Number %>" required>
               </div>
             </div>
           </div>
-          <div class="form-group">
+          <div class="form-group mt-3">
             <div class="row">
-              <div class="col-md-6">
+              <div class="col-12 col-md-6">
                 <label for="Price" class="form-label">Price</label>
                 <input type="number" class="form-control gadget-input" name="Price" value="<%= product.Price %>" required>
               </div>
-              <div class="col-md-6">
+              <div class="col-12 col-md-6 mt-3 mt-md-0">
                 <label for="Type" class="form-label">Type</label>
                 <select class="form-select gadget-select" name="Type" required>
                   <option value="New" <%= product.Type === 'New' ? 'selected' : '' %>>New Product</option>
@@ -321,16 +321,17 @@
               </div>
             </div>
           </div>
-          <div class="form-group">
+          <div class="form-group mt-3">
             <label for="Product" class="form-label">Product Name</label>
             <input type="text" class="form-control gadget-input" name="Product" value="<%= product.Product %>" readonly required>
           </div>
-          <button type="submit" class="gadget-submit-btn">Confirm</button>
+          <button type="submit" class="gadget-submit-btn mt-4">Confirm</button>
         </form>
       </div>
     </div>
   </div>
 <% }); %>
+
 
 
     <!-- Pagination -->

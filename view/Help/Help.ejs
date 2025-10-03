@@ -44,6 +44,11 @@
         background-color: #DC8F37; /* Teal circle color */
         border-radius: 50%;
     }
+    @media screen and (max-width:786px) {
+        .circle{
+            display: none;
+        }
+    }
     .circle.circle-left {
         width: 200px;
         height: 200px;
@@ -66,6 +71,7 @@
     }
     .button-container {
         margin-top: 20px;
+        padding: 0 20px;
     }
     .button-container .btn {
         margin: 5px;
@@ -105,8 +111,8 @@
     <div class="circle circle-right"></div>
 
     <!-- Content -->
-    <h1 class="text-dark">How can we help you?</h1>
-    <p class="text-dark">Spot-on guides on how to use forms.app and make the most out of it.</p>
+    <h1 class="text-dark" style="padding: 0 20px;">How can we help you?</h1>
+    <p class="text-dark" style="padding: 0 20px;">Spot-on guides on how to use forms.app and make the most out of it.</p>
 
     <!-- Buttons -->
     <div class="button-container">

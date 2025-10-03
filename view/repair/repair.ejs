@@ -109,7 +109,7 @@
       }
 
       .table thead th {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);
         color: white;
         font-weight: 600;
         text-transform: uppercase;
@@ -234,7 +234,7 @@
 
 
 <!-- graph -->
-<div class="container-fluid pt-4 px-4">
+<div class="container-fluid pt-4 px-1">
   <div class="row g-4">
     <!-- Chart Container -->
     <div class="col-12 col-md-12">
@@ -313,7 +313,7 @@ initializeChart();
 </script>
 
 <div class="body-wrapper" style="margin-top: 8rem !important;">
-  <div class="container-fluid">
+  <div class="">
 <div class="card card-body py-3">
   <div class="row align-items-center">
     <div class="col-md-12">
@@ -347,7 +347,7 @@ initializeChart();
                         
     <div class="card card-body" >
 <!-- Table (shown on md+ screens) -->
-<div class="table-responsive d-none d-md-block">
+<div class="table-responsive d-none d-xl-block">
   <table class="table search-table align-middle text-nowrap" id="paginatedTable">
     <thead class="header-item text-center">
       <tr>
@@ -401,45 +401,54 @@ initializeChart();
 </div>
 
 <!-- Card layout (shown on small screens) -->
-<div class="d-block d-md-none">
+<div class="d-xl-block d-xl-none">
   <% products.forEach(product => { %>
-  <div class="card mb-3 p-3">
-    <h5 class="mb-2"><i class="fa fa-user me-2"></i><%= product.fullName %></h5>
-    <p class="mb-1"><strong>Product:</strong> <%= product.brand %></p>
-    <p class="mb-1"><strong>Price:</strong> <%= product.Price %></p>
-    <div class="mb-2">
-      <strong>Status:</strong>
-      <select class="status-select <%= product.status %>" onchange="updateStatus('<%= product.id %>', this.value)">
-        <option value="Pending" <%= product.status === 'Pending' ? 'selected' : '' %>>Pending</option>
-        <option value="Cancelled" <%= product.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
-        <option value="Progress" <%= product.status === 'Progress' ? 'selected' : '' %>>Progress</option>
-        <option value="Completed" <%= product.status === 'Completed' ? 'selected' : '' %>>Completed</option>
-        <option value="Delivered" <%= product.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
-      </select>
-    </div>
-    <div class="d-flex flex-wrap gap-2">
-      <button class="btn btn-sm btn-outline-dark" onclick="printTable('<%= product.id %>')">
-        <i class="fa fa-print"></i>
-      </button>
+  <div class="card mb-4 shadow-sm border-0">
+    <div class="card-body">
+      <h5 class="card-title mb-3 text-primary">
+        <i class="fa fa-user me-2"></i><%= product.fullName %>
+      </h5>
 
-      <form action="/repair/<%= product.id %>" method="POST">
-        <button type="submit" class="btn btn-sm btn-outline-danger">
-          <i class="fa-solid fa-trash-can"></i>
+      <p class="mb-2"><span class="fw-semibold text-secondary">Product:</span> <%= product.brand %></p>
+      <p class="mb-2"><span class="fw-semibold text-secondary">Price:</span> $<%= product.Price %></p>
+
+      <div class="mb-3">
+        <span class="fw-semibold text-secondary me-2">Status:</span>
+        <select class="form-select form-select-sm w-auto d-inline-block <%= product.status %>"
+          onchange="updateStatus('<%= product.id %>', this.value)">
+          <option value="Pending" <%= product.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+          <option value="Cancelled" <%= product.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+          <option value="Progress" <%= product.status === 'Progress' ? 'selected' : '' %>>Progress</option>
+          <option value="Completed" <%= product.status === 'Completed' ? 'selected' : '' %>>Completed</option>
+          <option value="Delivered" <%= product.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+        </select>
+      </div>
+
+      <div class="d-flex flex-wrap gap-2">
+        <button class="btn btn-sm btn-outline-dark" onclick="printTable('<%= product.id %>')" title="Print">
+          <i class="fa fa-print"></i>
         </button>
-      </form>
 
-      <button class="btn btn-sm btn-outline-primary" onclick="generateQRCode('[<%= product.random_id%>, <%= product.fullName %>,<%= product.brand %>,<%= product.status %>]')">
-        <i class="fas fa-qrcode"></i>
-      </button>
+        <form action="/repair/<%= product.id %>" method="POST" class="d-inline">
+          <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+        </form>
 
-      <button type="button" class="btn btn-sm btn-outline-primary edit" data-bs-toggle="modal" data-bs-target="#editUserModal<%= product.id %>">
-        <i class="fa-solid fa-pen-to-square"></i>
-      </button>
+        <button class="btn btn-sm btn-outline-primary"
+          onclick="generateQRCode('[<%= product.random_id%>, <%= product.fullName %>,<%= product.brand %>,<%= product.status %>]')" title="Generate QR">
+          <i class="fas fa-qrcode"></i>
+        </button>
+
+        <button type="button" class="btn btn-sm btn-outline-primary edit"
+          data-bs-toggle="modal" data-bs-target="#editUserModal<%= product.id %>" title="Edit">
+          <i class="fa-solid fa-pen-to-square"></i>
+        </button>
+      </div>
     </div>
   </div>
   <% }); %>
 </div>
-```
 
     </div>
   </div>
