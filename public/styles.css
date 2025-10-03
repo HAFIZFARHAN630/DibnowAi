@@ -16,9 +16,7 @@
         vertical-align: middle;
     }
 
-    .table th {
-        color: #29343d;
-    }
+    
 
     .badge {
         padding: 8px;
@@ -163,7 +161,7 @@
 
     /*** Layout ***/
     .sidebar {
-        background-color: #111827 !important;
+        background-color: #F3F3F9 !important;
         position: fixed;
         top: 0;
         left: 0;

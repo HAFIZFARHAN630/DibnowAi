@@ -16,6 +16,11 @@
     <link href="/styles.css" rel="stylesheet">
     <link href="/styles1.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      .table-purple th {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+      }
+    </style>
 </head>
 <body>
      <%- include('../par/sidebar.ejs') %>
@@ -178,17 +183,17 @@
     <% if (plans && plans.length > 0) { %>
       <!-- Desktop Table (hidden on small screens) -->
       <div class="hidden md:block bg-white shadow-sm rounded-lg overflow-x-auto">
-        <table class="packages-table w-full min-w-[900px] table-auto divide-y divide-gray-100">
+        <table class="packages-table w-full min-w-[900px] table-auto divide-y table-puprle">
           <thead class="bg-gray-50">
-            <tr>
-              <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Package Name</th>
-              <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Price</th>
-              <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Limit</th>
-              <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Repair Customer</th>
-              <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">In Stock</th>
-              <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Inventory</th>
-              <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Teams</th>
-              <th class="px-4 py-3 text-left text-sm font-medium text-gray-600">Action</th>
+            <tr class="table-puprle">
+              <th style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;" class="px-4 py-3 text-left text-sm font-medium text-gray-600" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">Package Name</th>
+              <th style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;" class="px-4 py-3 text-left text-sm font-medium text-gray-600">Price</th>
+              <th style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;" class="px-4 py-3 text-left text-sm font-medium text-gray-600">Limit</th>
+              <th style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;" class="px-4 py-3 text-left text-sm font-medium text-gray-600">Repair Customer</th>
+              <th style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;" class="px-4 py-3 text-left text-sm font-medium text-gray-600">In Stock</th>
+              <th style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;" class="px-4 py-3 text-left text-sm font-medium text-gray-600">Inventory</th>
+              <th style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;" class="px-4 py-3 text-left text-sm font-medium text-gray-600">Teams</th>
+              <th style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;" class="px-4 py-3 text-left text-sm font-medium text-gray-600">Action</th>
             </tr>
           </thead>
           <tbody class="bg-white divide-y divide-gray-100">

@@ -603,34 +603,42 @@
 
             <!-- Sale & Revenue Start -->
             <div class="container-fluid pt-4 px-4" style="background-color:#F3F3F9;">
+                <a href="/in_stock">
                 <div class="row justify-content-center">
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
                       <div class="patient-card position-relative" style="background-color: #E3F2FD;">
                         <div class="patient-card-header" style="background-color: #1E88E5;">Stock Products</div>
                         <div class="patient-card-body"><%= productCount %></div>
                         <i class="fa-solid fa-box position-absolute" style="font-size: 5rem; color: rgba(30, 136, 229, 0.2); bottom: 1px; right: 13px; z-index: 1;"></i>
-                      </div>
+                    </a> 
+                    </div>
                     </div>
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                        <a href="/sell">
                       <div class="patient-card position-relative" style="background-color: #F1F8E9;">
                         <div class="patient-card-header" style="background-color: #43A047;">Sales Products</div>
                         <div class="patient-card-body"><%= soldCount %></div>
                         <i class="bi bi-cart-fill position-absolute" style="font-size: 5rem; color: rgba(67, 160, 71, 0.2); bottom: -16px; right: 7px; z-index: 1;"></i>
-                      </div>
+                    </a>
+                    </div>
                     </div>
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                        <a href="/repair">
                       <div class="patient-card position-relative" style="background-color: #FFF3E0;">
                         <div class="patient-card-header" style="background-color: #FB8C00;">Repair Products</div>
                         <div class="patient-card-body"><%= repairCount %></div>
                         <i class="bi bi-inboxes-fill position-absolute" style="font-size: 4.5rem; color: rgba(251, 140, 0, 0.2); bottom: -15px; right: 14px; z-index: 1;"></i>
-                      </div>
+                      </a>
+                    </div>
                     </div>
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                        <a href="/Teams">
                       <div class="patient-card position-relative" style="background-color: #FCE4EC; overflow: hidden; border-radius: 10px;">
                         <div class="patient-card-header text-white p-2" style="background-color: #D81B60; font-weight: bold;">Total team</div>
                         <div class="patient-card-body p-4 position-relative" style="font-size: 2rem; font-weight: bold;"><%= teamCount %></div>
                         <i class="bi bi-people-fill position-absolute" style="font-size: 6.5rem; color: rgba(216, 27, 96, 0.2); bottom: -36px; right: 10px; z-index: 1;"></i>
-                      </div>
+                        </a>
+                    </div>
                     </div>
                   </div>
               </div>
@@ -640,29 +648,36 @@
         <!-- Updated Second Row -->
         <div class="container-fluid pt-4 px-4" style="background-color:#E8F5E9; padding-top: 0%;">
             <div class="row justify-content-center">
+                <a href="/inventory">
                 <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
                     <div class="patient-card position-relative" style="background-color: #FFEBEE;">
                         <div class="patient-card-header text-white" style="background-color: #D32F2F;">Pending Orders</div>
                         <div class="patient-card-body"><%= pendingOrders %></div>
                         <i class="bi bi-clock-fill position-absolute" style="font-size: 4.5rem; color: rgba(211, 47, 47, 0.2); bottom: -13px; right: 12px; z-index: 1;"></i>
+                        </a>
                     </div>
                 </div>
                 <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <a href="/repair">
                     <div class="patient-card position-relative" style="background-color: #E0F2F1;">
                         <div class="patient-card-header text-white" style="background-color: #00796B;">Completed Repair Products</div>
                         <div class="patient-card-body"><%= completedRepairs %> </div>
                         <i class="bi bi-tools position-absolute" style="font-size: 4rem; color: rgba(0, 121, 107, 0.2); bottom: -8px; right: 13px; z-index: 1;"></i>
+                        </a>
                     </div>
                 </div>
                 <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <a href="/repair">
                     <div class="patient-card position-relative" style="background-color: #FFF3E0;">
                         <div class="patient-card-header text-white" style="background-color: #3909d7ba;">Repair Total Sales</div>
                         <div class="patient-card-body"> <%= totalSales ? totalSales : 0 %></div>
                         <i class="bi bi-bar-chart-fill position-absolute" style="font-size: 4.5rem; color: rgba(245, 124, 0, 0.2); bottom: -15px; right: 14px; z-index: 1;"></i>
+                  </a>
                     </div>
                 </div>
 
                 <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <a href="/pricing"></a>
                     <div class="patient-card position-relative" style="background-color: #F3E5F5; overflow: hidden; border-radius: 10px;">
                         <div class="patient-card-header text-white p-2" style="background-color: #7B1FA2; font-weight: bold;">Your Current Plan</div>
                         <div class="patient-card-body p-4 position-relative" style="font-size: 2rem; font-weight: bold;"> <%= plan_name %></div>
@@ -673,28 +688,36 @@
                 <!-- User Count Cards - Admin Only -->
                 <% if (isAdmin) { %>
                 <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <a href="/admin">
                     <div class="patient-card position-relative" style="background-color: #E8F5E8; overflow: hidden; border-radius: 10px;">
                         <div class="patient-card-header text-white p-2" style="background-color: #2E7D32; font-weight: bold;">All Users</div>
                         <div class="patient-card-body p-4 position-relative" style="font-size: 2rem; font-weight: bold;"> <%= totalUsers || 0 %></div>
                         <i class="bi bi-people-fill position-absolute" style="font-size: 6.5rem; color: rgba(46, 125, 50, 0.2); bottom: -36px; right: 10px; z-index: 1;"></i>
+                        </a>
                     </div>
                 </div>
 
                 <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <a href="/admin/active-users">
                     <div class="patient-card position-relative" style="background-color: #E3F2FD; overflow: hidden; border-radius: 10px;">
                         <div class="patient-card-header text-white p-2" style="background-color: #1565C0; font-weight: bold;">Active Users</div>
                         <div class="patient-card-body p-4 position-relative" style="font-size: 2rem; font-weight: bold;"> <%= activeUsers || 0 %></div>
                         <i class="bi bi-person-check-fill position-absolute" style="font-size: 6.5rem; color: rgba(21, 101, 192, 0.2); bottom: -36px; right: 10px; z-index: 1;"></i>
+                        </a>
                     </div>
                 </div>
-
+                
                 <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <a href="/admin/expired-users">
                     <div class="patient-card position-relative" style="background-color: #FFEBEE; overflow: hidden; border-radius: 10px;">
                         <div class="patient-card-header text-white p-2" style="background-color: #C62828; font-weight: bold;">Expired Users</div>
                         <div class="patient-card-body p-4 position-relative" style="font-size: 2rem; font-weight: bold;"> <%= expiredUsers || 0 %></div>
                         <i class="bi bi-person-x-fill position-absolute" style="font-size: 6.5rem; color: rgba(198, 40, 40, 0.2); bottom: -36px; right: 10px; z-index: 1;"></i>
+                    </a>
                     </div>
                 </div>
+
+
                 <% } %>
                 </div>
         </div>
@@ -1031,26 +1054,13 @@
 
           <!-- Sales Chart Start -->
           <div class="container-fluid p-4">
-            <div class="row justify-content-center">
+            <div class="row ">
                 <!-- Website Visitors Card -->
-                <div class="col-md-3 mb-4">
-                    <div class="custom-card text-white text-center" style="background-color: #1b263b; border: none; border-radius: 15px; padding: 20px; height: 400px;">
-                        <h5 class="mb-3">Website Visitors</h5>
-                        <div class="chart-container" style="position: relative; height: 250px;">
-                            <canvas id="visitorsChart"></canvas>
-                        </div>
-                        <h2 class="my-3">150k</h2>
-                        <ul class="list-unstyled">
-                            <li><span class="text-success">&#9679;</span> Organic - 80k</li>
-                            <li><span class="text-white">&#9679;</span> Social - 60k</li>
-                            <li><span class="text-info">&#9679;</span> Direct - 50k</li>
-                        </ul>
-                    </div>
-                </div>
+               
 
                 <!-- Revenue by Customer Type Card -->
-                <div class="col-md-9 mb-4">
-                    <div class="custom-card text-white" style="background-color: #1b263b; border: none; border-radius: 15px; padding: 20px; height: 400px;">
+                <div class="col-12 mb-4">
+                    <div class="custom-card text-white" style="background-color: #1b263b; border: none; border-radius: 15px; padding: 20px; height: 400px; width: 100%;">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h5>Revenue by Customer Type</h5>
                             <h4><%= formattedTotalSales %> <span class="badge bg-success"><%= salesGrowth.toFixed(1) %>% <%= salesGrowth >= 0 ? '&#x2191;' : '&#x2193;' %></span></h4>

@@ -431,11 +431,19 @@ exports.activeUsers = async (req, res) => {
     // Combine both arrays and remove duplicates based on user._id
     const allActiveUsers = [...activePayments, ...activeFreeTrials];
     const uniqueActiveUsers = allActiveUsers.filter((item, index, self) =>
-      index === self.findIndex(t => t.user && t.user._id.toString() === item.user._id.toString())
+      item.user &&
+      item.user._id &&
+      index === self.findIndex(t => t.user && t.user._id && t.user._id.toString() === item.user._id.toString())
     );
 
     console.log(`Found ${activePayments.length} active payment users and ${activeFreeTrials.length} active Free Trial users`);
     console.log(`Total unique active users: ${uniqueActiveUsers.length}`);
+
+    // Log any entries with missing user data for debugging
+    const entriesWithNullUsers = allActiveUsers.filter(item => !item.user || !item.user._id);
+    if (entriesWithNullUsers.length > 0) {
+      console.log(`Warning: Found ${entriesWithNullUsers.length} entries with missing user data`);
+    }
 
     // Get notification data
     const Notification = require("../models/notification");
