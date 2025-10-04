@@ -31,9 +31,8 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 <style>
     body {
-        background-color: black;
         color: white;
-       
+  background: linear-gradient(180deg, rgba(30, 41, 59, 0.95) 0%, rgba(51, 65, 85, 0.9) 100%);
     }
     .btn-group button {
         background-color: #333;
@@ -73,6 +72,11 @@
         cursor: pointer;
         margin-top: 10px;
     }
+    @media screen and (min-width:786px) {
+        .hide-on-large{
+            display: none;
+        }
+    }
 </style>
 </head>
 <body>
@@ -81,15 +85,22 @@
 
   <div class="container-scroller">
     <div class="container-fluid page-body-wrapper">
+        <div class="absolute top-0 left-0 md:z-20 cursor-pointer w-14 h-14 flex items-center justify-center rounded-full bg-black hide-on-large" onclick="toggleSidebar()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none">
+                    <rect x="3" y="5" width="18" height="2" rx="1" fill="#ffffff"/>
+                    <rect x="3" y="11" width="18" height="2" rx="1" fill="#ffffff"/>
+                    <rect x="3" y="17" width="18" height="2" rx="1" fill="#ffffff"/>
+                </svg>
 
+          </div>
        <!-- Sidebar Overlay for Mobile -->
        <div class="sidebar-overlay" id="sidebarOverlay"></div>
        
        <!-- ✅ Modern Sidebar Replacement -->
-<nav class="modern-sidebar" id="sidebar">
+ <nav class="modern-sidebar" id="sidebar" style="overflow-y: auto !important;">
   <div class="sidebar-header">
     <h1 class="sidebar-title">القرآن الكريم</h1>
-    <p class="sidebar-subtitle">Tasbeeh Counter</p>
+    <p class="sidebar-subtitle">Prayer Panel</p>
   </div>
   <nav class="sidebar-nav">
     <ul style="list-style: none; padding: 0; margin: 0;">
@@ -100,43 +111,106 @@
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="/package">
+        <a class="nav-link" href="/pricing">
           <i class="bi bi-box-seam"></i>
           <span>All Packages</span>
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="/History">
+        <a class="nav-link" href="/sell">
           <i class="bi bi-clock-history"></i>
           <span>History</span>
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="/complaint">
+        <a class="nav-link" href="/wallet">
           <i class="bi bi-wallet2"></i>
           <span>Wallet</span>
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="/profile">
+        <a class="nav-link" href="/Setting">
           <i class="bi bi-person"></i>
           <span>Profile</span>
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="/contactus">
+        <a class="nav-link" href="/help">
           <i class="bi bi-telephone"></i>
-          <span>Contact Us</span>
+          <span>Help</span>
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="/changepassword">
+        <a class="nav-link" href="/pricing">
           <i class="bi bi-lock"></i>
-          <span>Change Password</span>
+          <span>Plans</span>
+        </a>
+      </li>
+
+      <!-- Added routes from the other sidebar (kept icons) -->
+      <li class="nav-item">
+        <a class="nav-link" href="/inventory">
+          <i class="bi bi-clipboard-data"></i>
+          <span>Inventory</span>
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="/logout">
+        <a class="nav-link" href="/repair">
+          <i class="bi bi-tools"></i>
+          <span>Repair</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/in_stock">
+          <i class="bi bi-shop-window"></i>
+          <span>In Stock</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/Clients">
+          <i class="bi bi-people"></i>
+          <span>Clients</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/userteam/add">
+          <i class="bi bi-person-plus"></i>
+          <span>Add Team</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/userteam/list">
+          <i class="bi bi-people-fill"></i>
+          <span>My Teams</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/ticket">
+          <i class="bi bi-chat-dots"></i>
+          <span>Generate Ticket</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/show-tickets">
+          <i class="bi bi-card-text"></i>
+          <span>Show Tickets</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/track-ticket">
+          <i class="bi bi-search"></i>
+          <span>Track Ticket</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/tracking">
+          <i class="bi bi-tools"></i>
+          <span>Track Repair</span>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="/">
           <i class="bi bi-box-arrow-right"></i>
           <span>Logout</span>
         </a>
@@ -169,6 +243,7 @@
   .modern-sidebar {
     transform: translateX(-100%);
     z-index: 9999;
+    width: 220px;
   }
   
   .modern-sidebar.active {
@@ -630,6 +705,8 @@
             .content-wrapper {
                 padding: 15px;
                 min-height: calc(100vh - 60px);
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 30%, #16213e 70%, #0f3460 100%);
+
             }
             
             .tasbeeh-container {
@@ -1010,6 +1087,43 @@
                 opacity: 0;
             }
         }
+        /* ---- paste this near your other styles (minimal, safe) ---- */
+
+/* predictable sizing so padding doesn't blow widths */
+* { box-sizing: border-box; }
+
+/* hide any accidental horizontal overflow (prevents side-scrolling) */
+.content-wrapper { overflow-x: hidden; }
+
+/* make the tasbeeh area always stay inside viewport */
+.tasbeeh-container {
+  width: 100%;
+  max-width: 100%;
+  padding-left: 1rem;   /* keeps the existing visual gutter */
+  padding-right: 1rem;
+  margin: 0 auto;
+}
+
+/* tighten the inner bootstrap .container so it won't force overflow */
+.container {
+  max-width: 100%;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* make control buttons stack cleanly on very small screens */
+@media (max-width: 420px) {
+  .controls-section { gap: 8px; padding: 0 4px; }
+  .control-btn { min-width: 100% !important; max-width: 100% !important; }
+  .tasbeeh-card { margin: 0 6px; padding: 16px; }
+}
+
+/* optional: reduce horizontal visual overflow from the counter ring on tiny devices */
+@media (max-width: 360px) {
+  .counter-ring { width: 140px !important; height: 140px !important; }
+  .counter-display { font-size: 3.2rem !important; }
+}
+
     </style>
 
     <div class="content-wrapper">
@@ -1279,4 +1393,3 @@
 </body>
 
 </html>
-

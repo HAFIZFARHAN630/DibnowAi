@@ -401,7 +401,7 @@ exports.updatePlanRequest = async (req, res) => {
           user: planRequest.user,
           plan: planRequest.planName,
           amount: planRequest.amount,
-          gateway: planRequest.gateway || 'manual',
+          gateway: 'manual',
           startDate: new Date(),
           expiryDate: planRequest.expiryDate,
           status: 'active'

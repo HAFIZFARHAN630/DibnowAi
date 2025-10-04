@@ -136,7 +136,7 @@ exports.allUsers = [
 exports.addSubscription = [
   ensureLoggedIn,
   async (req, res) => {
-    const { plan, paymentMethod } = req.body;
+    const { plan, paymentMethod, transfer_id, amount } = req.body;
   
     // Validate if plan is selected
     if (!plan) {
@@ -155,18 +155,95 @@ exports.addSubscription = [
       STANDARD: "35.88",
       PREMIUM: "55.88",
     };
-  
+
     // Validate if the selected plan is valid
     if (!planPrices[plan]) {
       return res.status(400).send("Invalid plan selected.");
     }
-  
-    const amount = planPrices[plan];
-  
+
+    const expectedAmount = parseFloat(planPrices[plan]);
+    const submittedAmount = parseFloat(amount);
+
     // Validate supported payment methods
     if (!['stripe', 'paypal', 'jazzcash', 'payfast', 'wallet', 'bank', 'manual'].includes(paymentMethod)) {
-       return res.status(400).send("Invalid payment method.");
-     }
+        return res.status(400).send("Invalid payment method.");
+      }
+
+    // Handle manual payment with transaction details
+    if (paymentMethod === 'manual') {
+      if (!transfer_id || !amount) {
+        req.flash("error_msg", "Transaction ID and amount are required for manual payment.");
+        return res.redirect("/pricing");
+      }
+
+      // Validate amount is not less than plan price
+      if (submittedAmount < expectedAmount) {
+        req.flash("error_msg",
+          `Amount too low! Plan requires £${expectedAmount} but you entered £${submittedAmount}. Please enter the correct amount or contact admin if you have a discount.`
+        );
+        return res.redirect("/pricing");
+      }
+
+      try {
+        const PlanRequest = require("../models/planRequest");
+        const startDate = new Date();
+        const expiryDate = new Date(startDate);
+        expiryDate.setDate(expiryDate.getDate() + 30);
+
+        const newPlanRequest = new PlanRequest({
+          user: req.session.userId,
+          planName: plan,
+          amount: parseFloat(amount),
+          startDate,
+          expiryDate,
+          status: 'Pending',
+          invoiceStatus: 'Unpaid',
+          description: `Manual payment - awaiting admin verification. Transfer ID: ${transfer_id}`
+        });
+
+        console.log("Creating Manual Payment PlanRequest:", {
+          user: req.session.userId,
+          planName: plan,
+          amount: parseFloat(amount),
+          transfer_id: transfer_id
+        });
+
+        await newPlanRequest.save();
+        console.log("Manual Payment PlanRequest saved successfully:", newPlanRequest._id);
+
+        // Create transaction record for manual payment (pending status)
+        const newTransaction = new Transaction({
+          user: req.session.userId,
+          type: 'payment',
+          amount: parseFloat(amount),
+          status: 'pending'
+        });
+        await newTransaction.save();
+        console.log("Manual payment transaction saved successfully");
+
+        // Create notification
+        if (req.app.locals.notificationService) {
+          const user = await User.findById(req.session.userId).select('first_name');
+          if (user) {
+            await req.app.locals.notificationService.createNotification(
+              req.session.userId,
+              user.first_name,
+              "Manual Payment Pending"
+            );
+          }
+        }
+
+        req.flash(
+          "success_msg",
+          `Your manual payment for ${plan} plan has been submitted. Please wait for admin verification before your package is activated.`
+        );
+        return res.redirect("/index");
+      } catch (manualPaymentError) {
+        console.error("Error creating manual payment PlanRequest:", manualPaymentError);
+        req.flash("error_msg", "Failed to process manual payment. Please try again.");
+        return res.redirect("/pricing");
+      }
+    }
   
     try {
        let gatewaySettings;
@@ -444,8 +521,20 @@ exports.addSubscription = [
         req.session.pendingPayment = { plan, amount: parseFloat(amount) };
         req.flash("info_msg", `Please complete the bank transfer for ${plan} plan. Amount: £${amount}`);
         res.redirect("/transfer");
-      } else {
+      } else if (paymentMethod === 'jazzcash' || paymentMethod === 'payfast') {
         // Manual gateways: jazzcash, payfast - Create pending plan request for admin verification
+
+        // Validate amount against plan price
+        const expectedAmount = planPrices[plan];
+        const submittedAmount = parseFloat(amount);
+
+        if (submittedAmount < expectedAmount) {
+          req.flash("error_msg",
+            `Amount too low! ${paymentMethod.toUpperCase()} plan requires £${expectedAmount} but you entered £${submittedAmount}. Please enter the correct amount or contact admin if you have a discount.`
+          );
+          return res.redirect("/pricing");
+        }
+
         const startDate = new Date();
         const expiryDate = new Date(startDate);
         expiryDate.setDate(expiryDate.getDate() + 30);
@@ -455,7 +544,6 @@ exports.addSubscription = [
           user: req.session.userId,
           planName: plan,
           amount: parseFloat(amount),
-          gateway: paymentMethod,
           startDate,
           expiryDate,
           status: 'Pending',
@@ -724,6 +812,7 @@ exports.upgradePlan = async (req, res) => {
   }
 };
 
+
 // Corrected Route for Inserting Data
 exports.insertTransfer = async (req, res) => {
   try {
@@ -744,46 +833,82 @@ exports.insertTransfer = async (req, res) => {
     // Get pending payment from session if any
     const pendingPayment = req.session.pendingPayment;
     const plan = pendingPayment ? pendingPayment.plan : 'BASIC'; // default if no pending
+    const paymentMethod = pendingPayment ? pendingPayment.paymentMethod : 'bank'; // default to bank
 
-    // Create PlanRequest record for bank transfer (pending admin verification)
+    // Define plan prices for validation
+    const planPrices = {
+      FREE_TRIAL: 0.00,
+      BASIC: 20.88,
+      STANDARD: 35.88,
+      PREMIUM: 55.88,
+    };
+
+    const expectedAmount = planPrices[plan];
+    const submittedAmount = parseFloat(amount);
+
+    // Validate amount is not less than plan price
+    if (submittedAmount < expectedAmount) {
+      req.flash("error_msg",
+        `Amount too low! ${paymentMethod.toUpperCase()} plan requires £${expectedAmount} but you entered £${submittedAmount}. Please enter the correct amount or contact admin if you have a discount.`
+      );
+      return res.redirect("/pricing");
+    }
+
+    // Create PlanRequest record for manual payment (pending admin verification)
     const startDate = new Date();
     const expiryDate = new Date(startDate);
     expiryDate.setDate(expiryDate.getDate() + 30); // 30 days expiry
 
-    const newPlanRequest = new PlanRequest({
-      user: userId,
-      planName: plan,
-      amount: parseFloat(amount),
-      gateway: 'bank',
-      startDate,
-      expiryDate,
-      status: 'Pending',
-      invoiceStatus: 'Unpaid',
-      description: `Bank transfer payment - awaiting admin verification. Transfer ID: ${transfer_id}`
-    });
+    try {
+      const paymentMethodName = paymentMethod.toUpperCase();
+      const newPlanRequest = new PlanRequest({
+        user: userId,
+        planName: plan,
+        amount: parseFloat(amount),
+        startDate,
+        expiryDate,
+        status: 'Pending',
+        invoiceStatus: 'Unpaid',
+        description: `${paymentMethodName} payment - awaiting admin verification. Transfer ID: ${transfer_id}`
+      });
 
-    await newPlanRequest.save();
+      console.log(`Creating ${paymentMethodName} PlanRequest:`, {
+        user: userId,
+        planName: plan,
+        amount: parseFloat(amount),
+        paymentMethod: paymentMethod,
+        transfer_id: transfer_id
+      });
 
-    // Update transfer details in user record but don't activate plan yet
-    await User.findByIdAndUpdate(userId, {
-      transfer_id,
-      amount: parseFloat(amount)
-    });
+      await newPlanRequest.save();
+      console.log(`${paymentMethodName} PlanRequest saved successfully:`, newPlanRequest._id);
 
-    // Create transaction record for bank transfer payment (pending status)
-    const newTransaction = new Transaction({
-      user: userId,
-      type: 'payment',
-      amount: parseFloat(amount),
-      status: 'pending'
-    });
-    await newTransaction.save();
+      // Update transfer details in user record but don't activate plan yet
+      await User.findByIdAndUpdate(userId, {
+        transfer_id,
+        amount: parseFloat(amount)
+      });
 
-    // Clear session pending
-    delete req.session.pendingPayment;
+      // Create transaction record for manual payment (pending status)
+      const newTransaction = new Transaction({
+        user: userId,
+        type: 'payment',
+        amount: parseFloat(amount),
+        status: 'pending'
+      });
+      await newTransaction.save();
+      console.log(`${paymentMethodName} transaction saved successfully`);
 
-    req.flash("success_msg", "Bank transfer recorded successfully. Please wait for admin verification before your package is activated.");
-    res.redirect("/index");
+      // Clear session pending
+      delete req.session.pendingPayment;
+
+      req.flash("success_msg", `${paymentMethodName} payment recorded successfully. Please wait for admin verification before your package is activated.`);
+      res.redirect("/index");
+    } catch (manualPaymentError) {
+      console.error(`Error creating ${paymentMethod.toUpperCase()} PlanRequest:`, manualPaymentError);
+      req.flash("error_msg", `Failed to process ${paymentMethod.toUpperCase()} payment. Please try again.`);
+      res.redirect("/pricing");
+    }
   } catch (error) {
     console.error("Error updating transfer data:", error.message);
     req.flash("error_msg", "Failed to process bank transfer. Please try again.");
