@@ -636,11 +636,27 @@
                       <input type="text" id="transfer_id" name="transfer_id" class="form-control" placeholder="Transfer ID" required>
                     </div>
                     <div class="col-md-6 mb-3">
-                      <label for="amount" class="form-label">Amount</label>
-                      <input type="number" id="amount" name="amount" class="form-control" placeholder="Amount" required
-                             title="Enter the exact amount for your selected plan">
-                      <small class="form-text text-muted">
-                        Expected amount will be auto-filled. Do not enter less than the plan price.
+                      <!-- Hidden amount field - auto-populated with exact amount -->
+                      <input type="hidden" id="amount" name="amount" value="55.88">
+
+                      <!-- Expected Amount Display with PKR conversion - Always visible for manual payment -->
+                      <div id="expectedAmountInfo" class="mt-2" style="background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%); border: 2px solid rgba(255, 255, 255, 0.25); color: white; padding: 15px; border-radius: 12px; text-align: center; font-size: 14px; box-shadow: 0 4px 15px rgba(0, 51, 204, 0.3);">
+                        <div style="font-size: 18px; margin-bottom: 8px;">
+                          <strong>💰 Required Amount</strong>
+                        </div>
+                        <div id="expectedAmountGBP" style="font-size: 20px; font-weight: bold; color: #ffffff; margin-bottom: 5px; text-shadow: 0 1px 3px rgba(0,0,0,0.3);">
+                          £55.88 GBP
+                        </div>
+                        <div id="expectedAmountPKR" style="font-size: 18px; color: #00E676; margin-bottom: 5px; font-weight: 600;">
+                          22,194.77 PKR
+                        </div>
+                        <div style="font-size: 13px; opacity: 0.9; padding: 5px; background: rgba(255,255,255,0.1); border-radius: 6px; margin-top: 5px;">
+                          ⚡ Includes 4% conversion fee
+                        </div>
+                      </div>
+
+                      <small class="form-text text-success">
+                        ✅ <strong>Amount auto-filled: £<span id="expectedAmountText">55.88</span></strong> (No manual entry needed)
                       </small>
                       <!-- Auto-fetched amount display -->
                       <div id="autoAmountDisplay" class="mt-3" style="display: none; position: relative; z-index: 1000; width: 100%;">
@@ -744,26 +760,63 @@
         if (manualPaymentForm) {
             manualPaymentForm.addEventListener('shown.bs.collapse', function () {
                 console.log('✅ Manual payment form opened');
-                // Initialize real-time validation
-                validateManualPaymentAmount();
+                console.log('📋 Current plan:', currentPlan);
+                console.log('📋 Plan prices:', planPrices);
+
+                // Update expected amount display
+                const expectedAmountDisplay = document.getElementById('expectedAmountDisplay');
+                const expectedAmountText = document.getElementById('expectedAmountText');
+                const expectedAmountGBP = document.getElementById('expectedAmountGBP');
+                const expectedAmountPKR = document.getElementById('expectedAmountPKR');
+                const expectedAmountInfo = document.getElementById('expectedAmountInfo');
+
+                if (planPrices[currentPlan] && expectedAmountInfo) {
+                    const gbpAmount = planPrices[currentPlan];
+                    const pkrAmount = planPricesPkr[currentPlan] ? parseFloat(planPricesPkr[currentPlan]) : 0;
+
+                    // Update all displays
+                    if (expectedAmountDisplay) expectedAmountDisplay.textContent = gbpAmount;
+                    if (expectedAmountText) expectedAmountText.textContent = gbpAmount;
+                    if (expectedAmountGBP) expectedAmountGBP.textContent = `£${gbpAmount} GBP`;
+                    if (expectedAmountPKR) expectedAmountPKR.textContent = `${pkrAmount.toLocaleString()} PKR`;
+
+                    // Show the amount info
+                    expectedAmountInfo.style.display = 'block';
+
+                    console.log('📋 Updated expected amount displays:', {
+                        gbp: gbpAmount,
+                        pkr: pkrAmount,
+                        plan: currentPlan
+                    });
+                }
+
+                // Set amount field and update displays
+                const amountField = document.querySelector('input[name="amount"]');
+                if (amountField && planPrices[currentPlan]) {
+                    const expectedAmount = planPrices[currentPlan];
+                    const pkrAmount = planPricesPkr[currentPlan] ? parseFloat(planPricesPkr[currentPlan]) : 0;
+
+                    amountField.value = expectedAmount;
+                    updateExpectedAmountDisplay(expectedAmount, pkrAmount);
+                    console.log(`✅ Set amount field and displays for ${currentPlan}: £${expectedAmount}`);
+                }
+
+                // Enable submit button since amount is auto-filled
+                setTimeout(() => {
+                    enableManualPaymentSubmit();
+                    console.log('✅ Manual payment submit enabled - amount auto-filled');
+                }, 100);
             });
         }
 
-        // Also add form submission validation
+        // Manual payment form - amount is auto-filled, no validation needed
         const manualForm = document.getElementById('manualForm');
         if (manualForm) {
             manualForm.addEventListener('submit', function(e) {
-                const amountField = document.querySelector('input[name="amount"]');
-                const enteredAmount = parseFloat(amountField.value) || 0;
-                const expectedAmount = planPrices[currentPlan] ? parseFloat(planPrices[currentPlan]) : 0;
+                console.log(`✅ Manual payment form submitted for ${currentPlan} plan`);
 
-                console.log(`📋 Form submission validation: Entered £${enteredAmount}, Expected £${expectedAmount}`);
-
-                if (enteredAmount > 0 && enteredAmount < expectedAmount) {
-                    e.preventDefault(); // Stop form submission
-                    alert(`❌ Amount too low!\n\nPlan requires: £${expectedAmount}\nYou entered: £${enteredAmount}\n\nPlease enter the correct amount or contact admin for discounts.`);
-                    return false;
-                }
+                // Amount is auto-filled in hidden field, so no client-side validation needed
+                // Server-side validation will handle amount verification
             });
         }
 
@@ -771,6 +824,28 @@
         window.testAutoFillDisplay = function() {
             console.log('🧪 Testing auto-fill display...');
             showAutoFillDisplay(20.88, 8293.25, { note: 'Test conversion' });
+        };
+
+        // Debug function to test validation
+        window.testValidation = function() {
+            console.log('🧪 === VALIDATION DEBUG INFO ===');
+            console.log('Current Plan:', currentPlan);
+            console.log('Plan Prices:', planPrices);
+            console.log('Expected Amount:', planPrices[currentPlan]);
+
+            const amountField = document.querySelector('input[name="amount"]');
+            const submitBtn = document.querySelector('#manualForm button[type="submit"]');
+
+            console.log('Amount Field:', amountField);
+            console.log('Submit Button:', submitBtn);
+            console.log('Amount Field Value:', amountField?.value);
+            console.log('Submit Button Disabled:', submitBtn?.disabled);
+
+            if (amountField && planPrices[currentPlan]) {
+                const enteredAmount = parseFloat(amountField.value) || 0;
+                const expectedAmount = parseFloat(planPrices[currentPlan]);
+                console.log(`Comparison: ${enteredAmount} === ${expectedAmount}? ${enteredAmount === expectedAmount}`);
+            }
         };
     });
 
@@ -866,6 +941,9 @@
                 // Show visual display of auto-filled amount
                 showAutoFillDisplay(amount, pkrAmount, conversionRate);
 
+                // Update expected amount info display
+                updateExpectedAmountDisplay(amount, pkrAmount);
+
                 // Add visual feedback to input field
                 const originalPlaceholder = amountField.placeholder;
                 amountField.placeholder = `Auto-filled: £${amount}`;
@@ -886,6 +964,7 @@
                         retryAmountField.value = amount;
                         console.log(`✅ Set amount field on retry: £${amount}`);
                         showAutoFillDisplay(amount, pkrAmount, conversionRate);
+                        updateExpectedAmountDisplay(amount, pkrAmount);
                     } else {
                         console.log(`❌ Could not find amount field even after retry`);
                     }
@@ -896,42 +975,20 @@
         }
     }
 
-    // Real-time amount validation for manual payment
-    function validateManualPaymentAmount() {
-        const amountField = document.querySelector('input[name="amount"]');
+    // Enable submit button for manual payment (since amount is auto-filled)
+    function enableManualPaymentSubmit() {
         const submitBtn = document.querySelector('#manualForm button[type="submit"]');
 
-        if (amountField && submitBtn) {
-            amountField.addEventListener('input', function() {
-                const enteredAmount = parseFloat(this.value) || 0;
-                const expectedAmount = planPrices[currentPlan] ? parseFloat(planPrices[currentPlan]) : 0;
+        if (submitBtn) {
+            // Enable submit button since amount is auto-filled correctly
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = '1';
+            submitBtn.style.cursor = 'pointer';
+            submitBtn.style.background = 'linear-gradient(135deg, #00C853 0%, #00B894 100%)';
 
-                console.log(`🔍 Validating amount: Entered £${enteredAmount}, Expected £${expectedAmount}`);
-
-                if (enteredAmount > 0 && enteredAmount < expectedAmount) {
-                    // Show warning message
-                    showAmountWarning(expectedAmount, enteredAmount);
-                    submitBtn.disabled = true;
-                    submitBtn.style.opacity = '0.5';
-                    submitBtn.style.cursor = 'not-allowed';
-                } else {
-                    // Hide warning and enable button
-                    hideAmountWarning();
-                    submitBtn.disabled = false;
-                    submitBtn.style.opacity = '1';
-                    submitBtn.style.cursor = 'pointer';
-                }
-            });
-
-            // Also validate on form submission
-            amountField.addEventListener('blur', function() {
-                const enteredAmount = parseFloat(this.value) || 0;
-                const expectedAmount = planPrices[currentPlan] ? parseFloat(planPrices[currentPlan]) : 0;
-
-                if (enteredAmount > 0 && enteredAmount < expectedAmount) {
-                    alert(`⚠️ Amount too low!\n\nPlan requires: £${expectedAmount}\nYou entered: £${enteredAmount}\n\nPlease enter the correct amount or contact admin for discounts.`);
-                }
-            });
+            console.log(`✅ Manual payment submit button enabled - amount auto-filled`);
+        } else {
+            console.log(`❌ Could not find submit button`);
         }
     }
 
@@ -973,11 +1030,109 @@
         }
     }
 
+    // Show amount too high warning
+    function showAmountHighWarning(expected, entered) {
+        hideAmountWarning(); // Remove any existing warning
+
+        const warningDiv = document.createElement('div');
+        warningDiv.id = 'amountWarning';
+        warningDiv.style.cssText = `
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+            z-index: 1000;
+            margin-top: 8px;
+            animation: slideDown 0.3s ease-out;
+        `;
+
+        warningDiv.innerHTML = `
+            <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>Amount too high! Requires £${expected}, you entered £${entered}</span>
+            </div>
+        `;
+
+        const amountField = document.querySelector('input[name="amount"]');
+        if (amountField) {
+            amountField.parentElement.style.position = 'relative';
+            amountField.parentElement.appendChild(warningDiv);
+        }
+    }
+
+    // Show amount success
+    function showAmountSuccess(expected) {
+        hideAmountWarning(); // Remove any existing warning
+
+        const successDiv = document.createElement('div');
+        successDiv.id = 'amountSuccess';
+        successDiv.style.cssText = `
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #00C853 0%, #00B894 100%);
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 184, 148, 0.3);
+            z-index: 1000;
+            margin-top: 8px;
+            animation: slideDown 0.3s ease-out;
+        `;
+
+        successDiv.innerHTML = `
+            <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <i class="fas fa-check-circle"></i>
+                <span>✓ Perfect! Amount matches plan price: £${expected}</span>
+            </div>
+        `;
+
+        const amountField = document.querySelector('input[name="amount"]');
+        if (amountField) {
+            amountField.parentElement.style.position = 'relative';
+            amountField.parentElement.appendChild(successDiv);
+        }
+    }
+
     // Hide amount warning
     function hideAmountWarning() {
         const existingWarning = document.getElementById('amountWarning');
-        if (existingWarning) {
-            existingWarning.remove();
+        const existingSuccess = document.getElementById('amountSuccess');
+        if (existingWarning) existingWarning.remove();
+        if (existingSuccess) existingSuccess.remove();
+    }
+
+    // Update expected amount display
+    function updateExpectedAmountDisplay(gbpAmount, pkrAmount) {
+        const expectedAmountDisplay = document.getElementById('expectedAmountDisplay');
+        const expectedAmountText = document.getElementById('expectedAmountText');
+        const expectedAmountGBP = document.getElementById('expectedAmountGBP');
+        const expectedAmountPKR = document.getElementById('expectedAmountPKR');
+        const expectedAmountInfo = document.getElementById('expectedAmountInfo');
+
+        if (expectedAmountInfo) {
+            // Update all amount displays
+            if (expectedAmountDisplay) expectedAmountDisplay.textContent = gbpAmount;
+            if (expectedAmountText) expectedAmountText.textContent = gbpAmount;
+            if (expectedAmountGBP) expectedAmountGBP.textContent = `£${gbpAmount} GBP`;
+            if (expectedAmountPKR) expectedAmountPKR.textContent = `${pkrAmount.toLocaleString()} PKR`;
+
+            // Show the amount info
+            expectedAmountInfo.style.display = 'block';
+
+            console.log(`💰 Updated expected amount display: £${gbpAmount} GBP / ${pkrAmount.toLocaleString()} PKR`);
         }
     }
 
