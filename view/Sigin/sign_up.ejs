@@ -1,157 +1,161 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="utf-8">
-    <title>Sign Up</title>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="" name="keywords">
-    <meta content="" name="description">
+  <meta charset="utf-8">
+  <title>Sign Up</title>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta content="" name="keywords">
+  <meta content="" name="description">
 
-    
-   <!-- Favicon -->
-   <link rel="icon" href="\images\favicon.png" type="image/x-icon">
 
-    <!-- Icon Font Stylesheet -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- Favicon -->
+  <link rel="icon" href="\images\favicon.png" type="image/x-icon">
 
-    <!-- Customized Bootstrap Stylesheet -->
-    <link href="/bootstrap.css" rel="stylesheet">
-    <!-- Template Stylesheet -->
-    <link href="/styles.css" rel="stylesheet">
-    <link href="/styles1.css" rel="stylesheet">
+  <!-- Icon Font Stylesheet -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
 
-    <style>
-      /* Professional Sign Up Page Styling */
-      body {
-        background: linear-gradient(135deg, #744FA7 0%, #5a3a85 50%, #744FA7 100%);
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        min-height: 100vh;
-      }
+  <!-- Customized Bootstrap Stylesheet -->
+  <link href="/bootstrap.css" rel="stylesheet">
+  <!-- Template Stylesheet -->
+  <link href="/styles.css" rel="stylesheet">
+  <link href="/styles1.css" rel="stylesheet">
 
+  <style>
+    /* Professional Sign Up Page Styling */
+    body {
+      background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+    }
+
+    .auth-card {
+      background: linear-gradient(135deg, #ffffff 0%, #f8fafc 25%, #f1f5f9 50%, #e2e8f0 75%, #cbd5e1 100%);
+      backdrop-filter: blur(25px);
+      border-radius: 25px;
+      padding: 40px;
+      box-shadow: 0 30px 100px rgba(116, 79, 167, 0.3);
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      max-width: 750px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .auth-card h1 {
+      background: linear-gradient(135deg, #744FA7 0%, #5a3a85 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .auth-card p {
+      color: #6b7280;
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .form-label {
+      font-weight: 600;
+      color: #374151;
+      font-size: 1rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .form-control {
+      height: 50px;
+      border: 2px solid rgba(116, 79, 167, 0.2);
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 1rem;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+      border-color: #744FA7;
+      box-shadow: 0 0 0 4px rgba(116, 79, 167, 0.15);
+      background: rgba(255, 255, 255, 0.95);
+      transform: translateY(-2px);
+    }
+
+    .btn-primary {
+      height: 55px;
+      background: linear-gradient(135deg, #744FA7 0%, #5a3a85 100%);
+      border: none;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 25px rgba(116, 79, 167, 0.3);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #5a3a85 0%, #744FA7 100%);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 35px rgba(116, 79, 167, 0.4);
+    }
+
+    .text-primary {
+      color: #744FA7 !important;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .text-primary:hover {
+      color: #5a3a85 !important;
+      text-decoration: underline;
+    }
+
+    .bg-dark {
+      background: linear-gradient(135deg, #1f2937 0%, #111827 100%) !important;
+    }
+
+    #main-wrapper {
+      background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%) !important;
+    }
+
+    .bg-body {
+      background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%) !important;
+    }
+
+    @media (max-width: 768px) {
       .auth-card {
-        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 25%, #f1f5f9 50%, #e2e8f0 75%, #cbd5e1 100%);
-        backdrop-filter: blur(25px);
-        border-radius: 25px;
-        padding: 40px;
-        box-shadow: 0 30px 100px rgba(116, 79, 167, 0.3);
-        border: 2px solid rgba(255, 255, 255, 0.4);
-        max-width: 750px;
-        width: 100%;
-        margin: 0 auto;
-      }
-
-      .auth-card h1 {
-        background: linear-gradient(135deg, #744FA7 0%, #5a3a85 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        font-size: 2.5rem;
-        font-weight: 700;
-        margin-bottom: 1rem;
-        text-align: center;
-      }
-
-      .auth-card p {
-        color: #6b7280;
-        font-size: 1.1rem;
-        margin-bottom: 2rem;
-        text-align: center;
-      }
-
-      .form-label {
-        font-weight: 600;
-        color: #374151;
-        font-size: 1rem;
-        margin-bottom: 0.75rem;
+        padding: 30px 25px;
+        max-width: 90%;
+        border-radius: 20px;
       }
 
       .form-control {
-        height: 50px;
-        border: 2px solid rgba(116, 79, 167, 0.2);
-        border-radius: 12px;
-        padding: 12px 16px;
-        font-size: 1rem;
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(10px);
-        transition: all 0.3s ease;
+        height: 45px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .auth-card {
+        padding: 25px 20px;
+        max-width: 95%;
+        border-radius: 15px;
       }
 
-      .form-control:focus {
-        border-color: #744FA7;
-        box-shadow: 0 0 0 4px rgba(116, 79, 167, 0.15);
-        background: rgba(255, 255, 255, 0.95);
-        transform: translateY(-2px);
+      .form-control {
+        height: 42px;
+        font-size: 14px;
       }
 
       .btn-primary {
-        height: 55px;
-        background: linear-gradient(135deg, #744FA7 0%, #5a3a85 100%);
-        border: none;
-        border-radius: 12px;
-        font-size: 1.1rem;
-        font-weight: 600;
-        letter-spacing: 0.5px;
-        transition: all 0.3s ease;
-        box-shadow: 0 8px 25px rgba(116, 79, 167, 0.3);
+        height: 50px;
       }
-
-      .btn-primary:hover {
-        background: linear-gradient(135deg, #5a3a85 0%, #744FA7 100%);
-        transform: translateY(-3px);
-        box-shadow: 0 12px 35px rgba(116, 79, 167, 0.4);
-      }
-
-      .text-primary {
-        color: #744FA7 !important;
-        font-weight: 500;
-        text-decoration: none;
-        transition: all 0.3s ease;
-      }
-
-      .text-primary:hover {
-        color: #5a3a85 !important;
-        text-decoration: underline;
-      }
-
-      .bg-dark {
-        background: linear-gradient(135deg, #1f2937 0%, #111827 100%) !important;
-      }
-
-      #main-wrapper {
-        background: linear-gradient(135deg, #744FA7 0%, #5a3a85 50%, #744FA7 100%);
-      }
-
-      .bg-body {
-        background: linear-gradient(135deg, #744FA7 0%, #5a3a85 50%, #744FA7 100%) !important;
-      }
-
-      @media (max-width: 768px) {
-        .auth-card {
-          padding: 30px 25px;
-          max-width: 90%;
-          border-radius: 20px;
-        }
-        .form-control {
-          height: 45px;
-        }
-      }
-
-      @media (max-width: 480px) {
-        .auth-card {
-          padding: 25px 20px;
-          max-width: 95%;
-          border-radius: 15px;
-        }
-        .form-control {
-          height: 42px;
-          font-size: 14px;
-        }
-        .btn-primary {
-          height: 50px;
-        }
-      }
-    </style>
+    }
+  </style>
 
 </head>
 
@@ -162,76 +166,78 @@
       <div class="position-relative z-index-5">
         <div class="row gx-0">
 
-          <div class="col-lg-6 col-xl-6 col-xxl-6" style="background: linear-gradient(135deg, #744FA7 0%, #5a3a85 50%, #744FA7 100%);">
+          <div class="col-lg-6 col-xl-6 col-xxl-6"
+            style="background: linear-gradient(135deg, #744FA7 0%, #5a3a85 50%, #744FA7 100%);">
             <div class="min-vh-100 bg-body row justify-content-center align-items-center p-5 mt-n4">
               <div class="col-12 auth-card mt-n4 " style="margin-top:-50px;">
-             
+
                 <h1 class="mb-2 mt-4 fs-7 fw-bolder text-black">Sign Up</h1>
 
                 <p class="mb-9" style="text-decoration: underline;">Sign Up Now for a Smarter Future!</p>
 
-          
+
                 <!--  -->
                 <form action="/sign_up" method="POST">
-                    <div class="row mb-3 mt-5">
-                        <div class="col-md-6">
-                            <label for="first-name" class="form-label">First Name</label>
-                            <input type="text" class="form-control" id="first-name" name="first_name" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="last-name" class="form-label">Last Name</label>
-                            <input type="text" class="form-control" id="last-name" name="last_name" >
-                        </div>
+                  <div class="row mb-3 mt-5">
+                    <div class="col-md-6">
+                      <label for="first-name" class="form-label">First Name</label>
+                      <input type="text" class="form-control" id="first-name" name="first_name" required>
                     </div>
-                    
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="email" class="form-label">E-mail</label>
-                            <input type="email" class="form-control" id="email" name="email" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="phone-number" class="form-label">Phone Number</label>
-                            <input type="text" class="form-control" id="phone-number" name="phone_number"  required>
-                        </div>
+                    <div class="col-md-6">
+                      <label for="last-name" class="form-label">Last Name</label>
+                      <input type="text" class="form-control" id="last-name" name="last_name">
                     </div>
-                    
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="password" name="password" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="company" class="form-label">Company</label>
-                            <input type="text" class="form-control" id="company" name="company">
-                        </div>
+                  </div>
+
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <label for="email" class="form-label">E-mail</label>
+                      <input type="email" class="form-control" id="email" name="email" required>
                     </div>
-                    
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="postcode" class="form-label">Postcode</label>
-                            <input type="text" class="form-control" id="postcode" name="postcode">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="address" class="form-label">Address</label>
-                            <input type="text" class="form-control" id="address" name="address" >
-                        </div>
+                    <div class="col-md-6">
+                      <label for="phone-number" class="form-label">Phone Number</label>
+                      <input type="text" class="form-control" id="phone-number" name="phone_number" required>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100 py-8 mb-4 rounded-2">Register</button>
+                  </div>
+
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <label for="password" class="form-label">Password</label>
+                      <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="company" class="form-label">Company</label>
+                      <input type="text" class="form-control" id="company" name="company">
+                    </div>
+                  </div>
+
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <label for="postcode" class="form-label">Postcode</label>
+                      <input type="text" class="form-control" id="postcode" name="postcode">
+                    </div>
+                    <div class="col-md-6">
+                      <label for="address" class="form-label">Address</label>
+                      <input type="text" class="form-control" id="address" name="address">
+                    </div>
+                  </div>
+                  <button type="submit" class="btn btn-primary w-100 py-8 mb-4 rounded-2">Register</button>
                 </form>
-                    
-                    <div class="d-flex align-items-center justify-content-center">
-                        <p class="fs-4 mb-0 fw-medium">Already have an account?</p>
-                        <a class="text-primary fw-medium ms-2" href="/sign_in">Sign In</a>
-                    </div>
+
+                <div class="d-flex align-items-center justify-content-center">
+                  <p class="fs-4 mb-0 fw-medium">Already have an account?</p>
+                  <a class="text-primary fw-medium ms-2" href="/sign_in">Sign In</a>
+                </div>
               </div>
             </div>
 
           </div>
 
           <div class="col-lg-6 col-xl-6 col-xxl-6 position-relative overflow-hidden bg-dark d-none d-lg-block">
-  
+
             <div>
-              <img src="<%= info?.favicon ? '/uploads/' + info.favicon : '/images/DIB-NOW-512.png' %>" class="circle-bottom" alt="Logo-Dark" />
+              <img src="<%= info?.favicon ? '/uploads/' + info.favicon : '/images/DIB-NOW-512.png' %>"
+                class="circle-bottom" alt="Logo-Dark" />
             </div>
 
             <!--  -->
@@ -243,7 +249,7 @@
                   </h2>
                   <span class="opacity-75 fs-4 text-white d-block mb-3">
                     <%= welcome_description %>
-                  
+
                 </div>
                 <!--  -->
               </div>
@@ -255,8 +261,13 @@
   </div>
   <div class="dark-transparent sidebartoggler"></div>
   <!-- Import Js Files -->
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
-  
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+    integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+    integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
+    crossorigin="anonymous"></script>
+
 </body>
+
 </html>

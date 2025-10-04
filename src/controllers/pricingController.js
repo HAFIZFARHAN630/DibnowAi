@@ -164,37 +164,62 @@ exports.addSubscription = [
     const amount = planPrices[plan];
   
     // Validate supported payment methods
-    if (!['stripe', 'paypal', 'jazzcash', 'payfast', 'wallet'].includes(paymentMethod)) {
-      return res.status(400).send("Invalid payment method.");
-    }
+    if (!['stripe', 'paypal', 'jazzcash', 'payfast', 'wallet', 'bank', 'manual'].includes(paymentMethod)) {
+       return res.status(400).send("Invalid payment method.");
+     }
   
     try {
-      let gatewaySettings;
-      if (paymentMethod === 'stripe' || paymentMethod === 'paypal') {
-        gatewaySettings = await PaymentSettings.findOne({ gateway: paymentMethod }).lean();
-        if (!gatewaySettings || !gatewaySettings.enabled) {
-          // Fallback to env vars
-          if (paymentMethod === 'stripe' && process.env.STRIPE_SECRET_KEY) {
-            gatewaySettings = {
-              mode: process.env.STRIPE_MODE || 'live',
-              credentials: { secret_key: process.env.STRIPE_SECRET_KEY }
-            };
-          } else if (paymentMethod === 'paypal' && process.env.PAYPAL_CLIENT_SECRET) {
-            gatewaySettings = {
-              mode: process.env.PAYPAL_MODE || 'sandbox',
-              credentials: {
-                client_id: process.env.PAYPAL_CLIENT_ID,
-                client_secret: process.env.PAYPAL_CLIENT_SECRET
-              }
-            };
-          } else {
-            return res.status(400).send(`${paymentMethod} gateway not configured.`);
-          }
-        }
-      }
+       let gatewaySettings;
+       if (paymentMethod === 'stripe' || paymentMethod === 'paypal') {
+         // First try to get from database
+         gatewaySettings = await PaymentSettings.findOne({ gateway: paymentMethod }).lean();
+
+         // For Stripe, prioritize environment variables if they exist and are valid
+         if (paymentMethod === 'stripe' && process.env.STRIPE_SECRET_KEY && process.env.STRIPE_SECRET_KEY.length >= 20) {
+           console.log("Using Stripe env vars - Secret key length:", process.env.STRIPE_SECRET_KEY?.length || 0);
+           console.log("Stripe Secret Key (first 20 chars):", process.env.STRIPE_SECRET_KEY?.substring(0, 20) + "...");
+           gatewaySettings = {
+             mode: process.env.STRIPE_MODE || 'live',
+             credentials: { secret_key: process.env.STRIPE_SECRET_KEY }
+           };
+         } else if (paymentMethod === 'paypal' && process.env.PAYPAL_CLIENT_SECRET) {
+           gatewaySettings = {
+             mode: process.env.PAYPAL_MODE || 'sandbox',
+             credentials: {
+               client_id: process.env.PAYPAL_CLIENT_ID,
+               client_secret: process.env.PAYPAL_CLIENT_SECRET
+             }
+           };
+         } else if (!gatewaySettings || !gatewaySettings.enabled) {
+           // Final fallback to env vars for Stripe
+           if (paymentMethod === 'stripe' && process.env.STRIPE_SECRET_KEY) {
+             console.log("Using Stripe env vars as fallback - Secret key length:", process.env.STRIPE_SECRET_KEY?.length || 0);
+             gatewaySettings = {
+               mode: process.env.STRIPE_MODE || 'live',
+               credentials: { secret_key: process.env.STRIPE_SECRET_KEY }
+             };
+           } else {
+             console.error(`${paymentMethod} gateway not configured. STRIPE_SECRET_KEY exists:`, !!process.env.STRIPE_SECRET_KEY);
+             return res.status(400).send(`${paymentMethod} gateway not configured.`);
+           }
+         }
+       }
   
       if (paymentMethod === 'stripe') {
-        const stripeInstance = new Stripe(gatewaySettings.credentials.secret_key);
+        const secretKey = gatewaySettings.credentials.secret_key;
+
+        // Validate the secret key
+        if (!secretKey || secretKey.length < 20) {
+          console.error("Invalid Stripe secret key detected:", {
+            length: secretKey?.length || 0,
+            key: secretKey?.substring(0, 10) + "..."
+          });
+          return res.status(500).send("Stripe configuration error. Please contact support.");
+        }
+
+        console.log("Initializing Stripe with key length:", secretKey.length);
+        const stripeInstance = new Stripe(secretKey);
+
         const session = await stripeInstance.checkout.sessions.create({
           payment_method_types: ["card"],
           line_items: [
@@ -211,7 +236,7 @@ exports.addSubscription = [
           success_url: `${process.env.APP_BASE_URL}/success?plan=${plan}&gateway=${paymentMethod}`,
           cancel_url: `${process.env.APP_BASE_URL}/cancel`,
         });
-  
+
         res.redirect(302, session.url);
       } else if (paymentMethod === 'paypal') {
         paypal.configure({
@@ -219,7 +244,7 @@ exports.addSubscription = [
           client_id: gatewaySettings.credentials.client_id,
           client_secret: gatewaySettings.credentials.client_secret,
         });
-  
+
         const create_payment_json = {
           intent: "sale",
           payer: { payment_method: "paypal" },
@@ -253,7 +278,7 @@ exports.addSubscription = [
               .status(500)
               .send("Error creating PayPal payment. Please try again later.");
           }
-  
+
           const approvalUrl = payment.links.find(
             (link) => link.rel === "approval_url"
           );
@@ -264,6 +289,89 @@ exports.addSubscription = [
             return res.status(500).send("Error retrieving approval URL");
           }
         });
+      } else if (paymentMethod === 'payfast') {
+        try {
+          // Get PayFast settings from database or environment
+          let payfastSettings = await PaymentSettings.findOne({ gateway: 'payfast' }).lean();
+
+          if (!payfastSettings || !payfastSettings.enabled) {
+            // Use environment variables as fallback
+            if (process.env.PAYFAST_MERCHANT_ID && process.env.PAYFAST_SECURED_KEY) {
+              payfastSettings = {
+                mode: process.env.PAYFAST_MODE || 'live',
+                credentials: {
+                  merchant_id: process.env.PAYFAST_MERCHANT_ID,
+                  merchant_key: process.env.PAYFAST_SECURED_KEY
+                }
+              };
+            } else {
+              console.error("PayFast not configured");
+              return res.status(400).send("PayFast gateway not configured.");
+            }
+          }
+
+          // Create PayFast payment form
+          const payfastData = {
+            merchant_id: payfastSettings.credentials.merchant_id,
+            merchant_key: payfastSettings.credentials.merchant_key,
+            return_url: `${process.env.APP_BASE_URL}/success?plan=${plan}&gateway=payfast`,
+            cancel_url: `${process.env.APP_BASE_URL}/cancel`,
+            notify_url: `${process.env.APP_BASE_URL}/payfast-webhook`,
+            name_first: 'Customer',
+            name_last: 'Name',
+            email_address: 'customer@example.com',
+            m_payment_id: `plan_${plan}_${Date.now()}`,
+            amount: amount,
+            item_name: `${plan} Plan`,
+            item_description: `Payment for ${plan} subscription plan`,
+            custom_int1: req.session.userId,
+            custom_str1: plan
+          };
+
+          // Generate signature for PayFast
+          const signatureString = Object.keys(payfastData)
+            .filter(key => payfastData[key] !== '')
+            .sort()
+            .map(key => `${key}=${encodeURIComponent(payfastData[key]).replace(/%20/g, '+')}`)
+            .join('&');
+
+          const crypto = require('crypto');
+          const signature = crypto.createHash('md5').update(signatureString).digest('hex');
+
+          // Render PayFast payment form
+          const html = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+              <title>PayFast Payment</title>
+              <style>
+                body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
+                .payment-form { max-width: 400px; margin: 0 auto; }
+                .btn { background: #ff6600; color: white; padding: 15px 30px; border: none; border-radius: 5px; cursor: pointer; }
+              </style>
+            </head>
+            <body>
+              <div class="payment-form">
+                <h2>PayFast Payment</h2>
+                <p>Plan: ${plan}</p>
+                <p>Amount: £${amount}</p>
+                <form action="https://ipg1.apps.net.pk/Ecommerce/api/Transaction" method="post" name="payfast_form">
+                  ${Object.entries(payfastData).map(([key, value]) => `<input type="hidden" name="${key}" value="${value}">`).join('')}
+                  <input type="hidden" name="signature" value="${signature}">
+                  <button type="submit" class="btn">Pay with PayFast</button>
+                </form>
+                <script>document.payfast_form.submit();</script>
+              </div>
+            </body>
+            </html>
+          `;
+
+          res.send(html);
+        } catch (error) {
+          console.error("PayFast payment error:", error.message);
+          req.flash("error_msg", "Failed to process PayFast payment. Please try again.");
+          res.redirect("/pricing");
+        }
       } else if (paymentMethod === 'wallet') {
         try {
           const wallet = await Wallet.findOne({ user: req.session.userId });
@@ -331,38 +439,41 @@ exports.addSubscription = [
           req.flash("error_msg", "Failed to process wallet payment. Please try again.");
           res.redirect("/pricing");
         }
+      } else if (paymentMethod === 'bank') {
+        // Bank transfer - redirect to manual payment form
+        req.session.pendingPayment = { plan, amount: parseFloat(amount) };
+        req.flash("info_msg", `Please complete the bank transfer for ${plan} plan. Amount: £${amount}`);
+        res.redirect("/transfer");
       } else {
-        // Manual gateways: jazzcash, payfast (bank handled separately via /transfer)
+        // Manual gateways: jazzcash, payfast - Create pending plan request for admin verification
         const startDate = new Date();
         const expiryDate = new Date(startDate);
         expiryDate.setDate(expiryDate.getDate() + 30);
-  
-        const Payments = require("../models/payments");
-        const newPayment = new Payments({
+
+        const PlanRequest = require("../models/planRequest");
+        const newPlanRequest = new PlanRequest({
           user: req.session.userId,
-          plan,
+          planName: plan,
           amount: parseFloat(amount),
           gateway: paymentMethod,
           startDate,
           expiryDate,
-          status: 'active'
+          status: 'Pending',
+          invoiceStatus: 'Unpaid',
+          description: `Manual payment via ${paymentMethod.toUpperCase()} - awaiting admin verification`
         });
-  
-        await newPayment.save();
-  
-        await User.findByIdAndUpdate(req.session.userId, { plan_name: plan });
-  
-        await subscribePlan(req.session.userId, plan);
-  
-        // Create transaction record for manual payment
+
+        await newPlanRequest.save();
+
+        // Create transaction record for manual payment (pending status)
         const newTransaction = new Transaction({
           user: req.session.userId,
           type: 'payment',
           amount: parseFloat(amount),
-          status: 'success'
+          status: 'pending'
         });
         await newTransaction.save();
-  
+
         // Create notification
         if (req.app.locals.notificationService) {
           const user = await User.findById(req.session.userId).select('first_name');
@@ -370,14 +481,14 @@ exports.addSubscription = [
             await req.app.locals.notificationService.createNotification(
               req.session.userId,
               user.first_name,
-              "Buy Plan"
+              "Manual Payment Pending"
             );
           }
         }
-  
+
         req.flash(
           "success_msg",
-          `Your ${plan} plan has been activated via ${paymentMethod.toUpperCase()}. Please follow the instructions provided.`
+          `Your manual payment for ${plan} plan has been submitted. Please wait for admin verification before your package is activated.`
         );
         res.redirect("/index");
       }
@@ -537,6 +648,45 @@ exports.freeTrial = [
   },
 ];
 
+// Get plan prices from backend
+exports.getPlanPrices = async (req, res) => {
+  try {
+    const planPrices = {
+      FREE_TRIAL: "0.00",
+      BASIC: "20.88",
+      STANDARD: "35.88",
+      PREMIUM: "55.88",
+    };
+
+    // Add PKR conversions (1 GBP = 397.1863 PKR with 4% fee)
+    const gbpToPkrRate = 397.1863;
+    const planPricesPkr = {};
+
+    Object.keys(planPrices).forEach(plan => {
+      const gbpAmount = parseFloat(planPrices[plan]);
+      const pkrAmount = gbpAmount * gbpToPkrRate;
+      planPricesPkr[plan] = pkrAmount.toFixed(2);
+    });
+
+    res.json({
+      success: true,
+      planPrices: planPrices,
+      planPricesPkr: planPricesPkr,
+      conversionRate: {
+        gbp: 1,
+        pkr: gbpToPkrRate,
+        note: "Includes 4% conversion fee"
+      }
+    });
+  } catch (error) {
+    console.error("Error fetching plan prices:", error.message);
+    res.json({
+      success: false,
+      message: "Error fetching plan prices"
+    });
+  }
+};
+
 // Backend route to handle the subscription
 exports.handleSubscription = async (req, res) => {
   try {
@@ -588,53 +738,51 @@ exports.insertTransfer = async (req, res) => {
       return res.status(400).json({ message: "User not logged in" });
     }
 
-    const Payments = require("../models/payments");
+    const PlanRequest = require("../models/planRequest");
     const User = require("../models/user");
 
     // Get pending payment from session if any
     const pendingPayment = req.session.pendingPayment;
     const plan = pendingPayment ? pendingPayment.plan : 'BASIC'; // default if no pending
 
-    // Create Payments record for bank
+    // Create PlanRequest record for bank transfer (pending admin verification)
     const startDate = new Date();
     const expiryDate = new Date(startDate);
     expiryDate.setDate(expiryDate.getDate() + 30); // 30 days expiry
 
-    const newPayment = new Payments({
+    const newPlanRequest = new PlanRequest({
       user: userId,
-      plan,
+      planName: plan,
       amount: parseFloat(amount),
       gateway: 'bank',
       startDate,
       expiryDate,
-      status: 'active' // assume successful after submit
+      status: 'Pending',
+      invoiceStatus: 'Unpaid',
+      description: `Bank transfer payment - awaiting admin verification. Transfer ID: ${transfer_id}`
     });
 
-    await newPayment.save();
+    await newPlanRequest.save();
 
-    // Update the plan_name in the database
+    // Update transfer details in user record but don't activate plan yet
     await User.findByIdAndUpdate(userId, {
-      plan_name: plan,
       transfer_id,
       amount: parseFloat(amount)
     });
 
-    // Update plan_limit
-    await subscribePlan(userId, plan);
-
-    // Create transaction record for bank transfer payment
+    // Create transaction record for bank transfer payment (pending status)
     const newTransaction = new Transaction({
       user: userId,
       type: 'payment',
       amount: parseFloat(amount),
-      status: 'success'
+      status: 'pending'
     });
     await newTransaction.save();
 
     // Clear session pending
     delete req.session.pendingPayment;
 
-    req.flash("success_msg", "Bank transfer recorded and plan activated. Please wait for verification if needed.");
+    req.flash("success_msg", "Bank transfer recorded successfully. Please wait for admin verification before your package is activated.");
     res.redirect("/index");
   } catch (error) {
     console.error("Error updating transfer data:", error.message);
@@ -642,3 +790,5 @@ exports.insertTransfer = async (req, res) => {
     res.redirect("/pricing");
   }
 };
+
+

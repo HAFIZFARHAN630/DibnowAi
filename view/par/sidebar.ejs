@@ -96,16 +96,16 @@
     <br>
 
     <!-- User Profile at Bottom -->
-    <div class="sidebar-user d-flex align-items-center ms-4 mb-4">
+    <div class="sidebar-user d-flex align-items-center ms-2 mb-4">
       <a href="/Setting" class="d-flex align-items-center text-decoration-none">
         <div class="position-relative">
           <img class="rounded-circle" src="<%- profileImagePath %>" alt="Profile Image"
             style="width: 40px; height: 40px;" onerror="this.onerror=null; this.src='/img/dumi img.png';">
           <div class="online-dot position-absolute end-0 top-0"></div>
         </div>
-        <div class="ms-3">
-          <h6 class="mb-0 fw-bold"><%- typeof firstName !=='undefined' ? firstName : 'User' %></h6>
-          <p class="mb-0 small"><%- typeof email !=='undefined' ? email : 'user@example.com' %></p>
+        <div class="ms-2">
+          <h6 class="mb-0 fw-bold text-dark"><%- typeof firstName !=='undefined' ? firstName : 'User' %></h6>
+          <p class="mb-0 small text-dark"><%- typeof email !=='undefined' ? email : 'user@example.com' %></p>
         </div>
       </a>
     </div>

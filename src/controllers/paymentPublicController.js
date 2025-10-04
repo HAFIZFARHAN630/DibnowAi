@@ -1,5 +1,13 @@
+require("dotenv").config();
 const PaymentSettings = require("../models/paymentSettings");
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY); // Not used here, but for consistency
+// Only initialize Stripe if we have a valid secret key
+let stripe = null;
+if (process.env.STRIPE_SECRET_KEY && process.env.STRIPE_SECRET_KEY.length >= 20) {
+  stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+  console.log("Stripe initialized in paymentPublicController with key length:", process.env.STRIPE_SECRET_KEY.length);
+} else {
+  console.warn("Stripe not initialized in paymentPublicController - invalid or missing secret key");
+}
 
 exports.getEnabledGateways = async (req, res) => {
   try {

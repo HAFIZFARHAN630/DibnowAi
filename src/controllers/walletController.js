@@ -3,9 +3,21 @@ const Transaction = require("../models/transaction");
 const User = require("../models/user");
 const Stripe = require("stripe");
 const mongoose = require("mongoose");
-require("dotenv").config();
 
-const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
+// Validate and initialize Stripe
+const secretKey = process.env.STRIPE_SECRET_KEY;
+if (!secretKey || secretKey.length < 20) {
+  console.error("Invalid Stripe secret key in walletController:", {
+    length: secretKey?.length || 0,
+    key: secretKey?.substring(0, 10) + "...",
+    envKeyExists: !!process.env.STRIPE_SECRET_KEY,
+    envKeyLength: process.env.STRIPE_SECRET_KEY?.length || 0
+  });
+  throw new Error("Invalid Stripe secret key configuration");
+}
+
+const stripe = Stripe(secretKey);
+console.log("Stripe initialized in walletController with key length:", secretKey.length);
 
 // Middleware to ensure user is logged in
 function ensureLoggedIn(req, res, next) {
@@ -248,7 +260,7 @@ exports.getSavedCards = [
       let savedCards = [];
 
       if (!customerId) {
-        const stripeInstance = Stripe(process.env.STRIPE_SECRET_KEY);
+        const stripeInstance = stripe;
         const customer = await stripeInstance.customers.create({
           email: user.email,
           metadata: { user_id: userId.toString() }
@@ -256,7 +268,7 @@ exports.getSavedCards = [
         customerId = customer.id;
         await User.findByIdAndUpdate(userId, { stripe_customer_id: customerId });
       } else {
-        const stripeInstance = Stripe(process.env.STRIPE_SECRET_KEY);
+        const stripeInstance = stripe;
         const paymentMethods = await stripeInstance.paymentMethods.list({
           customer: customerId,
           type: 'card',
@@ -272,7 +284,7 @@ exports.getSavedCards = [
       }
 
       // Create setup intent for adding new card
-      const stripeInstance = Stripe(process.env.STRIPE_SECRET_KEY);
+      const stripeInstance = stripe;
       const setupIntent = await stripeInstance.setupIntents.create({
         customer: customerId,
         usage: 'off_session',
@@ -318,7 +330,7 @@ exports.addSavedCard = [
         return res.status(400).json({ success: false, error: "Customer not set up." });
       }
 
-      const stripeInstance = Stripe(process.env.STRIPE_SECRET_KEY);
+      const stripeInstance = stripe;
 
       // Attach payment method to customer
       await stripeInstance.paymentMethods.attach(payment_method_id, {
@@ -353,7 +365,7 @@ exports.deleteSavedCard = [
         return res.status(400).json({ success: false, error: "Customer not set up." });
       }
 
-      const stripeInstance = Stripe(process.env.STRIPE_SECRET_KEY);
+      const stripeInstance = stripe;
       await stripeInstance.paymentMethods.detach(id);
 
       res.json({ success: true, message: "Card deleted successfully!" });
@@ -385,7 +397,7 @@ exports.topupWithSavedCard = [
         return res.status(400).json({ success: false, error: "Customer not set up." });
       }
 
-      const stripeInstance = Stripe(process.env.STRIPE_SECRET_KEY);
+      const stripeInstance = stripe;
 
       // Create payment intent with saved payment method
       const paymentIntent = await stripeInstance.paymentIntents.create({

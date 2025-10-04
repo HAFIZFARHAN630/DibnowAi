@@ -16,7 +16,7 @@ const paymentsSchema = new mongoose.Schema({
   },
   gateway: {
     type: String,
-    enum: ['stripe', 'paypal', 'bank'],
+    enum: ['stripe', 'paypal', 'bank', 'payfast', 'manual'],
     required: true
   },
   startDate: {

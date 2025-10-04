@@ -376,18 +376,63 @@ exports.updatePlanRequest = async (req, res) => {
       });
     }
 
+    // Get the plan request details before updating
+    const planRequest = await PlanRequest.findById(planRequestId);
+    if (!planRequest) {
+      return res.status(404).json({ message: "Plan Request not found." });
+    }
+
     const updateData = { status };
     if (invoiceStatus) updateData.invoiceStatus = invoiceStatus;
     if (expiryDate) updateData.expiryDate = new Date(expiryDate);
 
-    const planRequest = await PlanRequest.findByIdAndUpdate(
+    // Update the plan request
+    const updatedPlanRequest = await PlanRequest.findByIdAndUpdate(
       planRequestId,
       updateData,
       { new: true }
     );
 
-    if (!planRequest) {
-      return res.status(404).json({ message: "Plan Request not found." });
+    // If status is being set to 'Active', activate the user's plan
+    if (status === 'Active' && planRequest.status !== 'Active') {
+      try {
+        // Create a Payments record for the activated plan
+        const newPayment = new Payments({
+          user: planRequest.user,
+          plan: planRequest.planName,
+          amount: planRequest.amount,
+          gateway: planRequest.gateway || 'manual',
+          startDate: new Date(),
+          expiryDate: planRequest.expiryDate,
+          status: 'active'
+        });
+
+        await newPayment.save();
+
+        // Update user's plan
+        await User.findByIdAndUpdate(planRequest.user, {
+          plan_name: planRequest.planName
+        });
+
+        // Update plan limits using the existing subscribePlan function
+        const pricingController = require('./pricingController');
+        await pricingController.subscribePlan(planRequest.user, planRequest.planName);
+
+        // Create transaction record
+        const Transaction = require("../models/transaction");
+        const newTransaction = new Transaction({
+          user: planRequest.user,
+          type: 'payment',
+          amount: planRequest.amount,
+          status: 'success'
+        });
+        await newTransaction.save();
+
+        console.log(`✅ Plan activated for user ${planRequest.user} - Plan: ${planRequest.planName}`);
+      } catch (activationError) {
+        console.error("❌ Error activating plan:", activationError);
+        // Don't fail the entire request if plan activation fails
+      }
     }
 
     req.flash("success", "Plan request updated successfully!");
