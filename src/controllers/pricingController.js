@@ -62,7 +62,7 @@ exports.allUsers = [
         }
 
         // Add instructions for manual payment gateways
-        if (['jazzcash', 'payfast'].includes(s.gateway)) {
+        if (['jazzcash'].includes(s.gateway)) {
           const idKey = s.gateway === 'jazzcash' ? 'merchant_id' : 'merchant_key';
           gw.instructions = `Use ${s.gateway.toUpperCase()}: ${idKey.replace('_', ' ').toUpperCase()}: ${s.credentials[idKey] || 'Not set'}. Mode: ${s.mode}. Please complete the payment following the gateway's standard procedure and include your order reference for verification.`;
         }
@@ -387,10 +387,9 @@ exports.addSubscription = [
             }
           }
 
-          // Create PayFast payment form
+          // Create PayFast payment form data (without merchant_key for signature)
           const payfastData = {
             merchant_id: payfastSettings.credentials.merchant_id,
-            merchant_key: payfastSettings.credentials.merchant_key,
             return_url: `${process.env.APP_BASE_URL}/success?plan=${plan}&gateway=payfast`,
             cancel_url: `${process.env.APP_BASE_URL}/cancel`,
             notify_url: `${process.env.APP_BASE_URL}/payfast-webhook`,
@@ -405,7 +404,7 @@ exports.addSubscription = [
             custom_str1: plan
           };
 
-          // Generate signature for PayFast
+          // Generate signature for PayFast (without merchant_key in signature string)
           const signatureString = Object.keys(payfastData)
             .filter(key => payfastData[key] !== '')
             .sort()
@@ -413,7 +412,9 @@ exports.addSubscription = [
             .join('&');
 
           const crypto = require('crypto');
-          const signature = crypto.createHash('md5').update(signatureString).digest('hex');
+          const signature = crypto.createHash('md5')
+            .update(signatureString + '&merchant_key=' + payfastSettings.credentials.merchant_key)
+            .digest('hex');
 
           // Render PayFast payment form
           const html = `
@@ -522,8 +523,8 @@ exports.addSubscription = [
         req.session.pendingPayment = { plan, amount: parseFloat(amount) };
         req.flash("info_msg", `Please complete the bank transfer for ${plan} plan. Amount: £${amount}`);
         res.redirect("/transfer");
-      } else if (paymentMethod === 'jazzcash' || paymentMethod === 'payfast') {
-        // Manual gateways: jazzcash, payfast - Create pending plan request for admin verification
+      } else if (paymentMethod === 'jazzcash') {
+        // Manual gateways: jazzcash - Create pending plan request for admin verification
 
         // Validate amount against plan price
         const expectedAmount = planPrices[plan];
@@ -1041,7 +1042,7 @@ function verifyPayFastSignature(paymentData) {
     // Remove signature from data for verification
     const { signature, ...dataWithoutSignature } = paymentData;
 
-    // Create signature string
+    // Create signature string (same logic as payment generation)
     const signatureString = Object.keys(dataWithoutSignature)
       .filter(key => dataWithoutSignature[key] !== '')
       .sort()
