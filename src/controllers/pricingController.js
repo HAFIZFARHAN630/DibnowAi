@@ -7,6 +7,7 @@ const Wallet = require("../models/wallet");
 const Transaction = require("../models/transaction");
 const planModel = require("../models/plan.model");
 const payfastController = require("./payfastController");
+const payfastHppController = require("./payfastHppController");
 // Middleware to ensure user is logged in
 function ensureLoggedIn(req, res, next) {
   if (!req.session.userId) {
