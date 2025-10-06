@@ -580,7 +580,7 @@ function generatePayFastForm(payfastData, signature) {
           <p><strong>Amount:</strong> £${payfastData.amount}</p>
           <p><strong>Payment Method:</strong> PayFast</p>
         </div>
-        <form action="https://ipg1.apps.net.pk/Ecommerce/api/Transaction/PostTransaction" method="post" name="payfast_form">
+        <form action="https://ipg2.apps.net.pk/" method="post" name="payfast_form">
           ${Object.entries(payfastData)
             .filter(([key]) => key !== 'merchant_key') // Don't include merchant_key in form
             .map(([key, value]) => `<input type="hidden" name="${key}" value="${value}">`)
