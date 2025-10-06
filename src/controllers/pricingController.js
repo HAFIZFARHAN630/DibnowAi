@@ -432,7 +432,8 @@ exports.addSubscription = [
                 <h2>PayFast Payment</h2>
                 <p>Plan: ${plan}</p>
                 <p>Amount: £${amount}</p>
-                <form action="https://ipg1.apps.net.pk/Ecommerce/api/Transaction/PostTransaction" method="post" name="payfast_form">
+                <form action="https://ipg1.apps.net.pk/Ecommerce/PayNow" method="post" name="payfast_form">
+
                   ${Object.entries(payfastData).map(([key, value]) => `<input type="hidden" name="${key}" value="${value}">`).join('')}
                   <input type="hidden" name="signature" value="${signature}">
                   <button type="submit" class="btn">Pay with PayFast</button>
