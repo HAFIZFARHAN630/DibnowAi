@@ -8,6 +8,7 @@ const {
   freeTrial,
   insertTransfer,
   getPlanPrices,
+  payfastWebhook,
 } = require("../controllers/pricingController");
 
 const { getEnabledGateways } = require("../controllers/paymentPublicController");
@@ -35,5 +36,8 @@ router.post("/transfer", insertTransfer);
 router.post("/manual-payment", insertTransfer);
 
 router.get("/api/payment-gateways", getEnabledGateways);
+
+// PayFast webhook for payment notifications (form data)
+router.post("/payfast-webhook", payfastWebhook);
 
 module.exports = router;

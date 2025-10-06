@@ -432,7 +432,7 @@ exports.addSubscription = [
                 <h2>PayFast Payment</h2>
                 <p>Plan: ${plan}</p>
                 <p>Amount: £${amount}</p>
-                <form action="https://ipg1.apps.net.pk/Ecommerce/api/Transaction" method="post" name="payfast_form">
+                <form action="${process.env.PAYFAST_API_URL || 'https://ipg1.apps.net.pk/Ecommerce/api/Transaction/PostTransaction'}" method="post" name="payfast_form">
 
                   ${Object.entries(payfastData).map(([key, value]) => `<input type="hidden" name="${key}" value="${value}">`).join('')}
                   <input type="hidden" name="signature" value="${signature}">
@@ -916,5 +916,150 @@ exports.insertTransfer = async (req, res) => {
     res.redirect("/pricing");
   }
 };
+
+// PayFast webhook handler for payment notifications
+exports.payfastWebhook = async (req, res) => {
+  try {
+    console.log("PayFast Webhook received:", req.body);
+
+    // PayFast sends form data, not JSON
+    const paymentData = req.body;
+
+    // Verify PayFast signature for security
+    if (!verifyPayFastSignature(paymentData)) {
+      console.error("Invalid PayFast signature");
+      return res.status(400).send("Invalid signature");
+    }
+
+    // Extract payment details
+    const mPaymentId = paymentData.m_payment_id;
+    const amount = parseFloat(paymentData.amount_gross);
+    const paymentStatus = paymentData.payment_status;
+
+    console.log("PayFast payment details:", {
+      mPaymentId,
+      amount,
+      paymentStatus
+    });
+
+    // Parse the plan and user from m_payment_id (format: plan_${plan}_${timestamp})
+    const paymentIdParts = mPaymentId.split('_');
+    if (paymentIdParts.length < 3 || paymentIdParts[0] !== 'plan') {
+      console.error("Invalid payment ID format:", mPaymentId);
+      return res.status(400).send("Invalid payment ID");
+    }
+
+    const plan = paymentIdParts[1];
+    const timestamp = paymentIdParts[2];
+    const userId = paymentData.custom_int1; // User ID from the payment form
+
+    if (!userId) {
+      console.error("No user ID in PayFast webhook");
+      return res.status(400).send("No user ID");
+    }
+
+    // Check if payment is successful
+    if (paymentStatus === 'COMPLETE') {
+      // Create payment record
+      const Payments = require("../models/payments");
+      const User = require("../models/user");
+      const Transaction = require("../models/transaction");
+
+      const startDate = new Date();
+      const expiryDate = new Date(startDate);
+      expiryDate.setDate(expiryDate.getDate() + 30); // 30 days expiry
+
+      const planPrices = {
+        BASIC: 20.88,
+        STANDARD: 35.88,
+        PREMIUM: 55.88,
+      };
+
+      const expectedAmount = planPrices[plan] || 0;
+
+      // Verify amount matches
+      if (Math.abs(amount - expectedAmount) > 0.01) {
+        console.error(`Amount mismatch: expected ${expectedAmount}, received ${amount}`);
+        return res.status(400).send("Amount mismatch");
+      }
+
+      const newPayment = new Payments({
+        user: userId,
+        plan,
+        amount,
+        gateway: 'payfast',
+        startDate,
+        expiryDate,
+        status: 'active'
+      });
+
+      await newPayment.save();
+
+      // Update user plan
+      await User.findByIdAndUpdate(userId, { plan_name: plan });
+
+      // Update plan limits
+      await subscribePlan(userId, plan);
+
+      // Create transaction record
+      const newTransaction = new Transaction({
+        user: userId,
+        type: 'payment',
+        amount,
+        status: 'success'
+      });
+      await newTransaction.save();
+
+      // Create notification
+      if (req.app.locals.notificationService) {
+        const user = await User.findById(userId).select('first_name');
+        if (user) {
+          await req.app.locals.notificationService.createNotification(
+            userId,
+            user.first_name,
+            "Buy Plan"
+          );
+        }
+      }
+
+      console.log(`PayFast payment successful for user ${userId}, plan ${plan}`);
+    } else {
+      console.log(`PayFast payment status: ${paymentStatus} for user ${userId}`);
+    }
+
+    // Always respond with 200 OK to PayFast
+    res.status(200).send("OK");
+  } catch (error) {
+    console.error("PayFast webhook error:", error.message);
+    res.status(500).send("Internal server error");
+  }
+};
+
+// Helper function to verify PayFast signature
+function verifyPayFastSignature(paymentData) {
+  try {
+    // Remove signature from data for verification
+    const { signature, ...dataWithoutSignature } = paymentData;
+
+    // Create signature string
+    const signatureString = Object.keys(dataWithoutSignature)
+      .filter(key => dataWithoutSignature[key] !== '')
+      .sort()
+      .map(key => `${key}=${encodeURIComponent(dataWithoutSignature[key]).replace(/%20/g, '+')}`)
+      .join('&');
+
+    // Generate expected signature using PayFast merchant key from environment
+    const crypto = require('crypto');
+    const merchantKey = process.env.PAYFAST_SECURED_KEY;
+    const expectedSignature = crypto.createHash('md5')
+      .update(signatureString + '&merchant_key=' + merchantKey)
+      .digest('hex');
+
+    return signature === expectedSignature;
+  } catch (error) {
+    console.error("Signature verification error:", error.message);
+    return false;
+  }
+}
 
 
