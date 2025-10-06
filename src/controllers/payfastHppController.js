@@ -73,6 +73,16 @@ exports.initiatePayment = [
         });
       }
 
+      // Validate amount against plan prices for security
+      const validAmounts = [20.88, 35.88, 55.88]; // BASIC, STANDARD, PREMIUM
+      if (!validAmounts.includes(paymentAmount)) {
+        console.error("PayFast HPP: Invalid amount for plan", { amount: paymentAmount, validAmounts });
+        return res.status(400).json({
+          success: false,
+          message: "Invalid payment amount for selected plan"
+        });
+      }
+
       // Get user details
       const user = await User.findById(userId).select('first_name last_name email');
       if (!user) {
@@ -118,10 +128,15 @@ exports.initiatePayment = [
             }
           };
         } else {
-          console.error("PayFast HPP: Gateway not configured");
+          console.error("PayFast HPP: Gateway not configured", {
+            merchantIdExists: !!process.env.PAYFAST_MERCHANT_ID,
+            merchantKeyExists: !!process.env.PAYFAST_MERCHANT_KEY,
+            merchantIdLength: process.env.PAYFAST_MERCHANT_ID?.length || 0,
+            merchantKeyLength: process.env.PAYFAST_MERCHANT_KEY?.length || 0
+          });
           return res.status(400).json({
             success: false,
-            message: "PayFast gateway not configured."
+            message: "PayFast gateway not configured. Please check PAYFAST_MERCHANT_ID and PAYFAST_MERCHANT_KEY in environment variables."
           });
         }
       }
@@ -166,6 +181,7 @@ exports.initiatePayment = [
         mPaymentId,
         amount: paymentAmount,
         itemName: item_name,
+        plan: item_name.replace(' Plan Subscription', ''), // Extract plan from item_name
         redirectUrl: redirectUrl.substring(0, 100) + '...' // Log partial URL for security
       });
 
