@@ -390,9 +390,9 @@ exports.addSubscription = [
           // Create PayFast payment form data (without merchant_key for signature)
           const payfastData = {
             merchant_id: payfastSettings.credentials.merchant_id,
-            return_url: `${process.env.APP_BASE_URL}/success?plan=${plan}&gateway=payfast`,
-            cancel_url: `${process.env.APP_BASE_URL}/cancel`,
-            notify_url: `${process.env.APP_BASE_URL}/payfast-webhook`,
+            return_url: `https://apps.dibnow.com/success?plan=${plan}&gateway=payfast`,
+            cancel_url: `https://apps.dibnow.com/cancel`,
+            notify_url: `https://apps.dibnow.com/payfast-webhook`,
             name_first: 'Customer',
             name_last: 'Name',
             email_address: 'customer@example.com',
@@ -433,7 +433,7 @@ exports.addSubscription = [
                 <h2>PayFast Payment</h2>
                 <p>Plan: ${plan}</p>
                 <p>Amount: £${amount}</p>
-                <form action="${process.env.PAYFAST_API_URL || 'https://ipg1.apps.net.pk/Ecommerce/Transaction/PostTransaction'}" method="post" name="payfast_form">
+                <form action="https://ipg1.apps.net.pk/Ecommerce/api/Transaction/PostTransaction" method="post" name="payfast_form">
 
                   ${Object.entries(payfastData).map(([key, value]) => `<input type="hidden" name="${key}" value="${value}">`).join('')}
                   <input type="hidden" name="signature" value="${signature}">
