@@ -260,13 +260,13 @@
 
     .sidebar .navbar .navbar-nav .nav-link:hover{
         background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);
-        color: white;
+        
     }
     
 
     
     .sidebar .navbar .navbar-nav .nav-link.active {
-        color: #ffffff;
+        color: #ffffff !important;
         background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);
         font-weight: 600;
         border-left-color: #3b82f6;
