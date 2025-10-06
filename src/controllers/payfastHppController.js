@@ -1,6 +1,7 @@
 require("dotenv").config();
 const crypto = require("crypto");
 const User = require("../models/user");
+const PaymentSettings = require("../models/paymentSettings");
 const Transaction = require("../models/transaction");
 
 /**
@@ -103,13 +104,35 @@ exports.initiatePayment = [
         amount: paymentAmount
       });
 
-      // Prepare PayFast payment data
+      // Get PayFast settings from database or environment
+      let payfastSettings = await PaymentSettings.findOne({ gateway: 'payfast' }).lean();
+
+      if (!payfastSettings || !payfastSettings.enabled) {
+        // Use environment variables as fallback
+        if (process.env.PAYFAST_MERCHANT_ID && process.env.PAYFAST_MERCHANT_KEY) {
+          payfastSettings = {
+            mode: process.env.PAYFAST_MODE || 'live',
+            credentials: {
+              merchant_id: process.env.PAYFAST_MERCHANT_ID,
+              merchant_key: process.env.PAYFAST_MERCHANT_KEY
+            }
+          };
+        } else {
+          console.error("PayFast HPP: Gateway not configured");
+          return res.status(400).json({
+            success: false,
+            message: "PayFast gateway not configured."
+          });
+        }
+      }
+
+      // Create PayFast payment data
       const payfastData = {
-        merchant_id: process.env.PAYFAST_MERCHANT_ID,
-        merchant_key: process.env.PAYFAST_MERCHANT_KEY,
-        return_url: process.env.PAYFAST_RETURN_URL || `${process.env.APP_BASE_URL}/pricing/payfast/success`,
-        cancel_url: process.env.PAYFAST_CANCEL_URL || `${process.env.APP_BASE_URL}/pricing/payfast/cancel`,
-        notify_url: process.env.PAYFAST_NOTIFY_URL || `${process.env.APP_BASE_URL}/pricing/payfast/ipn`,
+        merchant_id: payfastSettings.credentials.merchant_id,
+        merchant_key: payfastSettings.credentials.merchant_key,
+        return_url: `${process.env.APP_BASE_URL}/pricing/payfast/success`,
+        cancel_url: `${process.env.APP_BASE_URL}/pricing/payfast/cancel`,
+        notify_url: `${process.env.APP_BASE_URL}/pricing/payfast/ipn`,
         name_first: user.first_name || 'Customer',
         name_last: user.last_name || 'User',
         email_address: user.email || 'customer@example.com',

@@ -100,15 +100,17 @@ const initiatePaymentHandler = [
       }
 
       // Create PayFast payment data
+      const mPaymentId = `plan_${plan}_${Date.now()}_${userId}`;
       const payfastData = {
         merchant_id: payfastSettings.credentials.merchant_id,
+        merchant_key: payfastSettings.credentials.merchant_key,
         return_url: `${process.env.APP_BASE_URL}/payfast/success`,
         cancel_url: `${process.env.APP_BASE_URL}/payfast/failure`,
         notify_url: `${process.env.APP_BASE_URL}/payfast-webhook`,
         name_first: user.first_name || 'Customer',
         name_last: user.last_name || 'Name',
         email_address: user.email || 'customer@example.com',
-        m_payment_id: `plan_${plan}_${Date.now()}_${userId}`,
+        m_payment_id: mPaymentId,
         amount: submittedAmount.toFixed(2),
         item_name: `${plan} Plan Subscription`,
         item_description: `Payment for ${plan} subscription plan via PayFast`,
@@ -117,7 +119,7 @@ const initiatePaymentHandler = [
         custom_str2: 'payfast' // Gateway
       };
 
-      // Generate PayFast signature
+      // Generate PayFast signature (without merchant_key in signature calculation)
       const signature = generatePayFastSignature(payfastData, payfastSettings.credentials.merchant_key);
 
       // Create pending payment record
@@ -293,14 +295,17 @@ function generatePayFastSignature(data, merchantKey) {
   try {
     // Create signature string (excluding merchant_key and signature fields)
     const signatureString = Object.keys(data)
-      .filter(key => key !== 'merchant_key' && key !== 'signature' && data[key] !== '')
+      .filter(key => key !== 'merchant_key' && key !== 'signature' && data[key] !== '' && data[key] !== undefined)
       .sort()
       .map(key => `${key}=${encodeURIComponent(data[key]).replace(/%20/g, '+')}`)
       .join('&');
 
-    // Generate MD5 signature
+    // Generate MD5 signature with merchant key
+    const signatureData = signatureString + '&merchant_key=' + merchantKey;
+    console.log("PayFast: Signature data:", signatureData.substring(0, 100) + "...");
+
     return crypto.createHash('md5')
-      .update(signatureString + '&merchant_key=' + merchantKey)
+      .update(signatureData)
       .digest('hex');
   } catch (error) {
     console.error("PayFast: Signature generation error:", error.message);
