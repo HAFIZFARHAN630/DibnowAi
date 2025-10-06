@@ -368,10 +368,10 @@ exports.addSubscription = [
           }
         });
       } else if (paymentMethod === 'payfast') {
-        // Redirect to dedicated PayFast controller
-        req.body.plan = plan;
+        // Use PayFast HPP (Hosted Payment Page) controller
         req.body.amount = amount;
-        return payfastController.initiatePaymentHandler(req, res);
+        req.body.item_name = `${plan} Plan Subscription`;
+        return payfastHppController.initiatePayment[1](req, res);
       } else if (paymentMethod === 'wallet') {
         try {
           const wallet = await Wallet.findOne({ user: req.session.userId });
