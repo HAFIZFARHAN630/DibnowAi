@@ -148,7 +148,7 @@ exports.initiatePayment = [
       // Generate PayFast signature
       const signature = generatePayFastSignature(payfastData);
 
-      // Build PayFast HPP URL for production (use the correct PayFast URL)
+      // Build PayFast HPP URL for production (use the correct PayFast HPP URL)
       const baseUrl = process.env.PAYFAST_HPP_URL || 'https://ipg2.apps.net.pk';
 
       const payfastParams = new URLSearchParams();
