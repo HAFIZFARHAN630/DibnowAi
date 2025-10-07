@@ -7,7 +7,7 @@ const Wallet = require("../models/wallet");
 const Transaction = require("../models/transaction");
 const planModel = require("../models/plan.model");
 const payfastController = require("./payfastController");
-const payfastHppController = require("./payfastHppController");
+// Removed: const payfastHppController = require("./payfastHppController");
 // Middleware to ensure user is logged in
 function ensureLoggedIn(req, res, next) {
   if (!req.session.userId) {
@@ -369,10 +369,10 @@ exports.addSubscription = [
           }
         });
       } else if (paymentMethod === 'payfast') {
-        // Use PayFast HPP (Hosted Payment Page) controller
+        // Use PayFast Token-based controller (NEW APPROACH)
         req.body.amount = amount;
-        req.body.item_name = `${plan} Plan Subscription`;
-        return payfastHppController.initiatePayment[1](req, res);
+        req.body.plan = plan;
+        return payfastController.initiateTokenPayment[1](req, res);
       } else if (paymentMethod === 'wallet') {
         try {
           const wallet = await Wallet.findOne({ user: req.session.userId });

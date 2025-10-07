@@ -12,7 +12,7 @@ const {
 } = require("../controllers/pricingController");
 
 const payfastController = require("../controllers/payfastController");
-const payfastHppController = require("../controllers/payfastHppController");
+// Removed: const payfastHppController = require("../controllers/payfastHppController");
 
 const { getEnabledGateways } = require("../controllers/paymentPublicController");
 
@@ -44,17 +44,7 @@ router.get("/api/payment-gateways", getEnabledGateways);
 router.post("/payfast/initiate-token", payfastController.initiateTokenPayment); // Initiate PayFast token payment
 router.get("/payfast/test-connection", payfastController.testPayFastConnection); // Test PayFast API connectivity
 
-// PayFast HPP (Hosted Payment Page) routes (LEGACY)
-router.post("/payfast/initiate", payfastHppController.initiatePayment); // Initiate PayFast HPP payment
-router.post("/payfast/ipn", payfastHppController.handleIPN); // PayFast IPN for payment notifications
-router.get("/payfast/success", payfastHppController.handleSuccess); // PayFast success return URL
-router.get("/payfast/cancel", payfastHppController.handleCancel); // PayFast cancel return URL
 
-// Legacy PayFast routes (keeping for backward compatibility)
-router.post("/payfast/initiate-legacy", payfastController.initiatePayment); // Legacy PayFast payment
-router.post("/payfast-webhook", payfastController.handleWebhook); // Legacy PayFast webhook
-router.get("/payfast/success-legacy", payfastController.handlePaymentResult); // Legacy PayFast success
-router.get("/payfast/failure-legacy", payfastController.handlePaymentResult); // Legacy PayFast failure
 
 
 module.exports = router;

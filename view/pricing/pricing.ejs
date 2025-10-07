@@ -417,8 +417,13 @@
                     <nav aria-label="breadcrumb" class="ms-auto">
                       <ol class="breadcrumb center-on-small">
                         <button type="button" class="btn btn-primary btn-3d" data-bs-toggle="modal" data-bs-target="#transferModal">
-                          Transfer Money
-                      </button>
+                            Transfer Money
+                        </button>
+ 
+                        <!-- Debug button for PayFast testing -->
+                        <button type="button" class="btn btn-warning btn-3d" onclick="testPayFast()" style="margin-left: 10px;">
+                            🧪 Test PayFast
+                        </button>
 
                       <!-- Modal -->
                       <div class="modal fade" id="transferModal" tabindex="-1" aria-labelledby="transferModalLabel" aria-hidden="true">
@@ -847,6 +852,43 @@
                 console.log(`Comparison: ${enteredAmount} === ${expectedAmount}? ${enteredAmount === expectedAmount}`);
             }
         };
+
+        // Debug function to test PayFast integration
+        window.testPayFast = function() {
+            console.log('🧪 === PAYFAST DEBUG INFO ===');
+            console.log('Current Plan:', currentPlan);
+            console.log('Plan Prices:', planPrices);
+
+            if (!currentPlan || !planPrices[currentPlan]) {
+                console.error('❌ No plan selected or plan prices not loaded');
+                alert('Please select a plan first');
+                return;
+            }
+
+            console.log('🚀 Testing PayFast integration...');
+            fetch('/payfast/initiate-token', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    plan: currentPlan,
+                    amount: planPrices[currentPlan]
+                })
+            })
+            .then(response => {
+                console.log('📡 Status:', response.status);
+                console.log('📡 Content-Type:', response.headers.get('content-type'));
+                return response.text();
+            })
+            .then(html => {
+                console.log('✅ HTML length:', html.length);
+                console.log('📄 Preview:', html.substring(0, 200) + '...');
+                alert('✅ PayFast test successful! Check console for details.');
+            })
+            .catch(error => {
+                console.error('❌ Test failed:', error);
+                alert('❌ Test failed: ' + error.message);
+            });
+        };
     });
 
     // Function to show auto-fill display
@@ -1196,7 +1238,7 @@
                 document.getElementById("planForm").submit();
                 return;
             } else if (paymentMethod === 'payfast') {
-                // Handle PayFast payment with direct redirect approach
+                // Handle PayFast payment with HTML form approach
                 try {
                     console.log('🚀 Initiating PayFast payment for plan:', plan);
 
@@ -1218,38 +1260,35 @@
                         })
                     });
 
-                    const data = await response.json();
+                    console.log('📡 Response status:', response.status);
+                    console.log('📡 Response type:', response.headers.get('content-type'));
 
-                    if (data.success && data.redirectUrl) {
-                        console.log('✅ PayFast payment initiated successfully');
-                        console.log('🔗 Redirecting to:', data.redirectUrl);
-
-                        // Show redirecting message
-                        confirmBtn.value = "Redirecting...";
-
-                        // Use window.location.href for direct redirect to PayFast
-                        setTimeout(() => {
-                            console.log('🚀 Performing direct redirect to PayFast portal');
-                            window.location.href = data.redirectUrl;
-                        }, 500);
-
-                    } else {
-                        console.error('❌ PayFast initiation failed:', data.message);
-                        alert('Failed to initiate PayFast payment: ' + (data.message || 'Unknown error'));
-
-                        // Reset button
-                        confirmBtn.value = originalText;
-                        confirmBtn.disabled = false;
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
                     }
+
+                    // ✅ CORRECT: Handle HTML response (NOT JSON!)
+                    const html = await response.text();
+                    console.log('✅ HTML received, length:', html.length);
+
+                    if (html.length < 1000) {
+                        throw new Error('Invalid response: HTML too short');
+                    }
+
+                    // ✅ Replace page content with PayFast form
+                    document.body.innerHTML = html;
+                    console.log('✅ PayFast form displayed successfully');
 
                 } catch (error) {
                     console.error('❌ Error initiating PayFast payment:', error);
-                    alert('Error initiating PayFast payment. Please try again.');
+                    alert('Error initiating PayFast payment: ' + error.message + '\n\nPlease check console for details.');
 
                     // Reset button
                     const confirmBtn = document.querySelector(".confirm-btn");
-                    confirmBtn.value = originalText;
-                    confirmBtn.disabled = false;
+                    if (confirmBtn) {
+                        confirmBtn.value = originalText;
+                        confirmBtn.disabled = false;
+                    }
                 }
 
             } else {
@@ -1268,5 +1307,55 @@
  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
  <script src="https://cdn.jsdelivr.net/npm/tempusdominus-bootstrap-4@5.39.0/build/js/tempusdominus-bootstrap-4.min.js"></script>
 <!-- Template Javascript -->
- <script src="js/main.js"></script>
+<script src="js/main.js"></script>
+
+<!-- PayFast Debug Panel (Temporary) -->
+<div id="payfast-debug" style="position: fixed; top: 10px; right: 10px; background: #000; color: #0f0; padding: 10px; font-family: monospace; font-size: 12px; border: 2px solid #0f0; z-index: 9999; max-width: 400px; max-height: 300px; overflow: auto;">
+    <div><strong>🧪 PAYFAST DEBUG PANEL</strong></div>
+    <div>Status: <span id="debug-status">Ready</span></div>
+    <div>Plan: <span id="debug-plan">None</span></div>
+    <div>Amount: <span id="debug-amount">None</span></div>
+    <div>Response: <span id="debug-response">None</span></div>
+    <button onclick="runPayFastTest()" style="margin-top: 5px; background: #0f0; color: #000; border: none; padding: 5px 10px; cursor: pointer;">Run Test</button>
+    <button onclick="clearDebug()" style="margin-top: 5px; background: #f00; color: #fff; border: none; padding: 5px 10px; cursor: pointer;">Clear</button>
+</div>
+
+<script>
+    function updateDebug(status, plan, amount, response) {
+        document.getElementById('debug-status').textContent = status;
+        document.getElementById('debug-plan').textContent = plan || 'None';
+        document.getElementById('debug-amount').textContent = amount || 'None';
+        document.getElementById('debug-response').textContent = response || 'None';
+    }
+
+    function clearDebug() {
+        updateDebug('Ready', 'None', 'None', 'None');
+    }
+
+    function runPayFastTest() {
+        updateDebug('Testing...', 'BASIC', '20.88', 'Starting test...');
+
+        fetch('/pricing/payfast/initiate-token', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ plan: 'BASIC', amount: '20.88' })
+        })
+        .then(response => {
+            updateDebug('Response received', 'BASIC', '20.88', 'Status: ' + response.status + ', Type: ' + response.headers.get('content-type'));
+            return response.text();
+        })
+        .then(html => {
+            updateDebug('HTML received', 'BASIC', '20.88', 'Length: ' + html.length + ' chars');
+        })
+        .catch(error => {
+            updateDebug('ERROR', 'BASIC', '20.88', error.message);
+        });
+    }
+
+    // Auto-clear debug panel after 30 seconds
+    setTimeout(() => {
+        const panel = document.getElementById('payfast-debug');
+        if (panel) panel.remove();
+    }, 30000);
+</script>
 </html>
