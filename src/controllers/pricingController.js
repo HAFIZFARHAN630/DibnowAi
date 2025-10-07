@@ -306,7 +306,7 @@ exports.addSubscription = [
               price_data: {
                 currency: "gbp",
                 product_data: { name: plan },
-                unit_amount: Math.round(parseFloat(amount) * 100),
+                unit_amount: Math.round(parseFloat(planPrices[plan]) * 100),
               },
               quantity: 1,
             },
@@ -338,13 +338,13 @@ exports.addSubscription = [
                   {
                     name: plan,
                     sku: plan,
-                    price: amount,
+                    price: planPrices[plan],
                     currency: "GBP",
                     quantity: 1,
                   },
                 ],
               },
-              amount: { currency: "GBP", total: amount },
+              amount: { currency: "GBP", total: planPrices[plan] },
               description: `Payment for the ${plan} plan.`,
             },
           ],
@@ -370,7 +370,7 @@ exports.addSubscription = [
         });
       } else if (paymentMethod === 'payfast') {
         // Use PayFast controller
-        req.body.amount = amount;
+        req.body.amount = planPrices[plan];
         req.body.plan = plan;
         return payfastController.initiatePayment(req, res);
       } else if (paymentMethod === 'wallet') {
