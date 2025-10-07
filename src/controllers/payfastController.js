@@ -755,9 +755,9 @@ exports.initiatePaymentHandler = initiatePaymentHandler[1];
 exports.handlePaymentResultHandler = handlePaymentResultHandler[1];
 
 /**
- * NEW TOKEN-BASED PAYFAST IMPLEMENTATION
- * Initiate PayFast payment using token-based approach
- */
+  * NEW TOKEN-BASED PAYFAST IMPLEMENTATION
+  * Initiate PayFast payment using token-based approach
+  */
 exports.initiateTokenPayment = [
   ensureLoggedIn,
   async (req, res) => {
@@ -814,22 +814,21 @@ exports.initiateTokenPayment = [
       }
 
       // Generate unique basket ID
-      const basketId = `ITEM-${generateRandomString(4)}`;
-      const currencyCode = "GBP";
+      const basketId = `CART-NO-${Math.floor(Math.random() * Math.floor(100))}`;
       const transAmount = submittedAmount.toFixed(2);
-      const orderDate = new Date().toISOString().slice(0, 19).replace("T", " ");
+      const orderDate = new Date().toISOString().slice(0, 10); // Format: 2020-05-25
 
       console.log("PayFast Token: Initiating payment", {
         userId,
         plan,
         amount: submittedAmount,
         basketId,
-        currencyCode,
-        transAmount
+        transAmount,
+        orderDate
       });
 
-      // Get PayFast access token from ipg1
-      const tokenData = await getPayFastAccessToken(basketId, transAmount, currencyCode);
+      // Get PayFast access token using the correct API endpoint
+      const tokenData = await getPayFastAccessToken(basketId, transAmount);
 
       if (!tokenData.success) {
         console.error("PayFast Token: Failed to get access token", tokenData.message);
@@ -872,22 +871,23 @@ exports.initiateTokenPayment = [
       // Store payment ID in session for tracking
       req.session.pendingPayFastPayment = newPayment._id;
 
-      // Build the complete PayFast redirect URL for direct browser redirect
-      // Use the correct PayFast IPG2 payment endpoint
-      const baseUrl = 'https://ipg2.apps.net.pk/Ecommerce/Pay';
+      // Validate required data before generating form
+      if (!tokenData.token || !basketId || !transAmount || !orderDate || !user) {
+        console.error("PayFast Token: Missing required data for form generation", {
+          hasToken: !!tokenData.token,
+          basketId,
+          transAmount,
+          orderDate,
+          hasUser: !!user
+        });
+        return res.status(400).json({
+          success: false,
+          message: "Missing required data to generate payment form"
+        });
+      }
 
-      const payfastParams = new URLSearchParams();
-      payfastParams.append('MERCHANT_ID', process.env.PAYFAST_MERCHANT_ID);
-      payfastParams.append('SECURED_KEY', process.env.PAYFAST_SECURED_KEY || process.env.PAYFAST_MERCHANT_KEY);
-      payfastParams.append('TOKEN', tokenData.token);
-      payfastParams.append('BASKET_ID', basketId);
-      payfastParams.append('TXNAMT', transAmount);
-      payfastParams.append('CURRENCY_CODE', currencyCode);
-      payfastParams.append('SUCCESS_URL', `${process.env.APP_BASE_URL}/pricing/payfast/success`);
-      payfastParams.append('FAILURE_URL', `${process.env.APP_BASE_URL}/pricing/payfast/cancel`);
-      payfastParams.append('ORDER_DATE', orderDate);
-
-      const redirectUrl = `${baseUrl}?${payfastParams.toString()}`;
+      // Generate HTML form for PayFast payment (matches user's working example)
+      const html = generatePayFastTokenForm(tokenData.token, basketId, transAmount, orderDate, user);
 
       console.log("PayFast Token: Payment initiated successfully", {
         userId,
@@ -895,30 +895,35 @@ exports.initiateTokenPayment = [
         amount: submittedAmount,
         basketId,
         token: tokenData.token.substring(0, 20) + "...",
-        redirectUrl: redirectUrl.substring(0, 100) + "..."
+        htmlLength: html.length,
+        orderDate: orderDate,
+        userEmail: user.email
       });
 
-      // Return redirect URL for frontend to handle
-      res.json({
-        success: true,
-        redirectUrl: redirectUrl,
-        message: "Redirect to PayFast payment portal"
-      });
+      // Set proper content type for HTML response
+      res.setHeader('Content-Type', 'text/html');
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+
+      // Return HTML form that will be rendered by the frontend
+      res.send(html);
 
     } catch (error) {
       console.error("PayFast Token: Payment initiation error:", error.message);
+      console.error("PayFast Token: Full error object:", error);
       res.status(500).json({
         success: false,
-        message: "Failed to initiate PayFast payment. Please try again."
+        message: "Failed to initiate PayFast payment. Please try again.",
+        error: error.message,
+        stack: error.stack
       });
     }
   },
 ];
 
 /**
- * Get PayFast access token from ipg1
- */
-async function getPayFastAccessToken(basketId, transAmount, currencyCode) {
+  * Get PayFast access token from ipg1
+  */
+async function getPayFastAccessToken(basketId, transAmount) {
   try {
     const merchantId = process.env.PAYFAST_MERCHANT_ID;
     const securedKey = process.env.PAYFAST_SECURED_KEY || process.env.PAYFAST_MERCHANT_KEY;
@@ -930,69 +935,37 @@ async function getPayFastAccessToken(basketId, transAmount, currencyCode) {
       };
     }
 
-    // Use the correct PayFast Pakistan API endpoint
-    const tokenApiUrl = `https://ipg1.apps.net.pk/Ecommerce/api/Transaction/GetAccessToken`;
+    // Use the correct PayFast Pakistan API endpoint for live environment
+    const tokenUrl = `https://ipg1.apps.net.pk/Ecommerce/api/Transaction/GetAccessToken`;
 
     console.log("PayFast Token: Requesting access token", {
       merchantId,
       basketId,
       transAmount,
-      currencyCode,
-      tokenUrl: tokenApiUrl
+      tokenUrl: tokenUrl
     });
 
-    // Try multiple approaches for the request
-    let response;
+    // Send POST request with required parameters in form data
+    const formData = new URLSearchParams();
+    formData.append('MERCHANT_ID', merchantId);
+    formData.append('SECURED_KEY', securedKey);
+    formData.append('BASKET_ID', basketId);
+    formData.append('TXNAMT', transAmount);
+    formData.append('CURRENCY_CODE', 'GBP');
 
-    try {
-      // Approach 1: Form data format
-      const formData = new URLSearchParams();
-      formData.append('MERCHANT_ID', merchantId);
-      formData.append('SECURED_KEY', securedKey);
-      formData.append('BASKET_ID', basketId);
-      formData.append('TXNAMT', transAmount);
-      formData.append('CURRENCY_CODE', currencyCode);
-
-      response = await axios.post(
-        tokenApiUrl,
-        formData,
-        {
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-            "User-Agent": "Dibnow-PayFast/1.0"
-          },
-          timeout: 30000,
-          maxRedirects: 5
-        }
-      );
-    } catch (formError) {
-      console.log("PayFast Token: Form data approach failed, trying JSON approach");
-
-      // Approach 2: JSON format (alternative)
-      response = await axios.post(
-        tokenApiUrl,
-        {
-          MERCHANT_ID: merchantId,
-          SECURED_KEY: securedKey,
-          BASKET_ID: basketId,
-          TXNAMT: transAmount,
-          CURRENCY_CODE: currencyCode,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "User-Agent": "Dibnow-PayFast/1.0"
-          },
-          timeout: 30000,
-          maxRedirects: 5
-        }
-      );
-    }
+    const response = await axios.post(tokenUrl, formData, {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "Dibnow-PayFast/1.0"
+      },
+      timeout: 30000,
+      maxRedirects: 5
+    });
 
     console.log("PayFast Token: Token response status", response.status);
     console.log("PayFast Token: Token response data", response.data);
 
-    const token = response.data?.ACCESS_TOKEN || response.data?.access_token;
+    const token = response.data?.ACCESS_TOKEN;
 
     if (!token) {
       console.error("PayFast Token: No access token in response", response.data);
@@ -1006,8 +979,7 @@ async function getPayFastAccessToken(basketId, transAmount, currencyCode) {
       success: true,
       token: token,
       basketId: basketId,
-      amount: transAmount,
-      currency: currencyCode
+      amount: transAmount
     };
 
   } catch (error) {
@@ -1029,7 +1001,7 @@ async function getPayFastAccessToken(basketId, transAmount, currencyCode) {
 
       return {
         success: false,
-        message: `PayFast API error (${error.response.status}): ${error.response.data?.message || error.message}`
+        message: `PayFast API error (${error.response.status}): ${error.response.data?.errorDescription || error.response.data?.message || error.message}`
       };
     }
 
@@ -1057,6 +1029,146 @@ function generateRandomString(length) {
     result += chars.charAt(Math.floor(Math.random() * chars.length));
   }
   return result;
+}
+
+/**
+ * Generate PayFast token payment form HTML (matches user's working example)
+ */
+function generatePayFastTokenForm(token, basketId, transAmount, orderDate, user) {
+  const merchantId = process.env.PAYFAST_MERCHANT_ID;
+  const securedKey = process.env.PAYFAST_SECURED_KEY || process.env.PAYFAST_MERCHANT_KEY;
+
+  return `<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <title>PayFast WebCheckout Integration Demo</title>
+</head>
+<body>
+    <div class="container">
+        <h2>PayFast WebCheckout Integration Demo</h2>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="card-header">
+                    PayFast Web Checkout - Token Based
+                </div>
+                <form method="post" action="https://ipg2.apps.net.pk/Ecommerce/api/Transaction/PostTransaction">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Merchant ID</label>
+                                <input class="form-control" type="text" name="MERCHANT_ID" value="${merchantId}">
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Merchant Name</label>
+                                <input class="form-control" type="text" name="MERCHANT_NAME" value="Dibnow">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Token</label>
+                                <input class="form-control" type="text" name="TOKEN" value="${token}" data-toggle="tooltip" role="tooltip" title="Temporary Token">
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Proccode</label>
+                                <input readonly="readonly" class="form-control" type="text" name="PROCCODE" value="00">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Amount</label>
+                                <input class="form-control" type="text" name="TXNAMT" value="${transAmount}">
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Customer Mobile Number</label>
+                                <input class="form-control" type="text" name="CUSTOMER_MOBILE_NO" value="+92300000000">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Customer Email</label>
+                                <input class="form-control" type="text" name="CUSTOMER_EMAIL_ADDRESS" value="${user.email || 'email@example.com'}">
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Signature</label>
+                                <input class="form-control" type="text" name="SIGNATURE" value="RANDOMSTRINGVALUE">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Version</label>
+                                <input class="form-control" type="text" name="VERSION" value="MY_VER_1.0">
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Transaction Description</label>
+                                <input class="form-control" type="text" name="TXNDESC" value="Dibnow Payment">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Success CallBack URL</label>
+                                <input class="form-control" type="text" name="SUCCESS_URL" value="${process.env.APP_BASE_URL}/pricing/payfast/success">
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Failure CallBack URL</label>
+                                <input class="form-control" type="text" name="FAILURE_URL" value="${process.env.APP_BASE_URL}/pricing/payfast/cancel">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Basket ID/Order ID</label>
+                                <input class="form-control" type="text" name="BASKET_ID" value="${basketId}">
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Order Date</label>
+                                <input class="form-control" type="text" name="ORDER_DATE" value="${orderDate}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Checkout URL</label>
+                        <input class="form-control" type="text" name="CHECKOUT_URL" value="${process.env.APP_BASE_URL}/pricing/payfast/backend/confirm">
+                    </div>
+                    <div class="form-group">
+                        <input class="btn btn-primary" type="submit" value="PAY NOW">
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    </div>
+</body>
+</html>`;
 }
 
 module.exports = exports;
