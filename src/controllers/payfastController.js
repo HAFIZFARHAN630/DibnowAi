@@ -878,6 +878,7 @@ exports.initiateTokenPayment = [
 
       const payfastParams = new URLSearchParams();
       payfastParams.append('MERCHANT_ID', process.env.PAYFAST_MERCHANT_ID);
+      payfastParams.append('SECURED_KEY', process.env.PAYFAST_SECURED_KEY || process.env.PAYFAST_MERCHANT_KEY);
       payfastParams.append('TOKEN', tokenData.token);
       payfastParams.append('BASKET_ID', basketId);
       payfastParams.append('TXNAMT', transAmount);
