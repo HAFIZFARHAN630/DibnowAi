@@ -1249,7 +1249,7 @@
                     confirmBtn.disabled = true;
 
                     // Make AJAX call to PayFast initiation endpoint
-                    const response = await fetch('/payfast/initiate-token', {
+                    const response = await fetch('/pricing/payfast/initiate-token', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

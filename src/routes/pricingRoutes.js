@@ -40,9 +40,12 @@ router.post("/manual-payment", insertTransfer);
 
 router.get("/api/payment-gateways", getEnabledGateways);
 
-// PayFast Token-based Payment routes (NEW APPROACH)
-router.post("/payfast/initiate-token", payfastController.initiateTokenPayment); // Initiate PayFast token payment
-router.get("/payfast/test-connection", payfastController.testPayFastConnection); // Test PayFast API connectivity
+// PayFast OAuth2 Payment routes
+router.post("/payfast/initiate", payfastController.initiatePayment);
+router.post("/payfast/initiate-token", payfastController.initiatePayment);
+router.post("/pricing/payfast/initiate-token", payfastController.initiatePayment);
+router.get("/payfast/test", payfastController.testPayFastConnection);
+router.post("/payfast/webhook", payfastController.handleWebhook);
 
 
 

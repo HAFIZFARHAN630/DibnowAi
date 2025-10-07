@@ -369,10 +369,10 @@ exports.addSubscription = [
           }
         });
       } else if (paymentMethod === 'payfast') {
-        // Use PayFast Token-based controller (NEW APPROACH)
+        // Use PayFast controller
         req.body.amount = amount;
         req.body.plan = plan;
-        return payfastController.initiateTokenPayment[1](req, res);
+        return payfastController.initiatePayment(req, res);
       } else if (paymentMethod === 'wallet') {
         try {
           const wallet = await Wallet.findOne({ user: req.session.userId });
