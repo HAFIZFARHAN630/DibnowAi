@@ -1196,45 +1196,42 @@
                 document.getElementById("planForm").submit();
                 return;
             } else if (paymentMethod === 'payfast') {
-                // Handle PayFast payment with AJAX call
+                // Handle PayFast payment with token-based approach
                 try {
-                    console.log('🚀 Initiating PayFast payment for plan:', plan);
+                    console.log('🚀 Initiating PayFast token payment for plan:', plan);
 
                     // Show loading state
                     const confirmBtn = document.querySelector(".confirm-btn");
                     const originalText = confirmBtn.value;
-                    confirmBtn.value = "Processing...";
+                    confirmBtn.value = "Getting Token...";
                     confirmBtn.disabled = true;
 
-                    // Make AJAX call to PayFast initiation endpoint
-                    const response = await fetch('/payfast/initiate', {
+                    // Make AJAX call to PayFast token initiation endpoint
+                    const response = await fetch('/payfast/initiate-token', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                         },
                         body: JSON.stringify({
-                            amount: planPrices[currentPlan] || '20.88',
-                            item_name: `${currentPlan} Plan Subscription`
+                            plan: currentPlan,
+                            amount: planPrices[currentPlan] || '20.88'
                         })
                     });
 
-                    const data = await response.json();
+                    if (response.ok) {
+                        console.log('✅ PayFast token payment initiated successfully');
 
-                    if (data.success && data.redirectUrl) {
-                        console.log('✅ PayFast payment initiated successfully');
-                        console.log('🔗 Redirecting to:', data.redirectUrl);
-
-                        // Show success message briefly
+                        // The backend will render the EJS form, so we don't need to handle the response
+                        // Just show redirecting message
                         confirmBtn.value = "Redirecting...";
 
-                        // Redirect to PayFast Hosted Payment Page
-                        setTimeout(() => {
-                            window.location.href = data.redirectUrl;
-                        }, 500);
+                        // The response will be the rendered HTML form that auto-submits
+                        console.log('📋 PayFast form will be rendered by backend');
 
                     } else {
-                        console.error('❌ PayFast initiation failed:', data.message);
-                        alert('Failed to initiate PayFast payment: ' + (data.message || 'Unknown error'));
+                        const errorData = await response.json();
+                        console.error('❌ PayFast token initiation failed:', errorData.message);
+                        alert('Failed to initiate PayFast payment: ' + (errorData.message || 'Unknown error'));
 
                         // Reset button
                         confirmBtn.value = originalText;
@@ -1242,7 +1239,7 @@
                     }
 
                 } catch (error) {
-                    console.error('❌ Error initiating PayFast payment:', error);
+                    console.error('❌ Error initiating PayFast token payment:', error);
                     alert('Error initiating PayFast payment. Please try again.');
 
                     // Reset button

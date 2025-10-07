@@ -16,8 +16,12 @@ const paymentsSchema = new mongoose.Schema({
   },
   gateway: {
     type: String,
-    enum: ['stripe', 'paypal', 'bank', 'payfast', 'manual'],
+    enum: ['stripe', 'paypal', 'bank', 'payfast', 'payfast_token', 'manual'],
     required: true
+  },
+  transaction_id: {
+    type: String,
+    required: false
   },
   startDate: {
     type: Date,

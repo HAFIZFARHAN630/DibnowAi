@@ -1,5 +1,6 @@
 require("dotenv").config();
 const crypto = require("crypto");
+const axios = require("axios");
 const User = require("../models/user");
 const PaymentSettings = require("../models/paymentSettings");
 const Wallet = require("../models/wallet");
@@ -647,5 +648,249 @@ exports.handlePaymentResult = handlePaymentResultHandler;
 // Export individual functions for internal use
 exports.initiatePaymentHandler = initiatePaymentHandler[1];
 exports.handlePaymentResultHandler = handlePaymentResultHandler[1];
+
+/**
+ * NEW TOKEN-BASED PAYFAST IMPLEMENTATION
+ * Initiate PayFast payment using token-based approach
+ */
+exports.initiateTokenPayment = [
+  ensureLoggedIn,
+  async (req, res) => {
+    try {
+      const { plan, amount } = req.body;
+      const userId = req.session.userId;
+
+      // Validate required fields
+      if (!plan || !amount) {
+        console.error("PayFast Token: Missing plan or amount", { plan, amount });
+        return res.status(400).json({
+          success: false,
+          message: "Plan and amount are required for PayFast payment."
+        });
+      }
+
+      // Define plan prices for validation
+      const planPrices = {
+        FREE_TRIAL: "0.00",
+        BASIC: "20.88",
+        STANDARD: "35.88",
+        PREMIUM: "55.88",
+      };
+
+      // Validate plan
+      if (!planPrices[plan]) {
+        console.error("PayFast Token: Invalid plan selected", { plan });
+        return res.status(400).json({
+          success: false,
+          message: "Invalid plan selected."
+        });
+      }
+
+      const expectedAmount = parseFloat(planPrices[plan]);
+      const submittedAmount = parseFloat(amount);
+
+      // Validate amount
+      if (submittedAmount < expectedAmount) {
+        console.error("PayFast Token: Amount too low", { expectedAmount, submittedAmount });
+        return res.status(400).json({
+          success: false,
+          message: `Amount too low! Plan requires £${expectedAmount} but you entered £${submittedAmount}.`
+        });
+      }
+
+      // Get user details
+      const user = await User.findById(userId).select('first_name last_name email');
+      if (!user) {
+        console.error("PayFast Token: User not found", { userId });
+        return res.status(404).json({
+          success: false,
+          message: "User not found."
+        });
+      }
+
+      // Generate unique basket ID
+      const basketId = `ITEM-${generateRandomString(4)}`;
+      const currencyCode = "GBP";
+      const transAmount = submittedAmount.toFixed(2);
+      const orderDate = new Date().toISOString().slice(0, 19).replace("T", " ");
+
+      console.log("PayFast Token: Initiating payment", {
+        userId,
+        plan,
+        amount: submittedAmount,
+        basketId,
+        currencyCode,
+        transAmount
+      });
+
+      // Get PayFast access token from ipg1
+      const tokenData = await getPayFastAccessToken(basketId, transAmount, currencyCode);
+
+      if (!tokenData.success) {
+        console.error("PayFast Token: Failed to get access token", tokenData.message);
+        return res.status(400).json({
+          success: false,
+          message: "Failed to get PayFast access token: " + tokenData.message
+        });
+      }
+
+      // Create pending payment record
+      const startDate = new Date();
+      const expiryDate = new Date(startDate);
+      expiryDate.setDate(expiryDate.getDate() + 30);
+
+      const newPayment = new Payments({
+        user: userId,
+        plan,
+        amount: submittedAmount,
+        gateway: 'payfast_token',
+        startDate,
+        expiryDate,
+        status: 'pending',
+        transaction_id: basketId
+      });
+
+      await newPayment.save();
+      console.log("PayFast Token: Pending payment record created", { paymentId: newPayment._id });
+
+      // Create pending transaction record
+      const newTransaction = new Transaction({
+        user: userId,
+        type: 'payment',
+        amount: submittedAmount,
+        status: 'pending',
+        gateway: 'payfast_token',
+        reference: basketId
+      });
+      await newTransaction.save();
+
+      // Store payment ID in session for tracking
+      req.session.pendingPayFastPayment = newPayment._id;
+
+      // Prepare form data for EJS template
+      const formData = {
+        merchantId: process.env.PAYFAST_MERCHANT_ID,
+        token: tokenData.token,
+        basketId: basketId,
+        txnAmount: transAmount,
+        currencyCode: currencyCode,
+        successUrl: `${process.env.APP_BASE_URL}/pricing/payfast/success`,
+        failureUrl: `${process.env.APP_BASE_URL}/pricing/payfast/cancel`,
+        orderDate: orderDate,
+        plan: plan,
+        amount: submittedAmount,
+        user: user
+      };
+
+      console.log("PayFast Token: Payment initiated successfully", {
+        userId,
+        plan,
+        amount: submittedAmount,
+        basketId,
+        token: tokenData.token.substring(0, 20) + "..."
+      });
+
+      // Render EJS template with form data
+      res.render("payfast/payfast_form", formData);
+
+    } catch (error) {
+      console.error("PayFast Token: Payment initiation error:", error.message);
+      res.status(500).json({
+        success: false,
+        message: "Failed to initiate PayFast payment. Please try again."
+      });
+    }
+  },
+];
+
+/**
+ * Get PayFast access token from ipg1
+ */
+async function getPayFastAccessToken(basketId, transAmount, currencyCode) {
+  try {
+    const merchantId = process.env.PAYFAST_MERCHANT_ID;
+    const securedKey = process.env.PAYFAST_SECURED_KEY || process.env.PAYFAST_MERCHANT_KEY;
+
+    if (!merchantId || !securedKey) {
+      return {
+        success: false,
+        message: "PayFast credentials not configured"
+      };
+    }
+
+    const tokenApiUrl = `${process.env.PAYFAST_API_URL}/GetAccessToken`;
+
+    console.log("PayFast Token: Requesting access token", {
+      merchantId,
+      basketId,
+      transAmount,
+      currencyCode,
+      tokenUrl: tokenApiUrl
+    });
+
+    const response = await axios.post(
+      tokenApiUrl,
+      {
+        MERCHANT_ID: merchantId,
+        SECURED_KEY: securedKey,
+        BASKET_ID: basketId,
+        TXNAMT: transAmount,
+        CURRENCY_CODE: currencyCode,
+      },
+      {
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        timeout: 30000
+      }
+    );
+
+    console.log("PayFast Token: Token response status", response.status);
+    console.log("PayFast Token: Token response data", response.data);
+
+    const token = response.data?.ACCESS_TOKEN || response.data?.access_token;
+
+    if (!token) {
+      console.error("PayFast Token: No access token in response", response.data);
+      return {
+        success: false,
+        message: "No access token received from PayFast"
+      };
+    }
+
+    return {
+      success: true,
+      token: token,
+      basketId: basketId,
+      amount: transAmount,
+      currency: currencyCode
+    };
+
+  } catch (error) {
+    console.error("PayFast Token: Error getting access token:", error.message);
+
+    if (error.response) {
+      console.error("PayFast Token: API Error Response:", {
+        status: error.response.status,
+        data: error.response.data
+      });
+    }
+
+    return {
+      success: false,
+      message: `Failed to get access token: ${error.message}`
+    };
+  }
+}
+
+/**
+ * Generate random string for basket ID
+ */
+function generateRandomString(length) {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+}
 
 module.exports = exports;

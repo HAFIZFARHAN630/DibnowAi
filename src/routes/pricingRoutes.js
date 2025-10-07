@@ -40,7 +40,10 @@ router.post("/manual-payment", insertTransfer);
 
 router.get("/api/payment-gateways", getEnabledGateways);
 
-// PayFast HPP (Hosted Payment Page) routes
+// PayFast Token-based Payment routes (NEW APPROACH)
+router.post("/payfast/initiate-token", payfastController.initiateTokenPayment); // Initiate PayFast token payment
+
+// PayFast HPP (Hosted Payment Page) routes (LEGACY)
 router.post("/payfast/initiate", payfastHppController.initiatePayment); // Initiate PayFast HPP payment
 router.post("/payfast/ipn", payfastHppController.handleIPN); // PayFast IPN for payment notifications
 router.get("/payfast/success", payfastHppController.handleSuccess); // PayFast success return URL
