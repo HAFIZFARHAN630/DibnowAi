@@ -42,6 +42,7 @@ router.get("/api/payment-gateways", getEnabledGateways);
 
 // PayFast Token-based Payment routes (NEW APPROACH)
 router.post("/payfast/initiate-token", payfastController.initiateTokenPayment); // Initiate PayFast token payment
+router.get("/payfast/test-connection", payfastController.testPayFastConnection); // Test PayFast API connectivity
 
 // PayFast HPP (Hosted Payment Page) routes (LEGACY)
 router.post("/payfast/initiate", payfastHppController.initiatePayment); // Initiate PayFast HPP payment

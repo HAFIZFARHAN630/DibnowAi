@@ -610,6 +610,100 @@ function generatePayFastForm(payfastData, signature) {
 }
 
 /**
+ * Test PayFast API connectivity (for debugging live issues)
+ */
+exports.testPayFastConnection = async (req, res) => {
+  try {
+    console.log("🔧 Testing PayFast API connectivity...");
+
+    const merchantId = process.env.PAYFAST_MERCHANT_ID;
+    const securedKey = process.env.PAYFAST_SECURED_KEY || process.env.PAYFAST_MERCHANT_KEY;
+
+    if (!merchantId || !securedKey) {
+      return res.json({
+        success: false,
+        error: "PayFast credentials not configured",
+        environment: process.env.NODE_ENV || 'development',
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    // Test API endpoints
+    const testResults = {
+      credentials: {
+        merchantId: merchantId,
+        securedKey: securedKey ? `${securedKey.substring(0, 10)}...` : 'Not set'
+      },
+      endpoints: {},
+      environment: process.env.NODE_ENV || 'development',
+      timestamp: new Date().toISOString()
+    };
+
+    // Test token endpoint
+    try {
+      const tokenUrl = 'https://ipg1.apps.net.pk/Ecommerce/api/Transaction/GetAccessToken';
+      console.log("Testing token endpoint:", tokenUrl);
+
+      const tokenResponse = await axios.get(tokenUrl, {
+        timeout: 10000,
+        headers: { "User-Agent": "Dibnow-Test/1.0" }
+      });
+
+      testResults.endpoints.tokenEndpoint = {
+        status: tokenResponse.status,
+        accessible: true,
+        responseTime: Date.now()
+      };
+    } catch (tokenError) {
+      testResults.endpoints.tokenEndpoint = {
+        status: tokenError.response?.status || tokenError.code,
+        accessible: false,
+        error: tokenError.message,
+        responseTime: Date.now()
+      };
+    }
+
+    // Test payment portal endpoint
+    try {
+      const portalUrl = 'https://ipg2.apps.net.pk/Ecommerce/Pay';
+      console.log("Testing portal endpoint:", portalUrl);
+
+      const portalResponse = await axios.get(portalUrl, {
+        timeout: 10000,
+        headers: { "User-Agent": "Dibnow-Test/1.0" }
+      });
+
+      testResults.endpoints.portalEndpoint = {
+        status: portalResponse.status,
+        accessible: true,
+        responseTime: Date.now()
+      };
+    } catch (portalError) {
+      testResults.endpoints.portalEndpoint = {
+        status: portalError.response?.status || portalError.code,
+        accessible: false,
+        error: portalError.message,
+        responseTime: Date.now()
+      };
+    }
+
+    res.json({
+      success: true,
+      testResults: testResults
+    });
+
+  } catch (error) {
+    console.error("PayFast connection test error:", error.message);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+      stack: error.stack,
+      timestamp: new Date().toISOString()
+    });
+  }
+};
+
+/**
  * Sample request data for testing PayFast payments
  * Use these examples to test the PayFast integration
  */
@@ -636,8 +730,19 @@ exports.getSampleTestData = () => {
       "PAYFAST_MERCHANT_ID",
       "PAYFAST_SECURED_KEY",
       "PAYFAST_API_URL",
+      "PAYFAST_HPP_URL",
       "APP_BASE_URL"
-    ]
+    ],
+
+    // Live environment debugging
+    liveDebugging: {
+      renderDeployment: "Make sure PAYFAST_SECURED_KEY is set (not PAYFAST_MERCHANT_KEY)",
+      apiEndpoints: {
+        token: "https://ipg1.apps.net.pk/Ecommerce/api/Transaction/GetAccessToken",
+        portal: "https://ipg2.apps.net.pk/Ecommerce/Pay"
+      },
+      testEndpoint: "/payfast/test-connection"
+    }
   };
 };
 
@@ -824,7 +929,8 @@ async function getPayFastAccessToken(basketId, transAmount, currencyCode) {
       };
     }
 
-    const tokenApiUrl = `${process.env.PAYFAST_API_URL}/GetAccessToken`;
+    // Use the correct PayFast Pakistan API endpoint
+    const tokenApiUrl = `https://ipg1.apps.net.pk/Ecommerce/api/Transaction/GetAccessToken`;
 
     console.log("PayFast Token: Requesting access token", {
       merchantId,
@@ -834,20 +940,53 @@ async function getPayFastAccessToken(basketId, transAmount, currencyCode) {
       tokenUrl: tokenApiUrl
     });
 
-    const response = await axios.post(
-      tokenApiUrl,
-      {
-        MERCHANT_ID: merchantId,
-        SECURED_KEY: securedKey,
-        BASKET_ID: basketId,
-        TXNAMT: transAmount,
-        CURRENCY_CODE: currencyCode,
-      },
-      {
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        timeout: 30000
-      }
-    );
+    // Try multiple approaches for the request
+    let response;
+
+    try {
+      // Approach 1: Form data format
+      const formData = new URLSearchParams();
+      formData.append('MERCHANT_ID', merchantId);
+      formData.append('SECURED_KEY', securedKey);
+      formData.append('BASKET_ID', basketId);
+      formData.append('TXNAMT', transAmount);
+      formData.append('CURRENCY_CODE', currencyCode);
+
+      response = await axios.post(
+        tokenApiUrl,
+        formData,
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "User-Agent": "Dibnow-PayFast/1.0"
+          },
+          timeout: 30000,
+          maxRedirects: 5
+        }
+      );
+    } catch (formError) {
+      console.log("PayFast Token: Form data approach failed, trying JSON approach");
+
+      // Approach 2: JSON format (alternative)
+      response = await axios.post(
+        tokenApiUrl,
+        {
+          MERCHANT_ID: merchantId,
+          SECURED_KEY: securedKey,
+          BASKET_ID: basketId,
+          TXNAMT: transAmount,
+          CURRENCY_CODE: currencyCode,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "User-Agent": "Dibnow-PayFast/1.0"
+          },
+          timeout: 30000,
+          maxRedirects: 5
+        }
+      );
+    }
 
     console.log("PayFast Token: Token response status", response.status);
     console.log("PayFast Token: Token response data", response.data);
@@ -858,7 +997,7 @@ async function getPayFastAccessToken(basketId, transAmount, currencyCode) {
       console.error("PayFast Token: No access token in response", response.data);
       return {
         success: false,
-        message: "No access token received from PayFast"
+        message: "No access token received from PayFast. Response: " + JSON.stringify(response.data)
       };
     }
 
@@ -873,16 +1012,36 @@ async function getPayFastAccessToken(basketId, transAmount, currencyCode) {
   } catch (error) {
     console.error("PayFast Token: Error getting access token:", error.message);
 
+    if (error.code === 'ENOTFOUND') {
+      return {
+        success: false,
+        message: "Failed to get access token: Network error - cannot reach PayFast servers. Check internet connection."
+      };
+    }
+
     if (error.response) {
       console.error("PayFast Token: API Error Response:", {
         status: error.response.status,
-        data: error.response.data
+        data: error.response.data,
+        headers: error.response.headers
       });
+
+      return {
+        success: false,
+        message: `PayFast API error (${error.response.status}): ${error.response.data?.message || error.message}`
+      };
+    }
+
+    if (error.code === 'ECONNREFUSED') {
+      return {
+        success: false,
+        message: "Failed to get access token: Connection refused. PayFast servers may be down."
+      };
     }
 
     return {
       success: false,
-      message: `Failed to get access token: ${error.message}`
+      message: `Failed to get access token: ${error.code || 'Unknown error'} - ${error.message}`
     };
   }
 }
