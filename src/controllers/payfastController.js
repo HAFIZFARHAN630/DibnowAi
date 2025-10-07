@@ -767,31 +767,37 @@ exports.initiateTokenPayment = [
       // Store payment ID in session for tracking
       req.session.pendingPayFastPayment = newPayment._id;
 
-      // Prepare form data for EJS template
-      const formData = {
-        merchantId: process.env.PAYFAST_MERCHANT_ID,
-        token: tokenData.token,
-        basketId: basketId,
-        txnAmount: transAmount,
-        currencyCode: currencyCode,
-        successUrl: `${process.env.APP_BASE_URL}/pricing/payfast/success`,
-        failureUrl: `${process.env.APP_BASE_URL}/pricing/payfast/cancel`,
-        orderDate: orderDate,
-        plan: plan,
-        amount: submittedAmount,
-        user: user
-      };
+      // Build the complete PayFast redirect URL for direct browser redirect
+      // Use the correct PayFast IPG2 payment endpoint
+      const baseUrl = 'https://ipg2.apps.net.pk/Ecommerce/Pay';
+
+      const payfastParams = new URLSearchParams();
+      payfastParams.append('MERCHANT_ID', process.env.PAYFAST_MERCHANT_ID);
+      payfastParams.append('TOKEN', tokenData.token);
+      payfastParams.append('BASKET_ID', basketId);
+      payfastParams.append('TXNAMT', transAmount);
+      payfastParams.append('CURRENCY_CODE', currencyCode);
+      payfastParams.append('SUCCESS_URL', `${process.env.APP_BASE_URL}/pricing/payfast/success`);
+      payfastParams.append('FAILURE_URL', `${process.env.APP_BASE_URL}/pricing/payfast/cancel`);
+      payfastParams.append('ORDER_DATE', orderDate);
+
+      const redirectUrl = `${baseUrl}?${payfastParams.toString()}`;
 
       console.log("PayFast Token: Payment initiated successfully", {
         userId,
         plan,
         amount: submittedAmount,
         basketId,
-        token: tokenData.token.substring(0, 20) + "..."
+        token: tokenData.token.substring(0, 20) + "...",
+        redirectUrl: redirectUrl.substring(0, 100) + "..."
       });
 
-      // Render EJS template with form data
-      res.render("payfast/payfast_form", formData);
+      // Return redirect URL for frontend to handle
+      res.json({
+        success: true,
+        redirectUrl: redirectUrl,
+        message: "Redirect to PayFast payment portal"
+      });
 
     } catch (error) {
       console.error("PayFast Token: Payment initiation error:", error.message);

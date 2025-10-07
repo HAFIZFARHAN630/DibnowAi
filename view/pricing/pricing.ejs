@@ -1196,9 +1196,9 @@
                 document.getElementById("planForm").submit();
                 return;
             } else if (paymentMethod === 'payfast') {
-                // Handle PayFast payment with token-based approach
+                // Handle PayFast payment with direct redirect approach
                 try {
-                    console.log('🚀 Initiating PayFast token payment for plan:', plan);
+                    console.log('🚀 Initiating PayFast payment for plan:', plan);
 
                     // Show loading state
                     const confirmBtn = document.querySelector(".confirm-btn");
@@ -1206,7 +1206,7 @@
                     confirmBtn.value = "Getting Token...";
                     confirmBtn.disabled = true;
 
-                    // Make AJAX call to PayFast token initiation endpoint
+                    // Make AJAX call to PayFast initiation endpoint
                     const response = await fetch('/payfast/initiate-token', {
                         method: 'POST',
                         headers: {
@@ -1218,20 +1218,24 @@
                         })
                     });
 
-                    if (response.ok) {
-                        console.log('✅ PayFast token payment initiated successfully');
+                    const data = await response.json();
 
-                        // The backend will render the EJS form, so we don't need to handle the response
-                        // Just show redirecting message
+                    if (data.success && data.redirectUrl) {
+                        console.log('✅ PayFast payment initiated successfully');
+                        console.log('🔗 Redirecting to:', data.redirectUrl);
+
+                        // Show redirecting message
                         confirmBtn.value = "Redirecting...";
 
-                        // The response will be the rendered HTML form that auto-submits
-                        console.log('📋 PayFast form will be rendered by backend');
+                        // Use window.location.href for direct redirect to PayFast
+                        setTimeout(() => {
+                            console.log('🚀 Performing direct redirect to PayFast portal');
+                            window.location.href = data.redirectUrl;
+                        }, 500);
 
                     } else {
-                        const errorData = await response.json();
-                        console.error('❌ PayFast token initiation failed:', errorData.message);
-                        alert('Failed to initiate PayFast payment: ' + (errorData.message || 'Unknown error'));
+                        console.error('❌ PayFast initiation failed:', data.message);
+                        alert('Failed to initiate PayFast payment: ' + (data.message || 'Unknown error'));
 
                         // Reset button
                         confirmBtn.value = originalText;
@@ -1239,7 +1243,7 @@
                     }
 
                 } catch (error) {
-                    console.error('❌ Error initiating PayFast token payment:', error);
+                    console.error('❌ Error initiating PayFast payment:', error);
                     alert('Error initiating PayFast payment. Please try again.');
 
                     // Reset button
