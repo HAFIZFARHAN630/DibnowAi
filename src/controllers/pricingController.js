@@ -372,7 +372,6 @@ exports.addSubscription = [
         // Use PayFast HPP (Hosted Payment Page) controller
         req.body.amount = amount;
         req.body.item_name = `${plan} Plan Subscription`;
-        req.body.custom_ref = `plan_${plan}_${Date.now()}`;
         return payfastHppController.initiatePayment[1](req, res);
       } else if (paymentMethod === 'wallet') {
         try {

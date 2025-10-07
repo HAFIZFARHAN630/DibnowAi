@@ -55,31 +55,49 @@ exports.initiatePayment = [
       const userId = req.session.userId;
 
       // Validate required fields
-      if (!amount || !item_name) {
-        console.error("PayFast HPP: Missing amount or item_name", { amount, item_name });
+      if (!item_name) {
+        console.error("PayFast HPP: Missing item_name", { item_name });
         return res.status(400).json({
           success: false,
-          message: "Amount and item_name are required"
+          message: "Plan name is required"
         });
       }
 
-      // Validate amount is a positive number
-      const paymentAmount = parseFloat(amount);
-      if (isNaN(paymentAmount) || paymentAmount <= 0) {
-        console.error("PayFast HPP: Invalid amount", { amount: paymentAmount });
+      // If amount is empty, get it from plan name
+      let paymentAmount;
+      if (!amount || amount === '') {
+        // Define plan prices mapping
+        const planPrices = {
+          'FREE': 0.00,
+          'FREE TRIAL': 0.00,
+          'BASIC': 20.88,
+          'STANDARD': 35.88,
+          'PREMIUM': 55.88
+        };
+
+        paymentAmount = planPrices[item_name.replace(' Plan Subscription', '')];
+        if (paymentAmount === undefined) {
+          console.error("PayFast HPP: Invalid plan name for amount lookup", { item_name });
+          return res.status(400).json({
+            success: false,
+            message: "Invalid plan selected"
+          });
+        }
+
+        console.log("PayFast HPP: Auto-filled amount from plan name", {
+          plan: item_name,
+          amount: paymentAmount
+        });
+      } else {
+        paymentAmount = parseFloat(amount);
+      }
+
+      // Validate payment amount is valid
+      if (paymentAmount <= 0 && !item_name.includes('FREE')) {
+        console.error("PayFast HPP: Invalid payment amount", { amount: paymentAmount, item_name });
         return res.status(400).json({
           success: false,
           message: "Valid payment amount is required"
-        });
-      }
-
-      // Validate amount against plan prices for security
-      const validAmounts = [20.88, 35.88, 55.88]; // BASIC, STANDARD, PREMIUM
-      if (!validAmounts.includes(paymentAmount)) {
-        console.error("PayFast HPP: Invalid amount for plan", { amount: paymentAmount, validAmounts });
-        return res.status(400).json({
-          success: false,
-          message: "Invalid payment amount for selected plan"
         });
       }
 
@@ -541,6 +559,5 @@ exports.getSampleTestData = () => {
     }
   };
 };
-
 
 module.exports = exports;

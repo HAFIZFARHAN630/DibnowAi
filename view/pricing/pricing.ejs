@@ -538,7 +538,7 @@
     %>
 
       <div class="col-12 col-sm-6 col-lg-2" style="display: flex !important; align-items: center !important; justify-content: center !important;">
-        <div class="card <%= variant %> h-100 text-center p-3" data-plan="BASIC" aria-label="plan-card-<%= name %>">
+        <div class="card <%= variant %> h-100 text-center p-3" data-plan="<%= name %>" aria-label="plan-card-<%= name %>">
           <div class="card-body d-flex flex-column">
             <div class="title h6 text-uppercase fw-bold mb-2"><%= name %></div>
 
@@ -562,9 +562,9 @@
 
             <div class="mt-auto">
               <!-- data-plan set to BASIC for every plan as requested -->
-              <a href="#" 
-                 class="btn btn-primary btn-select-plan" 
-                 data-plan="BASIC"
+              <a href="#"
+                 class="btn btn-primary btn-select-plan"
+                 data-plan="<%= name %>"
                  data-bs-toggle="modal" 
                  data-bs-target="#<%= modalId %>">
                 BUY NOW
@@ -1185,15 +1185,74 @@
   </script>
   <script>
     document.addEventListener("DOMContentLoaded", function () {
-        document.querySelector(".confirm-btn").addEventListener("click", function (event) {
+        document.querySelector(".confirm-btn").addEventListener("click", async function (event) {
+            event.preventDefault(); // Always prevent default form submission
+
             const paymentMethod = document.getElementById("paymentMethod").value;
+            const plan = document.getElementById("plan").value;
 
             if (paymentMethod === 'manual') {
-                event.preventDefault(); // Prevent form submission for manual payment
                 // Manual payment form will handle its own submission
+                document.getElementById("planForm").submit();
                 return;
+            } else if (paymentMethod === 'payfast') {
+                // Handle PayFast payment with AJAX call
+                try {
+                    console.log('🚀 Initiating PayFast payment for plan:', plan);
+
+                    // Show loading state
+                    const confirmBtn = document.querySelector(".confirm-btn");
+                    const originalText = confirmBtn.value;
+                    confirmBtn.value = "Processing...";
+                    confirmBtn.disabled = true;
+
+                    // Make AJAX call to PayFast initiation endpoint
+                    const response = await fetch('/payfast/initiate', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            amount: planPrices[currentPlan] || '20.88',
+                            item_name: `${currentPlan} Plan Subscription`
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success && data.redirectUrl) {
+                        console.log('✅ PayFast payment initiated successfully');
+                        console.log('🔗 Redirecting to:', data.redirectUrl);
+
+                        // Show success message briefly
+                        confirmBtn.value = "Redirecting...";
+
+                        // Redirect to PayFast Hosted Payment Page
+                        setTimeout(() => {
+                            window.location.href = data.redirectUrl;
+                        }, 500);
+
+                    } else {
+                        console.error('❌ PayFast initiation failed:', data.message);
+                        alert('Failed to initiate PayFast payment: ' + (data.message || 'Unknown error'));
+
+                        // Reset button
+                        confirmBtn.value = originalText;
+                        confirmBtn.disabled = false;
+                    }
+
+                } catch (error) {
+                    console.error('❌ Error initiating PayFast payment:', error);
+                    alert('Error initiating PayFast payment. Please try again.');
+
+                    // Reset button
+                    const confirmBtn = document.querySelector(".confirm-btn");
+                    confirmBtn.value = originalText;
+                    confirmBtn.disabled = false;
+                }
+
             } else {
-                // Allow normal form submission for other payment methods
+                // Handle other payment methods with normal form submission
                 document.getElementById("planForm").submit();
             }
         });
