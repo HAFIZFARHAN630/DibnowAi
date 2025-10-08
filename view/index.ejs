@@ -480,7 +480,7 @@
             font-size: 1.1rem;
             transition: all 0.3s ease;
             margin-top: 20px;
-            min-width: 200px;
+            min-width: 150px;
             text-align: center;
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
             border: 2px solid transparent;
@@ -736,27 +736,41 @@
                             <h5 class="card-title">Plan Status</h5>
                         </div>
                         <div class="card-body">
-                            <% if (userPlan && userPlan.planName) { %>
+                            <% 
+                            // Check if user has an active paid plan (from Payments collection)
+                            const hasActivePlan = latestPayment && latestPayment.status === 'active';
+                            const displayPlan = hasActivePlan ? latestPayment : userPlan;
+                            %>
+                            <% if (displayPlan && (displayPlan.planName || displayPlan.plan)) { %>
+                                <% 
+                                const planName = displayPlan.planName || displayPlan.plan;
+                                const planStatus = displayPlan.status || 'Active';
+                                const invoiceStatus = displayPlan.invoiceStatus || (hasActivePlan ? 'Paid' : 'Unpaid');
+                                const planAmount = displayPlan.amount || 0;
+                                const planStartDate = displayPlan.startDate || displayPlan.createdAt;
+                                const planExpiryDate = displayPlan.expiryDate;
+                                const planDescription = displayPlan.description || `${planName} subscription plan`;
+                                %>
                                 <div class="plan-overview">
                                     <div class="plan-main-info">
-                                        <h3 class="plan-name"><%= userPlan.planName %></h3>
+                                        <h3 class="plan-name"><%= planName %></h3>
                                         <div class="plan-status-badge">
-                                            <% if (userPlan.status === 'Active') { %>
+                                            <% if (planStatus === 'Active' || planStatus === 'active') { %>
                                                 <span class="status-badge active">
                                                     <i class="bi bi-check-circle-fill"></i>
                                                     Active
                                                 </span>
-                                            <% } else if (userPlan.status === 'Expired') { %>
+                                            <% } else if (planStatus === 'Expired' || planStatus === 'expired') { %>
                                                 <span class="status-badge expired">
                                                     <i class="bi bi-x-circle-fill"></i>
                                                     Expired
                                                 </span>
-                                            <% } else if (userPlan.status === 'Pending') { %>
+                                            <% } else if (planStatus === 'Pending' || planStatus === 'pending') { %>
                                                 <span class="status-badge pending">
                                                     <i class="bi bi-clock-fill"></i>
                                                     Pending
                                                 </span>
-                                            <% } else if (userPlan.status === 'Paid') { %>
+                                            <% } else if (planStatus === 'Paid') { %>
                                                 <span class="status-badge paid">
                                                     <i class="bi bi-check-circle-fill"></i>
                                                     Paid
@@ -764,14 +778,14 @@
                                             <% } else { %>
                                                 <span class="status-badge unknown">
                                                     <i class="bi bi-question-circle-fill"></i>
-                                                    <%= userPlan.status %>
+                                                    <%= planStatus %>
                                                 </span>
                                             <% } %>
                                         </div>
                                     </div>
                                     <div class="plan-expiry">
                                         <i class="bi bi-calendar-event"></i>
-                                        <span>Expires: <%= userPlan.expiryDate ? new Date(userPlan.expiryDate).toLocaleDateString() : 'No expiry date' %></span>
+                                        <span>Expires: <%= planExpiryDate ? new Date(planExpiryDate).toLocaleDateString() : 'No expiry date' %></span>
                                     </div>
                                 </div>
 
@@ -782,7 +796,7 @@
                                             <i class="bi bi-tag"></i>
                                             <span>Plan Name</span>
                                         </div>
-                                        <div class="detail-value"><%= userPlan.planName %></div>
+                                        <div class="detail-value"><%= planName %></div>
                                     </div>
                                     <div class="detail-row">
                                         <div class="detail-label">
@@ -790,16 +804,16 @@
                                             <span>Status</span>
                                         </div>
                                         <div class="detail-value">
-                                            <% if (userPlan.status === 'Active') { %>
+                                            <% if (planStatus === 'Active' || planStatus === 'active') { %>
                                                 <span class="value-badge success">Active</span>
-                                            <% } else if (userPlan.status === 'Expired') { %>
+                                            <% } else if (planStatus === 'Expired' || planStatus === 'expired') { %>
                                                 <span class="value-badge danger">Expired</span>
-                                            <% } else if (userPlan.status === 'Pending') { %>
+                                            <% } else if (planStatus === 'Pending' || planStatus === 'pending') { %>
                                                 <span class="value-badge warning">Pending</span>
-                                            <% } else if (userPlan.status === 'Paid') { %>
+                                            <% } else if (planStatus === 'Paid') { %>
                                                 <span class="value-badge info">Paid</span>
                                             <% } else { %>
-                                                <span class="value-badge secondary"><%= userPlan.status %></span>
+                                                <span class="value-badge secondary"><%= planStatus %></span>
                                             <% } %>
                                         </div>
                                     </div>
@@ -809,7 +823,7 @@
                                             <span>Invoice Status</span>
                                         </div>
                                         <div class="detail-value">
-                                            <% if (userPlan.invoiceStatus === 'Paid') { %>
+                                            <% if (invoiceStatus === 'Paid' || invoiceStatus === 'paid') { %>
                                                 <span class="value-badge success">Paid</span>
                                             <% } else { %>
                                                 <span class="value-badge warning">Unpaid</span>
@@ -821,29 +835,29 @@
                                             <i class="bi bi-calendar-plus"></i>
                                             <span>Start Date</span>
                                         </div>
-                                        <div class="detail-value"><%= new Date(userPlan.startDate || userPlan.createdAt).toLocaleDateString() %></div>
+                                        <div class="detail-value"><%= planStartDate ? new Date(planStartDate).toLocaleDateString() : 'N/A' %></div>
                                     </div>
                                     <div class="detail-row">
                                         <div class="detail-label">
                                             <i class="bi bi-calendar-x"></i>
                                             <span>Expiry Date</span>
                                         </div>
-                                        <div class="detail-value"><%= userPlan.expiryDate ? new Date(userPlan.expiryDate).toLocaleDateString() : 'No expiry date' %></div>
+                                        <div class="detail-value"><%= planExpiryDate ? new Date(planExpiryDate).toLocaleDateString() : 'No expiry date' %></div>
                                     </div>
                                     <div class="detail-row">
                                         <div class="detail-label">
                                             <i class="bi bi-cash"></i>
                                             <span>Amount</span>
                                         </div>
-                                        <div class="detail-value">£<%= userPlan.amount || 0 %></div>
+                                        <div class="detail-value">£<%= planAmount %></div>
                                     </div>
-                                    <% if (userPlan.description) { %>
+                                    <% if (planDescription) { %>
                                     <div class="detail-row">
                                         <div class="detail-label">
                                             <i class="bi bi-info-circle"></i>
                                             <span>Description</span>
                                         </div>
-                                        <div class="detail-value description"><%= userPlan.description %></div>
+                                        <div class="detail-value description"><%= planDescription %></div>
                                     </div>
                                     <% } %>
                                 </div>
@@ -870,21 +884,46 @@
                             <h5 class="card-title">Subscription Status</h5>
                         </div>
                         <div class="card-body">
-                            <% if (subscription && subscription.status === 'active') { %>
-                                <% if (subscription.invoice_status === 'unpaid') { %>
-                                    <div class="subscription-status active-unpaid">
-                                        <div class="status-icon">
-                                            <i class="bi bi-exclamation-triangle"></i>
+                            <% 
+                            // Use the same displayPlan logic from above
+                            const subStatus = displayPlan ? (displayPlan.status || 'Active') : null;
+                            const subInvoiceStatus = displayPlan ? (displayPlan.invoiceStatus || (hasActivePlan ? 'Paid' : 'Unpaid')) : null;
+                            const subExpiryDate = displayPlan ? displayPlan.expiryDate : null;
+                            const subPlanName = displayPlan ? (displayPlan.planName || displayPlan.plan) : null;
+                            const isFreeTrial = subPlanName && (subPlanName === 'Free Trial' || subPlanName === 'FREE TRIAL');
+                            %>
+                            <% if (displayPlan && (subStatus === 'Active' || subStatus === 'active')) { %>
+                                <% if (subInvoiceStatus === 'Unpaid' || subInvoiceStatus === 'unpaid') { %>
+                                    <% if (isFreeTrial) { %>
+                                        <!-- Free Trial - Show as Active Trial -->
+                                        <div class="subscription-status active-valid">
+                                            <div class="status-icon">
+                                                <i class="bi bi-gift"></i>
+                                            </div>
+                                            <div class="status-content">
+                                                <h4>Free Trial Active</h4>
+                                                <p>Expires: <%= subExpiryDate ? new Date(subExpiryDate).toLocaleDateString() : '7 days' %></p>
+                                            </div>
+                                            </div>
+                                                                                         <a href="/pricing" class="choose-plan-btn" style="margin-top: 35px;">Upgrade to Premium</a>
+
                                         </div>
-                                        <div class="status-content">
-                                            <h4>Active + Unpaid</h4>
-                                            <p>Please complete your payment to continue</p>
+                                    <% } else { %>
+                                        <!-- Paid plan but unpaid invoice -->
+                                        <div class="subscription-status active-unpaid">
+                                            <div class="status-icon">
+                                                <i class="bi bi-exclamation-triangle"></i>
+                                            </div>
+                                            <div class="status-content">
+                                                <h4>Active + Unpaid</h4>
+                                                <p>Please complete your payment to continue</p>
+                                            </div>
                                         </div>
-                                    </div>
-                                <% } else if (subscription.invoice_status === 'paid') { %>
+                                    <% } %>
+                                <% } else if (subInvoiceStatus === 'Paid' || subInvoiceStatus === 'paid') { %>
                                     <% const now = new Date(); %>
-                                    <% const expiryDate = new Date(subscription.expiryDate); %>
-                                    <% if (now > expiryDate) { %>
+                                    <% const expiryDate = subExpiryDate ? new Date(subExpiryDate) : null; %>
+                                    <% if (expiryDate && now > expiryDate) { %>
                                         <div class="subscription-status expired">
                                             <div class="status-icon">
                                                 <i class="bi bi-x-circle"></i>
@@ -901,12 +940,12 @@
                                             </div>
                                             <div class="status-content">
                                                 <h4>Active + Paid + Valid</h4>
-                                                <p>Expires: <%= expiryDate.toLocaleDateString() %></p>
+                                                <p>Expires: <%= expiryDate ? expiryDate.toLocaleDateString() : 'No expiry' %></p>
                                             </div>
                                         </div>
                                     <% } %>
                                 <% } %>
-                            <% } else if (subscription && subscription.status === 'expired') { %>
+                            <% } else if (displayPlan && (subStatus === 'Expired' || subStatus === 'expired')) { %>
                                 <div class="subscription-status expired">
                                     <div class="status-icon">
                                         <i class="bi bi-x-circle"></i>
@@ -916,7 +955,7 @@
                                         <p>Your subscription has expired</p>
                                     </div>
                                 </div>
-                            <% } else if (subscription && subscription.status === 'pending') { %>
+                            <% } else if (displayPlan && (subStatus === 'Pending' || subStatus === 'pending')) { %>
                                 <div class="subscription-status pending">
                                     <div class="status-icon">
                                         <i class="bi bi-clock"></i>

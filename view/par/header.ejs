@@ -20,7 +20,7 @@
                 </a>
                 
                 
-                <a href="#" class="sidebar-toggler flex-shrink-0 ">
+                <a href="#" class="sidebar-toggler flex-shrink-0 " style="color: white;">
                     <i class="fa fa-bars"></i>
                 </a>
                 
@@ -160,7 +160,27 @@
             min-height: 450px;
             overflow: hidden;
         }
-
+        @media screen and (max-width:1024px) {
+            #logoutModal .modal-content {
+                width: 95vw;
+                padding: 8px;
+            }
+            #logoutModal .modal-header {
+                width: 95vw;
+                padding: 8px !important;
+                font-size: 12px !important;
+            }
+            #logoutModal {
+                width: 95vw;
+                padding: 8px;
+            }
+            #logoutModal .modal-body {
+                padding: 8px !important;
+            }
+            #logoutModal .modal-title {
+                font-size: 22px !important;
+            }
+        }
         #logoutModal .modal-header {
             border: none;
             padding: 45px 45px 25px;
@@ -295,6 +315,31 @@
             50% { transform: translate(-50%, -50%) scale(1.1); }
             100% { transform: translate(-50%, -50%) scale(1); }
         }
+       @media screen and (max-width: 1024px) {
+  #notificationDropdown + .dropdown-menu,
+  #userNotificationDropdown,
+  .notification-container {
+    width: 95vw !important;
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    right: auto !important;
+    z-index: 9999 !important;
+  }
+}
+
+        /* @media screen and (max-width: 784px) {
+  #notificationDropdown + .dropdown-menu,
+  #userNotificationDropdown,
+  .notification-container {
+    width: 95vw !important;
+    left: -50% !important;
+    transform: translateX(-50%) !important;
+    right: auto !important;
+  }
+} */
+
         </style>
 
         <!-- Socket.IO Client -->
@@ -319,7 +364,7 @@
             
             list.insertAdjacentHTML('afterbegin', `
                 <div class="notification-item unread" data-id="${notification.id}">
-                    <div class="d-flex align-items-start p-3">
+                    <div class="d-flex align-items-start p-3 flex-wrap">
                         <div class="notification-checkbox d-none me-3">
                             <input type="checkbox" class="form-check-input notification-select" value="${notification.id}">
                         </div>

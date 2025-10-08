@@ -293,6 +293,37 @@
         }
         /* ========== end added block ========== */
 
+        /* Professional Pagination Buttons */
+        .pagination .page-link {
+          background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%) !important;
+          color: white !important;
+          border: none !important;
+          font-weight: 600 !important;
+          padding: 10px 24px !important;
+          min-width: 120px !important;
+          border-radius: 8px !important;
+          transition: all 0.3s ease !important;
+          box-shadow: 0 2px 8px rgba(0, 51, 204, 0.3) !important;
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+        }
+
+        .pagination .page-link:hover {
+          transform: translateY(-2px) !important;
+          box-shadow: 0 4px 12px rgba(0, 51, 204, 0.4) !important;
+        }
+
+        .pagination .page-item.disabled .page-link {
+          background: linear-gradient(135deg, #6b7280 0%, #9ca3af 100%) !important;
+          opacity: 0.6 !important;
+          cursor: not-allowed !important;
+        }
+
+        .pagination .page-item {
+          margin: 0 4px !important;
+        }
+
     </style>
 </head>
 <body>
@@ -530,6 +561,13 @@
 
 </div>
 
+<!-- Pagination -->
+<div class="d-flex justify-content-between align-items-center mt-4 px-3">
+  <span id="tableInfo" class="text-muted">Showing <span id="currentEntries">0</span> entries</span>
+  <nav>
+    <ul class="pagination mb-0" id="pagination"></ul>
+  </nav>
+</div>
                 
             </div>  
         <!-- Content End -->
@@ -549,6 +587,60 @@
   <script>
    // Active Users Search Functionality
    document.addEventListener('DOMContentLoaded', function() {
+     // Pagination
+     setTimeout(function() {
+       const rowsPerPage = 10;
+       let currentPage = 1;
+       const tableRows = document.querySelectorAll('#activeUsersTable tbody tr');
+       const cardRows = document.querySelectorAll('.hide-at-1200 > div > article');
+       const totalRows = tableRows.length > 0 ? tableRows.length : cardRows.length;
+       const totalPages = Math.ceil(totalRows / rowsPerPage);
+
+       function showPage(page) {
+         currentPage = page;
+         const start = (page - 1) * rowsPerPage;
+         const end = start + rowsPerPage;
+
+         tableRows.forEach((row, index) => {
+           row.style.display = (index >= start && index < end) ? '' : 'none';
+         });
+
+         cardRows.forEach((card, index) => {
+           card.style.display = (index >= start && index < end) ? '' : 'none';
+         });
+
+         document.getElementById('currentEntries').textContent = Math.min(end, totalRows);
+         updatePagination();
+       }
+
+       function updatePagination() {
+         const pagination = document.getElementById('pagination');
+         if (!pagination) return;
+         pagination.innerHTML = '';
+
+         const prevLi = document.createElement('li');
+         prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+         prevLi.innerHTML = `<a class="page-link" href="#"><i class="bi bi-chevron-left me-1"></i> Previous</a>`;
+         prevLi.addEventListener('click', (e) => {
+           e.preventDefault();
+           if (currentPage > 1) showPage(currentPage - 1);
+         });
+         pagination.appendChild(prevLi);
+
+         const nextLi = document.createElement('li');
+         nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
+         nextLi.innerHTML = `<a class="page-link" href="#">Next <i class="bi bi-chevron-right ms-1"></i></a>`;
+         nextLi.addEventListener('click', (e) => {
+           e.preventDefault();
+           if (currentPage < totalPages) showPage(currentPage + 1);
+         });
+         pagination.appendChild(nextLi);
+       }
+
+       if (totalRows > 0) showPage(1);
+     }, 100);
+
+
        const searchInput = document.getElementById('walletSearch');
        const table = document.getElementById('activeUsersTable');
 

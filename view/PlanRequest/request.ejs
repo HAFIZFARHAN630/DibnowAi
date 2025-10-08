@@ -1055,6 +1055,14 @@
   </div>
 </div>
 
+<!-- Pagination -->
+<div class="d-flex justify-content-between align-items-center mt-4 px-3">
+  <span id="tableInfo" class="text-muted">Showing <span id="currentEntries">0</span> entries</span>
+  <nav>
+    <ul class="pagination mb-0" id="pagination"></ul>
+  </nav>
+</div>
+
                           </div>
                         </div>
                       </div>
@@ -1112,49 +1120,50 @@
 </div>
 
 <!-- Edit Plan Request Modal -->
-<div class="modal fade" id="editPlanModal" tabindex="-1" role="dialog" aria-labelledby="editPlanModalLabel" style="padding: 20px 25px !important;">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header d-flex justify-content-between" style="position: relative; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 35px 25px; border-radius: 15px 15px 0 0;">
-        <h4 class="modal-title" id="myModalLabel">Edit Plan Request <i class="ti-calendar"></i></h4>
-        <button type="button" class="btn-close-professional" data-bs-dismiss="modal" aria-label="Close"
-          style="position: absolute; top: 15px; right: 15px; width: 32px; height: 32px; background: #dc3545; color: white; border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: bold; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3); z-index: 1060;">
+<div class="modal fade" id="editPlanModal" tabindex="-1" role="dialog" aria-labelledby="editPlanModalLabel">
+  <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 800px;">
+    <div class="modal-content" style="background: transparent; border: none;">
+      <div class="form-container" style="background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%); padding: 50px; border-radius: 25px; box-shadow: 0 30px 100px rgba(0, 0, 0, 0.2); position: relative; backdrop-filter: blur(15px); border: 2px solid rgba(255, 255, 255, 0.3);">
+        <button type="button" class="close-btn" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; top: 20px; right: 20px; width: 40px; height: 40px; background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%); border: none; border-radius: 50%; color: white; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);">
           <i class="fas fa-times"></i>
         </button>
+        <div class="form-header" style="text-align: center; margin-bottom: 35px;">
+          <h2 style="font-size: 36px; font-weight: 700; color: #ffffff; margin-bottom: 10px; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);">Edit Plan Request</h2>
+          <p style="color: rgba(255, 255, 255, 0.9); font-size: 18px; line-height: 1.5; margin: 0;">Update plan request information below</p>
+        </div>
+
+        <form action="/update-plan-request" method="POST" onsubmit="console.log('Form submitted with data:', new FormData(this))">
+          <input type="hidden" name="planRequestId" id="planRequestId">
+
+          <div class="form-group" style="margin-bottom: 25px;">
+            <label for="plan_status" style="font-weight: 600; color: #ffffff; margin-bottom: 12px; font-size: 18px; display: block; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);">Plan Status</label>
+            <select class="form-control" id="plan_status" name="status" required style="width: 100%; height: 60px; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 15px; padding: 18px 25px; font-size: 18px; transition: all 0.3s ease; outline: none; font-weight: 600;">
+              <option value="Active" style="background: #10b981; color: white;">✓ Active</option>
+              <option value="Expired" style="background: #ef4444; color: white;">✗ Expired</option>
+              <option value="Pending" style="background: #f59e0b; color: white;">⏳ Pending</option>
+              <option value="Paid" style="background: #10b981; color: white;">✓ Paid</option>
+              <option value="Cancelled" style="background: #ef4444; color: white;">✗ Cancelled</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 25px;">
+            <label for="invoice_status" style="font-weight: 600; color: #ffffff; margin-bottom: 12px; font-size: 18px; display: block; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);">Invoice Status</label>
+            <select class="form-control" id="invoice_status" name="invoiceStatus" required style="width: 100%; height: 60px; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 15px; padding: 18px 25px; font-size: 18px; transition: all 0.3s ease; outline: none; font-weight: 600;">
+<option value="Paid" style="background: #10b981; color: white;">✓ Paid</option>
+              <option value="Unpaid" style="background: #f59e0b; color: white;">⏳ Unpaid</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 25px;">
+            <label for="expiry_date" style="font-weight: 600; color: #ffffff; margin-bottom: 12px; font-size: 18px; display: block; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);">Expiry Date</label>
+            <input type="date" class="form-control" id="expiry_date" name="expiryDate" required style="width: 100%; height: 60px; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 15px; padding: 18px 25px; font-size: 18px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%); transition: all 0.3s ease; outline: none; backdrop-filter: blur(10px);">
+          </div>
+
+          <button type="submit" class="btn-submit" style="width: 100%; height: 60px; background: linear-gradient(135deg, #00C853 0%, #00B894 100%); border: none; border-radius: 15px; color: #ffffff; font-size: 20px; font-weight: 700; letter-spacing: 1px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 10px 30px rgba(0, 184, 148, 0.4); text-transform: uppercase; margin-top: 1rem;">
+            <i class="fas fa-save me-2"></i>Update Plan Request
+          </button>
+        </form>
       </div>
-
-      <form action="/update-plan-request" method="POST" onsubmit="console.log('Form submitted with data:', new FormData(this))">
-        <input type="hidden" name="planRequestId" id="planRequestId">
-
-        <div class="form-group p-4">
-          <label for="plan_status">Plan Status</label>
-          <select class="form-control p-2" id="plan_status" name="status" required>
-            <option value="Active">Active</option>
-            <option value="Expired">Expired</option>
-            <option value="Pending">Pending</option>
-            <option value="Paid">Paid</option>
-            <option value="Cancelled">Cancelled</option>
-          </select>
-        </div>
-
-        <div class="form-group p-4">
-          <label for="invoice_status">Invoice Status</label>
-          <select class="form-control p-2" id="invoice_status" name="invoiceStatus" required>
-            <option value="Paid">Paid</option>
-            <option value="Unpaid">Unpaid</option>
-          </select>
-        </div>
-
-        <div class="form-group p-4">
-          <label for="expiry_date">Expiry Date</label>
-          <input type="date" class="form-control p-2" id="expiry_date" name="expiryDate" required>
-        </div>
-
-        <div class="modal-footer p-4" style="display: flex; gap: 14px; flex-wrap: wrap;">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-primary">Update Plan Request</button>
-        </div>
-      </form>
     </div>
   </div>
 </div>
@@ -1430,11 +1439,31 @@ document.querySelectorAll(".edit-plan").forEach(button => {
     const expiryDateField = document.getElementById("expiry_date");
 
     if (planRequestIdField) planRequestIdField.value = planId;
-    if (planStatusField) planStatusField.value = status;
-    if (invoiceStatusField) invoiceStatusField.value = invoiceStatus;
+    if (planStatusField) {
+      planStatusField.value = status;
+    }
+    if (invoiceStatusField) {
+      invoiceStatusField.value = invoiceStatus;
+    }
     if (expiryDateField) expiryDateField.value = expiry;
 
     console.log('Modal fields populated successfully');
+    
+    // Update colors after a short delay to ensure modal is rendered
+    setTimeout(function() {
+      if (planStatusField) {
+        console.log('Updating plan status color:', planStatusField.value);
+        updateDropdownColor(planStatusField);
+      }
+      if (invoiceStatusField) {
+        console.log('Updating invoice status color:', invoiceStatusField.value);
+        // Force style update with !important
+        const bgColor = invoiceStatus === 'Paid' ? '#10b981' : '#f59e0b';
+        invoiceStatusField.style.setProperty('background-color', bgColor, 'important');
+        invoiceStatusField.style.setProperty('color', 'white', 'important');
+        console.log('Applied styles:', invoiceStatusField.style.backgroundColor, invoiceStatusField.style.color);
+      }
+    }, 300);
 
     // === Minimal addition: show the modal after populating ===
     try {
@@ -1468,6 +1497,99 @@ document.querySelectorAll(".edit-plan").forEach(button => {
 });
 
     });
+
+// Dynamic dropdown color change based on selection
+function updateDropdownColor(selectElement) {
+  if (!selectElement) return;
+  const value = selectElement.value;
+  const colorMap = {
+    'Active': '#10b981',
+    'Paid': '#10b981',
+    'Pending': '#f59e0b',
+    'Unpaid': '#f59e0b',
+    'Expired': '#ef4444',
+    'Cancelled': '#ef4444'
+  };
+  selectElement.style.backgroundColor = colorMap[value] || '#fff';
+  selectElement.style.color = colorMap[value] ? 'white' : '#333';
+}
+
+// Initialize dropdown colors on page load
+document.addEventListener('DOMContentLoaded', function() {
+  const planStatus = document.getElementById('plan_status');
+  const invoiceStatus = document.getElementById('invoice_status');
+  
+  if (planStatus) {
+    updateDropdownColor(planStatus);
+    planStatus.addEventListener('change', function() {
+      updateDropdownColor(this);
+    });
+  }
+  
+  if (invoiceStatus) {
+    updateDropdownColor(invoiceStatus);
+    invoiceStatus.addEventListener('change', function() {
+      updateDropdownColor(this);
+    });
+  }
+
+  // Pagination - Initialize immediately
+  setTimeout(function() {
+    const rowsPerPage = 10;
+    let currentPage = 1;
+    const tableRows = document.querySelectorAll('#planRequestsTable tbody tr');
+    const cardRows = document.querySelectorAll('.hide-at-1200 > div > article');
+    const totalRows = tableRows.length > 0 ? tableRows.length : cardRows.length;
+    const totalPages = Math.ceil(totalRows / rowsPerPage);
+
+    function showPage(page) {
+      currentPage = page;
+      const start = (page - 1) * rowsPerPage;
+      const end = start + rowsPerPage;
+
+      // Handle table rows
+      tableRows.forEach((row, index) => {
+        row.style.display = (index >= start && index < end) ? '' : 'none';
+      });
+
+      // Handle card rows
+      cardRows.forEach((card, index) => {
+        card.style.display = (index >= start && index < end) ? '' : 'none';
+      });
+
+      document.getElementById('currentEntries').textContent = Math.min(end, totalRows);
+      updatePagination();
+    }
+
+    function updatePagination() {
+      const pagination = document.getElementById('pagination');
+      if (!pagination) return;
+      pagination.innerHTML = '';
+
+      // Previous button
+      const prevLi = document.createElement('li');
+      prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+      prevLi.innerHTML = `<a class="page-link" href="#">Previous</a>`;
+      prevLi.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (currentPage > 1) showPage(currentPage - 1);
+      });
+      pagination.appendChild(prevLi);
+
+      // Next button
+      const nextLi = document.createElement('li');
+      nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
+      nextLi.innerHTML = `<a class="page-link" href="#">Next</a>`;
+      nextLi.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (currentPage < totalPages) showPage(currentPage + 1);
+      });
+      pagination.appendChild(nextLi);
+    }
+
+    if (totalRows > 0) showPage(1);
+  }, 100);
+});
   
 </script>
 

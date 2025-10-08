@@ -20,6 +20,31 @@ const mongoose = require("mongoose");
 const { getPaymentSettings, savePaymentSettings } = require("../controllers/adminPaymentController");
 const { isAuthenticated, isAdmin } = require("../middlewares/authMiddleware");
 
+// Manual Payment Notification - MUST BE BEFORE OTHER ROUTES
+router.post("/admin/notify/manual-payment/:userId", isAuthenticated, isAdmin, async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { message } = req.body;
+    const Notification = require("../models/notification");
+    const User = require("../models/user");
+    
+    const user = await User.findById(userId);
+    if (!user) return res.json({ success: false, message: "User not found" });
+    
+    await Notification.create({
+      userId: user._id,
+      userName: user.first_name + " " + (user.last_name || ""),
+      action: "Manual Payment Notification",
+      message: message
+    });
+    
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.json({ success: false });
+  }
+});
+
 // Admin page
 router.get("/admin", isAuthenticated, isAdmin, admin);
 
@@ -73,8 +98,5 @@ router.get("/notification-settings", isAuthenticated, isAdmin,notificationSettin
 
 // Save Notification Settings
 router.post("/save-notification-settings", isAuthenticated, isAdmin,saveNotificationSettingsPage)
-
-
-
 
 module.exports = router;

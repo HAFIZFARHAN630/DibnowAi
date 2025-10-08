@@ -66,6 +66,9 @@
                                 </div>
                             </div>
                             <p class="notification-action mb-1 text-secondary"><%= notification.action %></p>
+                            <% if (notification.message) { %>
+                                <p class="notification-message mb-1 text-dark" style="font-size: 12px;"><%= notification.message %></p>
+                            <% } %>
                             <small class="notification-time text-muted">
                                 <i class="fas fa-clock me-1"></i>
                                 <%= new Date(notification.timestamp).toLocaleString() %>

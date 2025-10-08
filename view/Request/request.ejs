@@ -148,6 +148,29 @@
           display: none;
         }
       }
+
+      /* Professional Pagination Buttons */
+      .pagination .page-link {
+        background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%) !important;
+        color: white !important;
+        border: none !important;
+        font-weight: 600 !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 2px 8px rgba(0, 51, 204, 0.3) !important;
+      }
+
+      .pagination .page-link:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 4px 12px rgba(0, 51, 204, 0.4) !important;
+      }
+
+      .pagination .page-item.disabled .page-link {
+        background: linear-gradient(135deg, #6b7280 0%, #9ca3af 100%) !important;
+        opacity: 0.6 !important;
+        cursor: not-allowed !important;
+      }
     </style>
 
 </head>
@@ -197,8 +220,12 @@
               </td>
 
               <td class="px-6 py-4">
-                <i class="bi bi-envelope text-muted me-2"></i>
-                <span class="text-gray-600 italic"><%= user.email %></span>
+                <div class="d-flex align-items-center justify-content-center">
+                  <div class="bg-light rounded-3 px-3 py-2 border border-primary border-opacity-25">
+                    <i class="bi bi-envelope-fill text-primary me-2"></i>
+                    <span class="text-dark fw-medium" style="font-size: 0.9rem;"><%= user.email %></span>
+                  </div>
+                </div>
               </td>
 
               <td class="px-6 py-4 text-gray-600">
@@ -207,10 +234,11 @@
               </td>
 
               <td class="px-6 py-4">
-                <span class="transaction-id inline-flex items-center px-3 py-2 rounded-full shadow-sm bg-gray-50 border text-sm">
-                  <i class="bi bi-upc-scan text-primary me-1"></i>
-                  <%= user.transfer_id %>
-                </span>
+                <div class="d-flex justify-content-center">
+                  <span class="text-white px-3 py-2 rounded-pill shadow-sm" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.3px; display: inline-block;">
+                    <i class="bi bi-credit-card me-2"></i><%= user.transfer_id %>
+                  </span>
+                </div>
               </td>
 
               <td class="px-6 py-4">
@@ -241,11 +269,14 @@
             </div>
             <div class="min-w-0">
               <div class="text-sm font-semibold text-gray-800 truncate"><%= user.first_name %> <%= user.last_name %></div>
-              <div class="text-xs text-gray-500 mt-1 truncate"><i class="bi bi-envelope me-1"></i><%= user.email %></div>
-              <div class="text-xs text-gray-500 mt-1"><i class="bi bi-telephone me-1"></i><%= user.phone_number %></div>
+              <div class="mt-2 bg-light rounded-2 px-2 py-1 border border-primary border-opacity-25">
+                <i class="bi bi-envelope-fill text-primary" style="font-size: 0.75rem;"></i>
+                <span class="text-dark ms-1" style="font-size: 0.75rem; font-weight: 500;"><%= user.email %></span>
+              </div>
+              <div class="text-xs text-gray-500 mt-2"><i class="bi bi-telephone me-1"></i><%= user.phone_number %></div>
               <div class="mt-2">
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs bg-gray-50 border">
-                  <i class="bi bi-upc-scan me-1"></i><span class="truncate"><%= user.transfer_id %></span>
+                <span class="text-white px-2 py-1 rounded-pill shadow-sm" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important; font-size: 0.7rem; font-weight: 600; display: inline-block;">
+                  <i class="bi bi-credit-card me-1"></i><%= user.transfer_id %>
                 </span>
               </div>
             </div>
@@ -270,12 +301,120 @@
 
           </div>
       </div>
+<!-- Pagination -->
+<div class="d-flex justify-content-between align-items-center mt-4 px-3">
+  <span id="tableInfo" class="text-muted">Showing <span id="currentEntries">0</span> entries</span>
+  <nav>
+    <ul class="pagination mb-0" id="pagination"></ul>
+  </nav>
+</div>
+
   </div>
-  <scrpt src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <!-- Template Javascript -->
 <script src="js/main.js"></script>
+
+<script>
+  // Pagination
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+      const rowsPerPage = 10;
+      let currentPage = 1;
+      const tableRows = document.querySelectorAll('#paginatedTable tbody tr');
+      const cardRows = document.querySelectorAll('.min-\\[1200px\\]\\:hidden > article');
+      const totalRows = tableRows.length > 0 ? tableRows.length : cardRows.length;
+      const totalPages = Math.ceil(totalRows / rowsPerPage);
+
+      function showPage(page) {
+        currentPage = page;
+        const start = (page - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+
+        tableRows.forEach((row, index) => {
+          row.style.display = (index >= start && index < end) ? '' : 'none';
+        });
+
+        cardRows.forEach((card, index) => {
+          card.style.display = (index >= start && index < end) ? '' : 'none';
+        });
+
+        document.getElementById('currentEntries').textContent = Math.min(end, totalRows);
+        updatePagination();
+      }
+
+      function updatePagination() {
+        const pagination = document.getElementById('pagination');
+        if (!pagination) return;
+        pagination.innerHTML = '';
+
+        const prevLi = document.createElement('li');
+        prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+        prevLi.innerHTML = `<a class="page-link" href="#">Previous</a>`;
+        prevLi.addEventListener('click', (e) => {
+          e.preventDefault();
+          if (currentPage > 1) showPage(currentPage - 1);
+        });
+        pagination.appendChild(prevLi);
+
+        const nextLi = document.createElement('li');
+        nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
+        nextLi.innerHTML = `<a class="page-link" href="#">Next</a>`;
+        nextLi.addEventListener('click', (e) => {
+          e.preventDefault();
+          if (currentPage < totalPages) showPage(currentPage + 1);
+        });
+        pagination.appendChild(nextLi);
+      }
+
+      if (totalRows > 0) showPage(1);
+    }, 100);
+  });
+
+  // Notification logic for Accept/Deny buttons
+  document.querySelectorAll(".accept-btn").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const userId = btn.getAttribute("data-user-id");
+      try {
+        const res = await fetch(`/admin/notify/manual-payment/${userId}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: "Your manual payment could be verified. Please wait. Your plan will be activated in one or two hours."
+          })
+        });
+        const data = await res.json();
+        if (data.success) alert("Notification sent successfully!");
+        else alert("Failed to send notification.");
+      } catch (err) {
+        console.error(err);
+        alert("Error sending notification.");
+      }
+    });
+  });
+
+  document.querySelectorAll(".deny-btn").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const userId = btn.getAttribute("data-user-id");
+      try {
+        const res = await fetch(`/admin/notify/manual-payment/${userId}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: "Your transaction has an issue and payment was not received."
+          })
+        });
+        const data = await res.json();
+        if (data.success) alert("Notification sent successfully!");
+        else alert("Failed to send notification.");
+      } catch (err) {
+        console.error(err);
+        alert("Error sending notification.");
+      }
+    });
+  });
+</script>
   
 </body>
 <!-- JavaScript Libraries -->

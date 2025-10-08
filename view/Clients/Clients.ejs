@@ -173,6 +173,162 @@
       display: none !important;
     }
   }
+
+  /* Modal Redesign */
+  .modal-content.gadget-form-modal {
+    background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);
+    border-radius: 25px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 30px 100px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(15px);
+  }
+
+  .modal-header {
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    padding: 30px;
+    position: relative;
+  }
+
+  .modal-title {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    margin: 0 !important;
+    font-size: 28px !important;
+  }
+
+  .gadget-close-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+  }
+
+  .gadget-close-btn:hover {
+    transform: scale(1.1) rotate(90deg);
+    box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+  }
+
+  .modal-body {
+    padding: 30px;
+  }
+
+  .gadget-form .form-label {
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 12px;
+    font-size: 16px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  }
+
+  .gadget-form .gadget-input,
+  .gadget-form .gadget-select {
+    width: 100%;
+    height: 50px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    padding: 12px 20px;
+    font-size: 16px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%);
+    transition: all 0.3s ease;
+    margin-bottom: 15px;
+  }
+
+  .gadget-form .gadget-input:focus,
+  .gadget-form .gadget-select:focus {
+    border-color: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.98);
+  }
+
+  .gadget-submit-btn {
+    width: 100%;
+    height: 50px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    color: #0033cc;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
+    text-transform: uppercase;
+    margin-top: 20px;
+  }
+
+  .gadget-submit-btn:hover {
+    background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(255, 255, 255, 0.3);
+  }
+
+  /* Status Select Colors */
+  .status-select {
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 8px 12px;
+    border: 2px solid;
+    transition: all 0.3s ease;
+    color: white;
+  }
+
+  .status-select.Pending { background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); border-color: #ffc107; }
+  .status-select.Cancelled { background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); border-color: #dc3545; }
+  .status-select.Progress { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); border-color: #007bff; }
+  .status-select.Completed { background: linear-gradient(135deg, #28a745 0%, #218838 100%); border-color: #28a745; }
+  .status-select.Delivered { background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%); border-color: #6f42c1; }
+
+  .status-select option[value="Pending"] { background: #ffc107; color: white; }
+  .status-select option[value="Cancelled"] { background: #dc3545; color: white; }
+  .status-select option[value="Progress"] { background: #007bff; color: white; }
+  .status-select option[value="Completed"] { background: #28a745; color: white; }
+  .status-select option[value="Delivered"] { background: #6f42c1; color: white; }
+
+  /* Professional Pagination Buttons */
+  .pagination .page-link {
+    background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%) !important;
+    color: white !important;
+    border: none !important;
+    font-weight: 600 !important;
+    padding: 10px 24px !important;
+    min-width: 120px !important;
+    border-radius: 8px !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 2px 8px rgba(0, 51, 204, 0.3) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .pagination .page-link:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(0, 51, 204, 0.4) !important;
+  }
+
+  .pagination .page-item.disabled .page-link {
+    background: linear-gradient(135deg, #6b7280 0%, #9ca3af 100%) !important;
+    opacity: 0.6 !important;
+    cursor: not-allowed !important;
+  }
+
+  .pagination .page-item {
+    margin: 0 4px !important;
+  }
 </style>
 </head>
 <body style="max-width: 100vw !important; overflow-x: hidden !important;">  
@@ -327,7 +483,7 @@
 </div>
 
 <!-- Cards (mobile only) -->
-<div class="d-xl-none>
+<div class="d-xl-none">
   <div class="row g-3">
     <% products.forEach(product => { %>
     <div class="col-12">
@@ -380,9 +536,9 @@
 
         <!-- Pagination -->
         <div class="d-flex justify-content-between align-items-center mt-3">
-          <span id="tableInfo" class="text-muted">Showing 1 to 10 of <%= products.length %> entries</span>
+          <span id="tableInfo" class="text-muted">Showing <span id="currentEntries">0</span> entries</span>
           <nav>
-            <ul class="pagination" id="pagination"></ul>
+            <ul class="pagination mb-0" id="pagination"></ul>
           </nav>
         </div>
       </div>
@@ -407,11 +563,13 @@
     <div class="modal-dialog">
       <div class="modal-content gadget-form-modal" style="width:100%;">
         <div class="modal-header">
-          <h5 class="modal-title" id="editUserModalLabel" style="margin-left: auto; font-size: xx-large;margin-bottom: -17px;">Update Clients</h5>
-          <button type="button" class="btn-close gadget-close-btn" data-bs-dismiss="modal" aria-label="Close"><i class="fas fa-times gadget-close-btn" data-bs-dismiss="modal" aria-label="Close"></i></button>
+          <h5 class="modal-title" id="editUserModalLabel">Update Clients</h5>
+          <button type="button" class="gadget-close-btn" data-bs-dismiss="modal" aria-label="Close">
+            <i class="fas fa-times"></i>
+          </button>
         </div>
 
-        <div class="modal-body" style="padding-top: 17px;">
+        <div class="modal-body">
           <form action="/Clients/update/<%= product.id %>" method="POST" id="editUserForm<%= product.id %>" class="gadget-form">
             <input type="hidden" name="id" value="<%= product.id %>" />
             <div class="col-md-12">
@@ -449,7 +607,7 @@
           </div>
             <!-- Submit Button -->
             <div class="btn-add">
-              <button type="submit" class="btn gadget-submit-btn" style=" background-color: #28a745; color: white;">
+              <button type="submit" class="btn gadget-submit-btn">
                 Update Clients
               </button>
             </div>
@@ -464,6 +622,22 @@
 
 
 <script>
+  // Update status and change dropdown color
+  function updateStatus(productId, status) {
+    const selectElement = event.target;
+    selectElement.className = 'status-select ' + status;
+    
+    fetch(`/Clients/${productId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: status }),
+    })
+    .then(response => {
+      if (response.ok) console.log('Status updated successfully');
+    })
+    .catch(error => console.error('Error updating status:', error));
+  }
+
   // search bar
   function filterTable() {
     const searchValue = document.getElementById('text-srh').value.toLowerCase();
@@ -568,206 +742,117 @@
       }
     }
   
-  // Table pagination // Table pagination
+  // Table pagination
   document.addEventListener("DOMContentLoaded", () => {
-    const table = document.getElementById("paginatedTable");
-    const rows = table.querySelectorAll("tbody tr");
-    const pagination = document.getElementById("pagination");
-    const tableInfo = document.getElementById("tableInfo");
-  
-    const rowsPerPage = 10; // Number of rows to display per page
-    const totalPages = Math.ceil(rows.length / rowsPerPage);
-    let currentPage = 1;
-  
-    // Function to show rows for the current page
-    const showPage = (page) => {
-      currentPage = page;
-      const start = (page - 1) * rowsPerPage;
-      const end = start + rowsPerPage;
-  
-      rows.forEach((row, index) => {
-        row.style.display = index >= start && index < end ? "" : "none";
-      });
-  
-      // Update the pagination info
-      tableInfo.textContent = `Showing ${start + 1} to ${
-        end > rows.length ? rows.length : end
-      } of ${rows.length} entries`;
-  
-      // Update pagination buttons
-      updatePagination();
-    };
-  
-    // Function to create pagination buttons
-    const updatePagination = () => {
-      pagination.innerHTML = ""; 
-  
-      const createPageItem = (page, label, isDisabled = false, isActive = false) => {
-        const li = document.createElement("li");
-        li.className = `page-item ${isActive ? "active" : ""} ${isDisabled ? "disabled" : ""}`;
-        li.innerHTML = `<a class="page-link" href="#">${label}</a>`;
-        li.addEventListener("click", (e) => {
-          e.preventDefault();
-          if (!isDisabled) {
-            if (label === "Previous") {
-              showPage(currentPage - 1);
-            } else if (label === "Next") {
-              showPage(currentPage + 1);
-            } else {
-              showPage(page);
-            }
-          }
+    setTimeout(function() {
+      const rowsPerPage = 10;
+      let currentPage = 1;
+      const tableRows = document.querySelectorAll('#paginatedTable tbody tr');
+      const cardRows = document.querySelectorAll('.d-xl-none > .row > .col-12');
+      const totalRows = tableRows.length > 0 ? tableRows.length : cardRows.length;
+      const totalPages = Math.ceil(totalRows / rowsPerPage);
+
+      function showPage(page) {
+        currentPage = page;
+        const start = (page - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+
+        tableRows.forEach((row, index) => {
+          row.style.display = (index >= start && index < end) ? '' : 'none';
         });
-        return li;
-      };
-  
-      // Add "Previous" button
-      pagination.appendChild(
-        createPageItem(currentPage - 1, "Previous", currentPage === 1)
-      );
-  
-      // Add numbered page buttons
-      for (let i = 1; i <= totalPages; i++) {
-        pagination.appendChild(
-          createPageItem(i, i, false, i === currentPage)
-        );
+
+        cardRows.forEach((card, index) => {
+          card.style.display = (index >= start && index < end) ? '' : 'none';
+        });
+
+        document.getElementById('currentEntries').textContent = Math.min(end, totalRows);
+        updatePagination();
       }
-  
-      // Add "Next" button
-      pagination.appendChild(
-        createPageItem(currentPage + 1, "Next", currentPage === totalPages)
-      );
-    };
-    // Initialize pagination
-    showPage(1);
+
+      function updatePagination() {
+        const pagination = document.getElementById('pagination');
+        if (!pagination) return;
+        pagination.innerHTML = '';
+
+        const prevLi = document.createElement('li');
+        prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+        prevLi.innerHTML = `<a class="page-link" href="#"><i class="bi bi-chevron-left me-1"></i> Previous</a>`;
+        prevLi.addEventListener('click', (e) => {
+          e.preventDefault();
+          if (currentPage > 1) showPage(currentPage - 1);
+        });
+        pagination.appendChild(prevLi);
+
+        const nextLi = document.createElement('li');
+        nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
+        nextLi.innerHTML = `<a class="page-link" href="#">Next <i class="bi bi-chevron-right ms-1"></i></a>`;
+        nextLi.addEventListener('click', (e) => {
+          e.preventDefault();
+          if (currentPage < totalPages) showPage(currentPage + 1);
+        });
+        pagination.appendChild(nextLi);
+      }
+
+      if (totalRows > 0) showPage(1);
+    }, 100);
   });
   
-  // ID for user to print // ID for user to print 
+  // Print single client
   function printTable(userId) {
     if (userId) {
         const userRow = document.querySelector(`tr[data-user-id="${userId}"]`);
+        if (!userRow) return;
 
-        if (userRow) {
-            // Open a new window for printing and directly inject content
-            const printWindow = window.open( 'sss', 'PrintWindow', 'height=600,width=800');
-            let now = new Date();
-            let formattedDate = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-            let formattedTime = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            let liveDate = `${formattedDate}`;
-            let liveTime = `${formattedTime}`;
+        let now = new Date();
+        let formattedDate = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+        let formattedTime = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
-            
-            printWindow.document.open();
-            printWindow.document.write(`
-              <html>
-                    <head>
-                        <style>
-                            body {
-                                font-family: Arial, sans-serif;
-                                margin: 0;
-                                padding: 0;
-                            }
-                            h1 {
-                                text-align: center;
-                                color: #333;
-                            }
-                            .live-date {
-                                margin-left: 20px;
-                                font-size: 14px;
-                                font-weight: bold;
-                            }
-                            .user-details {
-                                margin: 20px;
-                                padding: 20px;
-                                border-radius: 8px;
-                            }
-                            .customer-footer {
-                                margin-top: 590px;
-                                text-align: center;
-                                font-weight: bold;
-                            }
-                            .qr-code {
-                                margin-top: 100px;
-                                text-align: center;
-                            }
-                            img {
-                                width: 300px;
-                                height: 300px;
-                            }
-                            .date {
-                                display: flex;
-                                justify-content: space-between;
-                                margin-left: 20px;
-                            }
-                            .dates {
-                               display: flex;
-                               justify-content: space-between;
-                               margin-left: 20px;
-                               border-bottom: 3px double #ccc;
-                            }
-                            .info-section {
-                                margin: 20px;
-                                display: flex;
-                                justify-content: space-between;
-                                align-items: center;
-                            }
-                            .info-section h5 {
-                                margin-right: 10px;
-                                font-weight: bold;
-                            }
-                            .info-section .left,
-                            .info-section .center,
-                            .info-section .right {
-                                flex: 1;
-                                text-align: center;
-                            }
-                            .center {
-                                text-align: center;
-                            }
-                        </style>
-                    </head>
-                    <body>
-                         <h1><%- company %></h1>
-                           <div class="date">
-                            <p class="live-date">Date: ${liveDate}</p> 
-                            <p class="live-date">Time: ${liveTime}</p> 
-                        </div>
+        let userName = userRow.querySelector('.user-name') ? userRow.querySelector('.user-name').innerText : 'N/A';
+        let userEmail = userRow.cells[2] ? userRow.cells[2].innerText : 'N/A';
+        let brand = userRow.cells[3] ? userRow.cells[3].innerText : 'N/A';
+        let status = userRow.querySelector('.status-select') ? userRow.querySelector('.status-select').value : 'N/A';
 
-                        <div class="date">
-                            <p class="live-date">Name: ${userRow.querySelector('.user-name').innerText}</p>
-                        </div>
-                          <div class="dates">
-                            <p class="live-date">Email: ${userRow.querySelector('.usr-email-addr').innerText}</p>
-                        </div>
-               
-                          <div class="info-section">
-                            <div class="left">
-                                <h5>Product</h5>
-                                <p>${userRow.querySelector('.usr-location').innerText}</p>
-                            </div>
-                            <div class="right">
-                                <h5>Price</h5>
-                                <p>${userRow.querySelector('.usr-price').innerText}</p>
-                            </div>
-                             <div class="center">
-                                <h5>Status</h5>
-                                <p>${userRow.querySelector('.status-select').value}</p>
-                            </div>
-                        </div>
-
-                    <!-- Customer Details Footer -->
-                        <div class="customer-footer">
-                            <p>Developed By ClickTake Technologies © 2025 DibNow</p>
-                        </div>
-                    </body>
-                   
-                </html>
-            `);
-            printWindow.document.close();
-            printWindow.focus(); 
-            printWindow.print();
-            printWindow.close(); 
-        }
+        const printWindow = window.open('', 'PrintWindow', 'height=600,width=800');
+        printWindow.document.write(`
+          <html>
+            <head>
+              <style>
+                body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+                h1 { text-align: center; color: #333; }
+                .date { display: flex; justify-content: space-between; margin: 20px; font-weight: bold; }
+                .dates { display: flex; justify-content: space-between; margin: 20px; border-bottom: 3px double #ccc; padding-bottom: 10px; }
+                .info-section { margin: 20px; display: flex; justify-content: space-around; border-bottom: 1px solid #ccc; padding-bottom: 20px; }
+                .info-section div { text-align: center; }
+                .info-section h5 { font-weight: bold; margin-bottom: 10px; }
+                .footer { margin-top: 100px; text-align: center; font-weight: bold; }
+              </style>
+            </head>
+            <body>
+              <h1>Client Details</h1>
+              <div class="date">
+                <p>Date: ${formattedDate}</p>
+                <p>Time: ${formattedTime}</p>
+              </div>
+              <div class="date">
+                <p>Name: ${userName}</p>
+              </div>
+              <div class="dates">
+                <p>Email: ${userEmail}</p>
+              </div>
+              <div class="info-section">
+                <div><h5>Brand</h5><p>${brand}</p></div>
+                <div><h5>Status</h5><p>${status}</p></div>
+              </div>
+              <div class="footer">
+                <p>Developed By ClickTake Technologies © 2025 DibNow</p>
+              </div>
+            </body>
+          </html>
+        `);
+        printWindow.document.close();
+        printWindow.focus();
+        printWindow.print();
+        printWindow.close();
     } 
     else {
         // If no userId is provided, print the entire table

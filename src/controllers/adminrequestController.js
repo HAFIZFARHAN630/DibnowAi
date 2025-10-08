@@ -393,8 +393,8 @@ exports.updatePlanRequest = async (req, res) => {
       { new: true }
     );
 
-    // If status is being set to 'Active', activate the user's plan
-    if (status === 'Active' && planRequest.status !== 'Active') {
+    // If status is being set to 'Active' and invoice is 'Paid', activate the user's plan
+    if (status === 'Active' && invoiceStatus === 'Paid' && planRequest.status !== 'Active') {
       try {
         // Create a Payments record for the activated plan
         const newPayment = new Payments({
@@ -403,7 +403,7 @@ exports.updatePlanRequest = async (req, res) => {
           amount: planRequest.amount,
           gateway: 'manual',
           startDate: new Date(),
-          expiryDate: planRequest.expiryDate,
+          expiryDate: expiryDate ? new Date(expiryDate) : planRequest.expiryDate,
           status: 'active'
         });
 
@@ -414,9 +414,29 @@ exports.updatePlanRequest = async (req, res) => {
           plan_name: planRequest.planName
         });
 
-        // Update plan limits using the existing subscribePlan function
-        const pricingController = require('./pricingController');
-        await pricingController.subscribePlan(planRequest.user, planRequest.planName);
+        // Update plan limits
+        let planLimit;
+        switch (planRequest.planName) {
+          case "BASIC":
+            planLimit = 300;
+            break;
+          case "STANDARD":
+            planLimit = 500;
+            break;
+          case "PREMIUM":
+            planLimit = 1000;
+            break;
+          default:
+            planLimit = 30;
+            break;
+        }
+
+        const user = await User.findById(planRequest.user).select("plan_limit");
+        if (user) {
+          const currentPlanLimit = user.plan_limit || 0;
+          const newPlanLimit = currentPlanLimit + planLimit;
+          await User.findByIdAndUpdate(planRequest.user, { plan_limit: newPlanLimit });
+        }
 
         // Create transaction record
         const Transaction = require("../models/transaction");

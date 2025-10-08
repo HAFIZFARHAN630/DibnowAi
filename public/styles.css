@@ -268,7 +268,8 @@
     .sidebar .navbar .navbar-nav .nav-link.active {
         color: #ffffff !important;
         background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);
-        font-weight: 600;
+        font-weight: 800;
+        font-family: Arial, Helvetica, sans-serif;
         border-left-color: #3b82f6;
         box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
     }

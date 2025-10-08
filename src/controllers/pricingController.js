@@ -6,6 +6,7 @@ const Stripe = require("stripe");
 const Wallet = require("../models/wallet");
 const Transaction = require("../models/transaction");
 const planModel = require("../models/plan.model");
+const PlanRequest = require("../models/planRequest");
 const payfastController = require("./payfastController");
 // Removed: const payfastHppController = require("./payfastHppController");
 // Middleware to ensure user is logged in
@@ -402,6 +403,22 @@ exports.addSubscription = [
           });
     
           await newPayment.save();
+
+          // Create/Update PlanRequest with Active status for wallet payments
+          await PlanRequest.findOneAndUpdate(
+            { user: req.session.userId },
+            {
+              user: req.session.userId,
+              planName: plan,
+              status: 'Active',
+              invoiceStatus: 'Paid',
+              startDate,
+              expiryDate,
+              amount: parseFloat(amount),
+              description: 'Wallet payment - Plan activated automatically'
+            },
+            { upsert: true, new: true }
+          );
     
           // Update user plan
           await User.findByIdAndUpdate(req.session.userId, { plan_name: plan });
@@ -526,6 +543,7 @@ exports.paymentSuccess = [
       }
 
       const Payments = require("../models/payments");
+      const PlanRequest = require("../models/planRequest");
       const User = require("../models/user");
 
       // Create Payments record
@@ -541,49 +559,78 @@ exports.paymentSuccess = [
 
       const amount = planPrices[plan] || 0;
 
-      const newPayment = new Payments({
-        user: userId,
-        plan,
-        amount,
-        gateway,
-        startDate,
-        expiryDate,
-        status: 'active'
-      });
+      // Check if payment method is online (Stripe, PayPal, PayFast)
+      const isOnlinePayment = ['stripe', 'paypal', 'payfast'].includes(gateway);
 
-      await newPayment.save();
+      if (isOnlinePayment) {
+        // Auto-activate plan for online payments
+        const newPayment = new Payments({
+          user: userId,
+          plan,
+          amount,
+          gateway,
+          startDate,
+          expiryDate,
+          status: 'active'
+        });
 
-      // Update the plan_name in the database
-      await User.findByIdAndUpdate(userId, { plan_name: plan });
+        await newPayment.save();
 
-      // Now, update the plan_limit based on the selected plan
-      await subscribePlan(userId, plan);
+        // Create/Update PlanRequest with Active status
+        await PlanRequest.findOneAndUpdate(
+          { user: userId },
+          {
+            user: userId,
+            planName: plan,
+            status: 'Active',
+            invoiceStatus: 'Paid',
+            startDate,
+            expiryDate,
+            amount,
+            description: `${gateway.toUpperCase()} payment - Plan activated automatically`
+          },
+          { upsert: true, new: true }
+        );
 
-      // Create transaction record for payment
-      const newTransaction = new Transaction({
-        user: userId,
-        type: 'payment',
-        amount,
-        status: 'success'
-      });
-      await newTransaction.save();
+        // Update the plan_name in the database
+        await User.findByIdAndUpdate(userId, { plan_name: plan });
 
-      // Create notification for buying a plan
-      if (req.app.locals.notificationService) {
-        const user = await User.findById(userId).select('first_name');
-        if (user) {
-          await req.app.locals.notificationService.createNotification(
-            userId,
-            user.first_name,
-            "Buy Plan"
-          );
+        // Now, update the plan_limit based on the selected plan
+        await subscribePlan(userId, plan);
+
+        // Create transaction record for payment
+        const newTransaction = new Transaction({
+          user: userId,
+          type: 'payment',
+          amount,
+          status: 'success'
+        });
+        await newTransaction.save();
+
+        // Create notification for buying a plan
+        if (req.app.locals.notificationService) {
+          const user = await User.findById(userId).select('first_name');
+          if (user) {
+            await req.app.locals.notificationService.createNotification(
+              userId,
+              user.first_name,
+              "Buy Plan"
+            );
+          }
         }
+
+        req.flash(
+          "success_msg",
+          `Your subscription plan has been activated to ${plan}.`
+        );
+      } else {
+        // Manual payment - create pending plan request
+        req.flash(
+          "info_msg",
+          `Your payment is being processed. Please wait for admin verification.`
+        );
       }
 
-      req.flash(
-        "success_msg",
-        `Your subscription plan has been updated to ${plan}.`
-      );
       res.redirect("/index");
     } catch (error) {
       console.error("Payment success error:", error.message);

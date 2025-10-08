@@ -761,7 +761,7 @@
 // Department filter functionality
 document.getElementById('departmentFilter').addEventListener('change', function() {
     const selectedDepartment = this.value;
-    const tableRows = document.querySelectorAll('#paginatedTable tbody tr');
+    const tableRows = document.querySelectorAll('.search-table tbody tr.search-items');
     
     tableRows.forEach(row => {
         const rowDepartment = row.getAttribute('data-department');

@@ -1,0 +1,17 @@
+Pagination Button Update Script
+
+CSS Update (add to all files):
+.pagination .page-link {
+  padding: 10px 24px !important;
+  min-width: 120px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+.pagination .page-item {
+  margin: 0 4px !important;
+}
+
+JavaScript Update (replace in all files):
+prevLi.innerHTML = `<a class="page-link" href="#"><i class="bi bi-chevron-left me-1"></i> Previous</a>`;
+nextLi.innerHTML = `<a class="page-link" href="#">Next <i class="bi bi-chevron-right ms-1"></i></a>`;

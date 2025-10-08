@@ -96,7 +96,8 @@
         align-items: center;
         margin-top: 20px;
         gap: 15px;
-        margin-left: 30px;
+        justify-content: flex-end;
+    
       }
       @media screen and (max-width: 768px) {
         .action-buttons-b {
@@ -147,6 +148,37 @@
 .body-wrapper{
   max-width: 100vw !important;
   overflow-x: hidden !important;
+}
+
+/* Professional Pagination Buttons */
+.pagination .page-link {
+  background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%) !important;
+  color: white !important;
+  border: none !important;
+  font-weight: 600 !important;
+  padding: 10px 24px !important;
+  min-width: 120px !important;
+  border-radius: 8px !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 2px 8px rgba(0, 51, 204, 0.3) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.pagination .page-link:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(0, 51, 204, 0.4) !important;
+}
+
+.pagination .page-item.disabled .page-link {
+  background: linear-gradient(135deg, #6b7280 0%, #9ca3af 100%) !important;
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+}
+
+.pagination .page-item {
+  margin: 0 4px !important;
 }
 
 </style>
@@ -414,9 +446,9 @@
       </div>
             <!-- Pagination -->
             <div class="d-flex justify-content-between align-items-center mt-3">
-              <span id="tableInfo" class="text-muted">Showing 1 to 10 of <%= products.length %> entries</span>
+              <span id="tableInfo" class="text-muted">Showing <span id="currentEntries">0</span> entries</span>
               <nav style="margin-right:31px;">
-                <ul class="pagination" id="pagination"></ul>
+                <ul class="pagination mb-0" id="pagination"></ul>
               </nav>
             </div>
           </div>
@@ -429,91 +461,81 @@
           <!-- footer -->
 </body>
 <script>
-  // Table pagination // Table pagination
-document.addEventListener("DOMContentLoaded", () => {
-  const table = document.getElementById("paginatedTable");
-  const rows = table.querySelectorAll("tbody tr");
-  const pagination = document.getElementById("pagination");
-  const tableInfo = document.getElementById("tableInfo");
+  // Table pagination
+  document.addEventListener("DOMContentLoaded", () => {
+    setTimeout(function() {
+      const rowsPerPage = 10;
+      let currentPage = 1;
+      const tableRows = document.querySelectorAll('#paginatedTable tbody tr');
+      const cardRows = document.querySelectorAll('.d-md-none > div');
+      const totalRows = tableRows.length > 0 ? tableRows.length : cardRows.length;
+      const totalPages = Math.ceil(totalRows / rowsPerPage);
 
-  const rowsPerPage = 10;
-  const totalPages = Math.ceil(rows.length / rowsPerPage);
-  let currentPage = 1;
+      function showPage(page) {
+        currentPage = page;
+        const start = (page - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
 
-  const showPage = (page) => {
-    currentPage = page;
-    const start = (page - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
+        tableRows.forEach((row, index) => {
+          row.style.display = (index >= start && index < end) ? '' : 'none';
+        });
 
-    rows.forEach((row, index) => {
-      row.style.display = index >= start && index < end ? "" : "none";
-    });
+        cardRows.forEach((card, index) => {
+          card.style.display = (index >= start && index < end) ? '' : 'none';
+        });
 
-    tableInfo.textContent = `Showing ${start + 1} to ${
-      end > rows.length ? rows.length : end
-    } of ${rows.length} entries`;
+        document.getElementById('currentEntries').textContent = Math.min(end, totalRows);
+        updatePagination();
+      }
 
-    updatePagination();
-  };
+      function updatePagination() {
+        const pagination = document.getElementById('pagination');
+        if (!pagination) return;
+        pagination.innerHTML = '';
 
-  const updatePagination = () => {
-    pagination.innerHTML = ""; 
+        const prevLi = document.createElement('li');
+        prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+        prevLi.innerHTML = `<a class="page-link" href="#"><i class="bi bi-chevron-left me-1"></i> Previous</a>`;
+        prevLi.addEventListener('click', (e) => {
+          e.preventDefault();
+          if (currentPage > 1) showPage(currentPage - 1);
+        });
+        pagination.appendChild(prevLi);
 
-    const createPageItem = (page, label, isDisabled = false, isActive = false) => {
-      const li = document.createElement("li");
-      li.className = `page-item ${isActive ? "active" : ""} ${isDisabled ? "disabled" : ""}`;
-      li.innerHTML = `<a class="page-link" href="#">${label}</a>`;
-      li.addEventListener("click", (e) => {
-        e.preventDefault();
-        if (!isDisabled) {
-          if (label === "Previous") {
-            showPage(currentPage - 1);
-          } else if (label === "Next") {
-            showPage(currentPage + 1);
-          } else {
-            showPage(page);
-          }
+        const nextLi = document.createElement('li');
+        nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
+        nextLi.innerHTML = `<a class="page-link" href="#">Next <i class="bi bi-chevron-right ms-1"></i></a>`;
+        nextLi.addEventListener('click', (e) => {
+          e.preventDefault();
+          if (currentPage < totalPages) showPage(currentPage + 1);
+        });
+        pagination.appendChild(nextLi);
+      }
+
+      if (totalRows > 0) showPage(1);
+    }, 100);
+  });
+  // search
+  const searchInput = document.getElementById("searchInput");
+  const tableBody = document.getElementById("table-body");
+
+  if (searchInput && tableBody) {
+    searchInput.addEventListener("input", () => {
+      const query = searchInput.value.toLowerCase();
+
+      const rows = tableBody.querySelectorAll("tr");
+      rows.forEach((row) => {
+        const userName = row.querySelector(".user-name")?.textContent.toLowerCase() || '';
+        const location = row.querySelector(".usr-location")?.textContent.toLowerCase() || '';
+
+        if (userName.includes(query) || location.includes(query)) {
+          row.style.display = "";
+        } else {
+          row.style.display = "none";
         }
       });
-      return li;
-    };
-
-    pagination.appendChild(
-      createPageItem(currentPage - 1, "Previous", currentPage === 1)
-    );
-
-    for (let i = 1; i <= totalPages; i++) {
-      pagination.appendChild(
-        createPageItem(i, i, false, i === currentPage)
-      );
-    }
-
-    pagination.appendChild(
-      createPageItem(currentPage + 1, "Next", currentPage === totalPages)
-    );
-  };
-
-  showPage(1);
-});
-// search
-const searchInput = document.getElementById("searchInput");
-const tableBody = document.getElementById("table-body");
-
-searchInput.addEventListener("input", () => {
-  const query = searchInput.value.toLowerCase();
-
-  const rows = tableBody.querySelectorAll("tr");
-  rows.forEach((row) => {
-    const userName = row.querySelector(".user-name").textContent.toLowerCase();
-    const location = row.querySelector(".usr-location").textContent.toLowerCase();
-
-    if (userName.includes(query) || location.includes(query)) {
-      row.style.display = "";
-    } else {
-      row.style.display = "none";
-    }
-  });
-});
+    });
+  }
 
 </script>
  <!-- JavaScript Libraries -->
