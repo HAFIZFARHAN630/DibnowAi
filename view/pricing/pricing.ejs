@@ -418,8 +418,7 @@
                       <ol class="breadcrumb center-on-small">
                         
  
-                        <!-- Debug button for PayFast testing -->
-                        
+
 
                       <!-- Modal -->
                       <div class="modal fade" id="transferModal" tabindex="-1" aria-labelledby="transferModalLabel" aria-hidden="true">
@@ -821,70 +820,7 @@
             });
         }
 
-        // Add test function to global scope for debugging
-        window.testAutoFillDisplay = function() {
-            console.log('🧪 Testing auto-fill display...');
-            showAutoFillDisplay(20.88, 8293.25, { note: 'Test conversion' });
-        };
 
-        // Debug function to test validation
-        window.testValidation = function() {
-            console.log('🧪 === VALIDATION DEBUG INFO ===');
-            console.log('Current Plan:', currentPlan);
-            console.log('Plan Prices:', planPrices);
-            console.log('Expected Amount:', planPrices[currentPlan]);
-
-            const amountField = document.querySelector('input[name="amount"]');
-            const submitBtn = document.querySelector('#manualForm button[type="submit"]');
-
-            console.log('Amount Field:', amountField);
-            console.log('Submit Button:', submitBtn);
-            console.log('Amount Field Value:', amountField?.value);
-            console.log('Submit Button Disabled:', submitBtn?.disabled);
-
-            if (amountField && planPrices[currentPlan]) {
-                const enteredAmount = parseFloat(amountField.value) || 0;
-                const expectedAmount = parseFloat(planPrices[currentPlan]);
-                console.log(`Comparison: ${enteredAmount} === ${expectedAmount}? ${enteredAmount === expectedAmount}`);
-            }
-        };
-
-        // Debug function to test PayFast integration
-        window.testPayFast = function() {
-            console.log('🧪 === PAYFAST DEBUG INFO ===');
-            console.log('Current Plan:', currentPlan);
-            console.log('Plan Prices:', planPrices);
-
-            if (!currentPlan || !planPrices[currentPlan]) {
-                console.error('❌ No plan selected or plan prices not loaded');
-                alert('Please select a plan first');
-                return;
-            }
-
-            console.log('🚀 Testing PayFast integration...');
-            fetch('/payfast/initiate-token', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    plan: currentPlan,
-                    amount: planPrices[currentPlan]
-                })
-            })
-            .then(response => {
-                console.log('📡 Status:', response.status);
-                console.log('📡 Content-Type:', response.headers.get('content-type'));
-                return response.text();
-            })
-            .then(html => {
-                console.log('✅ HTML length:', html.length);
-                console.log('📄 Preview:', html.substring(0, 200) + '...');
-                alert('✅ PayFast test successful! Check console for details.');
-            })
-            .catch(error => {
-                console.error('❌ Test failed:', error);
-                alert('❌ Test failed: ' + error.message);
-            });
-        };
     });
 
     // Function to show auto-fill display
@@ -1305,53 +1241,4 @@
 <!-- Template Javascript -->
 <script src="js/main.js"></script>
 
-<!-- PayFast Debug Panel (Temporary) -->
-<div id="payfast-debug" style="position: fixed; top: 10px; right: 10px; background: #000; color: #0f0; padding: 10px; font-family: monospace; font-size: 12px; border: 2px solid #0f0; z-index: 9999; max-width: 400px; max-height: 300px; overflow: auto;">
-    <div><strong>🧪 PAYFAST DEBUG PANEL</strong></div>
-    <div>Status: <span id="debug-status">Ready</span></div>
-    <div>Plan: <span id="debug-plan">None</span></div>
-    <div>Amount: <span id="debug-amount">None</span></div>
-    <div>Response: <span id="debug-response">None</span></div>
-    <button onclick="runPayFastTest()" style="margin-top: 5px; background: #0f0; color: #000; border: none; padding: 5px 10px; cursor: pointer;">Run Test</button>
-    <button onclick="clearDebug()" style="margin-top: 5px; background: #f00; color: #fff; border: none; padding: 5px 10px; cursor: pointer;">Clear</button>
-</div>
-
-<script>
-    function updateDebug(status, plan, amount, response) {
-        document.getElementById('debug-status').textContent = status;
-        document.getElementById('debug-plan').textContent = plan || 'None';
-        document.getElementById('debug-amount').textContent = amount || 'None';
-        document.getElementById('debug-response').textContent = response || 'None';
-    }
-
-    function clearDebug() {
-        updateDebug('Ready', 'None', 'None', 'None');
-    }
-
-    function runPayFastTest() {
-        updateDebug('Testing...', 'BASIC', '20.88', 'Starting test...');
-
-        fetch('/pricing/payfast/initiate-token', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ plan: 'BASIC', amount: '20.88' })
-        })
-        .then(response => {
-            updateDebug('Response received', 'BASIC', '20.88', 'Status: ' + response.status + ', Type: ' + response.headers.get('content-type'));
-            return response.text();
-        })
-        .then(html => {
-            updateDebug('HTML received', 'BASIC', '20.88', 'Length: ' + html.length + ' chars');
-        })
-        .catch(error => {
-            updateDebug('ERROR', 'BASIC', '20.88', error.message);
-        });
-    }
-
-    // Auto-clear debug panel after 30 seconds
-    setTimeout(() => {
-        const panel = document.getElementById('payfast-debug');
-        if (panel) panel.remove();
-    }, 30000);
-</script>
 </html>

@@ -5,8 +5,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
   const { sendConfirmationEmail, sendForgotPasswordEmail, sendLogoutEmail } = require("../../emailService");
 // Signup
-exports.signup = [
-  async (req, res) => {
+exports.signup = async (req, res) => {
     try {
       const {
         first_name,
@@ -17,7 +16,58 @@ exports.signup = [
         company,
         address,
         postcode,
+        website
       } = req.body;
+
+      // CRITICAL: Block fake users FIRST
+      const emailLower = (email || "").toLowerCase();
+      const firstNameLower = (first_name || "").toLowerCase();
+      const lastNameLower = (last_name || "").toLowerCase();
+      const companyLower = (company || "").toLowerCase();
+
+      // Honeypot check
+      if (website) {
+        console.log("❌ BLOCKED: Honeypot filled:", email);
+        return res.status(400).render("Sigin/sign_up", {
+          message: "Invalid submission. Please try again.",
+        });
+      }
+
+      // Block fake emails
+      if (
+        emailLower.includes("example.com") ||
+        emailLower.includes("testf") ||
+        emailLower.includes("load") ||
+        /test\w*\d+@/.test(emailLower) ||
+        /load\d+@/.test(emailLower) ||
+        /comp\d+@/.test(emailLower)
+      ) {
+        console.log("❌ BLOCKED: Fake email:", email);
+        return res.status(400).render("Sigin/sign_up", {
+          message: "Invalid email. Please use a valid email address.",
+        });
+      }
+
+      // Block fake names
+      if (
+        /^test\w*\d+$/i.test(firstNameLower) ||
+        /^load\d+$/i.test(firstNameLower) ||
+        /^test\w*\d+$/i.test(lastNameLower) ||
+        /^load\d+$/i.test(lastNameLower)
+      ) {
+        console.log("❌ BLOCKED: Fake name:", first_name, last_name);
+        return res.status(400).render("Sigin/sign_up", {
+          message: "Invalid name. Please use your real name.",
+        });
+      }
+
+      // Block fake companies
+      if (company && /^comp\d+$/i.test(companyLower)) {
+        console.log("❌ BLOCKED: Fake company:", company);
+        return res.status(400).render("Sigin/sign_up", {
+          message: "Invalid company name.",
+        });
+      }
 
       // Check if email already exists
       const existingUser = await User.findOne({ email });
@@ -120,10 +170,8 @@ exports.signup = [
     return res.render("Sigin/sign_up", {
       message: "An error occurred while creating your account. Please try again.",
     });
-     
-    }
-  },
-];
+  }
+};
 exports.verifySignupOtp = async (req, res) => {
   try {
     const { email, otp } = req.body;
@@ -196,8 +244,7 @@ exports.autoVerifySignup = async (req, res) => {
 };
 
 // Signin
-exports.signin = [
-  async (req, res) => {
+exports.signin = async (req, res) => {
     try {
       const { email, password } = req.body;
 
@@ -348,8 +395,7 @@ exports.signin = [
         message: "An error occurred during login. Please try again."
       });
     }
-  },
-];
+};
 
 // forget password // forget password
 // Forgot Password - Send OTP

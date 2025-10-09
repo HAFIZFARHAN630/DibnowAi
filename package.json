@@ -25,6 +25,7 @@
     "env": "^0.0.2",
     "express": "^4.21.2",
     "express-handlebars": "^8.0.3",
+    "express-rate-limit": "^7.5.1",
     "express-session": "^1.18.2",
     "express-validator": "^7.2.1",
     "fs": "^0.0.1-security",
