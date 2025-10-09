@@ -40299,9 +40299,7 @@ html[data-layout=horizontal] .body-wrapper>.container-xxl {
     border-color: var(--bs-table-border-color)
 }
 
-.table th {
-    color: var(--bs-heading-color)
-}
+
 
 .table.table-dark th,
 .table.table-dark.border {

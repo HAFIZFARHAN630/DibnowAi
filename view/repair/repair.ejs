@@ -403,53 +403,35 @@
         color: white !important;
       }
 
-      /* Pagination Styles */
-      .pagination {
-        display: flex;
-        gap: 5px;
-      }
-
-      .pagination .page-item {
-        list-style: none;
-      }
-
+      /* Professional Pagination Buttons */
       .pagination .page-link {
-        padding: 8px 16px;
-        border: 2px solid #007bff;
-        border-radius: 8px;
-        color: #007bff;
-        text-decoration: none;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        background: white;
+        background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%) !important;
+        color: white !important;
+        border: none !important;
+        font-weight: 600 !important;
+        padding: 10px 24px !important;
+        min-width: 120px !important;
+        border-radius: 8px !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 2px 8px rgba(0, 51, 204, 0.3) !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
       }
 
       .pagination .page-link:hover {
-        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
-        color: white;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
-      }
-
-      .pagination .page-item.active .page-link {
-        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
-        color: white;
-        border-color: #007bff;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 4px 12px rgba(0, 51, 204, 0.4) !important;
       }
 
       .pagination .page-item.disabled .page-link {
-        opacity: 0.5;
-        cursor: not-allowed;
-        background: #e9ecef;
-        color: #6c757d;
-        border-color: #dee2e6;
+        background: linear-gradient(135deg, #6b7280 0%, #9ca3af 100%) !important;
+        opacity: 0.6 !important;
+        cursor: not-allowed !important;
       }
 
-      .pagination .page-item.disabled .page-link:hover {
-        background: #e9ecef;
-        color: #6c757d;
-        transform: none;
-        box-shadow: none;
+      .pagination .page-item {
+        margin: 0 4px !important;
       }
       .action-buttons-b{
         display: flex;
@@ -656,7 +638,7 @@ initializeChart();
               </button>
             </form>
 
-            <button class="btn text-primary" onclick="generateQRCode('[<%= product.random_id%>, <%= product.fullName %>,<%= product.brand %>,<%= product.status %>]')">
+            <button class="btn text-primary" onclick="generateQRCode('<%= product.id %>', '<%= product.fullName %>', '<%= product.mobileNumber %>', '<%= product.brand %>', '<%= product.Price %>', '<%= product.status %>')">
               <i class="fas fa-qrcode"></i> Generate QR
             </button>
 
@@ -707,7 +689,7 @@ initializeChart();
         </form>
 
         <button class="btn btn-sm btn-outline-primary"
-          onclick="generateQRCode('[<%= product.random_id%>, <%= product.fullName %>,<%= product.brand %>,<%= product.status %>]')" title="Generate QR">
+          onclick="generateQRCode('<%= product.id %>', '<%= product.fullName %>', '<%= product.mobileNumber %>', '<%= product.brand %>', '<%= product.Price %>', '<%= product.status %>')" title="Generate QR">
           <i class="fas fa-qrcode"></i>
         </button>
 
@@ -798,7 +780,7 @@ initializeChart();
   <div style="background:white; padding:30px; border-radius:15px; text-align:center; position:relative;">
     <button onclick="closeQRModal()" style="position:absolute; top:10px; right:10px; background:#ff6b6b; border:none; border-radius:50%; width:35px; height:35px; color:white; cursor:pointer; font-size:18px;">&times;</button>
     <h3 style="margin-bottom:20px; color:#333;">QR Code</h3>
-    <img id="QR-image" src="" alt="QR Code" style="max-width:300px; height:auto;" />
+    <img id="QR-image" src="" alt="QR Code" style="width:300px; height:300px; border-radius:0;" />
   </div>
 </div>
 
@@ -813,12 +795,26 @@ initializeChart();
 
 <script>
 // QR Code Scanner
-function generateQRCode(productId) {
+function generateQRCode(userId, userName, userNumber, productName, price, status) {
   let qrDiv = document.getElementById("QR-div");
   let qrImage = document.getElementById("QR-image");
   
+  let now = new Date();
+  let formattedDate = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+  let formattedTime = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
   let randomData = Math.random().toString(36).substr(2, 9);
-  let qrData = `Product ID: ${productId}, Ref: ${randomData}`;
+  
+  // Create simple text format that works with all QR scanners
+  let qrData = "REPAIR INVOICE\n" +
+               "Date: " + formattedDate + " " + formattedTime + "\n" +
+               "Ref: " + randomData + "\n" +
+               "Name: " + userName + "\n" +
+               "Number: " + userNumber + "\n" +
+               "Product: " + productName + "\n" +
+               "Price: " + price + "\n" +
+               "Status: " + status + "\n" +
+               "ID: " + userId;
+  
   let qrCodeURL = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodeURIComponent(qrData);
   
   qrImage.src = qrCodeURL;
@@ -1008,13 +1004,24 @@ function printTable(userId) {
     let formattedDate = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
     let formattedTime = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     let randomData = Math.random().toString(36).substr(2, 9);
-    let qrCodeURL = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodeURIComponent(`ID: ${userId}, Ref: ${randomData}`);
-
+    
     let userName = userRow.querySelector('.usr-name') ? userRow.querySelector('.usr-name').innerText : 'N/A';
     let userNumber = userRow.querySelector('.usr-select') ? userRow.querySelector('.usr-select').innerText : 'N/A';
     let productName = userRow.querySelector('.usr-location') ? userRow.querySelector('.usr-location').innerText : 'N/A';
     let price = userRow.querySelector('.usr-price') ? userRow.querySelector('.usr-price').innerText : 'N/A';
     let status = userRow.querySelector('.status-select') ? userRow.querySelector('.status-select').value : 'N/A';
+
+    // Create simple invoice data for QR code
+    const invoiceData = "REPAIR INVOICE\n" +
+                       "Date: " + formattedDate + " " + formattedTime + "\n" +
+                       "Ref: " + randomData + "\n" +
+                       "Name: " + userName + "\n" +
+                       "Number: " + userNumber + "\n" +
+                       "Product: " + productName + "\n" +
+                       "Price: " + price + "\n" +
+                       "Status: " + status + "\n" +
+                       "ID: " + userId;
+    let qrCodeURL = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodeURIComponent(invoiceData);
 
     var printWindow = window.open('', 'PrintWindow', 'height=600,width=800');
     printWindow.document.write(`

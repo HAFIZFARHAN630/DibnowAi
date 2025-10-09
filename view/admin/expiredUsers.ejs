@@ -255,6 +255,37 @@
        letter-spacing: 0.5px;
        box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
      }
+
+     /* Professional Pagination Buttons */
+     .pagination .page-link {
+       background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%) !important;
+       color: white !important;
+       border: none !important;
+       font-weight: 600 !important;
+       padding: 10px 24px !important;
+       min-width: 120px !important;
+       border-radius: 8px !important;
+       transition: all 0.3s ease !important;
+       box-shadow: 0 2px 8px rgba(0, 51, 204, 0.3) !important;
+       display: inline-flex !important;
+       align-items: center !important;
+       justify-content: center !important;
+     }
+
+     .pagination .page-link:hover {
+       transform: translateY(-2px) !important;
+       box-shadow: 0 4px 12px rgba(0, 51, 204, 0.4) !important;
+     }
+
+     .pagination .page-item.disabled .page-link {
+       background: linear-gradient(135deg, #6b7280 0%, #9ca3af 100%) !important;
+       opacity: 0.6 !important;
+       cursor: not-allowed !important;
+     }
+
+     .pagination .page-item {
+       margin: 0 4px !important;
+     }
    </style>
    <script src="https://cdn.tailwindcss.com"></script>
 
@@ -305,16 +336,14 @@
     <div class="overflow-hidden rounded-lg shadow-lg">
       <table class="min-w-full w-full border-collapse" id="expiredUsersTable">
         <thead>
-          <tr class="bg-gradient-to-br from-[#667eea] to-[#764ba2] text-white text-sm font-semibold uppercase tracking-wide">
-            <th class="px-6 py-3 text-left bg-gradient-to-br from-[#667eea] to-[#764ba2]"><i class="bi bi-person me-2"></i>First Name</th>
-            <th class="px-6 py-3 text-left bg-gradient-to-br from-[#667eea] to-[#764ba2]"><i class="bi bi-envelope me-2"></i>Email</th>
-            <th class="px-6 py-3 text-left bg-gradient-to-br from-[#667eea] to-[#764ba2]"><i class="bi bi-building me-2"></i>Company</th>
-            <th class="px-6 py-3 text-center bg-gradient-to-br from-[#667eea] to-[#764ba2]"><i class="bi bi-credit-card me-2"></i>Plan</th>
-            <th class="px-6 py-3 text-center bg-gradient-to-br from-[#667eea] to-[#764ba2]"><i class="bi bi-calendar-check me-2"></i>Start Date</th>
-            <th class="px-6 py-3 text-center bg-gradient-to-br from-[#667eea] to-[#764ba2]"><i class="bi bi-calendar-x me-2"></i>Expiry Date</th>
-            <th class="px-6 py-3 text-center bg-gradient-to-br from-[#667eea] to-[#764ba2]"><i class="bi bi-info-circle me-2"></i>Status</th>
-          </tr>
-        </thead>
+          <tr class=" text-white text-sm font-semibold uppercase tracking-wide" style=" background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);">
+            <th class="px-6 py-3 text-left "><i class="bi bi-person me-2"></i>First Name</th>
+            <th class="px-6 py-3 text-left "><i class="bi bi-envelope me-2"></i>Email</th>
+            <th class="px-6 py-3 text-left "><i class="bi bi-building me-2"></i>Company</th>
+            <th class="px-6 py-3 text-center "><i class="bi bi-credit-card me-2"></i>Plan</th>
+            <th class="px-6 py-3 text-center "><i class="bi bi-calendar-check me-2"></i>Start Date</th>
+            <th class="px-6 py-3 text-center "><i class="bi bi-calendar-x me-2"></i>Expiry Date</th>
+            <th class="px-6 py-3 text-center "><i class="bi bi-info-circle 
         <tbody class="bg-white">
           <% if (expiredUsers && expiredUsers.length > 0) { %>
             <% expiredUsers.forEach((payment) => { %>
@@ -422,6 +451,14 @@
   </div>
 </div>
 
+<!-- Pagination -->
+<div class="d-flex justify-content-between align-items-center mt-4 px-3">
+  <span id="tableInfo" class="text-muted">Showing <span id="currentEntries">0</span> entries</span>
+  <nav>
+    <ul class="pagination mb-0" id="pagination"></ul>
+  </nav>
+</div>
+
             </div>
         <!-- Content End -->
 
@@ -432,6 +469,59 @@
    <script>
      // Enhanced User Search Functionality
      document.addEventListener('DOMContentLoaded', function() {
+       // Pagination
+       setTimeout(function() {
+         const rowsPerPage = 10;
+         let currentPage = 1;
+         const tableRows = document.querySelectorAll('#expiredUsersTable tbody tr');
+         const cardRows = document.querySelectorAll('.block.min-\\[1200px\\]\\:hidden > div > div');
+         const totalRows = tableRows.length > 0 ? tableRows.length : cardRows.length;
+         const totalPages = Math.ceil(totalRows / rowsPerPage);
+
+         function showPage(page) {
+           currentPage = page;
+           const start = (page - 1) * rowsPerPage;
+           const end = start + rowsPerPage;
+
+           tableRows.forEach((row, index) => {
+             row.style.display = (index >= start && index < end) ? '' : 'none';
+           });
+
+           cardRows.forEach((card, index) => {
+             card.style.display = (index >= start && index < end) ? '' : 'none';
+           });
+
+           document.getElementById('currentEntries').textContent = Math.min(end, totalRows);
+           updatePagination();
+         }
+
+         function updatePagination() {
+           const pagination = document.getElementById('pagination');
+           if (!pagination) return;
+           pagination.innerHTML = '';
+
+           const prevLi = document.createElement('li');
+           prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+           prevLi.innerHTML = `<a class="page-link" href="#"><i class="bi bi-chevron-left me-1"></i> Previous</a>`;
+           prevLi.addEventListener('click', (e) => {
+             e.preventDefault();
+             if (currentPage > 1) showPage(currentPage - 1);
+           });
+           pagination.appendChild(prevLi);
+
+           const nextLi = document.createElement('li');
+           nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
+           nextLi.innerHTML = `<a class="page-link" href="#">Next <i class="bi bi-chevron-right ms-1"></i></a>`;
+           nextLi.addEventListener('click', (e) => {
+             e.preventDefault();
+             if (currentPage < totalPages) showPage(currentPage + 1);
+           });
+           pagination.appendChild(nextLi);
+         }
+
+         if (totalRows > 0) showPage(1);
+       }, 100);
+
        const searchInput = document.getElementById('userSearch');
        const table = document.getElementById('expiredUsersTable');
 
