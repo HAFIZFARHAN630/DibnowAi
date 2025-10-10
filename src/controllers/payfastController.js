@@ -380,8 +380,34 @@ exports.handleSuccess = async (req, res) => {
       );
 
       if (payment) {
-        await User.findByIdAndUpdate(payment.user, { plan_name: payment.plan });
+        const PlanRequest = require("../models/planRequest");
         
+        // Update user plan
+        await User.findByIdAndUpdate(payment.user, { plan_name: payment.plan });
+        console.log(`✅ User plan updated to ${payment.plan}`);
+        
+        // Create/Update PlanRequest with Active status
+        await PlanRequest.findOneAndUpdate(
+          { user: payment.user },
+          {
+            user: payment.user,
+            planName: payment.plan,
+            status: 'Active',
+            invoiceStatus: 'Paid',
+            startDate: payment.startDate,
+            expiryDate: payment.expiryDate,
+            amount: payment.amount,
+            description: 'PAYFAST payment - Plan activated automatically'
+          },
+          { upsert: true, new: true }
+        );
+        console.log(`✅ PlanRequest auto-activated for user ${payment.user}`);
+        
+        // Update plan limits
+        await subscribePlan(payment.user, payment.plan);
+        console.log(`✅ Plan limits updated for user ${payment.user}`);
+        
+        // Create transaction record
         await Transaction.create({
           user: payment.user,
           type: 'payment',
@@ -391,7 +417,7 @@ exports.handleSuccess = async (req, res) => {
           reference: BASKET_ID
         });
 
-        console.log('Payment activated via success callback:', BASKET_ID);
+        console.log('✅ Payment activated via success callback:', BASKET_ID);
       }
     }
 
@@ -401,6 +427,27 @@ exports.handleSuccess = async (req, res) => {
     res.redirect('/cancel');
   }
 };
+
+// Function to subscribe and update plan limits
+async function subscribePlan(userId, planType) {
+  try {
+    let planLimit;
+    switch (planType) {
+      case "BASIC": planLimit = 300; break;
+      case "STANDARD": planLimit = 500; break;
+      case "PREMIUM": planLimit = 1000; break;
+      default: planLimit = 30; break;
+    }
+    const user = await User.findById(userId).select("plan_limit");
+    if (user) {
+      const newPlanLimit = (user.plan_limit || 0) + planLimit;
+      await User.findByIdAndUpdate(userId, { plan_limit: newPlanLimit });
+      console.log(`User's plan limit updated to: ${newPlanLimit}`);
+    }
+  } catch (error) {
+    console.error("Error updating plan limit:", error.message);
+  }
+}
 
 /**
  * Handle PayFast cancel callback
