@@ -52,6 +52,8 @@ exports.getWallet = [
         .sort({ date: -1 })
         .limit(5)
         .populate('user', 'first_name last_name');
+      
+      console.log(`📊 Wallet: Found ${recentTransactions.length} transactions for user ${userId}`);
 
       const profileImagePath = user.user_img ? `/uploads/${user.user_img}` : '/img/dumi img.png';
 
@@ -90,6 +92,8 @@ exports.getHistory = [
       const transactions = await Transaction.find({ user: userId })
         .sort({ date: -1 })
         .populate('user', 'first_name last_name');
+      
+      console.log(`📊 History: Found ${transactions.length} transactions for user ${userId}`);
 
       const profileImagePath = user.user_img ? `/uploads/${user.user_img}` : '/img/dumi img.png';
 

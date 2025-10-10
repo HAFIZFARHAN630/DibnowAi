@@ -737,8 +737,8 @@
                         </div>
                         <div class="card-body">
                             <% 
-                            // Check if user has an active paid plan (from Payments collection)
-                            const hasActivePlan = latestPayment && latestPayment.status === 'active';
+                            // Prioritize Payments collection for online payments (Stripe/PayPal/PayFast)
+                            const hasActivePlan = latestPayment && (latestPayment.status === 'active' || latestPayment.status === 'Active');
                             const displayPlan = hasActivePlan ? latestPayment : userPlan;
                             %>
                             <% if (displayPlan && (displayPlan.planName || displayPlan.plan)) { %>
@@ -891,6 +891,7 @@
                             const subExpiryDate = displayPlan ? displayPlan.expiryDate : null;
                             const subPlanName = displayPlan ? (displayPlan.planName || displayPlan.plan) : null;
                             const isFreeTrial = subPlanName && (subPlanName === 'Free Trial' || subPlanName === 'FREE TRIAL');
+                            const isOnlinePayment = hasActivePlan; // Online payments from Stripe/PayPal/PayFast
                             %>
                             <% if (displayPlan && (subStatus === 'Active' || subStatus === 'active')) { %>
                                 <% if (subInvoiceStatus === 'Unpaid' || subInvoiceStatus === 'unpaid') { %>
@@ -909,14 +910,14 @@
 
                                         </div>
                                     <% } else { %>
-                                        <!-- Paid plan but unpaid invoice -->
+                                        <!-- Paid plan but unpaid invoice (Manual Payment Only) -->
                                         <div class="subscription-status active-unpaid">
                                             <div class="status-icon">
                                                 <i class="bi bi-exclamation-triangle"></i>
                                             </div>
                                             <div class="status-content">
-                                                <h4>Active + Unpaid</h4>
-                                                <p>Please complete your payment to continue</p>
+                                                <h4>Payment Pending</h4>
+                                                <p>Your payment is under admin review</p>
                                             </div>
                                         </div>
                                     <% } %>
@@ -939,7 +940,7 @@
                                                 <i class="bi bi-check-circle"></i>
                                             </div>
                                             <div class="status-content">
-                                                <h4>Active + Paid + Valid</h4>
+                                                <h4>Your plan is active! Enjoy the premium features!</h4>
                                                 <p>Expires: <%= expiryDate ? expiryDate.toLocaleDateString() : 'No expiry' %></p>
                                             </div>
                                         </div>

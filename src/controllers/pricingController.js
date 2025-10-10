@@ -460,9 +460,11 @@ exports.addSubscription = [
           // Create transaction record
           const newTransaction = new Transaction({
             user: req.session.userId,
-            type: 'payment',
+            type: 'plan_purchase',
             amount: parseFloat(amount),
-            status: 'success'
+            status: 'success',
+            gateway: 'wallet',
+            description: `${plan} plan purchase via Wallet`
           });
           await newTransaction.save();
     
@@ -636,9 +638,11 @@ exports.paymentSuccess = [
         // Create transaction record for payment
         const newTransaction = new Transaction({
           user: userId,
-          type: 'payment',
+          type: 'plan_purchase',
           amount,
-          status: 'success'
+          status: 'success',
+          gateway,
+          description: `${plan} plan purchase via ${gateway.toUpperCase()}`
         });
         await newTransaction.save();
 

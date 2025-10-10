@@ -202,7 +202,7 @@
                     <div class="col-md-12">
                         <div class="d-sm-flex align-items-center justify-content-between">
                             <h4 class="mb-4 mb-sm-0 card-title me-1">My Wallet <i class="bi bi-wallet2"></i></h4>
-                            <a href="/dashboard" class="btn btn-gradient">Back to Dashboard</a>
+                            <a href="/index" class="btn btn-gradient">Back to Dashboard</a>
                         </div>
                     </div>
                 </div>
@@ -245,6 +245,7 @@
                             <thead class="table-dark">
                                 <tr>
                                     <th>Type</th>
+                                    <th>Description</th>
                                     <th>Amount</th>
                                     <th>Date</th>
                                     <th>Status</th>
@@ -254,14 +255,15 @@
                                     <% if (recentTransactions && recentTransactions.length > 0) { %>
                                         <% recentTransactions.forEach(txn => { %>
                                             <tr>
-                                                <td><%= txn.type.charAt(0).toUpperCase() + txn.type.slice(1) %></td>
-                                                <td>£<%= txn.amount.toFixed(2) %></td>
+                                                <td><span class="badge bg-info"><%= txn.type === 'plan_purchase' ? 'Plan Purchase' : (txn.type ? txn.type.charAt(0).toUpperCase() + txn.type.slice(1) : 'Payment') %></span></td>
+                                                <td><%= txn.description || (txn.gateway ? `Payment via ${txn.gateway.toUpperCase()}` : (txn.type === 'topup' ? 'Wallet Top-up' : 'Payment')) %></td>
+                                                <td><strong>£<%= txn.amount.toFixed(2) %></strong></td>
                                                 <td><%= new Date(txn.date).toLocaleDateString() %></td>
-                                                <td><span class="badge <%= txn.status === 'success' ? 'bg-success' : 'bg-danger' %>"><%= txn.status.toUpperCase() %></span></td>
+                                                <td><span class="badge <%= txn.status === 'success' ? 'bg-success' : (txn.status === 'pending' ? 'bg-warning' : 'bg-danger') %>"><%= txn.status.toUpperCase() %></span></td>
                                             </tr>
                                         <% }) %>
                                     <% } else { %>
-                                        <tr><td colspan="4" class="text-center">No recent transactions.</td></tr>
+                                        <tr><td colspan="5" class="text-center">No recent transactions.</td></tr>
                                     <% } %>
                                 </tbody>
                             </table>

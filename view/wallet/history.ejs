@@ -134,6 +134,7 @@
     <thead style="background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);color: white;">
       <tr style="background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);color: white;">
         <th style="background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%); color: white;">Type</th>
+        <th style="background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);color: white;">Description</th>
         <th style="background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);color: white;">Amount</th>
         <th style="background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);color: white;">Date</th>
         <th style="background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);color: white;">Status</th>
@@ -143,14 +144,15 @@
       <% if (transactions && transactions.length > 0) { %>
         <% transactions.forEach(txn => { %>
           <tr>
-            <td><span class="badge bg-secondary"><%= txn.type.charAt(0).toUpperCase() + txn.type.slice(1) %></span></td>
+            <td><span class="badge <%= txn.type === 'plan_purchase' ? 'bg-info' : 'bg-secondary' %>"><%= txn.type === 'plan_purchase' ? 'Plan Purchase' : (txn.type ? txn.type.charAt(0).toUpperCase() + txn.type.slice(1) : 'Payment') %></span></td>
+            <td><%= txn.description || (txn.gateway ? `Payment via ${txn.gateway.toUpperCase()}` : (txn.type === 'topup' ? 'Wallet Top-up' : 'Payment')) %></td>
             <td><strong>£<%= txn.amount.toFixed(2) %></strong></td>
             <td><%= new Date(txn.date).toLocaleString() %></td>
-            <td><span class="badge <%= txn.status === 'success' ? 'bg-success' : 'bg-danger' %>"><%= txn.status.toUpperCase() %></span></td>
+            <td><span class="badge <%= txn.status === 'success' ? 'bg-success' : (txn.status === 'pending' ? 'bg-warning text-dark' : 'bg-danger') %>"><%= txn.status.toUpperCase() %></span></td>
           </tr>
         <% }) %>
       <% } else { %>
-        <tr><td colspan="4" class="text-center">No transactions found.</td></tr>
+        <tr><td colspan="5" class="text-center">No transactions found.</td></tr>
       <% } %>
     </tbody>
   </table>
@@ -163,7 +165,11 @@
       <div class="bg-white shadow rounded-lg p-4 border border-gray-200">
         <div class="flex justify-between items-center mb-2">
           <span class="text-sm font-semibold text-gray-600">Type:</span>
-          <span class="px-2 py-1 text-xs rounded bg-gray-200"><%= txn.type.charAt(0).toUpperCase() + txn.type.slice(1) %></span>
+          <span class="px-2 py-1 text-xs rounded <%= txn.type === 'plan_purchase' ? 'bg-blue-100 text-blue-800' : 'bg-gray-200' %>"><%= txn.type === 'plan_purchase' ? 'Plan Purchase' : (txn.type ? txn.type.charAt(0).toUpperCase() + txn.type.slice(1) : 'Payment') %></span>
+        </div>
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-sm font-semibold text-gray-600">Description:</span>
+          <span class="text-xs text-gray-700"><%= txn.description || (txn.gateway ? `Payment via ${txn.gateway.toUpperCase()}` : (txn.type === 'topup' ? 'Wallet Top-up' : 'Payment')) %></span>
         </div>
         <div class="flex justify-between items-center mb-2">
           <span class="text-sm font-semibold text-gray-600">Amount:</span>
@@ -175,7 +181,7 @@
         </div>
         <div class="flex justify-between items-center">
           <span class="text-sm font-semibold text-gray-600">Status:</span>
-          <span class="px-2 py-1 text-xs rounded <%= txn.status === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
+          <span class="px-2 py-1 text-xs rounded <%= txn.status === 'success' ? 'bg-green-100 text-green-800' : (txn.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') %>">
             <%= txn.status.toUpperCase() %>
           </span>
         </div>

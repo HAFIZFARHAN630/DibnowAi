@@ -90,6 +90,18 @@ exports.initiatePayment = async (req, res) => {
       expiryDate
     });
     await payment.save();
+    
+    // Create transaction record immediately
+    await Transaction.create({
+      user: userId,
+      type: 'plan_purchase',
+      amount: parseFloat(amount),
+      status: 'pending',
+      gateway: 'payfast',
+      reference: basketId,
+      description: `${plan} plan purchase via PayFast (Pending)`
+    });
+    console.log(`✅ Pending transaction created for basket ${basketId}`);
 
     console.log('PayFast: Initiating payment', { basketId, pkrAmount, tokenLength: token.length });
 
@@ -407,15 +419,25 @@ exports.handleSuccess = async (req, res) => {
         await subscribePlan(payment.user, payment.plan);
         console.log(`✅ Plan limits updated for user ${payment.user}`);
         
-        // Create transaction record
-        await Transaction.create({
-          user: payment.user,
-          type: 'payment',
-          amount: payment.amount,
-          status: 'success',
-          gateway: 'payfast',
-          reference: BASKET_ID
-        });
+        // Update existing transaction to success or create new one
+        const existingTxn = await Transaction.findOne({ reference: BASKET_ID, user: payment.user });
+        if (existingTxn) {
+          existingTxn.status = 'success';
+          existingTxn.description = `${payment.plan} plan purchase via PayFast`;
+          await existingTxn.save();
+          console.log(`✅ Transaction updated to success for ${BASKET_ID}`);
+        } else {
+          await Transaction.create({
+            user: payment.user,
+            type: 'plan_purchase',
+            amount: payment.amount,
+            status: 'success',
+            gateway: 'payfast',
+            reference: BASKET_ID,
+            description: `${payment.plan} plan purchase via PayFast`
+          });
+          console.log(`✅ New success transaction created for ${BASKET_ID}`);
+        }
 
         console.log('✅ Payment activated via success callback:', BASKET_ID);
       }
