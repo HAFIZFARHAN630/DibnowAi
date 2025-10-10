@@ -629,7 +629,9 @@
             <!-- Manual Payment Form -->
             <div id="manualPaymentForm" class="collapse mt-4">
               <div class="form-container">
-                <form id="manualForm" method="POST" action="/manual-payment">
+                <form id="manualForm" method="POST" action="/pricing">
+                  <input type="hidden" name="plan" id="manual_plan" value="">
+                  <input type="hidden" name="paymentMethod" value="manual">
                   <div class="row">
                     <div class="col-md-6 mb-3">
                       <label for="transfer_id" class="form-label">Transfer ID</label>
@@ -644,19 +646,16 @@
                         <div style="font-size: 18px; margin-bottom: 8px;">
                           <strong>💰 Required Amount</strong>
                         </div>
-                        <div id="expectedAmountGBP" style="font-size: 20px; font-weight: bold; color: #ffffff; margin-bottom: 5px; text-shadow: 0 1px 3px rgba(0,0,0,0.3);">
-                          £55.88 GBP
-                        </div>
-                        <div id="expectedAmountPKR" style="font-size: 18px; color: #00E676; margin-bottom: 5px; font-weight: 600;">
-                          22,194.77 PKR
+                        <div id="expectedAmountPKR" style="font-size: 20px; font-weight: bold; color: #00E676; margin-bottom: 5px; font-weight: 600;">
+                          ₨ 3.00 PKR
                         </div>
                         <div style="font-size: 13px; opacity: 0.9; padding: 5px; background: rgba(255,255,255,0.1); border-radius: 6px; margin-top: 5px;">
-                          ⚡ Includes 4% conversion fee
+                          🧪 Testing Mode - PayFast & Manual Only
                         </div>
                       </div>
 
                       <small class="form-text text-success">
-                        ✅ <strong>Amount auto-filled: £<span id="expectedAmountText">55.88</span></strong> (No manual entry needed)
+                        ✅ <strong>Amount auto-filled: ₨<span id="expectedAmountText">3.00</span></strong> (No manual entry needed)
                       </small>
                       <!-- Auto-fetched amount display -->
                       <div id="autoAmountDisplay" class="mt-3" style="display: none; position: relative; z-index: 1000; width: 100%;">
@@ -665,7 +664,7 @@
                             <strong>📋 Auto-filled Amount</strong>
                           </div>
                           <div id="displayAmount" style="font-size: 18px; font-weight: bold; color: #ffffff; text-shadow: 0 1px 3px rgba(0,0,0,0.3);">
-                            £0.00
+                            ₨ 0.00
                           </div>
                         </div>
                       </div>
@@ -766,25 +765,21 @@
                 // Update expected amount display
                 const expectedAmountDisplay = document.getElementById('expectedAmountDisplay');
                 const expectedAmountText = document.getElementById('expectedAmountText');
-                const expectedAmountGBP = document.getElementById('expectedAmountGBP');
                 const expectedAmountPKR = document.getElementById('expectedAmountPKR');
                 const expectedAmountInfo = document.getElementById('expectedAmountInfo');
 
                 if (planPrices[currentPlan] && expectedAmountInfo) {
-                    const gbpAmount = planPrices[currentPlan];
-                    const pkrAmount = planPricesPkr[currentPlan] ? parseFloat(planPricesPkr[currentPlan]) : 0;
+                    const pkrAmount = planPrices[currentPlan];
 
                     // Update all displays
-                    if (expectedAmountDisplay) expectedAmountDisplay.textContent = gbpAmount;
-                    if (expectedAmountText) expectedAmountText.textContent = gbpAmount;
-                    if (expectedAmountGBP) expectedAmountGBP.textContent = `£${gbpAmount} GBP`;
-                    if (expectedAmountPKR) expectedAmountPKR.textContent = `${pkrAmount.toLocaleString()} PKR`;
+                    if (expectedAmountDisplay) expectedAmountDisplay.textContent = pkrAmount;
+                    if (expectedAmountText) expectedAmountText.textContent = pkrAmount;
+                    if (expectedAmountPKR) expectedAmountPKR.textContent = `₨ ${pkrAmount} PKR`;
 
                     // Show the amount info
                     expectedAmountInfo.style.display = 'block';
 
                     console.log('📋 Updated expected amount displays:', {
-                        gbp: gbpAmount,
                         pkr: pkrAmount,
                         plan: currentPlan
                     });
@@ -836,23 +831,20 @@
                     <span style="color: #00E676;">FREE PLAN</span><br>
                     <small style="font-size: 14px; opacity: 0.9;">No payment required</small>
                 `;
-            } else if (pkrAmount > 0) {
-                // Show both GBP and PKR amounts with proper formatting
+            } else if (pkrAmount > 0 || amount > 0) {
+                // Show PKR amount only (testing mode)
                 displayAmount.innerHTML = `
-                    <div style="color: #ffffff; font-size: 20px; margin-bottom: 5px;">
-                        £${amount} GBP
-                    </div>
-                    <div style="font-size: 16px; color: #00E676; margin-bottom: 3px;">
-                        ${pkrAmount.toLocaleString()} PKR
+                    <div style="color: #00E676; font-size: 20px; margin-bottom: 5px;">
+                        ₨ ${amount} PKR
                     </div>
                     <div style="font-size: 12px; opacity: 0.8;">
-                        ${conversionRate.note || 'Includes 4% conversion fee'}
+                        🧪 Testing Mode
                     </div>
                 `;
             } else {
-                // Fallback for GBP only
+                // Fallback
                 displayAmount.innerHTML = `
-                    <span style="color: #ffffff; font-size: 20px;">£${amount} GBP</span>
+                    <span style="color: #ffffff; font-size: 20px;">₨ ${amount} PKR</span>
                 `;
             }
 
@@ -1089,24 +1081,22 @@
     }
 
     // Update expected amount display
-    function updateExpectedAmountDisplay(gbpAmount, pkrAmount) {
+    function updateExpectedAmountDisplay(pkrAmount) {
         const expectedAmountDisplay = document.getElementById('expectedAmountDisplay');
         const expectedAmountText = document.getElementById('expectedAmountText');
-        const expectedAmountGBP = document.getElementById('expectedAmountGBP');
         const expectedAmountPKR = document.getElementById('expectedAmountPKR');
         const expectedAmountInfo = document.getElementById('expectedAmountInfo');
 
         if (expectedAmountInfo) {
             // Update all amount displays
-            if (expectedAmountDisplay) expectedAmountDisplay.textContent = gbpAmount;
-            if (expectedAmountText) expectedAmountText.textContent = gbpAmount;
-            if (expectedAmountGBP) expectedAmountGBP.textContent = `£${gbpAmount} GBP`;
-            if (expectedAmountPKR) expectedAmountPKR.textContent = `${pkrAmount.toLocaleString()} PKR`;
+            if (expectedAmountDisplay) expectedAmountDisplay.textContent = pkrAmount;
+            if (expectedAmountText) expectedAmountText.textContent = pkrAmount;
+            if (expectedAmountPKR) expectedAmountPKR.textContent = `₨ ${pkrAmount} PKR`;
 
             // Show the amount info
             expectedAmountInfo.style.display = 'block';
 
-            console.log(`💰 Updated expected amount display: £${gbpAmount} GBP / ${pkrAmount.toLocaleString()} PKR`);
+            console.log(`💰 Updated expected amount display: ₨${pkrAmount} PKR`);
         }
     }
 
@@ -1141,6 +1131,9 @@
         currentPlan = plan; // Set global plan variable
         document.getElementById('selectedPlan').textContent = `You selected the ${plan} plan.`;
         document.getElementById('plan').value = plan;
+        // Also set plan in manual form
+        const manualPlanField = document.getElementById('manual_plan');
+        if (manualPlanField) manualPlanField.value = plan;
         document.getElementById('planModal').style.display = 'block';
       });
     });

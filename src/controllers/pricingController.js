@@ -139,7 +139,13 @@ exports.allUsers = [
 exports.addSubscription = [
   ensureLoggedIn,
   async (req, res) => {
-    const { plan, paymentMethod, transfer_id, amount } = req.body;
+    let { plan, paymentMethod, transfer_id, amount } = req.body;
+  
+    // Handle array values (if form submits duplicates)
+    if (Array.isArray(plan)) plan = plan[0];
+    if (Array.isArray(paymentMethod)) paymentMethod = paymentMethod[0];
+    
+    console.log('📋 Payment Request:', { plan, paymentMethod, transfer_id, amount });
   
     // Validate if plan is selected
     if (!plan) {
@@ -151,13 +157,25 @@ exports.addSubscription = [
       return res.redirect("/pricing");
     }
   
-    // Define plan prices
-    const planPrices = {
+    // Define plan prices - GBP for Stripe/PayPal, PKR for PayFast/Manual
+    const planPricesGBP = {
       FREE_TRIAL: "0.00",
       BASIC: "20.88",
       STANDARD: "35.88",
       PREMIUM: "55.88",
     };
+    
+    const planPricesPKR = {
+      FREE_TRIAL: "0.00",
+      BASIC: "1.00",
+      STANDARD: "2.00",
+      PREMIUM: "3.00",
+    };
+    
+    // Use appropriate prices based on payment method
+    const planPrices = (paymentMethod === 'payfast' || paymentMethod === 'manual' || paymentMethod === 'bank') 
+      ? planPricesPKR 
+      : planPricesGBP;
 
     // Validate if the selected plan is valid
     if (!planPrices[plan]) {
@@ -174,9 +192,15 @@ exports.addSubscription = [
 
     // Handle manual payment with transaction details
     if (paymentMethod === 'manual') {
-      if (!transfer_id || !amount) {
-        req.flash("error_msg", "Transaction ID and amount are required for manual payment.");
+      if (!transfer_id) {
+        req.flash("error_msg", "Transaction ID is required for manual payment.");
         return res.redirect("/pricing");
+      }
+      
+      // Auto-fill amount if not provided
+      if (!amount || amount === '') {
+        amount = planPrices[plan];
+        console.log(`✅ Auto-filled amount for ${plan}: ${amount}`);
       }
 
       // Validate amount is not less than plan price
@@ -213,6 +237,13 @@ exports.addSubscription = [
 
         await newPlanRequest.save();
         console.log("Manual Payment PlanRequest saved successfully:", newPlanRequest._id);
+
+        // Update user record with transfer details
+        await User.findByIdAndUpdate(req.session.userId, {
+          transfer_id: transfer_id,
+          amount: parseFloat(amount)
+        });
+        console.log("User record updated with transfer details");
 
         // Create transaction record for manual payment (pending status)
         const newTransaction = new Transaction({
@@ -460,7 +491,7 @@ exports.addSubscription = [
       } else if (paymentMethod === 'bank') {
         // Bank transfer - redirect to manual payment form
         req.session.pendingPayment = { plan, amount: parseFloat(amount) };
-        req.flash("info_msg", `Please complete the bank transfer for ${plan} plan. Amount: £${amount}`);
+        req.flash("info_msg", `Please complete the bank transfer for ${plan} plan. Amount: ₨${amount}`);
         res.redirect("/transfer");
       } else if (paymentMethod === 'jazzcash') {
         // Manual gateways: jazzcash - Create pending plan request for admin verification
@@ -575,6 +606,7 @@ exports.paymentSuccess = [
         });
 
         await newPayment.save();
+        console.log(`✅ Auto-payment created for user ${userId} - Gateway: ${gateway}`);
 
         // Create/Update PlanRequest with Active status
         await PlanRequest.findOneAndUpdate(
@@ -591,12 +623,15 @@ exports.paymentSuccess = [
           },
           { upsert: true, new: true }
         );
+        console.log(`✅ PlanRequest auto-activated for user ${userId}`);
 
         // Update the plan_name in the database
         await User.findByIdAndUpdate(userId, { plan_name: plan });
+        console.log(`✅ User plan updated to ${plan}`);
 
         // Now, update the plan_limit based on the selected plan
         await subscribePlan(userId, plan);
+        console.log(`✅ Plan limits updated for user ${userId}`);
 
         // Create transaction record for payment
         const newTransaction = new Transaction({
@@ -614,14 +649,14 @@ exports.paymentSuccess = [
             await req.app.locals.notificationService.createNotification(
               userId,
               user.first_name,
-              "Buy Plan"
+              "Plan Activated"
             );
           }
         }
 
         req.flash(
           "success_msg",
-          `Your subscription plan has been activated to ${plan}.`
+          `Your ${plan} plan is now active! Enjoy your premium features.`
         );
       } else {
         // Manual payment - create pending plan request
@@ -886,15 +921,22 @@ exports.freeTrial = [
 // Get plan prices from backend
 exports.getPlanPrices = async (req, res) => {
   try {
+    // const planPrices = {
+    //   FREE_TRIAL: "0.00",
+    //   BASIC: "20.88",
+    //   STANDARD: "35.88",
+    //   PREMIUM: "55.88",
+    // };
     const planPrices = {
-      FREE_TRIAL: "0.00",
-      BASIC: "20.88",
-      STANDARD: "35.88",
-      PREMIUM: "55.88",
-    };
+  FREE_TRIAL: "0.00",
+  BASIC: "1.00",      // test price
+  STANDARD: "2.00",   // test price
+  PREMIUM: "3.00",    // test price
+};
 
     // Add PKR conversions (1 GBP = 397.1863 PKR with 4% fee)
-    const gbpToPkrRate = 397.1863;
+    // const gbpToPkrRate = 397.1863;
+    const gbpToPkrRate = 1; 
     const planPricesPkr = {};
 
     Object.keys(planPrices).forEach(plan => {
@@ -982,12 +1024,12 @@ exports.insertTransfer = async (req, res) => {
     const plan = pendingPayment ? pendingPayment.plan : 'BASIC'; // default if no pending
     const paymentMethod = pendingPayment ? pendingPayment.paymentMethod : 'bank'; // default to bank
 
-    // Define plan prices for validation
+    // Define plan prices for validation - TEMPORARY PKR FOR TESTING
     const planPrices = {
       FREE_TRIAL: 0.00,
-      BASIC: 20.88,
-      STANDARD: 35.88,
-      PREMIUM: 55.88,
+      BASIC: 1.00,
+      STANDARD: 2.00,
+      PREMIUM: 3.00,
     };
 
     const expectedAmount = planPrices[plan];

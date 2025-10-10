@@ -206,6 +206,8 @@
             <th class="px-6 py-3" style="  background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);">First Name</th>
             <th class="px-6 py-3" style="  background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);">Email</th>
             <th class="px-6 py-3" style="  background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);">Phone Number</th>
+            <th class="px-6 py-3" style="  background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);">Plan Name</th>
+            <th class="px-6 py-3" style="  background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);">Amount (PKR)</th>
             <th class="px-6 py-3" style="  background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);">Transaction ID</th>
             <th class="px-6 py-3" style="  background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);">Actions</th>
           </tr>
@@ -235,7 +237,23 @@
 
               <td class="px-6 py-4">
                 <div class="d-flex justify-content-center">
-                  <span class="text-white px-3 py-2 rounded-pill shadow-sm" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.3px; display: inline-block;">
+                  <span class="badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); font-size: 0.9rem; padding: 8px 16px;">
+                    <%= user.plan_name %>
+                  </span>
+                </div>
+              </td>
+
+              <td class="px-6 py-4">
+                <div class="d-flex justify-content-center">
+                  <span class="amount-value">
+                    ₨<%= user.amount %>
+                  </span>
+                </div>
+              </td>
+
+              <td class="px-6 py-4">
+                <div class="d-flex justify-content-center">
+                  <span class="transaction-id">
                     <i class="bi bi-credit-card me-2"></i><%= user.transfer_id %>
                   </span>
                 </div>
@@ -275,7 +293,17 @@
               </div>
               <div class="text-xs text-gray-500 mt-2"><i class="bi bi-telephone me-1"></i><%= user.phone_number %></div>
               <div class="mt-2">
-                <span class="text-white px-2 py-1 rounded-pill shadow-sm" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important; font-size: 0.7rem; font-weight: 600; display: inline-block;">
+                <span class="badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); font-size: 0.75rem; padding: 4px 10px;">
+                  <%= user.plan_name %>
+                </span>
+              </div>
+              <div class="mt-2">
+                <span class="text-white px-2 py-1 rounded-pill shadow-sm" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); font-size: 0.75rem; font-weight: 600; display: inline-block;">
+                  ₨<%= user.amount %>
+                </span>
+              </div>
+              <div class="mt-2">
+                <span class="text-white px-2 py-1 rounded-pill shadow-sm" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); font-size: 0.7rem; font-weight: 600; display: inline-block;">
                   <i class="bi bi-credit-card me-1"></i><%= user.transfer_id %>
                 </span>
               </div>
@@ -381,12 +409,16 @@
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            message: "Your manual payment could be verified. Please wait. Your plan will be activated in one or two hours."
+            message: "Your payment has been verified. Please wait, your plan will activate within 1–2 hours."
           })
         });
         const data = await res.json();
-        if (data.success) alert("Notification sent successfully!");
-        else alert("Failed to send notification.");
+        if (data.success) {
+          alert("Notification sent successfully! Now go to Plan Request page to activate the plan.");
+          setTimeout(() => window.location.href = '/package-request', 1500);
+        } else {
+          alert("Failed to send notification.");
+        }
       } catch (err) {
         console.error(err);
         alert("Error sending notification.");
@@ -402,12 +434,16 @@
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            message: "Your transaction has an issue and payment was not received."
+            message: "Your transaction has an issue and payment was not received. Please contact support."
           })
         });
         const data = await res.json();
-        if (data.success) alert("Notification sent successfully!");
-        else alert("Failed to send notification.");
+        if (data.success) {
+          alert("Denial notification sent successfully!");
+          setTimeout(() => location.reload(), 1000);
+        } else {
+          alert("Failed to send notification.");
+        }
       } catch (err) {
         console.error(err);
         alert("Error sending notification.");

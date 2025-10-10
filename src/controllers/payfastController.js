@@ -66,8 +66,8 @@ exports.initiatePayment = async (req, res) => {
 
     const customerPhone = user.phone_number || '03123456789';
     const basketId = `ITEM-${Date.now()}`;
-    const gbpAmount = parseFloat(amount);
-    const pkrAmount = (gbpAmount * 397.1863).toFixed(2);
+    // TEMPORARY: Using PKR directly for testing (no conversion)
+    const pkrAmount = parseFloat(amount).toFixed(2);
     
     const orderDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
@@ -82,7 +82,7 @@ exports.initiatePayment = async (req, res) => {
     const payment = new Payments({
       user: userId,
       plan,
-      amount: gbpAmount,
+      amount: parseFloat(amount),
       gateway: 'payfast',
       status: 'pending',
       transaction_id: basketId,
@@ -91,7 +91,7 @@ exports.initiatePayment = async (req, res) => {
     });
     await payment.save();
 
-    console.log('PayFast: Initiating payment', { basketId, gbpAmount, pkrAmount, tokenLength: token.length });
+    console.log('PayFast: Initiating payment', { basketId, pkrAmount, tokenLength: token.length });
 
     // Generate professional HTML form matching addteam.ejs styling
     const html = `<!DOCTYPE html>
@@ -262,12 +262,8 @@ exports.initiatePayment = async (req, res) => {
         <span class="info-value">${plan}</span>
       </div>
       <div class="info-row">
-        <span class="info-label"><i class="fas fa-pound-sign me-2"></i>Amount (GBP):</span>
-        <span class="info-value">£${gbpAmount}</span>
-      </div>
-      <div class="info-row">
         <span class="info-label"><i class="fas fa-money-bill-wave me-2"></i>Amount (PKR):</span>
-        <span class="info-value">Rs ${pkrAmount}</span>
+        <span class="info-value">₨ ${pkrAmount}</span>
       </div>
       <div class="info-row">
         <span class="info-label"><i class="fas fa-receipt me-2"></i>Transaction ID:</span>
@@ -312,7 +308,7 @@ exports.initiatePayment = async (req, res) => {
     <script>
       console.log('✅ PayFast payment form loaded');
       console.log('📋 Transaction ID: ${basketId}');
-      console.log('💰 Amount: £${gbpAmount} GBP = Rs ${pkrAmount} PKR');
+      console.log('💰 Amount: ₨${pkrAmount} PKR');
       
       setTimeout(() => {
         console.log('🚀 Auto-submitting form to PayFast...');

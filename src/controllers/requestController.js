@@ -7,21 +7,49 @@ exports.allusers = async (req, res) => {
       return res.redirect("/sign_in");
     }
 
-    // Fetch all users
-    const allUsers = await User.find().select(
-      "first_name last_name phone_number email company address user_img country currency role transfer_id amount"
-    );
+    const User = require("../models/user");
+    const PlanRequest = require("../models/planRequest");
 
     // Find the logged-in user
-    const loggedInUser = allUsers.find((user) => user._id.toString() === userId);
+    const loggedInUser = await User.findById(userId);
     if (!loggedInUser) {
       return res.redirect("/sign_in");
     }
 
     const profileImagePath = loggedInUser.user_img || "/uploads/default.png";
 
-    // Filter out the logged-in user from the list
-    const users = allUsers.filter((user) => user._id.toString() !== userId);
+    // Get pending manual payment requests with user details
+    const manualPaymentRequests = await PlanRequest.find({ 
+      status: 'Pending',
+      invoiceStatus: 'Unpaid'
+    })
+    .populate('user', 'first_name last_name email phone_number transfer_id amount')
+    .sort({ createdAt: -1 });
+
+    console.log('📋 Manual Payment Requests Found:', manualPaymentRequests.length);
+    if (manualPaymentRequests.length > 0) {
+      console.log('📋 Request Details:', JSON.stringify(manualPaymentRequests, null, 2));
+    } else {
+      // Check all PlanRequests to debug
+      const allRequests = await PlanRequest.find({}).populate('user');
+      console.log('📋 Total PlanRequests in DB:', allRequests.length);
+      allRequests.forEach((req, i) => {
+        console.log(`${i+1}. Plan: ${req.planName}, Status: ${req.status}, Invoice: ${req.invoiceStatus}, User: ${req.user ? req.user.email : 'N/A'}`);
+      });
+    }
+
+    // Format data for display
+    const users = manualPaymentRequests.map(req => ({
+      id: req.user._id,
+      first_name: req.user.first_name,
+      last_name: req.user.last_name,
+      email: req.user.email,
+      phone_number: req.user.phone_number,
+      transfer_id: req.user.transfer_id || 'N/A',
+      amount: req.amount,
+      plan_name: req.planName,
+      planRequestId: req._id
+    }));
 
     // Get notification data for admin
     let notifications = [];
@@ -49,6 +77,49 @@ exports.allusers = async (req, res) => {
       unreadCount: 0,
       error_msg: "Unable to load request data. Please try again."
     });
+  }
+};
+
+// Accept manual payment and send notification
+exports.acceptManualPayment = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { message } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({ success: false, message: "User ID is required." });
+    }
+
+    const Notification = require("../models/notification");
+
+    const user = await User.findById(userId).select('first_name');
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found." });
+    }
+
+    // Create notification for user
+    const notification = new Notification({
+      userId: userId,
+      userName: user.first_name,
+      action: "Manual Payment Verified",
+      message: message || "Your payment has been verified. Please wait, your plan will activate within 1–2 hours.",
+      isRead: false
+    });
+
+    await notification.save();
+
+    // Emit notification via Socket.IO to specific user only
+    if (req.app.locals.notificationService) {
+      req.app.locals.notificationService.io.emit('userNotification', {
+        userId: userId,
+        notification: notification
+      });
+    }
+
+    res.json({ success: true, message: "Notification sent successfully." });
+  } catch (error) {
+    console.error("Error sending notification:", error.message);
+    res.status(500).json({ success: false, message: "Failed to send notification." });
   }
 };
 
