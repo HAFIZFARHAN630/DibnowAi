@@ -186,6 +186,44 @@
         .pagination .page-item {
           margin: 0 4px !important;
         }
+        .search-container {
+        position: relative !important;
+        margin-bottom: 20px !important;
+      }
+
+      .search-icon {
+        position: absolute !important;
+        left: 15px !important;
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+        color: #6c757d !important;
+        z-index: 10 !important;
+      }
+
+      .search-input-wrapper {
+        position: relative !important;
+      }
+
+      .search-input-wrapper input {
+        padding-left: 45px !important;
+        border-radius: 25px !important;
+        background-color: #f8f9fa !important;
+        border: 2px solid #e9ecef !important;
+        color: #212529 !important;
+        font-size: 14px !important;
+        transition: all 0.3s ease !important;
+      }
+
+      .search-input-wrapper input:focus {
+        background-color: #ffffff !important;
+        border-color: #667eea !important;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25) !important;
+        color: #212529 !important;
+      }
+
+      .search-input-wrapper input::placeholder {
+        color: #6c757d !important;
+      }
     </style>
 <body>
 
@@ -240,6 +278,12 @@
                 <!-- Recent Transactions -->
                 <div class="card card-body mt-4">
                     <h4>Recent Transactions <i class="bi bi-clock-history"></i></h4>
+                    <div class="search-container">
+          <div class="search-input-wrapper">
+            <i class="bi bi-search search-icon"></i>
+            <input type="text" id="text-srh" class="form-control" placeholder="Search Product">
+          </div>
+        </div>
                     <div class="table-responsive">
                         <table class="table table-striped transactions-table">
                             <thead class="table-dark">
@@ -340,6 +384,18 @@
           if (totalRows > 0) showPage(1);
         }, 100);
       });
+
+      const searchInput = document.getElementById("text-srh");
+const tableRows = document.querySelectorAll(".transactions-table tbody tr");
+
+searchInput.addEventListener("input", () => {
+  const query = searchInput.value.toLowerCase();
+
+  tableRows.forEach(row => {
+    const rowText = row.textContent.toLowerCase();
+    row.style.display = rowText.includes(query) ? "" : "none";
+  });
+});
     </script>
 </body>
 </html>

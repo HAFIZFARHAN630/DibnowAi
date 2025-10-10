@@ -33,59 +33,165 @@
         text-align: center;
         width: 109%;
         margin-left: -35px;
-          }
+    }
 
+    /* Gradient Button Styles */
+    .btn-gradient-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: white;
+        padding: 10px 25px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+    .btn-gradient-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        color: white;
+    }
 
-          .modal-dialog {
-    max-width: 600px;
-    border-radius: 10px;
-    overflow: hidden;
-   
-  }
-  .modal-header {
-    background-color: #007bff;
-    color: white;
-    padding: 15px;
-  }
-  .modal-title {
-    font-size: 20px;
-    font-weight: bold;
-  }
-  .btn-close {
-    color: white;
-  }
-  .modal-body {
-    padding: 20px;
-    background-color: #f9f9f9;
-    width: 601px;
-  }
-  .form-group label {
-    font-weight: 600;
-    margin-bottom: 5px;
-    display: block;
-  }
-  .form-control {
-    border-radius: 5px;
-    border: 1px solid #ddd;
-  }
-  .form-control:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-  }
-  .btn-add button {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    font-weight: bold;
-    background-color: #007bff;
-    border: none;
-    color: white;
-    border-radius: 5px;
-  }
-  .btn-add button:hover {
-    background-color: #0056b3;
-  }
+    .btn-gradient-success {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        border: none;
+        color: white;
+        padding: 10px 25px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(17, 153, 142, 0.3);
+    }
+    .btn-gradient-success:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(17, 153, 142, 0.4);
+        color: white;
+    }
+
+    .btn-gradient-danger {
+        background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+        border: none;
+        color: white;
+        padding: 10px 25px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(235, 51, 73, 0.3);
+    }
+    .btn-gradient-danger:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(235, 51, 73, 0.4);
+        color: white;
+    }
+
+    .btn-gradient-info {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        border: none;
+        color: white;
+        padding: 10px 25px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
+    }
+    .btn-gradient-info:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(79, 172, 254, 0.4);
+        color: white;
+    }
+
+    /* Card Enhancements */
+    .card {
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+    }
+    .card:hover {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+    }
+
+    .modal-dialog {
+        max-width: 600px;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    .modal-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 15px;
+    }
+    .modal-title {
+        font-size: 20px;
+        font-weight: bold;
+    }
+    .btn-close {
+        color: white;
+    }
+    .modal-body {
+        padding: 20px;
+        background-color: #f9f9f9;
+        width: 601px;
+    }
+    .form-group label {
+        font-weight: 600;
+        margin-bottom: 5px;
+        display: block;
+    }
+    .form-control {
+        border-radius: 8px;
+        border: 1px solid #e0e0e0;
+        padding: 10px 15px;
+        transition: all 0.3s ease;
+    }
+    .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+    #profileImg{
+        width: 325px;
+        height: 325px;
+        border: 5px solid #f0f0f0;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    @media screen and (max-width:1024px) {
+        #profileImg{
+            width: 200px;
+            height: 200px;
+        }
+        #profilePicDiv{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+    @media screen and (max-width: 1024px) {
+        #profilePicDiv {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        #profileImg {
+            width: 200px;
+            height: 200px;
+            margin-bottom: 15px;
+        }
+        #uploadForm button {
+            width: 100%;
+            max-width: 180px;
+        }
+    }
+    @media screen and (max-width: 584px) {
+        #profileImg {
+            width: 160px;
+            height: 160px;
+        }
+        #uploadForm button {
+            width: 100%;
+            font-size: 14px;
+        }
+    }
     </style>
 </head>
 
@@ -180,14 +286,14 @@
                               <div class="container text-dark mt-4" >
                                 <!-- Profile Section -->
                                 <div class="profile-card">
-                                    <div class="profile-pic">
-                                      <img class="rounded-circle" src="<%- profileImagePath %>" alt="Profile Image" style="width: 325px; height: 325px;" onerror="this.onerror=null; this.src='/img/dumi img.png';">
+                                    <div class="profile-pic" id="profilePicDiv">
+                                      <img class="rounded-circle" id="profileImg" src="<%- profileImagePath %>" alt="Profile Image"  onerror="this.onerror=null; this.src='/img/dumi img.png';">
                                          <form id="uploadForm" action="/profile/upload" method="POST" enctype="multipart/form-data">
                                             <label class="add-icon">
                                                 <input class="d-none" id="fileInput" type="file" name="user_img" required >
-                                                <button class="btn btn-success" type="button" 
+                                                <button class="btn btn-gradient-success" type="button" 
                                                 onclick="document.getElementById('fileInput').click()" 
-                                                style=" margin-top: 31px;"> <i class="bi bi-pencil-square"></i> Update </button>
+                                                style="margin-top: 31px;"> <i class="bi bi-pencil-square"></i> Update </button>
                                             </label>
                                             
                                         </form>
@@ -212,40 +318,40 @@
 <!-- aaa --><!-- aaa --><!-- aaa --><!-- aaa --><!-- aaa --><!-- aaa --><!-- aaa -->
 
 <div class="col-lg-6 d-flex align-items-stretch">
-  <div class="card w-100 border position-relative overflow-hidden">
+  <div class="card w-100 border position-relative overflow-hidden" style="background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);">
     <div class="card-body p-4">
-      <h4 class="card-title">Change Password</h4>
-      <p class="card-subtitle">To change your password please confirm here</p>
+      <h4 class="card-title text-white">Change Password</h4>
+      <p class="card-subtitle text-white">To change your password please confirm here</p>
       <% if (messages.error_msg) { %>
         <div  role="alert">
-          <strong class="text-danger"><%= messages.error_msg %></strong>
+          <strong class="text-warning"><%= messages.error_msg %></strong>
         </div>
       <% } %>
       <% if (messages.success_msg) { %>
         <div role="alert">
-          <strong class="text-success"><%= messages.success_msg %></strong>
+          <strong class="text-white"><%= messages.success_msg %></strong>
         </div>
       <% } %>
       <form class="mt-5" action="/sett" method="POST">
         <div class="mb-3 position-relative">
-          <label for="password" class="form-label">Current Password</label>
-          <input type="password" class="form-control" id="password" name="password" required>
+          <label for="password" class="form-label text-white">Current Password</label>
+          <input type="password" class="form-control" id="password" name="password" required style="width: 100%;">
           <i class="fa fa-eye toggle-password" data-target="password" onclick="togglePasswordVisibility('password')" id="togglePassword" style="position: absolute; right: 10px; top: 42px; cursor: pointer;"></i>
         </div>
       
         <div class="mb-3 position-relative">
-          <label for="newPassword" class="form-label">New Password</label>
-          <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+          <label for="newPassword" class="form-label text-white">New Password</label>
+          <input type="password" class="form-control" id="newPassword" name="newPassword" required style="width: 100%;">
           <i class="fa fa-eye toggle-password" data-target="newPassword" onclick="togglePasswordVisibility('newPassword')" id="toggleNewPassword" style="position: absolute; right: 10px; top: 42px; cursor: pointer;"></i>
         </div>
       
         <div class="mb-3 position-relative">
-          <label for="confirmPassword" class="form-label">Confirm Password</label>
-          <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+          <label for="confirmPassword" class="form-label text-white">Confirm Password</label>
+          <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required style="width: 100%;">
           <i class="fa fa-eye toggle-password" data-target="confirmPassword" onclick="togglePasswordVisibility('confirmPassword')" id="toggleConfirmPassword" style="position: absolute; right: 10px; top: 42px; cursor: pointer;"></i>
         </div>
       
-        <button type="submit" class="btn btn-primary">Save</button>
+        <button type="submit" class="btn btn-gradient-primary">Save</button>
       </form>
       </div>
       
@@ -274,10 +380,10 @@
 <!-- aaa --><!-- aaa --><!-- aaa --><!-- aaa --><!-- aaa --><!-- aaa --><!-- aaa -->
                     <div class="mt-3">
                       <div class="col-12">
-                        <div class="card w-100 border position-relative overflow-hidden mb-0">
+                        <div class="card w-100 border position-relative overflow-hidden mb-0" style="background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);">
                           <div class="card-body p-4">
-                            <h4 class="card-title">Personal Details</h4>
-                            <p class="card-subtitle mb-4">To change your personal detail , edit and save from here</p>
+                            <h4 class="card-title text-white">Personal Details</h4>
+                            <p class="card-subtitle mb-4 text-white">To change your personal detail , edit and save from here</p>
                             <form method="POST" action="/Setting/update">
                               <div class="row">
                                 <!-- First Name and Last Name -->
@@ -472,8 +578,8 @@
                             
                                 <!-- Buttons -->
                                 <div class="col-12 d-flex align-items-center justify-content-end mt-4 gap-3">
-                                  <button type="submit" class="btn btn-primary">Update</button>
-                                  <button type="button" class="btn btn-danger">Cancel</button>
+                                  <button type="submit" class="btn btn-gradient-primary">Update</button>
+                                  <button type="button" class="btn btn-gradient-danger">Cancel</button>
                                 </form>
                                 </div>
                               </div>
@@ -623,8 +729,8 @@
                       </div>
                       <div class="col-12">
                         <div class="d-flex align-items-center justify-content-end gap-6">
-                          <button class="btn btn-primary">Save</button>
-                          <button class="btn bg-danger-subtle text-danger">Cancel</button>
+                          <button class="btn btn-gradient-primary">Save</button>
+                          <button class="btn btn-gradient-danger">Cancel</button>
                         </div>
                       </div>
                     </div>
@@ -635,36 +741,36 @@
                   <div class="tab-pane fade" id="pills-bills" role="tabpanel" aria-labelledby="pills-bills-tab" tabindex="0">
                     <div class="row justify-content-center">
                       <div class="col-lg-9">
-                        <div class="card border shadow-none">
+                        <div class="card border shadow-none" style="background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);">
                           <div class="card-body p-4">
-                            <h4 class="card-title mb-3">Billing Information</h4>
+                            <h4 class="card-title mb-3 text-white">Billing Information</h4>
                             <form>
                               <div class="row">
                                 <div class="col-lg-6">
                                   <div class="mb-3">
-                                    <label for="exampleInputtext6" class="form-label">Business Name</label>
+                                    <label for="exampleInputtext6" class="form-label text-white">Business Name</label>
                                     <input type="text" class="form-control" id="exampleInputtext6" value="<%= company %>">
                                   </div>
                                   <div class="mb-3">
-                                    <label for="exampleInputtext7" class="form-label">Business Address</label>
+                                    <label for="exampleInputtext7" class="form-label text-white">Business Address</label>
                                     <input type="text" class="form-control" id="exampleInputtext7" value="<%= address %>">
                                   </div>
                                   <div>
-                                    <label for="exampleInputtext8" class="form-label">First Name</label>
+                                    <label for="exampleInputtext8" class="form-label text-white">First Name</label>
                                     <input type="text" class="form-control" id="exampleInputtext8" value="<%= firstName %>">
                                   </div>
                                 </div>
                                 <div class="col-lg-6">
                                   <div class="mb-3">
-                                    <label for="exampleInputtext9" class="form-label">Business Sector</label>
+                                    <label for="exampleInputtext9" class="form-label text-white">Business Sector</label>
                                     <input type="text" class="form-control" id="exampleInputtext9" value="<%= country %>">
                                   </div>
                                   <div class="mb-3">
-                                    <label for="exampleInputtext10" class="form-label">Country</label>
+                                    <label for="exampleInputtext10" class="form-label text-white">Country</label>
                                     <input type="text" class="form-control" id="exampleInputtext10" value="<%= country %>">
                                   </div>
                                   <div>
-                                    <label for="exampleInputtext11" class="form-label">Last Name</label>
+                                    <label for="exampleInputtext11" class="form-label text-white">Last Name</label>
                                     <input type="text" class="form-control" id="exampleInputtext11" name="lastName" value="<%= lastName %>">
 
                                   </div>
@@ -675,32 +781,32 @@
                         </div>
                       </div>
                       <div class="col-lg-9">
-                        <div class="card border shadow-none">
+                        <div class="card border shadow-none" style="background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);">
                           <div class="card-body p-4">
-                            <h4 class="card-title">Current Plan : <span class="text-success"> <%= plan_name %></span>
+                            <h4 class="card-title text-white">Current Plan : <span class="text-warning"> <%= plan_name %></span>
                             </h4>
-                            <p class="card-subtitle">Thanks for being a premium member and supporting our development.</p>
+                            <p class="card-subtitle text-white">Thanks for being a premium member and supporting our development.</p>
                             <div class="d-flex align-items-center justify-content-between mt-7 mb-3">
                               <div class="d-flex align-items-center gap-3">
                                
-                                  <i class="bi bi-receipt-cutoff text-dark" width="50" height="50"></i>
+                                  <i class="bi bi-receipt-cutoff text-white" width="50" height="50"></i>
                                 
                                 <div>
-                                  <p class="mb-0 text-dark">Plan Subscription Date: 
-                                    <strong class="text-dark"><%= subscriptionDate %></strong>
+                                  <p class="mb-0 text-white">Plan Subscription Date: 
+                                    <strong class="text-white"><%= subscriptionDate %></strong>
                                   </p>
-                                  <p class="mb-0 text-dark">Plan Expiration Date: 
-                                    <strong class="text-danger"><%= expirationDate %></strong>
+                                  <p class="mb-0 text-white">Plan Expiration Date: 
+                                    <strong class="text-warning"><%= expirationDate %></strong>
                                   </p>
                                 </div>
                                 
                               </div>
-                              <i class="bi bi-receipt-cutoff text-dark" width="50" height="50"></i>
+                              <i class="bi bi-receipt-cutoff text-white" width="50" height="50"></i>
                             </div>
                             <div class="d-flex align-items-center gap-3">
-                              <a href='/pricing' target='' class='btn btn-primary text-dark' style='padding: 14px 25px; text-align: center; text-decoration: none; display: inline-block;'>Change Plan</a>
+                              <a href='/pricing' target='' class='btn btn-gradient-info' style='padding: 14px 25px; text-align: center; text-decoration: none; display: inline-block;'>Change Plan</a>
                               <form action="/Setting" method="POST">
-                                <button type="submit" style="background-color: #d30718; color: #f5f5f5; border: none; padding: 0.375rem 0.75rem; border-radius: 8px; height: 50px;">
+                                <button type="submit" class="btn btn-gradient-danger" style="height: 50px;">
                                   Reset Plan
                                 </button>
                               </form>
@@ -711,8 +817,8 @@
                       </div>
                       <div class="col-12">
                         <div class="d-flex align-items-center justify-content-end gap-6">
-                          <button class="btn btn-primary">Save</button>
-                          <button class="btn bg-danger-subtle text-danger">Cancel</button>
+                          <button class="btn btn-gradient-primary">Save</button>
+                          <button class="btn btn-gradient-danger">Cancel</button>
                         </div>
                       </div>
                     </div>
@@ -730,28 +836,28 @@
                             <div class="d-flex align-items-center justify-content-between pb-7">
                               <p class="card-subtitle mb-0">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Corporis sapiente
                                 sunt earum officiis laboriosam ut.</p>
-                              <button class="btn btn-primary">Enable</button>
+                              <button class="btn btn-gradient-primary">Enable</button>
                             </div>
                             <div class="d-flex align-items-center justify-content-between py-3 border-top">
                               <div>
                                 <h5 class="fs-4 fw-semibold mb-0">Authentication App</h5>
                                 <p class="mb-0">Google auth app</p>
                               </div>
-                              <button class="btn bg-primary-subtle text-primary">Setup</button>
+                              <button class="btn btn-gradient-info">Setup</button>
                             </div>
                             <div class="d-flex align-items-center justify-content-between py-3 border-top">
                               <div>
                                 <h5 class="fs-4 fw-semibold mb-0">Another e-mail</h5>
                                 <p class="mb-0">E-mail to send verification link</p>
                               </div>
-                              <button class="btn bg-primary-subtle text-primary">Setup</button>
+                              <button class="btn btn-gradient-info">Setup</button>
                             </div>
                             <div class="d-flex align-items-center justify-content-between py-3 border-top">
                               <div>
                                 <h5 class="fs-4 fw-semibold mb-0">SMS Recovery</h5>
                                 <p class="mb-0">Your phone number or something</p>
                               </div>
-                              <button class="btn bg-primary-subtle text-primary">Setup</button>
+                              <button class="btn btn-gradient-info">Setup</button>
                             </div>
                           </div>
                         </div>
@@ -764,7 +870,7 @@
                             </div>
                             <h4 class="card-title mb-0">Devices</h4>
                             <p class="mb-3">Lorem ipsum dolor sit amet consectetur adipisicing elit Rem.</p>
-                            <button class="btn btn-primary mb-4">Sign out from all devices</button>
+                            <button class="btn btn-gradient-danger mb-4">Sign out from all devices</button>
                             <div class="d-flex align-items-center justify-content-between py-3 border-bottom">
                               <div class="d-flex align-items-center gap-3">
                                 <img width="48" height="48" src="https://img.icons8.com/emoji/48/united-kingdom-emoji.png" alt="united-kingdom-emoji"/>
@@ -789,14 +895,14 @@
                                
                               </a>
                             </div>
-                            <button class="btn bg-primary-subtle text-primary w-100 py-1">Need Help ?</button>
+                            <button class="btn btn-gradient-info w-100 py-1">Need Help ?</button>
                           </div>
                         </div>
                       </div>
                       <div class="col-12">
                         <div class="d-flex align-items-center justify-content-end gap-6">
-                          <button class="btn btn-primary">Save</button>
-                          <button class="btn bg-danger-subtle text-danger">Cancel</button>
+                          <button class="btn btn-gradient-primary">Save</button>
+                          <button class="btn btn-gradient-danger">Cancel</button>
                         </div>
                       </div>
                     </div>

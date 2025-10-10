@@ -27367,9 +27367,7 @@ border: none !important;
     width: 90% !important
 }
 
-.w-100 {
-    width: 100% !important
-}
+
 
 .w-auto {
     width: auto !important
@@ -39960,7 +39958,7 @@ html[data-layout=horizontal] .body-wrapper>.container-xxl {
 }
 
 .card-title {
-    font-size: 18px;
+    /* font-size: 18px; */
     margin-bottom: 8px;
     color: var(--bs-heading-color)
 }

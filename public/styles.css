@@ -176,6 +176,11 @@
         font-family: 'Inter', 'Segoe UI', Tahoma, sans-serif;
         color: #f1f5f9;
     }
+    @media screen and (max-width:1024px) {
+        .sidebar {
+            top: 55px;
+        }
+    }
 
     .sidebar .navbar {
         background: #F3F3F9 !important;
@@ -299,13 +304,15 @@
     /* User Profile at Bottom */
     .sidebar .sidebar-user {
         
-        
-        
-        margin-top: auto;
-        text-align: left;
+         text-align: left;
         margin-left: 15px;
-        margin-top: 50px;
+margin-bottom: 15px;
+margin-top: 20px;
+        
         color: black;
+        
+        
+       
     }
     
    

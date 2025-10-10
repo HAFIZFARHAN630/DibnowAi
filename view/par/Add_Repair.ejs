@@ -38,7 +38,12 @@
     width: 100%;
     margin: 0;
   }
-
+  @media screen and (max-width: 767px) {
+    .professional-modal .modal-title {
+      font-size: 22px !important;
+      width: 75% !important;
+    }
+  }
   .professional-modal .modal-subtitle {
     color: rgba(255, 255, 255, 0.9);
     font-size: 18px;
@@ -176,17 +181,16 @@
  @media (max-width: 500px) {
   .professional-modal .modal-dialog {
     margin: 5px !important;
-    max-width: 300px !important;
   }
 
   .professional-modal .modal-header,
   .professional-modal .modal-body {
-    padding: 10px !important;
+    /* padding: 10px !important; */
   }
 
   .professional-modal .modal-title {
     font-size: 18px;
-    line-height: 1.2;
+    /* line-height: 1.2; */
   }
 
   .professional-modal .modal-subtitle {
@@ -559,5 +563,3 @@
 </div>
 </div>
 <!-- Categories form -->
-
-

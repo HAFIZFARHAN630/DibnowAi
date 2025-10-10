@@ -124,7 +124,7 @@
       /* Search functionality */
       .search-container {
         position: relative;
-        margin-bottom: 20px;
+        
       }
 
       .search-icon {
@@ -450,6 +450,7 @@ justify-content: flex-end;
         }
       }
     </style>
+   
 </head>
 <body>
 
@@ -565,7 +566,7 @@ initializeChart();
 <div class="body-wrapper" style="margin-top: 8rem !important;">
   <div class="">
 <div class="card card-body py-3">
-  <div class="row align-items-center">
+ <div class="row align-items-center">
     <div class="col-md-12">
       <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
         <h4 class="mb-4 mb-sm-0 card-title">Repair</h4>
@@ -592,7 +593,24 @@ initializeChart();
     </div>
   </div>
 </div>
-```
+
+ <style>
+/* Bootstrap-only tweak for small screens */
+@media (max-width: 575.98px) {
+  .d-flex.flex-wrap.justify-content-between {
+    justify-content: center !important; /* center items when wrapped */
+    text-align: center;
+  }
+  .d-flex.flex-wrap > div {
+    flex: 0 0 100%; /* each item full-width */
+    max-width: 100%;
+  }
+  .d-flex.flex-wrap > div input,
+  .d-flex.flex-wrap > div select {
+    margin: 0 auto; /* center input/select */
+  }
+}
+</style>
 
                         
     <div class="card card-body" >

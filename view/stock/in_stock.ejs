@@ -295,7 +295,111 @@
         background: rgba(255, 255, 255, 0.98) !important;
       }
     </style>
+    <style>
+/* FINAL FIX — make sure labels are never pushed off-screen (targeted) */
+@media (max-width: 575.98px) {
+  /* make the dialog anchored to the viewport edges */
+  div[id^="confirmModal"] .modal-dialog,
+  div[id^="updateModal"]  .modal-dialog {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: 15px !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    transform: none !important;
+    display: flex !important;
+    align-items: stretch !important;
+    padding: 0 !important;
+  }
+  .modal-header{
+    padding: 22px 12px;
+  }
 
+  /* ensure content uses box-sizing so paddings keep things in-screen */
+  div[id^="confirmModal"] .modal-content,
+  div[id^="updateModal"]  .modal-content {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-height: 100vh !important;
+    height: auto !important;
+    border-radius: 0 !important;
+    padding: 1rem !important;        /* safe inner padding */
+    overflow-y: auto !important;
+    left: 0 !important;
+  }
+
+  /* ensure modal body has horizontal padding so labels never touch viewport edge */
+  div[id^="confirmModal"] .modal-body,
+  div[id^="updateModal"]  .modal-body {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  /* cancel any negative margins on rows/cols inside targeted modals */
+  div[id^="confirmModal"] .modal-body .row,
+  div[id^="updateModal"]  .modal-body .row {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  /* make columns stack and keep inner padding; prevents labels going off-screen */
+  div[id^="confirmModal"] .modal-body .row > [class*="col-"],
+  div[id^="updateModal"]  .modal-body .row > [class*="col-"] {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-bottom: .6rem !important;
+  }
+
+  /* Ensure labels are visible (no clipping), inputs full width */
+  div[id^="confirmModal"] .modal-body .form-label,
+  div[id^="updateModal"]  .modal-body .form-label {
+    display: block !important;
+    overflow: visible !important;
+    white-space: normal !important;
+    text-overflow: clip !important;
+    width: 100% !important;
+    margin-bottom: .35rem !important;
+    color: #212529 !important;
+    font-weight: 600 !important;
+  }
+
+  div[id^="confirmModal"] .modal-body input,
+  div[id^="confirmModal"] .modal-body select,
+  div[id^="confirmModal"] .modal-body textarea,
+  div[id^="updateModal"]  .modal-body input,
+  div[id^="updateModal"]  .modal-body select,
+  div[id^="updateModal"]  .modal-body textarea {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding: .5rem .625rem !important;
+    margin: 0 !important;
+  }
+
+  /* Prevent any absolutely positioned controls from covering the form */
+  div[id^="confirmModal"] .position-absolute,
+  div[id^="updateModal"]  .position-absolute {
+    left: auto !important;
+    right: 1rem !important;
+    top: auto !important;
+    z-index: 3 !important;
+  }
+
+  /* Modal footer centered and visible */
+  div[id^="confirmModal"] .modal-footer,
+  div[id^="updateModal"]  .modal-footer {
+    display: flex !important;
+    justify-content: center !important;
+    gap: .5rem !important;
+    flex-wrap: wrap !important;
+    padding: .75rem 1rem !important;
+  }
+}
+</style>
 </head>
 <body>
              <%- include('../par/sidebar.ejs') %>
@@ -478,7 +582,7 @@
 <!-- Confirmation Modal (for Sold button) -->
 <% products.forEach(items => { %>
   <div class="modal fade" id="confirmModal<%= items.id %>" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" style="max-width: 800px;">
+    <div class="modal-dialog modal-fullscreen-sm-down" style="max-width: 800px;">
       <div class="modal-content" style="background: transparent; border: none;">
         <div class="form-container" style="background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%); padding: 50px; border-radius: 25px; box-shadow: 0 30px 100px rgba(0, 0, 0, 0.2); position: relative; backdrop-filter: blur(15px); border: 2px solid rgba(255, 255, 255, 0.3);">
           <button type="button" class="close-btn" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; top: 20px; right: 20px; width: 40px; height: 40px; background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%); border: none; border-radius: 50%; color: white; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);">

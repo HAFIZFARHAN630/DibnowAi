@@ -329,6 +329,20 @@
   .pagination .page-item {
     margin: 0 4px !important;
   }
+  .padd{
+    padding: 28px;
+  }
+  @media screen and (max-width: 786px) {
+    .padd{
+      padding: 18px;
+    }
+    .center-on-small{
+      justify-content: center !important;
+    }
+  }
+  #text-srh{
+    margin-top: 15px;
+  }
 </style>
 </head>
 <body style="max-width: 100vw !important; overflow-x: hidden !important;">  
@@ -360,51 +374,47 @@
 <!-- content -->
 <div class="body-wrapper">
   <div class="container-fluid">
-    <div class="card card-body py-3" style="padding: 0 !important;">
-    <div class="row align-items-center">
-      <div class="col-12">
-      <!-- Flex wrapper that stacks on xs, row on sm+ -->
-      <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center gap-3">
-        
-        <!-- Left: Title + Icon -->
-        <div class="d-flex align-items-center gap-2">
-          <h4 class="mb-0 card-title">Clients</h4>
-          <i class="fa-solid fa-user-group"></i>
-        </div>
+    <div class="card card-body py-3 padd" style="">
+   <!-- REPLACE the existing flex wrapper with this (Bootstrap only) -->
+<div class="d-flex flex-column flex-sm-row flex-wrap justify-content-center justify-content-sm-between align-items-center gap-3 w-100">
+  
+  <!-- Left: Title + Icon -->
+  <div class="d-flex align-items-center gap-2">
+    <h4 class="mb-0 card-title">Clients</h4>
+    <i class="fa-solid fa-user-group"></i>
+  </div>
 
-        <!-- Middle: Action Buttons -->
-        <div class="d-flex flex-wrap gap-2 ms-sm-auto">
-          <button class="btn btn-action btn-primary" onclick="generatePDF()">
-            <i class="fa fa-file-pdf"></i> PDF
-          </button>
-          <button class="btn btn-action btn-success" onclick="generateExcel()">
-            <i class="fa fa-file-excel"></i> Excel
-          </button>
-          <button class="btn btn-action btn-info" onclick="printTable()">
-            <i class="fa fa-print"></i> Print
-          </button>
-          <button class="btn btn-action btn-danger" onclick="deleteSelected()">
-            <i class="fa fa-trash"></i> Delete
-          </button>
-        </div>
+  <!-- Middle: Action Buttons (ms-sm-auto pushes them right on sm+) -->
+  <div class="d-flex flex-wrap gap-2 ms-sm-auto center-on-small">
+    <button class="btn btn-action btn-primary" onclick="generatePDF()">
+      <i class="fa fa-file-pdf"></i> PDF
+    </button>
+    <button class="btn btn-action btn-success" onclick="generateExcel()">
+      <i class="fa fa-file-excel"></i> Excel
+    </button>
+    <button class="btn btn-action btn-info" onclick="printTable()">
+      <i class="fa fa-print"></i> Print
+    </button>
+    <button class="btn btn-action btn-danger" onclick="deleteSelected()">
+      <i class="fa fa-trash"></i> Delete
+    </button>
+  </div>
 
-        <!-- Right: Search -->
-        <div class="search-container w-100 w-sm-auto">
-          <div class="search-input-wrapper w-100">
-            <!-- <i class="bi bi-search search-icon"></i> -->
-            <input
-              type="text"
-              class="form-control"
-              id="text-srh"
-              placeholder="Search Product"
-              oninput="filterTable()"
-            />
-          </div>
-        </div>
-
-      </div>
+  <!-- Right: Search (full width on xs, auto on sm+) -->
+  <div class="search-container w-100 w-sm-auto">
+    <div class="search-input-wrapper w-100">
+      <input
+        type="text"
+        class="form-control"
+        id="text-srh"
+        placeholder="Search Product"
+        oninput="filterTable()"
+      />
     </div>
   </div>
+
+</div>
+
 </div>
 
 <!-- content -->

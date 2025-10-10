@@ -152,13 +152,13 @@
   backdrop-filter: blur(5px); 
 }
 /* Modal content styling */
-.modal-content {
+#planModal .modal-content {
   position: relative;
   margin: 10% auto;
   background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);
   border: none;
   border-radius: 25px;
-  width: 50%;
+  /* width: 50%; */
   max-width: 700px;
   padding: 30px 50px;
   box-shadow: 0 30px 100px rgba(0, 0, 0, 0.2);
@@ -194,7 +194,7 @@
 }
 
 /* Modal header styling */
-.modal-content h3 {
+#planModal .modal-content h3 {
   margin-top: 0;
   font-size: 1.8rem;
   color: #ffffff;
@@ -204,7 +204,7 @@
 }
 
 /* Paragraph (selected plan) styling */
-.modal-content p {
+#planModal .modal-content p {
   font-size: 1rem;
   color: rgba(255, 255, 255, 0.9);
   margin-bottom: 25px;
@@ -397,6 +397,40 @@
           transform: translateY(-2px);
           box-shadow: 0 12px 30px rgba(0, 200, 83, 0.5);
         }
+        /* card container: wrap & center, controlled via CSS not inline styles */
+.card-container {
+  display: flex;
+  gap: 100px;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 20px 0;
+  box-sizing: border-box;
+}
+
+/* wrapper that replaces the bootstrap column so dynamic cards match static ones */
+.plan-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 232px; /* same width as your static cards */
+  box-sizing: border-box;
+  margin: 0;
+}
+
+/* ensure card uses full width of wrapper and equal heights */
+.plan-wrapper .card {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* small screens: make wrappers shrink & center nicely */
+@media (max-width: 576px) {
+  .card-container { gap: 16px; }
+  .plan-wrapper { width: calc(100% - 40px); max-width: 420px; }
+}
 </style>
 
 </head>
@@ -537,7 +571,7 @@
          const variant = ['free-trial','basic','standard','premium'][i % 4];
     %>
 
-      <div class="col-12 col-sm-6 col-lg-2" style="display: flex !important; align-items: center !important; justify-content: center !important;">
+      <div class="plan-wrapper" style="display: flex !important; align-items: center !important; justify-content: center !important;">
         <div class="card <%= variant %> h-100 text-center p-3" data-plan="<%= name %>" aria-label="plan-card-<%= name %>">
           <div class="card-body d-flex flex-column">
             <div class="title h6 text-uppercase fw-bold mb-2"><%= name %></div>
