@@ -46,6 +46,9 @@ router.post("/payfast/initiate-token", payfastController.initiatePayment);
 router.post("/pricing/payfast/initiate-token", payfastController.initiatePayment);
 router.get("/payfast/test", payfastController.testPayFastConnection);
 router.post("/payfast/webhook", payfastController.handleWebhook);
+router.get("/pricing/payfast/success", payfastController.handleSuccess);
+router.get("/pricing/payfast/cancel", payfastController.handleCancel);
+router.post("/pricing/payfast/ipn", payfastController.handleWebhook);
 
 
 

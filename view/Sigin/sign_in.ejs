@@ -59,9 +59,9 @@
       }
 
       .auth-card h1 {
-        background: linear-gradient(135deg, #744FA7 0%, #5a3a85 100%);
+        color: #0749D3;
         -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        
         background-clip: text;
         font-size: 2.5rem;
         font-weight: 700;
@@ -281,14 +281,14 @@
             <div class="min-vh-100 bg-body row justify-content-center align-items-center p-5 mt-n4">
               <div class="col-12 auth-card mt-n4">
              
-                <h1 class="mb-2 mt-4 fs-7 fw-bolder text-black">Login</h1>
+                <h1 class="mb-2 mt-4 fs-7 fw-bolder" style="color: #0749D3;">Login</h1>
                 <% if (message) { %>
                   <div class="alert alert-success alert-dismissible fade show" role="alert">
                     <strong> <%= message %></strong> 
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                   </div>
             <% } %>    
-                <p class="mb-9">Your Login Dashboard</p>
+                <p class="mb-9" style="color: #0749D3;">Your Login Dashboard</p>
           
          
                 <!--  -->
@@ -306,12 +306,12 @@
                   </div>
                   <!--  -->
                   <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                    <a class="text-primary fw-medium" href="#" data-bs-toggle="modal" data-bs-target="#forgetpassword">Forgot Password?</a>
+                    <a class=" fw-medium" href="#" data-bs-toggle="modal" data-bs-target="#forgetpassword" style="color: #0749D3;">Forgot Password?</a>
                   </div>
-                  <button class="btn btn-primary w-100 py-8 mb-4 rounded-2" style=" background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);">Login</button>
+                  <button class="btn btn-primary w-100 py-8 mb-4 rounded-2" style=" background: linear-gradient(135deg, #3836ac 0%, #33ccff 100%);">Login</button>
                   <div class="d-flex align-items-center justify-content-center">
                     <p class="fs-4 mb-0 fw-medium">New to DibNow?</p>
-                    <a class="text-primary fw-medium ms-2" href="/sign_up">Create an
+                    <a class=" fw-medium ms-2" href="/sign_up" style="color:#0749D3;">Create an
                       account</a>
                   </div>
                 </form>
