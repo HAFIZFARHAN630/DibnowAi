@@ -610,7 +610,7 @@ exports.paymentSuccess = [
         await newPayment.save();
         console.log(`✅ Auto-payment created for user ${userId} - Gateway: ${gateway}`);
 
-        // Create/Update PlanRequest with Active status
+        // Create/Update PlanRequest with Active status and Paid invoice
         await PlanRequest.findOneAndUpdate(
           { user: userId },
           {
@@ -621,14 +621,21 @@ exports.paymentSuccess = [
             startDate,
             expiryDate,
             amount,
-            description: `${gateway.toUpperCase()} payment - Plan activated automatically`
+            description: `${plan} plan activated via ${gateway.toUpperCase()} automatic payment`
           },
           { upsert: true, new: true }
         );
         console.log(`✅ PlanRequest auto-activated for user ${userId}`);
 
-        // Update the plan_name in the database
-        await User.findByIdAndUpdate(userId, { plan_name: plan });
+        // Update user with complete plan details
+        await User.findByIdAndUpdate(userId, {
+          plan_name: plan,
+          payment_method: gateway,
+          plan_status: 'Active',
+          invoice_status: 'Paid',
+          start_date: startDate,
+          expiry_date: expiryDate
+        });
         console.log(`✅ User plan updated to ${plan}`);
 
         // Now, update the plan_limit based on the selected plan

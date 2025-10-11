@@ -393,12 +393,25 @@ exports.handleSuccess = async (req, res) => {
 
       if (payment) {
         const PlanRequest = require("../models/planRequest");
+        const startDate = payment.startDate || new Date();
+        const expiryDate = payment.expiryDate || (() => {
+          const date = new Date(startDate);
+          date.setDate(date.getDate() + 30);
+          return date;
+        })();
         
-        // Update user plan
-        await User.findByIdAndUpdate(payment.user, { plan_name: payment.plan });
+        // Update user with plan details
+        await User.findByIdAndUpdate(payment.user, {
+          plan_name: payment.plan,
+          payment_method: 'PayFast',
+          plan_status: 'Active',
+          invoice_status: 'Paid',
+          start_date: startDate,
+          expiry_date: expiryDate
+        });
         console.log(`✅ User plan updated to ${payment.plan}`);
         
-        // Create/Update PlanRequest with Active status
+        // Create/Update PlanRequest with Active status and Paid invoice
         await PlanRequest.findOneAndUpdate(
           { user: payment.user },
           {
@@ -406,10 +419,10 @@ exports.handleSuccess = async (req, res) => {
             planName: payment.plan,
             status: 'Active',
             invoiceStatus: 'Paid',
-            startDate: payment.startDate,
-            expiryDate: payment.expiryDate,
+            startDate,
+            expiryDate,
             amount: payment.amount,
-            description: 'PAYFAST payment - Plan activated automatically'
+            description: `${payment.plan} plan activated via PayFast automatic payment`
           },
           { upsert: true, new: true }
         );
@@ -502,18 +515,56 @@ exports.handleWebhook = async (req, res) => {
       );
 
       if (payment) {
-        await User.findByIdAndUpdate(payment.user, { plan_name: payment.plan });
+        const PlanRequest = require("../models/planRequest");
+        const startDate = payment.startDate || new Date();
+        const expiryDate = payment.expiryDate || (() => {
+          const date = new Date(startDate);
+          date.setDate(date.getDate() + 30);
+          return date;
+        })();
+
+        // Update user with complete plan details
+        await User.findByIdAndUpdate(payment.user, {
+          plan_name: payment.plan,
+          payment_method: 'PayFast',
+          plan_status: 'Active',
+          invoice_status: 'Paid',
+          start_date: startDate,
+          expiry_date: expiryDate
+        });
+        console.log(`✅ User plan updated via webhook to ${payment.plan}`);
+
+        // Create/Update PlanRequest with Active status and Paid invoice
+        await PlanRequest.findOneAndUpdate(
+          { user: payment.user },
+          {
+            user: payment.user,
+            planName: payment.plan,
+            status: 'Active',
+            invoiceStatus: 'Paid',
+            startDate,
+            expiryDate,
+            amount: parseFloat(TXNAMT || payment.amount),
+            description: `${payment.plan} plan activated via PayFast automatic payment`
+          },
+          { upsert: true, new: true }
+        );
+        console.log(`✅ PlanRequest auto-activated via webhook for user ${payment.user}`);
+
+        // Update plan limits
+        await subscribePlan(payment.user, payment.plan);
         
         await Transaction.create({
           user: payment.user,
-          type: 'payment',
+          type: 'plan_purchase',
           amount: parseFloat(TXNAMT || payment.amount),
           status: 'success',
           gateway: 'payfast',
-          reference: BASKET_ID
+          reference: BASKET_ID,
+          description: `${payment.plan} plan purchase via PayFast`
         });
 
-        console.log('Payment activated via webhook:', BASKET_ID);
+        console.log('✅ Payment activated via webhook:', BASKET_ID);
       }
     }
 
