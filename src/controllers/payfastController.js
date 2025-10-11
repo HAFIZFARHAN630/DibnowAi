@@ -429,15 +429,26 @@ exports.testPayFastConnection = async (req, res) => {
  */
 exports.handleSuccess = async (req, res) => {
   try {
-    console.log('PayFast Success callback:', req.query);
+    console.log('✅ PayFast Success callback:', req.query);
     const { BASKET_ID, err_msg } = req.query;
 
+    let payment = null;
+    let redirectPlan = 'BASIC';
+
     if (BASKET_ID && err_msg === 'Success') {
-      const payment = await Payments.findOneAndUpdate(
+      payment = await Payments.findOneAndUpdate(
         { transaction_id: BASKET_ID },
         { status: 'active' },
         { new: true }
       );
+
+      if (!payment) {
+        console.error('❌ Payment not found for BASKET_ID:', BASKET_ID);
+        return res.redirect('/cancel?error=payment_not_found');
+      }
+
+      redirectPlan = payment.plan;
+      console.log('💳 Payment found:', { plan: payment.plan, user: payment.user });
 
       if (payment) {
         const PlanRequest = require("../models/planRequest");
@@ -501,10 +512,14 @@ exports.handleSuccess = async (req, res) => {
         }
 
         console.log('✅ Payment activated via success callback:', BASKET_ID);
+      } else {
+        console.error('❌ Payment object is null after update');
       }
+    } else {
+      console.error('❌ Invalid callback parameters:', { BASKET_ID, err_msg });
     }
 
-    res.redirect('/success?plan=' + (payment?.plan || 'BASIC') + '&gateway=payfast');
+    res.redirect('/success?plan=' + redirectPlan + '&gateway=payfast');
   } catch (error) {
     console.error('Success callback error:', error.message);
     res.redirect('/cancel');

@@ -39,7 +39,7 @@ exports.allusers = async (req, res) => {
       teams,
       teamCount,
       deliveredRepairs,
-      subscription,       // ✅ FIXED: Now fetching subscription from PlanRequest
+      subscription,
       matchedPackage,
       latestPayment,
       userPlan,
@@ -64,10 +64,10 @@ exports.allusers = async (req, res) => {
         ? AddUser.countDocuments() // Admin sees total team count
         : AddUser.countDocuments({ user_id: userId }), // User sees their own team count
       Repair.find({ status: 'Delivered' }).select('Price'),
-      PlanRequest.findOne({ user: userId }).sort({ createdAt: -1 }), // ✅ Correct subscription
-      Payments.findOne({ user: userId }).sort({ createdAt: -1 }),
-      Payments.findOne({ user: userId }).sort({ createdAt: -1 }),
-      Payments.findOne({ user: userId }).sort({ createdAt: -1 }),
+      PlanRequest.findOne({ user: userId }).sort({ createdAt: -1 }),
+      Payments.findOne({ user: userId, status: 'active' }).sort({ createdAt: -1 }),
+      Payments.findOne({ user: userId, status: 'active' }).sort({ createdAt: -1 }),
+      PlanRequest.findOne({ user: userId }).sort({ createdAt: -1 }),
       // User count queries for admin dashboard
       User.countDocuments(),
       User.countDocuments({ status: 'Accepted' }),
@@ -76,8 +76,14 @@ exports.allusers = async (req, res) => {
 
     // Enhanced logging for plan debugging
     console.log(`🔍 Dashboard data fetched for user: ${user.email} (ID: ${userId})`);
+    console.log('📊 Data fetched:', {
+      userPlan: userPlan ? { planName: userPlan.planName, status: userPlan.status, invoiceStatus: userPlan.invoiceStatus } : null,
+      latestPayment: latestPayment ? { plan: latestPayment.plan, status: latestPayment.status } : null,
+      matchedPackage: matchedPackage ? { plan: matchedPackage.plan, status: matchedPackage.status } : null
+    });
+    
     if (userPlan) {
-      console.log(`📋 User plan found: ${userPlan.planName} (Status: ${userPlan.status})`);
+      console.log(`📋 User plan found: ${userPlan.planName} (Status: ${userPlan.status}, Invoice: ${userPlan.invoiceStatus})`);
       console.log(`📅 Plan expires: ${userPlan.expiryDate ? new Date(userPlan.expiryDate).toLocaleDateString() : 'No expiry date'}`);
     } else {
       console.log(`⚠️ No user plan found for user: ${user.email}`);

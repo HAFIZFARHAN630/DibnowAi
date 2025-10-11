@@ -737,9 +737,10 @@
                         </div>
                         <div class="card-body">
                             <% 
-                            // Prioritize Payments collection for online payments (Stripe/PayPal/PayFast)
-                            const hasActivePlan = latestPayment && (latestPayment.status === 'active' || latestPayment.status === 'Active');
-                            const displayPlan = hasActivePlan ? latestPayment : userPlan;
+                            // Prioritize PlanRequest for status (has invoiceStatus field)
+                            // Use Payments only if PlanRequest doesn't exist
+                            const displayPlan = userPlan || latestPayment;
+                            const hasActivePlan = displayPlan && (displayPlan.status === 'active' || displayPlan.status === 'Active');
                             %>
                             <% if (displayPlan && (displayPlan.planName || displayPlan.plan)) { %>
                                 <% 
