@@ -64,60 +64,32 @@ exports.allusers = async (req, res) => {
         ? AddUser.countDocuments() // Admin sees total team count
         : AddUser.countDocuments({ user_id: userId }), // User sees their own team count
       Repair.find({ status: 'Delivered' }).select('Price'),
-      PlanRequest.findOne({ user: userId }).sort({ createdAt: -1 }),
+      PlanRequest.findOne({ user: userId, status: 'Active' }).sort({ createdAt: -1 }),
       Payments.findOne({ user: userId, status: 'active' }).sort({ createdAt: -1 }),
       Payments.findOne({ user: userId, status: 'active' }).sort({ createdAt: -1 }),
-      PlanRequest.findOne({ user: userId }).sort({ createdAt: -1 }),
+      PlanRequest.findOne({ user: userId, status: 'Active', invoiceStatus: 'Paid' }).sort({ createdAt: -1 }),
       // User count queries for admin dashboard
       User.countDocuments(),
       User.countDocuments({ status: 'Accepted' }),
       User.countDocuments({ status: 'Expired' })
     ]);
 
-    // Enhanced logging for plan debugging
-    console.log(`🔍 Dashboard data fetched for user: ${user.email} (ID: ${userId})`);
-    console.log('📊 Data fetched:', {
-      userPlan: userPlan ? { planName: userPlan.planName, status: userPlan.status, invoiceStatus: userPlan.invoiceStatus } : null,
-      latestPayment: latestPayment ? { plan: latestPayment.plan, status: latestPayment.status } : null,
-      matchedPackage: matchedPackage ? { plan: matchedPackage.plan, status: matchedPackage.status } : null
-    });
-    
-    if (userPlan) {
-      console.log(`📋 User plan found: ${userPlan.planName} (Status: ${userPlan.status}, Invoice: ${userPlan.invoiceStatus})`);
-      console.log(`📅 Plan expires: ${userPlan.expiryDate ? new Date(userPlan.expiryDate).toLocaleDateString() : 'No expiry date'}`);
-    } else {
-      console.log(`⚠️ No user plan found for user: ${user.email}`);
-
-      // Auto-assign Free Trial plan if user has no plan
-      console.log(`🔄 Attempting to assign Free Trial plan to user: ${user.email}`);
-      const trialExpiryDate = new Date();
-      trialExpiryDate.setDate(trialExpiryDate.getDate() + 7);
-
-      const freeTrialPlan = new PlanRequest({
-        user: userId,
-        planName: "Free Trial",
-        status: "Active",
-        startDate: new Date(),
-        expiryDate: trialExpiryDate,
-        invoiceStatus: "Unpaid",
-        amount: 0,
-        description: "Free Trial Plan - 7 days access"
-      });
-
-      const savedPlan = await freeTrialPlan.save();
-
-      // Also update the User model
-      await User.findByIdAndUpdate(userId, {
-        plan_name: "Free Trial",
-        plan_limit: 30
-      });
-
-      console.log(`✅ Free Trial plan auto-assigned to user: ${user.email} on dashboard access`);
-      console.log(`💾 New plan saved with ID: ${savedPlan._id}`);
-
-      // Refresh the userPlan data
-      userPlan = savedPlan;
+    // Prioritize paid plans over Free Trial
+    if (!userPlan && latestPayment) {
+      // If no paid PlanRequest but has active Payment, use Payment data
+      userPlan = {
+        planName: latestPayment.plan,
+        status: 'Active',
+        invoiceStatus: 'Paid',
+        amount: latestPayment.amount,
+        startDate: latestPayment.startDate,
+        expiryDate: latestPayment.expiryDate,
+        description: `${latestPayment.plan} plan activated via ${latestPayment.gateway}`
+      };
     }
+
+    console.log(`🔍 Dashboard data for: ${user.email}`);
+    console.log('📊 Final plan:', userPlan ? { planName: userPlan.planName, status: userPlan.status, invoiceStatus: userPlan.invoiceStatus } : null);
 
     // Calculate comprehensive sales data
     const repairSales = deliveredRepairs.reduce((sum, repair) => sum + (repair.Price || 0), 0);
@@ -146,6 +118,11 @@ exports.allusers = async (req, res) => {
     }
 
     const profileImagePath = user.user_img || "/uploads/default.png";
+
+    // Prevent caching of dashboard data
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
 
     res.render("index", {
       profileImagePath,
