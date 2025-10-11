@@ -12,6 +12,11 @@ const Transaction = require("../models/transaction");
  */
 async function getAccessToken(basketId, amount) {
   try {
+    // Validate credentials
+    if (!process.env.PAYFAST_MERCHANT_ID || !process.env.PAYFAST_SECURED_KEY) {
+      throw new Error('PayFast credentials not configured');
+    }
+
     const formData = new URLSearchParams();
     formData.append('MERCHANT_ID', process.env.PAYFAST_MERCHANT_ID);
     formData.append('SECURED_KEY', process.env.PAYFAST_SECURED_KEY);
@@ -19,20 +24,41 @@ async function getAccessToken(basketId, amount) {
     formData.append('TXNAMT', amount);
     formData.append('CURRENCY_CODE', 'PKR');
 
+    console.log('📤 Requesting token from PayFast:', {
+      merchantId: process.env.PAYFAST_MERCHANT_ID,
+      basketId,
+      amount,
+      mode: process.env.PAYFAST_MODE
+    });
+
     const response = await axios.post(
       'https://ipg1.apps.net.pk/Ecommerce/api/Transaction/GetAccessToken',
       formData,
-      { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+      { 
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        timeout: 30000 // 30 second timeout
+      }
     );
 
+    console.log('📥 PayFast token response:', {
+      hasToken: !!response.data.ACCESS_TOKEN,
+      responseKeys: Object.keys(response.data)
+    });
+
     if (!response.data.ACCESS_TOKEN) {
-      throw new Error('No access token received');
+      console.error('❌ No token in response:', response.data);
+      throw new Error('No access token received from PayFast');
     }
 
     return response.data.ACCESS_TOKEN;
   } catch (error) {
-    console.error('PayFast Token Error:', error.response?.data || error.message);
-    throw new Error('Failed to get PayFast token');
+    console.error('❌ PayFast Token Error:', {
+      message: error.message,
+      response: error.response?.data,
+      status: error.response?.status,
+      url: error.config?.url
+    });
+    throw new Error(`Failed to get PayFast token: ${error.response?.data?.message || error.message}`);
   }
 }
 
@@ -64,15 +90,28 @@ exports.initiatePayment = async (req, res) => {
       return res.status(404).json({ success: false, message: "User not found" });
     }
 
-    const customerPhone = user.phone_number || '03123456789';
+    // Validate and format phone number for PayFast
+    let customerPhone = user.phone_number || '03123456789';
+    customerPhone = customerPhone.replace(/[^0-9]/g, ''); // Remove non-digits
+    if (customerPhone.length !== 11 || !customerPhone.startsWith('0')) {
+      console.warn('⚠️ Invalid phone format, using default:', customerPhone);
+      customerPhone = '03123456789';
+    }
+    
     const basketId = `ITEM-${Date.now()}`;
-    // TEMPORARY: Using PKR directly for testing (no conversion)
     const pkrAmount = parseFloat(amount).toFixed(2);
+    
+    // Validate amount
+    if (isNaN(pkrAmount) || parseFloat(pkrAmount) <= 0) {
+      throw new Error('Invalid payment amount');
+    }
     
     const orderDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
     // Get access token from PayFast
+    console.log('🔑 Requesting PayFast token:', { basketId, pkrAmount, merchantId: process.env.PAYFAST_MERCHANT_ID });
     const token = await getAccessToken(basketId, pkrAmount);
+    console.log('✅ Token received, length:', token.length);
 
     // Save payment record
     const startDate = new Date();
@@ -334,8 +373,17 @@ exports.initiatePayment = async (req, res) => {
     res.send(html);
 
   } catch (error) {
-    console.error('PayFast Error:', error.message);
-    console.error('PayFast Error Details:', error.response?.data);
+    console.error('❌ PayFast Error:', error.message);
+    console.error('📋 Error Details:', {
+      message: error.message,
+      response: error.response?.data,
+      status: error.response?.status,
+      config: {
+        merchantId: process.env.PAYFAST_MERCHANT_ID,
+        mode: process.env.PAYFAST_MODE,
+        hasSecuredKey: !!process.env.PAYFAST_SECURED_KEY
+      }
+    });
     
     try {
       await Transaction.create({

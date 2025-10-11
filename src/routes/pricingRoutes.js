@@ -15,6 +15,7 @@ const payfastController = require("../controllers/payfastController");
 // Removed: const payfastHppController = require("../controllers/payfastHppController");
 
 const { getEnabledGateways } = require("../controllers/paymentPublicController");
+const testPaymentController = require("../controllers/testPaymentController");
 
 router.get("/pricing", allUsers);
 router.post("/pricing", addSubscription);
@@ -50,7 +51,8 @@ router.get("/pricing/payfast/success", payfastController.handleSuccess);
 router.get("/pricing/payfast/cancel", payfastController.handleCancel);
 router.post("/pricing/payfast/ipn", payfastController.handleWebhook);
 
-
-
+// Test routes for debugging (REMOVE IN PRODUCTION)
+router.get("/test-payment-activation", testPaymentController.testPaymentActivation);
+router.get("/check-payment-status", testPaymentController.checkPaymentStatus);
 
 module.exports = router;
