@@ -259,6 +259,7 @@
 .payment-buttons {
     display: flex;
     gap: 15px;
+    flex-wrap: wrap;
     justify-content: center;
     margin-top: 10px;
 }
@@ -276,6 +277,11 @@
     display: flex;
     align-items: center;
     gap: 8px;
+}
+@media screen and (max-width:784px){
+  .payment-btn{
+    width: 100%;
+  }
 }
 
 .payment-btn:hover {
@@ -577,7 +583,7 @@
             <div class="title h6 text-uppercase fw-bold mb-2"><%= name %></div>
 
             <div class="price-circle display-5 fw-bold my-2">£<%= price %></div>
-            <div class="price text-muted mb-3"><%= limit %> Days </div>
+            <div class="price mb-3 " style="color:#FFFFFC ;"><%= limit %> Days </div>
 
             <ul class="features list-unstyled mb-3 d-flex flex-column align-items-center justify-content-center">
               <li class="mb-1">✔ <strong><%= repair %></strong> Repair Customer</li>

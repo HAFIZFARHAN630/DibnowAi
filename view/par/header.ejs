@@ -1,10 +1,16 @@
 <style>
+    .hide-on-large{
+        display: none !important;
+    }
     @media screen and (max-width: 924px) {
             .sm-hide{
         display: none;
     }
     .content{
         overflow: hidden !important;
+    }
+     .hide-on-large{
+        display: block !important;
     }
     }
    
@@ -25,6 +31,10 @@
                     <i class="fa fa-bars"></i>
                 </a>
                 
+                <a href="/index" class="navbar-brand d-flex d-lg-none me-4 hide-on-large" style="transform: translateX(20px);">
+                    <img  src="<%= info?.favicon ? '/uploads/' + info.favicon : '/images/DIB-NOW-512.png' %>"  alt="Profile Image" alt="Logo" style="width: 82px; height: auto; border: none; border-radius: 0;">
+                </a>
+
                 <% if (isUser) { %>
                 <form class="d-md-flex ms-4 sm-hide">
                     <div class="patient-card-body p-4 position-relative" 

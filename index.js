@@ -7,6 +7,7 @@ const flash = require("connect-flash");
 const path = require("path");
 const http = require("http");
 const socketIo = require("socket.io");
+const methodOverride = require("method-override");
 
 const cookieParser = require("cookie-parser");
 
@@ -83,6 +84,7 @@ console.log("Socket.IO server initialized");
 // Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(methodOverride('_method')); // Enable DELETE/PUT via POST with ?_method=DELETE
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/uploads", express.static("uploads"));
 app.use(cookieParser());

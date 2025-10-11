@@ -43,9 +43,6 @@ exports.allUsers = [
       let enabledGateways = paymentSettings.map(s => {
         let gw = { name: s.gateway.charAt(0).toUpperCase() + s.gateway.slice(1), enabled: true, type: s.gateway };
         switch (s.gateway) {
-          case 'bank':
-            gw.instructions = s.credentials.instructions || 'Please transfer to Bank of Punjab Account: 1234567890. Reference your order ID.';
-            break;
           case 'stripe':
             gw.publishable_key = s.credentials.publishable_key;
             gw.mode = s.mode;
@@ -54,20 +51,10 @@ exports.allUsers = [
             gw.client_id = s.credentials.client_id;
             gw.mode = s.mode;
             break;
-          case 'jazzcash':
-            gw.merchant_id = s.credentials.merchant_id;
-            gw.mode = s.mode;
-            break;
           case 'payfast':
             gw.merchant_key = s.credentials.merchant_key;
             gw.mode = s.mode;
             break;
-        }
-
-        // Add instructions for manual payment gateways
-        if (['jazzcash'].includes(s.gateway)) {
-          const idKey = s.gateway === 'jazzcash' ? 'merchant_id' : 'merchant_key';
-          gw.instructions = `Use ${s.gateway.toUpperCase()}: ${idKey.replace('_', ' ').toUpperCase()}: ${s.credentials[idKey] || 'Not set'}. Mode: ${s.mode}. Please complete the payment following the gateway's standard procedure and include your order reference for verification.`;
         }
 
         return gw;
@@ -94,12 +81,6 @@ exports.allUsers = [
             mode: process.env.PAYPAL_MODE || 'sandbox'
           });
         }
-        enabledGateways.push({
-          name: 'Bank',
-          enabled: true,
-          type: 'bank',
-          instructions: 'Please transfer to our bank account. Details: Bank of Punjab, Account 1234567890. Reference order ID.'
-        });
       }
 
       const plans = await planModel.find()
@@ -167,13 +148,13 @@ exports.addSubscription = [
     
     const planPricesPKR = {
       FREE_TRIAL: "0.00",
-      BASIC: "1.00",
-      STANDARD: "2.00",
-      PREMIUM: "3.00",
+      BASIC: "10.00",
+      STANDARD: "30.00",
+      PREMIUM: "50.00",
     };
     
     // Use appropriate prices based on payment method
-    const planPrices = (paymentMethod === 'payfast' || paymentMethod === 'manual' || paymentMethod === 'bank') 
+    const planPrices = (paymentMethod === 'payfast' || paymentMethod === 'manual') 
       ? planPricesPKR 
       : planPricesGBP;
 
@@ -186,7 +167,7 @@ exports.addSubscription = [
     const submittedAmount = parseFloat(amount);
 
     // Validate supported payment methods
-    if (!['stripe', 'paypal', 'jazzcash', 'payfast', 'wallet', 'bank', 'manual'].includes(paymentMethod)) {
+    if (!['stripe', 'paypal', 'payfast', 'wallet', 'manual'].includes(paymentMethod)) {
         return res.status(400).send("Invalid payment method.");
       }
 
@@ -490,69 +471,6 @@ exports.addSubscription = [
           req.flash("error_msg", "Failed to process wallet payment. Please try again.");
           res.redirect("/pricing");
         }
-      } else if (paymentMethod === 'bank') {
-        // Bank transfer - redirect to manual payment form
-        req.session.pendingPayment = { plan, amount: parseFloat(amount) };
-        req.flash("info_msg", `Please complete the bank transfer for ${plan} plan. Amount: ₨${amount}`);
-        res.redirect("/transfer");
-      } else if (paymentMethod === 'jazzcash') {
-        // Manual gateways: jazzcash - Create pending plan request for admin verification
-
-        // Validate amount against plan price
-        const expectedAmount = planPrices[plan];
-        const submittedAmount = parseFloat(amount);
-
-        if (submittedAmount < expectedAmount) {
-          req.flash("error_msg",
-            `Amount too low! ${paymentMethod.toUpperCase()} plan requires £${expectedAmount} but you entered £${submittedAmount}. Please enter the correct amount or contact admin if you have a discount.`
-          );
-          return res.redirect("/pricing");
-        }
-
-        const startDate = new Date();
-        const expiryDate = new Date(startDate);
-        expiryDate.setDate(expiryDate.getDate() + 30);
-
-        const PlanRequest = require("../models/planRequest");
-        const newPlanRequest = new PlanRequest({
-          user: req.session.userId,
-          planName: plan,
-          amount: parseFloat(amount),
-          startDate,
-          expiryDate,
-          status: 'Pending',
-          invoiceStatus: 'Unpaid',
-          description: `Manual payment via ${paymentMethod.toUpperCase()} - awaiting admin verification`
-        });
-
-        await newPlanRequest.save();
-
-        // Create transaction record for manual payment (pending status)
-        const newTransaction = new Transaction({
-          user: req.session.userId,
-          type: 'payment',
-          amount: parseFloat(amount),
-          status: 'pending'
-        });
-        await newTransaction.save();
-
-        // Create notification
-        if (req.app.locals.notificationService) {
-          const user = await User.findById(req.session.userId).select('first_name');
-          if (user) {
-            await req.app.locals.notificationService.createNotification(
-              req.session.userId,
-              user.first_name,
-              "Manual Payment Pending"
-            );
-          }
-        }
-
-        req.flash(
-          "success_msg",
-          `Your manual payment for ${plan} plan has been submitted. Please wait for admin verification before your package is activated.`
-        );
-        res.redirect("/index");
       }
     } catch (error) {
       console.error("Payment processing error:", error.message);
@@ -940,9 +858,9 @@ exports.getPlanPrices = async (req, res) => {
     // };
     const planPrices = {
   FREE_TRIAL: "0.00",
-  BASIC: "1.00",      // test price
-  STANDARD: "2.00",   // test price
-  PREMIUM: "3.00",    // test price
+  BASIC: "10.00",      // test price
+  STANDARD: "30.00",   // test price
+  PREMIUM: "50.00",    // test price
 };
 
     // Add PKR conversions (1 GBP = 397.1863 PKR with 4% fee)
@@ -1038,9 +956,9 @@ exports.insertTransfer = async (req, res) => {
     // Define plan prices for validation - TEMPORARY PKR FOR TESTING
     const planPrices = {
       FREE_TRIAL: 0.00,
-      BASIC: 1.00,
-      STANDARD: 2.00,
-      PREMIUM: 3.00,
+      BASIC: 10.00,
+      STANDARD: 30.00,
+      PREMIUM: 50.00,
     };
 
     const expectedAmount = planPrices[plan];

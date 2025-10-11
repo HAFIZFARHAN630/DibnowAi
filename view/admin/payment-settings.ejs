@@ -297,56 +297,6 @@
                     </div>
                 </div>
 
-                <!-- Bank Section -->
-                <div class="gateway-section">
-                    <div class="gateway-header">
-                        <i class="bi bi-bank gateway-icon" style="color: #28a745;"></i>
-                        <h4>Bank Transfer</h4>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="bank_enabled" name="bank_enabled" <%= bankSettings && bankSettings.enabled ? 'checked' : '' %> value="true">
-                        <label class="form-label" for="bank_enabled">Enable Bank Transfer</label>
-                    </div>
-                    <div class="form-group">
-                        <label for="bank_instructions" class="form-label">Bank Instructions</label>
-                        <textarea class="form-control" id="bank_instructions" name="bank_instructions" rows="3"><%= bankSettings ? (bankSettings.credentials ? bankSettings.credentials.instructions : '') : '' %></textarea>
-                    </div>
-                    <p class="text-white-50">Customize bank transfer instructions for users.</p>
-                </div>
-
-                <!-- JazzCash Section -->
-                <div class="gateway-section">
-                    <div class="gateway-header">
-                        <i class="fas fa-mobile-alt gateway-icon" style="color: #f39c12;"></i>
-                        <h4>JazzCash</h4>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="jazzcash_enabled" name="jazzcash_enabled" <%= jazzcashSettings && jazzcashSettings.enabled ? 'checked' : '' %> value="true">
-                        <label class="form-label" for="jazzcash_enabled">Enable JazzCash</label>
-                    </div>
-                    <div class="form-group">
-                        <label for="jazzcash_mode" class="form-label">Mode</label>
-                        <select class="form-control" id="jazzcash_mode" name="jazzcash_mode">
-                            <option value="live" <%= jazzcashSettings && jazzcashSettings.mode === 'live' ? 'selected' : '' %>>Live</option>
-                            <option value="sandbox" <%= jazzcashSettings && jazzcashSettings.mode === 'sandbox' ? 'selected' : '' %>>Sandbox</option>
-                        </select>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="jazzcash_merchant_id" class="form-label">Merchant ID</label>
-                                <input type="text" class="form-control" id="jazzcash_merchant_id" name="jazzcash_merchant_id" value="<%= jazzcashSettings ? (jazzcashSettings.credentials ? jazzcashSettings.credentials.merchant_id : '') : '' %>" placeholder="Merchant ID...">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="jazzcash_password" class="form-label">Password</label>
-                                <input type="password" class="form-control" id="jazzcash_password" name="jazzcash_password" value="<%= jazzcashSettings ? (jazzcashSettings.credentials ? jazzcashSettings.credentials.password : '') : '' %>" placeholder="Password...">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Payfast Section -->
                 <div class="gateway-section">
                     <div class="gateway-header">
@@ -398,5 +348,9 @@
 
     <!-- Template Javascript -->
     <script src="/js/main.js"></script>
+
+  <!-- footer -->
+  <%- include('../par/footer.ejs') %>
+  <!-- footer -->
 </body>
 </html>

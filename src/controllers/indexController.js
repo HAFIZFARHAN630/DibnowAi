@@ -46,7 +46,9 @@ exports.allusers = async (req, res) => {
       // New user count queries for admin
       totalUsers,
       activeUsers,
-      expiredUsers
+      expiredUsers,
+      freeTrialUsers,
+      paidUsers
     ] = await Promise.all([
       Repair.find({ user_id: userId }).sort({ _id: -1 }),
       Inventory.find({ user_id: userId }).sort({ _id: -1 }),
@@ -70,8 +72,10 @@ exports.allusers = async (req, res) => {
       PlanRequest.findOne({ user: userId, status: 'Active', invoiceStatus: 'Paid' }).sort({ createdAt: -1 }),
       // User count queries for admin dashboard
       User.countDocuments(),
-      User.countDocuments({ status: 'Accepted' }),
-      User.countDocuments({ status: 'Expired' })
+      PlanRequest.countDocuments({ status: 'Active', invoiceStatus: 'Paid' }),
+      PlanRequest.countDocuments({ status: 'Expired' }),
+      PlanRequest.countDocuments({ planName: { $in: ['Free Trial', 'FREE TRIAL', 'FREE_TRIAL'] }, status: 'Active' }),
+      PlanRequest.countDocuments({ planName: { $nin: ['Free Trial', 'FREE TRIAL', 'FREE_TRIAL'] }, status: 'Active', invoiceStatus: 'Paid' })
     ]);
 
     // Prioritize paid plans over Free Trial
@@ -118,6 +122,7 @@ exports.allusers = async (req, res) => {
 
     console.log(`🔍 Dashboard data for: ${user.email}`);
     console.log('📊 Final plan:', userPlan ? { planName: userPlan.planName, status: userPlan.status, invoiceStatus: userPlan.invoiceStatus } : null);
+    console.log('👥 User counts:', { totalUsers, activeUsers, expiredUsers, freeTrialUsers, paidUsers });
 
     // Calculate comprehensive sales data
     const repairSales = deliveredRepairs.reduce((sum, repair) => sum + (repair.Price || 0), 0);
@@ -191,6 +196,8 @@ exports.allusers = async (req, res) => {
        totalUsers,
        activeUsers,
        expiredUsers,
+       freeTrialUsers,
+       paidUsers,
        success_msg: req.flash("success_msg"),
        error_msg: req.flash("error_msg"),
     });

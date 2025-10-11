@@ -601,6 +601,7 @@
 
 
 
+
             <!-- Sale & Revenue Start -->
             <div class="container-fluid pt-4 px-4" style="background-color:#F3F3F9;">
                 <a href="/in_stock">
@@ -715,6 +716,29 @@
                         <i class="bi bi-person-x-fill position-absolute" style="font-size: 6.5rem; color: rgba(198, 40, 40, 0.2); bottom: -36px; right: 10px; z-index: 1;"></i>
                     </a>
                     </div>
+
+                </div>
+                
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <a href="/admin/active-users">
+                    <div class="patient-card position-relative" style="background-color: #FFF3E0; overflow: hidden; border-radius: 10px;">
+                        <div class="patient-card-header text-white p-2" style="background-color: #F57C00; font-weight: bold;">Free Trial Users</div>
+                        <div class="patient-card-body p-4 position-relative" style="font-size: 2rem; font-weight: bold;"> <%= freeTrialUsers || 0 %></div>
+                        <i class="bi bi-gift-fill position-absolute" style="font-size: 6.5rem; color: rgba(245, 124, 0, 0.2); bottom: -36px; right: 10px; z-index: 1;"></i>
+                    </a>
+                </div>
+
+            </div>
+
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <a href="/admin/active -users">
+                    <div class="patient-card position-relative" style="background-color: #E8F5E9; overflow: hidden; border-radius: 10px;">
+                        <div class="patient-card-header text-white p-2" style="background-color: #388E3C; font-weight: bold;">Plan Bought Users</div>
+                        <div class="patient-card-body p-4 position-relative" style="font-size: 2rem; font-weight: bold;"> <%= paidUsers || 0 %></div>
+                        <i class="bi bi-cash-coin position-absolute" style="font-size: 6.5rem; color: rgba(56, 142, 60, 0.2); bottom: -36px; right: 10px; z-index: 1;"></i>
+                    </a>
+                </div>
+
                 </div>
 
 
@@ -1101,7 +1125,7 @@
 
                 <!-- Revenue by Customer Type Card -->
                 <div class="col-12 mb-4">
-                    <div class="custom-card text-white" style="background-color: #1b263b; border: none; border-radius: 15px; padding: 20px; height: 400px; width: 100%;">
+                    <div class="custom-card text-white" style="background-color: #1b263b; border: none; border-radius: 15px; padding: 20px; height: 100%; width: 100%;">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h5>Revenue by Customer Type</h5>
                             <h4><%= formattedTotalSales %> <span class="badge bg-success"><%= salesGrowth.toFixed(1) %>% <%= salesGrowth >= 0 ? '&#x2191;' : '&#x2193;' %></span></h4>

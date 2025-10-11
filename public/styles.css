@@ -307,7 +307,7 @@
          text-align: left;
         margin-left: 15px;
 margin-bottom: 15px;
-margin-top: 20px;
+margin-top: 25px;
         
         color: black;
         
@@ -353,7 +353,11 @@ margin-top: 20px;
         color: rgb(73 72 72);
     }
 
-
+    @media screen and (max-width:1024px){
+        .content .navbar .navbar-nav .nav-link{
+            padding-right: 45px;
+        }
+    }
     .content .navbar .navbar-nav .nav-link {
         padding: 12px 0;
         padding-right: 22px;
@@ -391,6 +395,14 @@ margin-top: 20px;
         transition: .5s;
         color: black;
     }
+    .hover-green:hover{
+        background-color: #10b981;
+    }
+    @media screen and (max-wdith:575px){
+        .content .navbar .navbar-nav .nav-link{
+            margin-left: -37px;
+        }
+    }
 
     .content .navbar .dropdown-toggle[aria-expanded=true]::after {
         transform: rotate(-180deg);
@@ -398,7 +410,7 @@ margin-top: 20px;
 
     @media (max-width: 575.98px) {
         .content .navbar .navbar-nav .nav-link {
-            margin-left: 15px;
+            margin-left: -37px;
         }
     }
 
@@ -667,6 +679,12 @@ margin-top: 20px;
         max-width: 400px;
     }
 
+    @media screen and (max-width:1024px) {
+        .sidebar{
+            top: 55px;
+        }
+    }
+        
     .form-1 {
         width: 100%;
         margin-top: -12px;
@@ -791,7 +809,7 @@ margin-top: 20px;
 
     .gadget-form-modal .modal-header {
         border-bottom: 1px solid #ddd;
-        margin-top: -36px;
+        /* margin-top: -36px; */
         padding: 15px;
 
     }
