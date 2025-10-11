@@ -88,6 +88,34 @@ exports.allusers = async (req, res) => {
       };
     }
 
+    // Auto-assign Free Trial for new users (only if no plan at all)
+    if (!userPlan && !latestPayment && subscription) {
+      // Check if subscription is Free Trial
+      if (subscription.planName === 'Free Trial' || subscription.planName === 'FREE TRIAL') {
+        userPlan = subscription;
+      }
+    }
+
+    // If still no plan, create Free Trial
+    if (!userPlan && !latestPayment) {
+      const trialExpiryDate = new Date();
+      trialExpiryDate.setDate(trialExpiryDate.getDate() + 7);
+      
+      const freeTrialPlan = new PlanRequest({
+        user: userId,
+        planName: "Free Trial",
+        status: "Active",
+        startDate: new Date(),
+        expiryDate: trialExpiryDate,
+        invoiceStatus: "Unpaid",
+        amount: 0,
+        description: "Free Trial Plan - 7 days access"
+      });
+      
+      userPlan = await freeTrialPlan.save();
+      await User.findByIdAndUpdate(userId, { plan_name: "Free Trial", plan_limit: 30 });
+    }
+
     console.log(`🔍 Dashboard data for: ${user.email}`);
     console.log('📊 Final plan:', userPlan ? { planName: userPlan.planName, status: userPlan.status, invoiceStatus: userPlan.invoiceStatus } : null);
 
