@@ -163,15 +163,22 @@
                 <td class="px-4 py-3 text-sm text-gray-700"><%= package.inStock %></td>
                 <td class="px-4 py-3 text-sm text-gray-700"><%= package.inventory %></td>
                 <td class="px-4 py-3 text-sm text-gray-700"><%= package.teams %></td>
-                <td class="px-4 py-3 text-sm text-gray-700">
-                  <form action="/delete-plan/<%= package._id %>" method="POST"
-                        onsubmit="return confirm('Are you sure you want to delete this package?')" style="display:inline;">
-                    <input type="hidden" name="_method" value="DELETE">
-                    <button type="submit" class="btn-delete inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium px-3 py-1 rounded">
-                      <i class="fas fa-trash"></i> Delete
-                    </button>
-                  </form>
-                </td>
+                <td class="px-4 py-3 text-sm text-gray-700 flex items-center gap-2">
+  <!-- Edit Package Button -->
+  <button onclick="openEditModal('<%= package._id %>')"
+    class="btn-edit inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-3 py-1 rounded">
+    <i class="fas fa-edit"></i> Edit
+  </button>
+
+  <!-- Delete Package Form -->
+  <form action="/delete-plan/<%= package._id %>" method="POST"
+        onsubmit="return confirm('Are you sure you want to delete this package?')" style="display:inline;">
+    <input type="hidden" name="_method" value="DELETE">
+    <button type="submit" class="btn-delete inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium px-3 py-1 rounded">
+      <i class="fas fa-trash"></i> Delete
+    </button>
+  </form>
+</td>
               </tr>
             <% }); %>
           </tbody>
@@ -223,6 +230,14 @@
                 </button>
               </form>
             </div>
+            <div class="mobile-card-row mt-3">
+  <button onclick="openEditModal('<%= package._id %>')" 
+          class="btn-edit w-full inline-flex justify-center items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded">
+    <i class="fas fa-edit"></i> Edit Package
+  </button>
+</div>
+
+
           </div>
         <% }); %>
       </div>
@@ -236,6 +251,133 @@
     <% } %>
   </div>
 </div>
+
+
+
+
+<!-- Edit Modal -->
+<div id="editModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 9999; overflow-y: auto;">
+  <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px;">
+    <div class="form-container" style="background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%); padding: 50px; border-radius: 25px; box-shadow: 0 30px 100px rgba(0, 0, 0, 0.2); max-width: 900px; width: 100%; position: relative; backdrop-filter: blur(15px); border: 2px solid rgba(255, 255, 255, 0.3);">
+      <button type="button" class="close-btn" onclick="closeEditModal()" style="position: absolute; top: 20px; right: 20px; width: 40px; height: 40px; background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%); border: none; border-radius: 50%; color: white; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3); z-index: 10;">
+        <i class="fas fa-times"></i>
+      </button>
+
+      <div class="form-header" style="text-align: center; margin-bottom: 35px;">
+        <h2 style="font-size: 36px; font-weight: 700; color: #ffffff; margin-bottom: 10px; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);">
+          <i class="fas fa-edit me-3"></i>Edit Plan
+        </h2>
+        <p style="color: rgba(255, 255, 255, 0.9); font-size: 18px; line-height: 1.5; margin: 0;">Update your existing package details</p>
+      </div>
+
+      <form id="editPlanForm" method="POST" class="space-y-4">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group" style="margin-bottom: 25px;">
+              <label for="edit_plan_name" style="font-weight: 600; color: #ffffff; margin-bottom: 12px; font-size: 18px; display: block;">Package Name *</label>
+              <input type="text" name="plan_name" id="edit_plan_name" required placeholder="e.g., Premium Fiber 100GB"
+                style="width: 100%; height: 60px; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 15px; padding: 18px 25px; font-size: 18px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%); outline: none;">
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="form-group" style="margin-bottom: 25px;">
+              <label for="edit_plan_price" style="font-weight: 600; color: #ffffff; margin-bottom: 12px; font-size: 18px; display: block;">Price (PKR) *</label>
+              <input type="text" name="plan_price" id="edit_plan_price" required placeholder="2999"
+                style="width: 100%; height: 60px; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 15px; padding: 18px 25px; font-size: 18px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%); outline: none;">
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="form-group" style="margin-bottom: 25px;">
+              <label for="edit_plan_limit" style="font-weight: 600; color: #ffffff; margin-bottom: 12px; font-size: 18px; display: block;">Limit *</label>
+              <input type="text" name="plan_limit" id="edit_plan_limit" required placeholder="100 days"
+                style="width: 100%; height: 60px; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 15px; padding: 18px 25px; font-size: 18px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%); outline: none;">
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="form-group" style="margin-bottom: 25px;">
+              <label for="edit_repairCustomer" style="font-weight: 600; color: #ffffff; margin-bottom: 12px; font-size: 18px; display: block;">Repair Customer</label>
+              <input type="number" name="repairCustomer" id="edit_repairCustomer" placeholder="0"
+                style="width: 100%; height: 60px; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 15px; padding: 18px 25px; font-size: 18px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%); outline: none;">
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="form-group" style="margin-bottom: 25px;">
+              <label for="edit_inStock" style="font-weight: 600; color: #ffffff; margin-bottom: 12px; font-size: 18px; display: block;">In Stock</label>
+              <input type="number" name="inStock" id="edit_inStock" placeholder="0"
+                style="width: 100%; height: 60px; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 15px; padding: 18px 25px; font-size: 18px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%); outline: none;">
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="form-group" style="margin-bottom: 25px;">
+              <label for="edit_inventory" style="font-weight: 600; color: #ffffff; margin-bottom: 12px; font-size: 18px; display: block;">Inventory</label>
+              <input type="number" name="inventory" id="edit_inventory" placeholder="0"
+                style="width: 100%; height: 60px; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 15px; padding: 18px 25px; font-size: 18px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%); outline: none;">
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="form-group" style="margin-bottom: 25px;">
+              <label for="edit_teams" style="font-weight: 600; color: #ffffff; margin-bottom: 12px; font-size: 18px; display: block;">Teams</label>
+              <input type="number" name="teams" id="edit_teams" placeholder="0"
+                style="width: 100%; height: 60px; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 15px; padding: 18px 25px; font-size: 18px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%); outline: none;">
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="form-group" style="margin-bottom: 25px; display: flex; align-items: center; gap: 12px; padding-top: 40px;">
+              <input type="hidden" name="sportTicket" value="false">
+              <input type="checkbox" name="sportTicket" id="edit_sportTicket" value="true"
+                style="width: 24px; height: 24px; border: 2px solid rgba(255, 255, 255, 0.5); border-radius: 6px; cursor: pointer;">
+              <label for="edit_sportTicket" style="font-weight: 600; color: #ffffff; font-size: 18px; margin: 0; cursor: pointer;">Sport Ticket</label>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <button type="submit" class="btn-submit" style="width: 100%; height: 60px; background: linear-gradient(135deg, #00C853 0%, #00B894 100%); border: none; border-radius: 15px; color: #ffffff; font-size: 20px; font-weight: 700; letter-spacing: 1px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 10px 30px rgba(0, 200, 83, 0.4); text-transform: uppercase; margin-top: 1rem;">
+            <i class="fas fa-save me-2"></i>
+            Update Plan
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+function openEditModal(planId) {
+  fetch(`/edit-plan/${planId}`)
+    .then(res => res.json())
+    .then(plan => {
+      document.getElementById('edit_plan_name').value = plan.plan_name || '';
+      document.getElementById('edit_plan_price').value = plan.plan_price || '';
+      document.getElementById('edit_plan_limit').value = plan.plan_limit || '';
+      document.getElementById('edit_repairCustomer').value = plan.repairCustomer || '';
+      document.getElementById('edit_inStock').value = plan.inStock || '';
+      document.getElementById('edit_inventory').value = plan.inventory || '';
+      document.getElementById('edit_teams').value = plan.teams || '';
+      document.getElementById('edit_sportTicket').checked = plan.sportTicket === 'true';
+      document.getElementById('editPlanForm').action = `/update-plan/${planId}`;
+      document.getElementById('editModal').style.display = 'block';
+    });
+}
+
+function closeEditModal() {
+  document.getElementById('editModal').style.display = 'none';
+}
+
+window.onclick = function(event) {
+  const modal = document.getElementById('editModal');
+  if (event.target === modal) {
+    closeEditModal();
+  }
+}
+</script>
 
 
 

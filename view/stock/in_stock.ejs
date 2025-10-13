@@ -294,6 +294,31 @@
         transform: translateY(-2px);
         background: rgba(255, 255, 255, 0.98) !important;
       }
+
+      /* Colorful Dropdown Styles for Update Modal */
+      .brand-select option, .category-select option {
+        font-weight: 600;
+        padding: 10px;
+      }
+
+      /* Brand Dropdown Dynamic Colors */
+      .brand-select.brand-Apple { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%) !important; background-image: none !important; color: white !important; border-color: #007bff !important; }
+      .brand-select.brand-Samsung { background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%) !important; background-image: none !important; color: white !important; border-color: #6f42c1 !important; }
+      .brand-select.brand-Oppo { background: linear-gradient(135deg, #28a745 0%, #218838 100%) !important; background-image: none !important; color: white !important; border-color: #28a745 !important; }
+      .brand-select.brand-Xiaomi { background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%) !important; background-image: none !important; color: #333 !important; border-color: #ffc107 !important; }
+      .brand-select.brand-OnePlus { background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important; background-image: none !important; color: white !important; border-color: #dc3545 !important; }
+      .brand-select.brand-Realme { background: linear-gradient(135deg, #17a2b8 0%, #138496 100%) !important; background-image: none !important; color: white !important; border-color: #17a2b8 !important; }
+      .brand-select.brand-Vivo { background: linear-gradient(135deg, #fd7e14 0%, #e8590c 100%) !important; background-image: none !important; color: white !important; border-color: #fd7e14 !important; }
+
+      /* Category Dropdown Dynamic Colors */
+      .category-select.category-Mobile { background: linear-gradient(135deg, #28a745 0%, #218838 100%) !important; background-image: none !important; color: white !important; border-color: #28a745 !important; }
+      .category-select.category-Used-Mobile { background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%) !important; background-image: none !important; color: #333 !important; border-color: #ffc107 !important; }
+
+      /* Type Dropdown Dynamic Colors */
+      .type-select option { font-weight: 600; padding: 10px; }
+      .type-select.type-New { background: linear-gradient(135deg, #28a745 0%, #218838 100%) !important; background-image: none !important; color: white !important; border-color: #28a745 !important; }
+      .type-select.type-Used { background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%) !important; background-image: none !important; color: #333 !important; border-color: #ffc107 !important; }
+      .type-select.type-Return { background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important; background-image: none !important; color: white !important; border-color: #dc3545 !important; }
     </style>
     <style>
 /* FINAL FIX — make sure labels are never pushed off-screen (targeted) */
@@ -618,10 +643,10 @@
               <div class="col-md-6">
                 <div class="form-group" style="margin-bottom: 25px;">
                   <label for="Type" class="form-label" style="font-weight: 600; color: #ffffff; margin-bottom: 12px; font-size: 18px; display: block; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);">Type</label>
-                  <select class="form-select" name="Type" required style="width: 100%; height: 60px; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 15px; padding: 18px 25px; font-size: 18px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%); transition: all 0.3s ease; outline: none; backdrop-filter: blur(10px);">
-                    <option value="New">New Product</option>
-                    <option value="Used">Used Product</option>
-                    <option value="Return">Return Product</option>
+                  <select class="form-select type-select" name="Type" required style="width: 100%; height: 60px; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 15px; padding: 18px 25px; font-size: 18px; transition: all 0.3s ease; outline: none; backdrop-filter: blur(10px); font-weight: 600;">
+                    <option value="New" style="background: #28a745; color: white; font-weight: 600; padding: 10px;">New Product</option>
+                    <option value="Used" style="background: #ffc107; color: #333; font-weight: 600; padding: 10px;">Used Product</option>
+                    <option value="Return" style="background: #dc3545; color: white; font-weight: 600; padding: 10px;">Return Product</option>
                   </select>
                 </div>
               </div>
@@ -649,88 +674,94 @@
 <!-- Add Product  form-->  
 <% products.forEach(items => { %>
   <div class="modal fade" id="updateModal<%= items.id %>" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content gadget-form-modal" style="height: 551px;margin-top: -23px;">
-          <div class="modal-header ">
-              <h5 class="modal-title text-dark" id="gadgetRepairModalLabel" style="margin-left: auto; font-size: xx-large;margin-bottom: -17px;">Add Product</h5>
-              <button type="button" class="btn-close gadget-close-btn" data-bs-dismiss="modal" aria-label="Close">              
-                  <i class="fas fa-times gadget-close-btn" data-bs-dismiss="modal" aria-label="Close"></i>
-              </button>
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content" style="background: transparent; border: none;">
+        <div class="form-container" style="background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%); padding: 50px; border-radius: 25px; box-shadow: 0 30px 100px rgba(0, 0, 0, 0.2); position: relative; backdrop-filter: blur(15px); border: 2px solid rgba(255, 255, 255, 0.3);">
+          <button type="button" class="close-btn" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; top: 20px; right: 20px; width: 40px; height: 40px; background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%); border: none; border-radius: 50%; color: white; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);">
+            <i class="fas fa-times"></i>
+          </button>
+          
+          <div class="form-header" style="text-align: center; margin-bottom: 35px;">
+            <h2 style="font-size: 36px; font-weight: 700; color: #ffffff; margin-bottom: 10px; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);">Update Product</h2>
+            <p style="color: rgba(255, 255, 255, 0.9); font-size: 18px; line-height: 1.5; margin: 0;">Update product information below</p>
           </div>
-          <div class="modal-body" style="padding-top: 17px;">
-              <form action="/update/<%= items.id %>" method="POST" enctype="multipart/form-data" class="gadget-form">
-                  <div class="row">
-                      <div class="col-md-6">
-                          <label for="product_name" class="form-label">Product Name <span class="text-danger">*</span></label>
-                          <input type="text" name="product_name" value="<%= items.product_name %>" class="form-control gadget-input" id="product_name" required>
-                      </div>
-
-                      <div class="col-md-6 ">
-                          <label for="Model" class="form-label">Model</label>
-                          <input type="text" name="Model" value="<%= items.Model %>" class="form-control gadget-input" id="Model" required>
-                      </div>
-                  </div>
-
-                  <div class="row  justify-content-between">
-                      <div class="col-md-4">
-                          <label for="Brand" class="form-label">Brand</label>
-                          <select class="form-select gadget-select" name="brand" id="brand" required>
-                            <option value="Apple">Apple</option>
-                                  <option value="Samsung">Samsung</option>
-                                  <option value="Oppo">Oppo</option>
-                                  <option value="Xiaomi">Xiaomi</option>
-                                  <option value="OnePlus">OnePlus</option>
-                                  <option value="Realme">Realme</option>
-                                  <option value="Vivo">Vivo</option>
-                        </select>  
-                      </div>
-                      <div class="col-md-4">
-                          <label for="Category" class="form-label">Category</label>
-                          <select class="form-select gadget-select" name="Category" id="Category" required>
-                            <option value="Mobile">New Mobile</option>
-                            <option value="Used Mobile">Used Mobile</option>
-                          </select>
-                      </div>  
-                      <div class="col-md-4">
-                          <label for="Color" class="form-label">Color</label>
-                          <input type="color" name="Color" value="<%= items.Color %>" class="form-control gadget-input" id="Color">
-                      </div>
-                  </div>
-                  <div class="row  justify-content-between">
-                      <div class="col-md-4">
-                          <label for="Sale_Price" class="form-label">Sale Price</label>
-                          <input type="number" value="<%= items.Sale_Price %>" name="Sale_Price" class="form-control gadget-input" id="Sale_Price" required>
-                      </div>
-                      <div class="col-md-4 ">
-                           <label for="Retail_Price" class="form-label">Retail Price</label>
-                          <input type="number" value="<%= items.Retail_Price %>" name="Retail_Price" class="form-control gadget-input" id="Retail_Price" required>
-                      </div>
-                      <div class="col-md-4">
-                          <label for="imei_number" class="form-label">IMEI Number (if any)</label>
-                          <input type="text" value="<%= items.imei_number %>" name="imei_number" class="form-control gadget-input" id="imei_number">
-                      </div>   
-
-                      <div class="col-md-6">
-                        <label for="Quantity" class="form-label">Quantity</label>
-                        <input type="number" name="Quantity" value="<%= items.Quantity %>" class="form-control gadget-file" id="Quantity">
-                    </div>
-                      <div class="col-md-6">
-                          <label for="device_image" class="form-label">Upload Mobile Image</label>
-                          <input type="file"  name="device_image"  value="<%= profileImagePath %>"  class="form-control gadget-file" id="device_image">
-                        </div>
-                  </div>
-                  <div class="mb-3">
-                      <label for="gadgetProblem" class="form-label">Device Details <span class="text-danger">*</span></label>
-                      <textarea class="form-control gadget-textarea"  id="gadgetProblem" name="gadget_problem" rows="2" placeholder="Describe your Device Details"><%= items.gadget_problem %></textarea>
-                  </div>
-                  <button type="submit" class="btn gadget-submit-btn ">Submit</button>
-                </form>
-          </div>
-    
+          
+          <form action="/update/<%= items.id %>" method="POST" enctype="multipart/form-data">
+            <div class="row">
+              <div class="col-md-6" style="margin-bottom: 20px;">
+                <label for="product_name" style="font-weight: 600; color: #ffffff; margin-bottom: 12px; font-size: 16px; display: block; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);">Product Name</label>
+                <input type="text" name="product_name" value="<%= items.product_name %>" class="form-control" id="product_name" required style="width: 100%; height: 50px; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 12px; padding: 15px 20px; font-size: 16px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%); transition: all 0.3s ease; outline: none; backdrop-filter: blur(10px);">
+              </div>
+              <div class="col-md-6" style="margin-bottom: 20px;">
+                <label for="Model" style="font-weight: 600; color: #ffffff; margin-bottom: 12px; font-size: 16px; display: block; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);">Model</label>
+                <input type="text" name="Model" value="<%= items.Model %>" class="form-control" id="Model" required style="width: 100%; height: 50px; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 12px; padding: 15px 20px; font-size: 16px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%); transition: all 0.3s ease; outline: none; backdrop-filter: blur(10px);">
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-md-4" style="margin-bottom: 20px;">
+                <label for="brand" style="font-weight: 600; color: #ffffff; margin-bottom: 12px; font-size: 16px; display: block; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);">Brand</label>
+                <select class="form-select brand-select" name="brand" id="brand" required style="width: 100%; height: 50px; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 12px; padding: 15px 20px; font-size: 16px; transition: all 0.3s ease; outline: none; backdrop-filter: blur(10px); font-weight: 600;">
+                  <option value="Apple" style="background: #007bff; color: white; font-weight: 600; padding: 10px;">Apple</option>
+                  <option value="Samsung" style="background: #6f42c1; color: white; font-weight: 600; padding: 10px;">Samsung</option>
+                  <option value="Oppo" style="background: #28a745; color: white; font-weight: 600; padding: 10px;">Oppo</option>
+                  <option value="Xiaomi" style="background: #ffc107; color: #333; font-weight: 600; padding: 10px;">Xiaomi</option>
+                  <option value="OnePlus" style="background: #dc3545; color: white; font-weight: 600; padding: 10px;">OnePlus</option>
+                  <option value="Realme" style="background: #17a2b8; color: white; font-weight: 600; padding: 10px;">Realme</option>
+                  <option value="Vivo" style="background: #fd7e14; color: white; font-weight: 600; padding: 10px;">Vivo</option>
+                </select>
+              </div>
+              <div class="col-md-4" style="margin-bottom: 20px;">
+                <label for="Category" style="font-weight: 600; color: #ffffff; margin-bottom: 12px; font-size: 16px; display: block; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);">Category</label>
+                <select class="form-select category-select" name="Category" id="Category" required style="width: 100%; height: 50px; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 12px; padding: 15px 20px; font-size: 16px; transition: all 0.3s ease; outline: none; backdrop-filter: blur(10px); font-weight: 600;">
+                  <option value="Mobile" style="background: #28a745; color: white; font-weight: 600; padding: 10px;">New Mobile</option>
+                  <option value="Used Mobile" style="background: #ffc107; color: #333; font-weight: 600; padding: 10px;">Used Mobile</option>
+                </select>
+              </div>
+              <div class="col-md-4" style="margin-bottom: 20px;">
+                <label for="Color" style="font-weight: 600; color: #ffffff; margin-bottom: 12px; font-size: 16px; display: block; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);">Color</label>
+                <input type="color" name="Color" value="<%= items.Color %>" class="form-control" id="Color" style="width: 100%; height: 50px; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 12px; padding: 5px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%); transition: all 0.3s ease; outline: none; backdrop-filter: blur(10px);">
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-md-4" style="margin-bottom: 20px;">
+                <label for="Sale_Price" style="font-weight: 600; color: #ffffff; margin-bottom: 12px; font-size: 16px; display: block; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);">Sale Price</label>
+                <input type="number" value="<%= items.Sale_Price %>" name="Sale_Price" class="form-control" id="Sale_Price" required style="width: 100%; height: 50px; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 12px; padding: 15px 20px; font-size: 16px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%); transition: all 0.3s ease; outline: none; backdrop-filter: blur(10px);">
+              </div>
+              <div class="col-md-4" style="margin-bottom: 20px;">
+                <label for="Retail_Price" style="font-weight: 600; color: #ffffff; margin-bottom: 12px; font-size: 16px; display: block; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);">Retail Price</label>
+                <input type="number" value="<%= items.Retail_Price %>" name="Retail_Price" class="form-control" id="Retail_Price" required style="width: 100%; height: 50px; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 12px; padding: 15px 20px; font-size: 16px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%); transition: all 0.3s ease; outline: none; backdrop-filter: blur(10px);">
+              </div>
+              <div class="col-md-4" style="margin-bottom: 20px;">
+                <label for="imei_number" style="font-weight: 600; color: #ffffff; margin-bottom: 12px; font-size: 16px; display: block; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);">IMEI Number</label>
+                <input type="text" value="<%= items.imei_number %>" name="imei_number" class="form-control" id="imei_number" style="width: 100%; height: 50px; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 12px; padding: 15px 20px; font-size: 16px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%); transition: all 0.3s ease; outline: none; backdrop-filter: blur(10px);">
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-md-6" style="margin-bottom: 20px;">
+                <label for="Quantity" style="font-weight: 600; color: #ffffff; margin-bottom: 12px; font-size: 16px; display: block; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);">Quantity</label>
+                <input type="number" name="Quantity" value="<%= items.Quantity %>" class="form-control" id="Quantity" style="width: 100%; height: 50px; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 12px; padding: 15px 20px; font-size: 16px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%); transition: all 0.3s ease; outline: none; backdrop-filter: blur(10px);">
+              </div>
+              <div class="col-md-6" style="margin-bottom: 20px;">
+                <label for="device_image" style="font-weight: 600; color: #ffffff; margin-bottom: 12px; font-size: 16px; display: block; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);">Upload Image</label>
+                <input type="file" name="device_image" class="form-control" id="device_image" style="width: 100%; height: 50px; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 12px; padding: 10px 20px; font-size: 16px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%); transition: all 0.3s ease; outline: none; backdrop-filter: blur(10px);">
+              </div>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+              <label for="gadgetProblem" style="font-weight: 600; color: #ffffff; margin-bottom: 12px; font-size: 16px; display: block; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);">Device Details</label>
+              <textarea class="form-control" id="gadgetProblem" name="gadget_problem" rows="3" placeholder="Describe device details" style="width: 100%; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 12px; padding: 15px 20px; font-size: 16px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%); transition: all 0.3s ease; outline: none; backdrop-filter: blur(10px); resize: vertical;"><%= items.gadget_problem %></textarea>
+            </div>
+            
+            <button type="submit" class="btn" style="width: 100%; height: 55px; background: linear-gradient(135deg, #00C853 0%, #00B894 100%); border: none; border-radius: 12px; color: #ffffff; font-size: 18px; font-weight: 700; letter-spacing: 1px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 8px 20px rgba(0, 184, 148, 0.3); text-transform: uppercase;">Update Product</button>
+          </form>
+        </div>
       </div>
+    </div>
   </div>
-  </div>   
-  <% }); %>   
+<% }); %>   
    </div>
  
 
@@ -777,7 +808,33 @@
   
   // Search functionality
   document.addEventListener("DOMContentLoaded", () => {
-    const searchInput = document.getElementById("text-srh");
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) {
+      searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        const productCards = document.querySelectorAll('[data-category]');
+        productCards.forEach(card => {
+          const text = card.textContent.toLowerCase();
+          card.style.display = text.includes(searchTerm) ? '' : 'none';
+        });
+      });
+    }
+  });
+  
+  // Close button hover effect
+  document.addEventListener('DOMContentLoaded', function() {
+    const closeBtns = document.querySelectorAll('.close-btn');
+    closeBtns.forEach(btn => {
+      btn.addEventListener('mouseenter', function() {
+        this.style.transform = 'scale(1.1) rotate(90deg)';
+      });
+      btn.addEventListener('mouseleave', function() {
+        this.style.transform = 'scale(1) rotate(0deg)';
+      });
+    });
+  });
+  
+  const searchInput = document.getElementById("text-srh");
     const productCards = document.querySelectorAll('[data-category]');
   
     searchInput.addEventListener("input", () => {
@@ -791,6 +848,34 @@
           card.style.display = "none";
         }
       });
+    });
+
+    // Dynamic dropdown color change for modals
+    function initDropdowns() {
+      document.querySelectorAll('.brand-select').forEach(select => {
+        select.addEventListener('change', function() {
+          this.className = 'form-select brand-select brand-' + this.value;
+        });
+      });
+
+      document.querySelectorAll('.category-select').forEach(select => {
+        select.addEventListener('change', function() {
+          this.className = 'form-select category-select category-' + this.value.replace(/ /g, '-');
+        });
+      });
+
+      document.querySelectorAll('.type-select').forEach(select => {
+        select.addEventListener('change', function() {
+          this.className = 'form-select type-select type-' + this.value;
+        });
+      });
+    }
+
+    initDropdowns();
+
+    // Re-initialize when modals open
+    document.querySelectorAll('.modal').forEach(modal => {
+      modal.addEventListener('shown.bs.modal', initDropdowns);
     });
   });
   </script>

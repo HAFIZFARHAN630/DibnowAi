@@ -66,6 +66,7 @@ router.post("/addadmin", isAuthenticated, isAdmin, addAdmin);
 // Add User route
 router.post("/admin/addUser", isAuthenticated, isAdmin, addUser);
 
+
 // Payment Settings
 router.get("/payment-settings", isAuthenticated, isAdmin, (req, res) => res.redirect('/admin/payment-settings'));
 router.get("/admin/payment-settings", isAuthenticated, isAdmin, getPaymentSettings);

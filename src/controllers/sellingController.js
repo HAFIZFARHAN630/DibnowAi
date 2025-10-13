@@ -28,6 +28,7 @@ exports.SelectSell = async (req, res) => {
       profileImagePath: user.user_img || "/uploads/default.png",
       firstName: user.first_name,
       lastName: user.last_name,
+      email: user.email,
       isUser: user.role === "user",
       plan_name: user.plan_name || "No Plan",
       success_msg: req.flash("success_msg"),
@@ -39,6 +40,14 @@ exports.SelectSell = async (req, res) => {
     console.error("Error fetching sell products:", error.message);
     return res.render("Sell_Products/sell", {
       products: [],
+      profileImagePath: "/uploads/default.png",
+      firstName: "User",
+      lastName: "",
+      email: "",
+      isUser: true,
+      plan_name: "No Plan",
+      status: "active",
+      reson: null,
       error_msg: "Unable to load products. Please try again.",
       success_msg: ""
     });

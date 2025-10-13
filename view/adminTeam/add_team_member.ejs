@@ -115,6 +115,43 @@
             transform: translateY(-2px);
             background: rgba(255, 255, 255, 0.98);
         }
+        
+        /* Colorful Dropdown Styles */
+        .form-select {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .form-select option {
+            font-weight: 600;
+            padding: 10px;
+            color: white;
+        }
+        
+        /* Role Dropdown Colors */
+        .form-select#role option[value="Admin"] { background: #dc3545; }
+        .form-select#role option[value="Manager"] { background: #ffc107; color: #333; }
+        .form-select#role option[value="Supervisor"] { background: #28a745; }
+        .form-select#role option[value="Team Lead"] { background: #007bff; }
+        
+        /* Department Dropdown Colors */
+        .form-select#department option[value="Administration"] { background: #dc3545; }
+        .form-select#department option[value="Management"] { background: #ffc107; color: #333; }
+        .form-select#department option[value="Operations"] { background: #007bff; }
+        .form-select#department option[value="Support"] { background: #28a745; }
+        .form-select#department option[value="Technical"] { background: #6f42c1; }
+        
+        /* Dynamic Select Background on Change */
+        .form-select.role-Admin { background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; border-color: #dc3545; }
+        .form-select.role-Manager { background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); color: #333; border-color: #ffc107; }
+        .form-select.role-Supervisor { background: linear-gradient(135deg, #28a745 0%, #218838 100%); color: white; border-color: #28a745; }
+        .form-select.role-Team-Lead { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); color: white; border-color: #007bff; }
+        
+        .form-select.dept-Administration { background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; border-color: #dc3545; }
+        .form-select.dept-Management { background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); color: #333; border-color: #ffc107; }
+        .form-select.dept-Operations { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); color: white; border-color: #007bff; }
+        .form-select.dept-Support { background: linear-gradient(135deg, #28a745 0%, #218838 100%); color: white; border-color: #28a745; }
+        .form-select.dept-Technical { background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%); color: white; border-color: #6f42c1; }
 
         .form-control::placeholder {
             color: #9ca3af;
@@ -195,6 +232,26 @@
             }
         }
     </style>
+    
+    <script>
+    // Dynamic dropdown color change
+    document.addEventListener('DOMContentLoaded', function() {
+        const roleSelect = document.getElementById('role');
+        const deptSelect = document.getElementById('department');
+        
+        if (roleSelect) {
+            roleSelect.addEventListener('change', function() {
+                this.className = 'form-select role-' + this.value.replace(/ /g, '-');
+            });
+        }
+        
+        if (deptSelect) {
+            deptSelect.addEventListener('change', function() {
+                this.className = 'form-select dept-' + this.value;
+            });
+        }
+    });
+    </script>
 </head>
 <body>
     <%- include('../par/sidebar.ejs') %>

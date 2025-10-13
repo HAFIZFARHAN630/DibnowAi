@@ -96,6 +96,7 @@ exports.getPayments = async (req, res) => {
     res.render("PlanRequest/request", {
       user,
       message: null,
+      email: user.email,
       isAdmin,
       payments: payments || [],
       planRequests: planRequests || [],
@@ -196,6 +197,7 @@ exports.profile = async (req, res) => {
     res.render("Request/request", {
       user: user,
       message: null,
+      email: user.email,
       isAdmin,
       payments: paymentResults,
       bg_result: [], // Not needed for MongoDB
@@ -578,6 +580,7 @@ exports.getPackageRequests = async (req, res) => {
       user,
       message: null,
       isAdmin,
+      email: user.email,
       payments: payments || [],
       planRequests: planRequests || [],
       bg_result: [], // Not needed for MongoDB

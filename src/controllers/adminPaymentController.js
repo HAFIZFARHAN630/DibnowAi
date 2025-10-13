@@ -4,7 +4,7 @@ const User = require("../models/user");
 exports.getPaymentSettings = async (req, res) => {
   try {
     const userId = req.session.userId;
-    const user = await User.findById(userId).select("first_name last_name user_img");
+    const user = await User.findById(userId).select("first_name last_name email user_img");
     const profileImagePath = user ? (user.user_img || "/img/user.jpg") : "/img/user.jpg";
 
     const settings = await PaymentSettings.find({}).lean();
@@ -20,6 +20,7 @@ exports.getPaymentSettings = async (req, res) => {
     });
 
     res.render("admin/payment-settings", {
+      email: user ? user.email : '',
       stripeSettings: gatewaySettings.stripe,
       paypalSettings: gatewaySettings.paypal,
       bankSettings: gatewaySettings.bank,

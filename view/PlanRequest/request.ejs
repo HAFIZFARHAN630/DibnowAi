@@ -892,6 +892,9 @@
       <table id="planRequestsTable" class="equipment-table min-w-full w-full border-collapse bg-white">
         <thead>
           <tr class="text-white text-sm font-semibold uppercase" style=" background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);">
+            <th class="px-2 py-3 text-left" style=" background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%); width: 50px;">
+              <input type="checkbox" id="selectAllPlans" class="form-check-input" style="cursor: pointer; width: 18px; height: 18px;">
+            </th>
             <th class="px-2 py-3 text-left" style=" background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);">User</th>
             <th class="px-2 py-3 text-left" style=" background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);">Plan Name</th>
             <th class="px-2 py-3 text-left" style=" background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);">Status</th>
@@ -907,6 +910,9 @@
           <% if (planRequests && planRequests.length > 0) { %>
             <% planRequests.forEach((planRequest) => { %>
               <tr class="border-t hover:bg-gray-50">
+                <td class="px-2 py-4 align-top">
+                  <input type="checkbox" class="plan-row-checkbox form-check-input" data-id="<%= planRequest._id %>" style="cursor: pointer; width: 18px; height: 18px;">
+                </td>
                 <td class="px-2 py-4 align-top">
                   <% if (planRequest.user) { %>
                     <div class="font-medium text-gray-800"><%= planRequest.user.first_name %> <%= planRequest.user.last_name %></div>
@@ -975,7 +981,7 @@
             <% }); %>
           <% } else { %>
             <tr>
-              <td colspan="8" class="px-5 py-8 text-center text-gray-500">No plan requests found.</td>
+              <td colspan="9" class="px-5 py-8 text-center text-gray-500">No plan requests found.</td>
             </tr>
           <% } %>
         </tbody>
@@ -1053,6 +1059,13 @@
       <% } %>
     </div>
   </div>
+</div>
+
+<!-- Delete Selected Button -->
+<div id="deleteSelectedPlanContainer" class="mt-3 px-3" style="display: none;">
+  <button id="deleteSelectedPlanBtn" class="btn btn-danger">
+    <i class="bi bi-trash me-2"></i>Delete Selected (<span id="selectedPlanCount">0</span>)
+  </button>
 </div>
 
 <!-- Pagination -->
@@ -1179,6 +1192,78 @@
 
 <!-- Custom Script -->
 <script>
+  // Select All / Individual Checkbox Functionality for Plans
+  document.addEventListener("DOMContentLoaded", function () {
+    const selectAllCheckbox = document.getElementById('selectAllPlans');
+    const rowCheckboxes = document.querySelectorAll('.plan-row-checkbox');
+    const deleteSelectedContainer = document.getElementById('deleteSelectedPlanContainer');
+    const deleteSelectedBtn = document.getElementById('deleteSelectedPlanBtn');
+    const selectedCountSpan = document.getElementById('selectedPlanCount');
+
+    // Select All functionality
+    if (selectAllCheckbox) {
+      selectAllCheckbox.addEventListener('change', function() {
+        rowCheckboxes.forEach(checkbox => {
+          checkbox.checked = this.checked;
+        });
+        updateDeleteButton();
+      });
+    }
+
+    // Individual checkbox functionality
+    rowCheckboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', function() {
+        const allChecked = Array.from(rowCheckboxes).every(cb => cb.checked);
+        if (selectAllCheckbox) selectAllCheckbox.checked = allChecked;
+        updateDeleteButton();
+      });
+    });
+
+    // Update delete button visibility and count
+    function updateDeleteButton() {
+      const selectedCheckboxes = Array.from(rowCheckboxes).filter(cb => cb.checked);
+      const count = selectedCheckboxes.length;
+      
+      if (count > 0) {
+        deleteSelectedContainer.style.display = 'block';
+        selectedCountSpan.textContent = count;
+      } else {
+        deleteSelectedContainer.style.display = 'none';
+      }
+    }
+
+    // Delete selected plan requests
+    if (deleteSelectedBtn) {
+      deleteSelectedBtn.addEventListener('click', function() {
+        const selectedCheckboxes = Array.from(rowCheckboxes).filter(cb => cb.checked);
+        const selectedIds = selectedCheckboxes.map(cb => cb.dataset.id);
+        
+        if (selectedIds.length === 0) return;
+        
+        if (confirm(`Are you sure you want to delete ${selectedIds.length} plan request(s)?`)) {
+          let deletePromises = selectedIds.map(id => {
+            return fetch(`/plan-request/${id}?_method=DELETE`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+              },
+              body: '_method=DELETE'
+            });
+          });
+          
+          Promise.all(deletePromises)
+            .then(() => {
+              location.reload();
+            })
+            .catch(error => {
+              console.error('Error deleting plan requests:', error);
+              alert('Error deleting some plan requests. Please try again.');
+            });
+        }
+      });
+    }
+  });
+
   document.addEventListener("DOMContentLoaded", function () {
     // 🔔 Auto-dismiss flash message
     const msgBox = document.getElementById('pusher-message-box');

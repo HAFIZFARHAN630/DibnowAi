@@ -338,6 +338,9 @@
       <table class="min-w-full w-full border-collapse" id="expiredUsersTable">
         <thead>
           <tr class=" text-white text-sm font-semibold uppercase tracking-wide" style=" background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);">
+            <th class="px-6 py-3 text-left" style="width: 50px;">
+              <input type="checkbox" id="selectAllExpired" class="form-check-input" style="cursor: pointer; width: 18px; height: 18px;">
+            </th>
             <th class="px-6 py-3 text-left "><i class="bi bi-person me-2"></i>First Name</th>
             <th class="px-6 py-3 text-left "><i class="bi bi-envelope me-2"></i>Email</th>
             <th class="px-6 py-3 text-left "><i class="bi bi-building me-2"></i>Company</th>
@@ -349,6 +352,9 @@
           <% if (expiredUsers && expiredUsers.length > 0) { %>
             <% expiredUsers.forEach((payment) => { %>
               <tr class="hover:bg-gray-50 transition">
+                <td class="px-6 py-4">
+                  <input type="checkbox" class="expired-row-checkbox form-check-input" data-id="<%= payment._id %>" style="cursor: pointer; width: 18px; height: 18px;">
+                </td>
                 <td class="px-6 py-4"><%= payment.user.first_name %> <%= payment.user.last_name %></td>
                 <td class="px-6 py-4"><%= payment.user.email %></td>
                 <td class="px-6 py-4"><%= payment.user.company || 'N/A' %></td>
@@ -374,7 +380,7 @@
             <% }) %>
           <% } else { %>
             <tr>
-              <td colspan="7" class="px-6 py-8 text-center text-gray-500">
+              <td colspan="8" class="px-6 py-8 text-center text-gray-500">
                 <div class="flex flex-col items-center">
                   <i class="bi bi-person-x text-3xl mb-2"></i>
                   <h5 class="mt-2 text-lg font-medium">No Expired Users Found</h5>
@@ -452,6 +458,13 @@
   </div>
 </div>
 
+<!-- Delete Selected Button -->
+<div id="deleteSelectedExpiredContainer" class="mt-3 px-3" style="display: none;">
+  <button id="deleteSelectedExpiredBtn" class="btn btn-danger">
+    <i class="bi bi-trash me-2"></i>Delete Selected (<span id="selectedExpiredCount">0</span>)
+  </button>
+</div>
+
 <!-- Pagination -->
 <div class="d-flex justify-content-between align-items-center mt-4 px-3">
   <span id="tableInfo" class="text-muted">Showing <span id="currentEntries">0</span> entries</span>
@@ -468,6 +481,74 @@
 </div>
 <!-- JavaScript Libraries -->
    <script>
+     // Select All / Individual Checkbox Functionality
+     document.addEventListener('DOMContentLoaded', function() {
+       const selectAllCheckbox = document.getElementById('selectAllExpired');
+       const rowCheckboxes = document.querySelectorAll('.expired-row-checkbox');
+       const deleteSelectedContainer = document.getElementById('deleteSelectedExpiredContainer');
+       const deleteSelectedBtn = document.getElementById('deleteSelectedExpiredBtn');
+       const selectedCountSpan = document.getElementById('selectedExpiredCount');
+
+       if (selectAllCheckbox) {
+         selectAllCheckbox.addEventListener('change', function() {
+           rowCheckboxes.forEach(checkbox => {
+             checkbox.checked = this.checked;
+           });
+           updateDeleteButton();
+         });
+       }
+
+       rowCheckboxes.forEach(checkbox => {
+         checkbox.addEventListener('change', function() {
+           const allChecked = Array.from(rowCheckboxes).every(cb => cb.checked);
+           if (selectAllCheckbox) selectAllCheckbox.checked = allChecked;
+           updateDeleteButton();
+         });
+       });
+
+       function updateDeleteButton() {
+         const selectedCheckboxes = Array.from(rowCheckboxes).filter(cb => cb.checked);
+         const count = selectedCheckboxes.length;
+         
+         if (count > 0) {
+           deleteSelectedContainer.style.display = 'block';
+           selectedCountSpan.textContent = count;
+         } else {
+           deleteSelectedContainer.style.display = 'none';
+         }
+       }
+
+       if (deleteSelectedBtn) {
+         deleteSelectedBtn.addEventListener('click', function() {
+           const selectedCheckboxes = Array.from(rowCheckboxes).filter(cb => cb.checked);
+           const selectedIds = selectedCheckboxes.map(cb => cb.dataset.id);
+           
+           if (selectedIds.length === 0) return;
+           
+           if (confirm(`Are you sure you want to delete ${selectedIds.length} expired user(s)?`)) {
+             let deletePromises = selectedIds.map(id => {
+               return fetch(`/plan-request/${id}?_method=DELETE`, {
+                 method: 'POST',
+                 headers: {
+                   'Content-Type': 'application/x-www-form-urlencoded',
+                 },
+                 body: '_method=DELETE'
+               });
+             });
+             
+             Promise.all(deletePromises)
+               .then(() => {
+                 location.reload();
+               })
+               .catch(error => {
+                 console.error('Error deleting users:', error);
+                 alert('Error deleting some users. Please try again.');
+               });
+           }
+         });
+       }
+     });
+
      // Enhanced User Search Functionality
      document.addEventListener('DOMContentLoaded', function() {
        // Pagination

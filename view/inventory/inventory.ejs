@@ -383,6 +383,9 @@
   <table class="table search-table align-middle text-nowrap" id="paginatedTable">
     <thead class="header-item text-center">
       <tr>
+        <th style="width: 50px;">
+          <input type="checkbox" id="selectAllInventory" class="form-check-input" style="cursor: pointer; width: 18px; height: 18px;">
+        </th>
         <th>Image</th>
         <th>Product Name</th>
         <th>Details</th>
@@ -393,7 +396,10 @@
     <tbody id="table-body" class="text-center">
       <% if (typeof products !== 'undefined' && Array.isArray(products) && products.length > 0) { %>
         <% products.forEach(product => { %>
-          <tr class="search-items" data-user-id="<%= product.id %>">
+          <tr class="search-items inventory-row" data-user-id="<%= product.id %>">
+            <td>
+              <input type="checkbox" class="inventory-row-checkbox form-check-input" data-id="<%= product.id %>" style="cursor: pointer; width: 18px; height: 18px;">
+            </td>
             <td>
               <span class="user-name mb-0 text-dark">
                 <img src="/uploads/<%= product.device_image %>" alt="Device Icon" style="width: 30px; height: 30px; object-fit: cover">
@@ -444,6 +450,14 @@
           </div>
         </div>
       </div>
+
+<!-- Delete Selected Button -->
+<div id="deleteSelectedInventoryContainer" class="mt-3" style="display: none; margin-left: 20px;">
+  <button id="deleteSelectedInventoryBtn" class="btn btn-danger">
+    <i class="bi bi-trash me-2"></i>Delete Selected (<span id="selectedInventoryCount">0</span>)
+  </button>
+</div>
+
             <!-- Pagination -->
             <div class="d-flex justify-content-between align-items-center mt-3">
               <span id="tableInfo" class="text-muted">Showing <span id="currentEntries">0</span> entries</span>
@@ -457,6 +471,61 @@
   
 </body>
 <script>
+  // Checkbox functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    const selectAllCheckbox = document.getElementById('selectAllInventory');
+    const rowCheckboxes = document.querySelectorAll('.inventory-row-checkbox');
+    const deleteSelectedContainer = document.getElementById('deleteSelectedInventoryContainer');
+    const deleteSelectedBtn = document.getElementById('deleteSelectedInventoryBtn');
+    const selectedCountSpan = document.getElementById('selectedInventoryCount');
+
+    if (selectAllCheckbox) {
+      selectAllCheckbox.addEventListener('change', function() {
+        const isChecked = this.checked;
+        rowCheckboxes.forEach(checkbox => {
+          if (checkbox.closest('tr').style.display !== 'none') {
+            checkbox.checked = isChecked;
+          }
+        });
+        updateDeleteButton();
+      });
+    }
+
+    rowCheckboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', function() {
+        const visibleCheckboxes = Array.from(rowCheckboxes).filter(cb => cb.closest('tr').style.display !== 'none');
+        const allChecked = visibleCheckboxes.length > 0 && visibleCheckboxes.every(cb => cb.checked);
+        if (selectAllCheckbox) selectAllCheckbox.checked = allChecked;
+        updateDeleteButton();
+      });
+    });
+
+    function updateDeleteButton() {
+      const selectedCheckboxes = Array.from(rowCheckboxes).filter(cb => cb.checked);
+      const count = selectedCheckboxes.length;
+      
+      if (count > 0) {
+        deleteSelectedContainer.style.display = 'block';
+        selectedCountSpan.textContent = count;
+      } else {
+        deleteSelectedContainer.style.display = 'none';
+      }
+    }
+
+    if (deleteSelectedBtn) {
+      deleteSelectedBtn.addEventListener('click', function() {
+        const selectedCheckboxes = Array.from(rowCheckboxes).filter(cb => cb.checked);
+        const selectedIds = selectedCheckboxes.map(cb => cb.dataset.id);
+        
+        if (selectedIds.length === 0) return;
+        
+        if (confirm(`Are you sure you want to delete ${selectedIds.length} item(s)?`)) {
+          alert('Delete functionality needs to be implemented on the server side.');
+        }
+      });
+    }
+  });
+
   // Table pagination
   document.addEventListener("DOMContentLoaded", () => {
     setTimeout(function() {

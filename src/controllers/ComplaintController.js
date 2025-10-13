@@ -43,6 +43,7 @@ exports.AllComplaint = async (req, res) => {
 
     res.render("complaint/complaint", {
       users: complaintResults,
+      email: loggedInUser.email,
       user: userResults,
       message: null,
       messages: req.flash(),

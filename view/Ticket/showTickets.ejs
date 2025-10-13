@@ -188,6 +188,9 @@
           <table class="w-full divide-y divide-gray-200">
           <thead class="bg-gradient-to-r from-gray-50 to-slate-50">
             <tr style="background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%) !important;">
+              <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider" style="width: 50px;">
+                <input type="checkbox" id="selectAllTickets" class="form-check-input" style="cursor: pointer; width: 18px; height: 18px;">
+              </th>
               <th class="w-1/6 px-6 py-4 text-left text-xs font-bold  uppercase tracking-wider">
                 <i class="fas fa-ticket-alt mr-2"></i>Ticket
               </th>
@@ -216,7 +219,10 @@
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
             <% tickets.forEach((ticket, index) => { %>
-              <tr class="hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 transition-all duration-300 slide-in">
+              <tr class="hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 transition-all duration-300 slide-in ticket-row">
+                <td class="px-6 py-4">
+                  <input type="checkbox" class="ticket-row-checkbox form-check-input" data-id="<%= ticket._id %>" style="cursor: pointer; width: 18px; height: 18px;">
+                </td>
                 <!-- Ticket ID & Description -->
                 <td class="w-1/6 px-6 py-4 whitespace-nowrap">
                   <div class="flex items-center">
@@ -327,6 +333,13 @@
         </div>
       </div>
 
+<!-- Delete Selected Button -->
+<div id="deleteSelectedTicketsContainer" class="mt-3" style="display: none; margin-left: 20px;">
+  <button id="deleteSelectedTicketsBtn" class="btn btn-danger">
+    <i class="bi bi-trash me-2"></i>Delete Selected (<span id="selectedTicketsCount">0</span>)
+  </button>
+</div>
+
       <!-- Mobile Card View -->
      <div class="lg:hidden space-y-4 p-6">
   <% tickets.forEach((ticket, index) => { %>
@@ -427,6 +440,61 @@
         <script src="js/main.js"></script>
 
         <script>
+          // Checkbox functionality
+          document.addEventListener('DOMContentLoaded', function() {
+            const selectAllCheckbox = document.getElementById('selectAllTickets');
+            const rowCheckboxes = document.querySelectorAll('.ticket-row-checkbox');
+            const deleteSelectedContainer = document.getElementById('deleteSelectedTicketsContainer');
+            const deleteSelectedBtn = document.getElementById('deleteSelectedTicketsBtn');
+            const selectedCountSpan = document.getElementById('selectedTicketsCount');
+
+            if (selectAllCheckbox) {
+              selectAllCheckbox.addEventListener('change', function() {
+                const isChecked = this.checked;
+                rowCheckboxes.forEach(checkbox => {
+                  if (checkbox.closest('tr').style.display !== 'none') {
+                    checkbox.checked = isChecked;
+                  }
+                });
+                updateDeleteButton();
+              });
+            }
+
+            rowCheckboxes.forEach(checkbox => {
+              checkbox.addEventListener('change', function() {
+                const visibleCheckboxes = Array.from(rowCheckboxes).filter(cb => cb.closest('tr').style.display !== 'none');
+                const allChecked = visibleCheckboxes.length > 0 && visibleCheckboxes.every(cb => cb.checked);
+                if (selectAllCheckbox) selectAllCheckbox.checked = allChecked;
+                updateDeleteButton();
+              });
+            });
+
+            function updateDeleteButton() {
+              const selectedCheckboxes = Array.from(rowCheckboxes).filter(cb => cb.checked);
+              const count = selectedCheckboxes.length;
+              
+              if (count > 0) {
+                deleteSelectedContainer.style.display = 'block';
+                selectedCountSpan.textContent = count;
+              } else {
+                deleteSelectedContainer.style.display = 'none';
+              }
+            }
+
+            if (deleteSelectedBtn) {
+              deleteSelectedBtn.addEventListener('click', function() {
+                const selectedCheckboxes = Array.from(rowCheckboxes).filter(cb => cb.checked);
+                const selectedIds = selectedCheckboxes.map(cb => cb.dataset.id);
+                
+                if (selectedIds.length === 0) return;
+                
+                if (confirm(`Are you sure you want to delete ${selectedIds.length} ticket(s)?`)) {
+                  alert('Delete functionality needs to be implemented on the server side.');
+                }
+              });
+            }
+          });
+
           // Search and Filter Functionality
           document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.getElementById('searchInput');

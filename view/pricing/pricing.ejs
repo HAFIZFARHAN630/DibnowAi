@@ -26,7 +26,7 @@
   <style>
     .card-container {
         display: flex;
-        gap: 41px;
+        /* gap: 41px; */
         justify-content: center;
     }
 
@@ -406,11 +406,11 @@
         /* card container: wrap & center, controlled via CSS not inline styles */
 .card-container {
   display: flex;
-  gap: 100px;
+  /* gap: 100px; */
   justify-content: space-evenly;
   flex-wrap: wrap;
   align-items: center;
-  padding: 20px 0;
+  /* padding: 20px 0; */
   box-sizing: border-box;
 }
 
@@ -452,46 +452,9 @@
             <div class="card card-body py-3">
               <div class="row align-items-center">
                 <div class="col-12">
-                  <div class="d-sm-flex align-items-center justify-space-between center-on-small">
-                    <h4 class="mb-4 mb-sm-0 card-title">Choose Your Plan</h4>
-                    <nav aria-label="breadcrumb" class="ms-auto">
-                      <ol class="breadcrumb center-on-small">
-                        
- 
-
-
-                      <!-- Modal -->
-                      <div class="modal fade" id="transferModal" tabindex="-1" aria-labelledby="transferModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content" style="width: 100%;">
-                                <div class="modal-header">
-                                    <h5 class="modal-title text-dark" id="transferModalLabel" style="font-size: x-large; margin-top: -55px; margin-left: 67px;">Enter Transfer Details</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="margin-right: -55px; margin-top: -68px;"></button>
-                                    <hr style="margin-top: 5px; border: 1px solid #ccc;">
-                                </div>
-                                <div class="modal-body">
-                                    <form id="transferForm" action="/transfer" method="POST">
-                               
-                               
-                                    <div class="row">
-                                      <div class="col-md-6 mb-3">
-                                          <label for="transfer_id" class="form-label">Transfer ID</label>
-                                          <input type="text" id="transfer_id" name="transfer_id" class="form-control" placeholder="Transfer ID" required>
-                                      </div>
-                                      <div class="col-md-6 mb-3">
-                                        <label for="amount" class="form-label">Amount</label>
-                                        <input type="number" id="amount" name="amount" class="form-control" placeholder="Amount" required>
-                                        <small id="amountHelp" class="form-text text-white-50">Amount will be auto-filled based on selected plan</small>
-                                      </div>
-                                  </div>
-                                        <button type="submit" class="btn btn-success w-100">Submit</button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                      </ol>
-                    </nav>
+                  <div class="d-sm-flex align-items-center justify-content-center center-on-small">
+                    <h2 class="mb-4 mb-sm-0 card-title text-center">Choose Your Plan</h2>
+                    
                   </div>
                 </div>
               </div>

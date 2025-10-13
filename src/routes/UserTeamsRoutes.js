@@ -18,7 +18,8 @@ router.post("/userteam/add", isAuthenticated, createTeam);
 router.get("/userteam/list", isAuthenticated, listTeams);
 
 // User team update and delete routes
-router.post("/userteam/update/:id", isAuthenticated, updateUserTeam); // ✅ Fixed (added :id param)
+router.post("/userteam/update", isAuthenticated, updateUserTeam);
+router.post("/userteam/update/:id", isAuthenticated, updateUserTeam);
 router.post("/userteam/delete/:id", isAuthenticated, deleteUserTeam);
 
 module.exports = router;

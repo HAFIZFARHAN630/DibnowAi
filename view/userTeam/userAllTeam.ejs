@@ -184,6 +184,7 @@
         font-size: 14px;
         background: white;
         transition: all 0.3s ease;
+        font-weight: 600;
       }
 
       .filter-select:focus {
@@ -216,6 +217,13 @@
         background-color: #ef4444;
         color: white;
       }
+
+      /* Filter select gradient backgrounds */
+      select.filter-select.filter-billing { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; }
+      select.filter-select.filter-sales { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; }
+      select.filter-select.filter-support { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; }
+      select.filter-select.filter-technical { background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); color: white; }
+      select.filter-select.filter-management { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; }
 
       .dept-billing {
         background-color: #3b82f6;
@@ -356,6 +364,7 @@
         transition: all 0.3s ease;
         outline: none;
         backdrop-filter: blur(10px);
+        font-weight: 600;
       }
 
       .form-control:focus {
@@ -369,27 +378,58 @@
         color: #9ca3af;
       }
 
+      /* Colorful Dropdown Styles */
+      .form-control option {
+        font-weight: 600;
+        padding: 10px;
+      }
+
+      /* Department Dropdown Colors */
+      .form-control option[value="Billing"] { background: #3b82f6; color: white; }
+      .form-control option[value="Sales"] { background: #10b981; color: white; }
+      .form-control option[value="Support"] { background: #f59e0b; color: white; }
+      .form-control option[value="Technical"] { background: #8b5cf6; color: white; }
+      .form-control option[value="Management"] { background: #ef4444; color: white; }
+
+      /* Role Dropdown Colors */
+      .form-control option[value="Team"] { background: #007bff; color: white; }
+      .form-control option[value="Team Lead"] { background: #28a745; color: white; }
+      .form-control option[value="Supervisor"] { background: #ffc107; color: #333; }
+      .form-control option[value="Manager"] { background: #dc3545; color: white; }
+
+      /* Select element background when option is selected */
+      select.form-control.selected-dept-billing { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; }
+      select.form-control.selected-dept-sales { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; }
+      select.form-control.selected-dept-support { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; }
+      select.form-control.selected-dept-technical { background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); color: white; }
+      select.form-control.selected-dept-management { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; }
+
+      select.form-control.selected-role-team { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); color: white; }
+      select.form-control.selected-role-lead { background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%); color: white; }
+      select.form-control.selected-role-supervisor { background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%); color: #333; }
+      select.form-control.selected-role-manager { background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; }
+
       .submit-btn {
         width: 100%;
         height: 50px;
-        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        background: linear-gradient(135deg, #00C853 0%, #00B894 100%);
         border: 2px solid rgba(255, 255, 255, 0.3);
         border-radius: 15px;
-        color: #667eea;
+        color: white;
         font-size: 18px;
         font-weight: 700;
         letter-spacing: 1px;
         cursor: pointer;
         transition: all 0.3s ease;
-        box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
+        box-shadow: 0 10px 30px rgba(0, 200, 83, 0.4);
         text-transform: uppercase;
       }
 
       .submit-btn:hover {
-        background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+        background: linear-gradient(135deg, #00E676 0%, #00C853 100%);
         transform: translateY(-3px);
-        box-shadow: 0 15px 40px rgba(255, 255, 255, 0.3);
-        color: #764ba2;
+        box-shadow: 0 15px 40px rgba(0, 230, 118, 0.5);
+        color: white;
       }
 
       .submit-btn:active {
@@ -561,6 +601,9 @@
   <table class="table search-table align-middle text-nowrap w-full border">
     <thead class="header-item bg-gray-100">
       <tr style=" background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%) !important;">
+        <th class="px-4 py-2" style="width: 50px;">
+          <input type="checkbox" id="selectAllTeam" class="form-check-input" style="cursor: pointer; width: 18px; height: 18px;">
+        </th>
         <th class="px-4 py-2">Name</th>
         <th class="px-4 py-2">Email</th>
         <th class="px-4 py-2">Phone</th>
@@ -572,7 +615,10 @@
     <tbody>
       <% if (users && users.length > 0) { %>
         <% users.forEach(user => { %>
-        <tr class="search-items" data-department="<%= user.department || '' %>">
+        <tr class="search-items team-row" data-department="<%= user.department || '' %>">
+          <td class="px-4 py-2">
+            <input type="checkbox" class="team-row-checkbox form-check-input" data-id="<%= user._id %>" style="cursor: pointer; width: 18px; height: 18px;">
+          </td>
           <td class="px-4 py-2">
             <div class="flex items-center gap-3">
               <img src="https://img.icons8.com/3d-fluency/94/user-male--v4.png" alt="user" class="w-10 h-10" />
@@ -673,6 +719,13 @@
     </div>
 </div>
 
+<!-- Delete Selected Button -->
+<div id="deleteSelectedTeamContainer" class="mt-3" style="display: none; margin-left: 20px;">
+  <button id="deleteSelectedTeamBtn" class="btn btn-danger">
+    <i class="bi bi-trash me-2"></i>Delete Selected (<span id="selectedTeamCount">0</span>)
+  </button>
+</div>
+
 <!-- Update Team Member Modal -->
 <div class="modal fade" id="updateTeamModal" tabindex="-1" aria-labelledby="updateTeamModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg" style="min-height: auto;">
@@ -752,6 +805,70 @@
 
 
 <script>
+    // Checkbox functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      const selectAllCheckbox = document.getElementById('selectAllTeam');
+      const rowCheckboxes = document.querySelectorAll('.team-row-checkbox');
+      const deleteSelectedContainer = document.getElementById('deleteSelectedTeamContainer');
+      const deleteSelectedBtn = document.getElementById('deleteSelectedTeamBtn');
+      const selectedCountSpan = document.getElementById('selectedTeamCount');
+
+      if (selectAllCheckbox) {
+        selectAllCheckbox.addEventListener('change', function() {
+          const isChecked = this.checked;
+          rowCheckboxes.forEach(checkbox => {
+            if (checkbox.closest('tr').style.display !== 'none') {
+              checkbox.checked = isChecked;
+            }
+          });
+          updateDeleteButton();
+        });
+      }
+
+      rowCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+          const visibleCheckboxes = Array.from(rowCheckboxes).filter(cb => cb.closest('tr').style.display !== 'none');
+          const allChecked = visibleCheckboxes.length > 0 && visibleCheckboxes.every(cb => cb.checked);
+          if (selectAllCheckbox) selectAllCheckbox.checked = allChecked;
+          updateDeleteButton();
+        });
+      });
+
+      function updateDeleteButton() {
+        const selectedCheckboxes = Array.from(rowCheckboxes).filter(cb => cb.checked);
+        const count = selectedCheckboxes.length;
+        
+        if (count > 0) {
+          deleteSelectedContainer.style.display = 'block';
+          selectedCountSpan.textContent = count;
+        } else {
+          deleteSelectedContainer.style.display = 'none';
+        }
+      }
+
+      if (deleteSelectedBtn) {
+        deleteSelectedBtn.addEventListener('click', function() {
+          const selectedCheckboxes = Array.from(rowCheckboxes).filter(cb => cb.checked);
+          const selectedIds = selectedCheckboxes.map(cb => cb.dataset.id);
+          
+          if (selectedIds.length === 0) return;
+          
+          if (confirm(`Are you sure you want to delete ${selectedIds.length} team member(s)?`)) {
+            let deletePromises = selectedIds.map(id => {
+              return fetch(`/userteam/delete/${id}`, { method: 'POST' });
+            });
+            
+            Promise.all(deletePromises)
+              .then(() => { location.reload(); })
+              .catch(error => {
+                console.error('Error deleting team members:', error);
+                alert('Error deleting some team members. Please try again.');
+              });
+          }
+        });
+      }
+    });
+
     // Team search functionality
     document.addEventListener('DOMContentLoaded', function() {
         const searchInput = document.getElementById('teamSearch');
@@ -782,7 +899,29 @@ document.getElementById('departmentFilter').addEventListener('change', function(
             row.style.display = 'none';
         }
     });
+    
+    // Update filter dropdown background
+    updateFilterBackground();
 });
+
+// Function to update filter dropdown background
+function updateFilterBackground() {
+    const filterSelect = document.getElementById('departmentFilter');
+    const value = filterSelect.value;
+    
+    // Remove all previous classes
+    filterSelect.classList.remove('filter-billing', 'filter-sales', 'filter-support', 'filter-technical', 'filter-management');
+    
+    if (value) {
+        switch(value) {
+            case 'Billing': filterSelect.classList.add('filter-billing'); break;
+            case 'Sales': filterSelect.classList.add('filter-sales'); break;
+            case 'Support': filterSelect.classList.add('filter-support'); break;
+            case 'Technical': filterSelect.classList.add('filter-technical'); break;
+            case 'Management': filterSelect.classList.add('filter-management'); break;
+        }
+    }
+}
 
 // Open edit modal with pre-filled data
 function openEditModal(button) {
@@ -800,8 +939,40 @@ function openEditModal(button) {
     document.getElementById('updateDepartment').value = department;
     document.getElementById('updateRole').value = role;
 
+    // Apply gradient background after setting values
+    updateSelectBackground('updateDepartment');
+    updateSelectBackground('updateRole');
+
     const modal = new bootstrap.Modal(document.getElementById('updateTeamModal'));
     modal.show();
+}
+
+// Function to update select background based on selected value
+function updateSelectBackground(selectId) {
+    const select = document.getElementById(selectId);
+    const value = select.value;
+    
+    // Remove all previous classes
+    select.classList.remove('selected-dept-billing', 'selected-dept-sales', 'selected-dept-support', 
+                            'selected-dept-technical', 'selected-dept-management',
+                            'selected-role-team', 'selected-role-lead', 'selected-role-supervisor', 'selected-role-manager');
+    
+    if (selectId === 'updateDepartment' && value) {
+        switch(value) {
+            case 'Billing': select.classList.add('selected-dept-billing'); break;
+            case 'Sales': select.classList.add('selected-dept-sales'); break;
+            case 'Support': select.classList.add('selected-dept-support'); break;
+            case 'Technical': select.classList.add('selected-dept-technical'); break;
+            case 'Management': select.classList.add('selected-dept-management'); break;
+        }
+    } else if (selectId === 'updateRole' && value) {
+        switch(value) {
+            case 'Team': select.classList.add('selected-role-team'); break;
+            case 'Team Lead': select.classList.add('selected-role-lead'); break;
+            case 'Supervisor': select.classList.add('selected-role-supervisor'); break;
+            case 'Manager': select.classList.add('selected-role-manager'); break;
+        }
+    }
 }
 
 // Handle update form submission
@@ -850,6 +1021,15 @@ document.getElementById('updateTeamForm').addEventListener('submit', function(e)
         submitBtn.innerHTML = originalText;
         submitBtn.disabled = false;
     });
+});
+
+// Add event listeners for select dropdowns to update background on change
+document.getElementById('updateDepartment').addEventListener('change', function() {
+    updateSelectBackground('updateDepartment');
+});
+
+document.getElementById('updateRole').addEventListener('change', function() {
+    updateSelectBackground('updateRole');
 });
 
 // Delete team member with confirmation

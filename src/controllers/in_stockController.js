@@ -29,6 +29,7 @@ exports.viewitems = async (req, res) => {
       profileImagePath: user.user_img || "/uploads/default.png",
       firstName: user.first_name,
       lastName: user.last_name,
+      email: user.email,
       company: user.company,
       categories: categories,
       brand: brands,
@@ -38,6 +39,8 @@ exports.viewitems = async (req, res) => {
       error_msg: req.flash("error_msg"),
       status: user.status,
       reson: user.denial_reason,
+      isAdmin: user.role === "admin",
+      isUser: user.role === "user"
     });
   } catch (error) {
     console.error("Error fetching stock data:", error.message);
@@ -236,13 +239,16 @@ exports.desProducts = async (req, res) => {
       profileImagePath: user.user_img || "/uploads/default.png",
       firstName: user.first_name,
       lastName: user.last_name,
+      email: user.email,
       company: user.company,
-      products: [product], // Wrap in array to match template expectation
+      products: [product],
       plan_name: user.plan_name,
       success_msg: req.flash("success_msg"),
       error_msg: req.flash("error_msg"),
       status: user.status,
       reson: user.denial_reason,
+      isAdmin: user.role === "admin",
+      isUser: user.role === "user"
     });
   } catch (error) {
     console.error("Error fetching product details:", error.message);

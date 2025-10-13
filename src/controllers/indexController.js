@@ -6,6 +6,7 @@ const Repair = require("../models/repair");
 const Inventory = require("../models/inventery");
 const SoldItem = require("../models/Sold_Products");
 const AddUser = require("../models/adduser");
+const Complaint = require("../models/complaint");
 
 exports.allusers = async (req, res) => {
   try {
@@ -48,7 +49,11 @@ exports.allusers = async (req, res) => {
       activeUsers,
       expiredUsers,
       freeTrialUsers,
-      paidUsers
+      paidUsers,
+      // Complaint counts
+      totalComplaints,
+      pendingComplaints,
+      completedComplaints
     ] = await Promise.all([
       Repair.find({ user_id: userId }).sort({ _id: -1 }),
       Inventory.find({ user_id: userId }).sort({ _id: -1 }),
@@ -75,7 +80,11 @@ exports.allusers = async (req, res) => {
       PlanRequest.countDocuments({ status: 'Active', invoiceStatus: 'Paid' }),
       PlanRequest.countDocuments({ status: 'Expired' }),
       PlanRequest.countDocuments({ planName: { $in: ['Free Trial', 'FREE TRIAL', 'FREE_TRIAL'] }, status: 'Active' }),
-      PlanRequest.countDocuments({ planName: { $nin: ['Free Trial', 'FREE TRIAL', 'FREE_TRIAL'] }, status: 'Active', invoiceStatus: 'Paid' })
+      PlanRequest.countDocuments({ planName: { $nin: ['Free Trial', 'FREE TRIAL', 'FREE_TRIAL'] }, status: 'Active', invoiceStatus: 'Paid' }),
+      // Complaint counts for admin dashboard
+      Complaint.countDocuments(),
+      Complaint.countDocuments({ status: 'Pending' }),
+      Complaint.countDocuments({ status: 'Complete' })
     ]);
 
     // Prioritize paid plans over Free Trial
@@ -198,6 +207,10 @@ exports.allusers = async (req, res) => {
        expiredUsers,
        freeTrialUsers,
        paidUsers,
+       // Complaint counts for admin dashboard
+       totalComplaints,
+       pendingComplaints,
+       completedComplaints,
        success_msg: req.flash("success_msg"),
        error_msg: req.flash("error_msg"),
     });

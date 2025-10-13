@@ -277,9 +277,9 @@
   </div>
 
   <!-- CARDS: visible at width < 1200px -->
-  <div class="min-[1200px]:hidden block ">
+  <div class="min-[1200px]:hidden block">
     <% users.forEach(user => { %>
-      <article class="w-full bg-white rounded-lg border border-gray-100 shadow-sm p-2 break-words">
+      <article class="w-full bg-white rounded-lg border border-gray-100 shadow-sm p-2 break-words mb-3">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div class="flex items-start gap-3">
             <div class="flex-shrink-0">
@@ -351,7 +351,7 @@
       const rowsPerPage = 10;
       let currentPage = 1;
       const tableRows = document.querySelectorAll('#paginatedTable tbody tr');
-      const cardRows = document.querySelectorAll('.min-\\[1200px\\]\\:hidden > article');
+      const cardRows = document.querySelectorAll('.min-\[1200px\]\:hidden article');
       const totalRows = tableRows.length > 0 ? tableRows.length : cardRows.length;
       const totalPages = Math.ceil(totalRows / rowsPerPage);
 
@@ -374,7 +374,7 @@
 
       function updatePagination() {
         const pagination = document.getElementById('pagination');
-        if (!pagination) return;
+        if (!pagination || totalPages <= 1) return;
         pagination.innerHTML = '';
 
         const prevLi = document.createElement('li');
@@ -396,7 +396,7 @@
         pagination.appendChild(nextLi);
       }
 
-      if (totalRows > 0) showPage(1);
+      if (totalRows > rowsPerPage) showPage(1);
     }, 100);
   });
 

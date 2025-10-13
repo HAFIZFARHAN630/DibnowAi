@@ -38,9 +38,12 @@ exports.admin = async (req, res) => {
     res.render("admin/adminfile", {
       profileImagePath,
       firstName: loggedInUser.first_name,
+      email: loggedInUser.email,
       users: users,
       notifications: notifications,
-      unreadCount: unreadCount
+      unreadCount: unreadCount,
+      isAdmin: loggedInUser.role === "admin",
+      isUser: loggedInUser.role === "user"
     });
   } catch (error) {
     console.error("Error fetching admin data:", error.message);
@@ -119,9 +122,12 @@ exports.selectAddAdmin = async (req, res) => {
       message: "",
       profileImagePath,
       firstName: loggedInUser.first_name,
+      email: loggedInUser.email,
       users: users,
       notifications: notifications,
-      unreadCount: unreadCount
+      unreadCount: unreadCount,
+      isAdmin: loggedInUser.role === "admin",
+      isUser: loggedInUser.role === "user"
     });
   } catch (error) {
     console.error("Error fetching admin data:", error.message);
@@ -290,6 +296,7 @@ exports.walletManagement = async (req, res) => {
     res.render("admin/wallet", {
       profileImagePath,
       firstName: user.first_name,
+      email: user.email,
       usersWithWallets,
       totalWallets,
       totalBalance,
@@ -297,6 +304,8 @@ exports.walletManagement = async (req, res) => {
       totalTransactions,
       notifications,
       unreadCount,
+      isAdmin: true,
+      isUser: false,
       success_msg: req.flash("success_msg"),
       error_msg: req.flash("error_msg")
     });
@@ -336,11 +345,14 @@ exports.paymentSettings = async (req, res) => {
     res.render("admin/payment-settings", {
       profileImagePath,
       firstName: user.first_name,
+      email: user.email,
       notifications,
       unreadCount,
       stripeSettings,
       paypalSettings,
       bankSettings,
+      isAdmin: true,
+      isUser: false,
       success_msg: req.flash("success_msg"),
       error_msg: req.flash("error_msg")
     });
@@ -453,9 +465,12 @@ exports.activeUsers = async (req, res) => {
     res.render("admin/activeUsers", {
       profileImagePath,
       firstName: user.first_name,
+      email: user.email,
       activeUsers: uniqueActiveUsers,
       notifications,
       unreadCount,
+      isAdmin: true,
+      isUser: false,
       success_msg: req.flash("success_msg"),
       error_msg: req.flash("error_msg")
     });
@@ -500,9 +515,12 @@ exports.expiredUsers = async (req, res) => {
     res.render("admin/expiredUsers", {
       profileImagePath,
       firstName: user.first_name,
+      email: user.email,
       expiredUsers,
       notifications,
       unreadCount,
+      isAdmin: true,
+      isUser: false,
       success_msg: req.flash("success_msg"),
       error_msg: req.flash("error_msg")
     });
@@ -556,7 +574,9 @@ exports.settings = async (req, res) => {
       message: "",
       profileImagePath,
       firstName: loggedInUser.first_name,
+      email: loggedInUser.email,
       isUser: loggedInUser.role === "user",
+      isAdmin: loggedInUser.role === "admin",
       users: users,
       title: "Website title",
       description: "Website description",
@@ -607,7 +627,9 @@ exports.notificationSettingsPage = async (req, res) => {
       message: "",
       profileImagePath,
       firstName: loggedInUser.first_name,
+      email: loggedInUser.email,
       isUser: loggedInUser.role === "user",
+      isAdmin: loggedInUser.role === "admin",
       users: users,
       title: "Website title",
       description: "Website description",

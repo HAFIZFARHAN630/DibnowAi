@@ -7,7 +7,7 @@ exports.addTeamForm = async (req, res) => {
   try {
     const userId = req.userId || req.session.userId;
     const user = await User.findById(userId).select(
-      "first_name last_name user_img role plan_name status denial_reason"
+      "first_name last_name email user_img role plan_name status denial_reason"
     );
 
     if (!user) {
@@ -52,6 +52,7 @@ exports.addTeamForm = async (req, res) => {
       profileImagePath: user.user_img || "/uploads/default.png",
       firstName: user.first_name,
       lastName: user.last_name,
+      email: user.email,
       isUser: user.role === "user",
       plan_name: user.plan_name || "No Plan",
       status: user.status,
@@ -293,7 +294,7 @@ exports.listTeams = async (req, res) => {
 
      // Get user information
      const user = await User.findById(userIdString).select(
-       "first_name last_name user_img role plan_name status denial_reason"
+       "first_name last_name email user_img role plan_name status denial_reason"
      );
  
      if (!user) {
@@ -409,6 +410,7 @@ exports.listTeams = async (req, res) => {
       profileImagePath: user.user_img || "/uploads/default.png",
       firstName: user.first_name,
       lastName: user.last_name,
+      email: user.email,
       isUser: user.role === "user",
       plan_name: user.plan_name || "No Plan",
       status: user.status,

@@ -730,6 +730,41 @@
 
             </div>
 
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <a href="/UserComplaint">
+                    <div class="patient-card position-relative" style="background-color: #E3F2FD; overflow: hidden; border-radius: 10px;">
+                        <div class="patient-card-header text-white p-2" style="background-color: #1976D2; font-weight: bold;">All Complaints</div>
+                        <div class="patient-card-body p-4 position-relative" style="font-size: 2rem; font-weight: bold;"> <%= totalComplaints || 0 %></div>
+                        <i class="bi bi-chat-left-text-fill position-absolute" style="font-size: 6.5rem; color: rgba(25, 118, 210, 0.2); bottom: -36px; right: 10px; z-index: 1;"></i>
+                    </a>
+                </div>
+
+            </div>
+
+
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <a href="/UserComplaint">
+                    <div class="patient-card position-relative" style="background-color: #FFF3E0; overflow: hidden; border-radius: 10px;">
+                        <div class="patient-card-header text-white p-2" style="background-color: #FB8C00; font-weight: bold;">Pending Complaints</div>
+                        <div class="patient-card-body p-4 position-relative" style="font-size: 2rem; font-weight: bold;"> <%= pendingComplaints || 0 %></div>
+                        <i class="bi bi-clock-fill position-absolute" style="font-size: 6.5rem; color: rgba(251, 140, 0, 0.2); bottom: -36px; right: 10px; z-index: 1;"></i>
+                    </a>
+                </div>
+
+            </div>
+
+
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <a href="/UserComplaint">
+                    <div class="patient-card position-relative" style="background-color: #E8F5E9; overflow: hidden; border-radius: 10px;">
+                        <div class="patient-card-header text-white p-2" style="background-color: #43A047; font-weight: bold;">Completed Complaints</div>
+                        <div class="patient-card-body p-4 position-relative" style="font-size: 2rem; font-weight: bold;"> <%= completedComplaints || 0 %></div>
+                        <i class="bi bi-check-circle-fill position-absolute" style="font-size: 6.5rem; color: rgba(67, 160, 71, 0.2); bottom: -36px; right: 10px; z-index: 1;"></i>
+                    </a>
+                </div>
+
+            </div>
+
                 <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
                     <a href="/admin/active -users">
                     <div class="patient-card position-relative" style="background-color: #E8F5E9; overflow: hidden; border-radius: 10px;">
@@ -1128,7 +1163,7 @@
                     <div class="custom-card text-white" style="background-color: #1b263b; border: none; border-radius: 15px; padding: 20px; height: 100%; width: 100%;">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h5>Revenue by Customer Type</h5>
-                            <h4><%= formattedTotalSales %> <span class="badge bg-success"><%= salesGrowth.toFixed(1) %>% <%= salesGrowth >= 0 ? '&#x2191;' : '&#x2193;' %></span></h4>
+                            <h4><%= formattedTotalSales %> <span class="badge bg-success"><%= salesGrowth.toFixed(1) %>% <%= salesGrowth >= 0 ? '' : '' %></span></h4>
                         </div>
 
                         <div class="chart-container" style="position: relative; height: 250px;">

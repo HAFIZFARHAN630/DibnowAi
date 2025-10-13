@@ -62,6 +62,7 @@ exports.allusers = async (req, res) => {
 
     res.render("Request/request", { 
       message: "",
+      email: loggedInUser.email,
       profileImagePath,
       firstName: loggedInUser.first_name,
       isUser: loggedInUser.role === "user",

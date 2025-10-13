@@ -89,11 +89,13 @@ exports.getInventory = async (req, res) => {
       profileImagePath,
       firstName,
       lastName,
+      email: user.email,
       daysInMonth,
-
       plan_name: user.plan_name || "No Plan",
       status: user.status,
       reson: user.denial_reason,
+      isAdmin: user.role === "admin",
+      isUser: user.role === "user"
     });
   } catch (error) {
     console.error("Error fetching inventory:", error.message);

@@ -37,6 +37,7 @@ exports.SelectTeam = async (req, res) => {
       profileImagePath: user.user_img || "/uploads/default.png",
       firstName: user.first_name,
       lastName: user.last_name,
+      email: user.email,
       isUser: user.role === "user",
       isAdmin: isAdmin,
       plan_name: user.plan_name || "No Plan",
@@ -47,7 +48,7 @@ exports.SelectTeam = async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching admin team data:", error.message);
-    return res.render("Teams/Teams", {
+    return res.render("adminTeam/Teams", {
       users: [],
       isAdmin: false,
       profileImagePath: "/uploads/default.png",

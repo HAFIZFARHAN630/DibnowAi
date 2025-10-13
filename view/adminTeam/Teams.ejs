@@ -17,10 +17,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
 
     <!-- Customized Bootstrap Stylesheet -->
-    <link href="/bootstrap.css" rel="stylesheet">
+    <link href="\bootstrap.css" rel="stylesheet">
     <!-- Template Stylesheet -->
-    <link href="/styles.css" rel="stylesheet">
-    <link href="/styles1.css" rel="stylesheet">
+    <link href="\styles.css" rel="stylesheet">
+    <link href="\styles1.css" rel="stylesheet">
     <style>
       .body-wrapper {
       min-height: 100%;
@@ -281,28 +281,83 @@
       .submit-btn {
         width: 100%;
         height: 50px;
-        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        background: linear-gradient(135deg, #00C853 0%, #00B894 100%);
         border: 2px solid rgba(255, 255, 255, 0.3);
         border-radius: 15px;
-        color: #667eea;
+        color: white;
         font-size: 18px;
         font-weight: 700;
         letter-spacing: 1px;
         cursor: pointer;
         transition: all 0.3s ease;
-        box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
+        box-shadow: 0 10px 30px rgba(0, 200, 83, 0.4);
         text-transform: uppercase;
       }
 
       .submit-btn:hover {
-        background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+        background: linear-gradient(135deg, #00E676 0%, #00C853 100%);
         transform: translateY(-3px);
-        box-shadow: 0 15px 40px rgba(255, 255, 255, 0.3);
-        color: #764ba2;
+        box-shadow: 0 15px 40px rgba(0, 230, 118, 0.5);
+        color: white;
       }
 
       .submit-btn:active {
         transform: translateY(-1px);
+      }
+
+      /* Colorful Dropdown Styles */
+      .form-control {
+        font-weight: 600;
+        border-radius: 8px;
+        padding: 8px 12px;
+        border: 2px solid;
+        transition: all 0.3s ease;
+      }
+
+      .form-control option {
+        font-weight: 600;
+        padding: 10px;
+      }
+
+      /* Department Dropdown Dynamic Colors */
+      .form-control.dept-Billing { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); border-color: #3b82f6; color: white; }
+      .form-control.dept-Sales { background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-color: #10b981; color: white; }
+      .form-control.dept-Support { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border-color: #f59e0b; color: white; }
+      .form-control.dept-Technical { background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); border-color: #8b5cf6; color: white; }
+      .form-control.dept-Management { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); border-color: #ef4444; color: white; }
+
+      /* Role Dropdown Dynamic Colors */
+      .form-control.role-Team-Member { background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%); border-color: #6b7280; color: white; }
+      .form-control.role-Manager { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); border-color: #ef4444; color: white; }
+      .form-control.role-Developer { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); border-color: #3b82f6; color: white; }
+      .form-control.role-Designer { background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); border-color: #8b5cf6; color: white; }
+      .form-control.role-Analyst { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border-color: #f59e0b; color: white; }
+      .form-control.role-Support { background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-color: #10b981; color: white; }
+
+      /* Department Dropdown Option Colors */
+      .form-control option[value="Billing"] { background: #3b82f6; color: white; }
+      .form-control option[value="Sales"] { background: #10b981; color: white; }
+      .form-control option[value="Support"] { background: #f59e0b; color: white; }
+      .form-control option[value="Technical"] { background: #8b5cf6; color: white; }
+      .form-control option[value="Management"] { background: #ef4444; color: white; }
+
+      /* Role Dropdown Option Colors */
+      .form-control option[value="Team Member"] { background: #6b7280; color: white; }
+      .form-control option[value="Manager"] { background: #ef4444; color: white; }
+      .form-control option[value="Developer"] { background: #3b82f6; color: white; }
+      .form-control option[value="Designer"] { background: #8b5cf6; color: white; }
+      .form-control option[value="Analyst"] { background: #f59e0b; color: white; }
+      .form-control option[value="Support"] { background: #10b981; color: white; }
+
+      /* Green Submit Button */
+      .submit-btn {
+        background: linear-gradient(135deg, #00C853 0%, #00B894 100%) !important;
+        color: white !important;
+      }
+
+      .submit-btn:hover {
+        background: linear-gradient(135deg, #00E676 0%, #00C853 100%) !important;
+        color: white !important;
       }
 
       /* Responsive Design for Modal */
@@ -457,6 +512,9 @@
                 <table class="table search-table align-middle text-nowrap" id="paginatedTable">
                     <thead class="header-item  text-white hide-on-small" style="  background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%) !important; padding: 10px !important;">
                         <tr>
+                            <th style="  background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%) !important; padding: 10px; width: 50px;">
+                                <input type="checkbox" id="selectAllTeam" class="form-check-input" style="cursor: pointer; width: 18px; height: 18px;">
+                            </th>
                             <th style="  background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%) !important; padding: 10px;">Name</th>
                             <th style="  background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%) !important; padding: 10px;">Email</th>
                             <th style="  background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%) !important; padding: 10px;">Phone</th>
@@ -469,6 +527,9 @@
                         <% if (users && users.length > 0) { %>
                             <% users.forEach(user => { %>
                             <tr class="search-items" data-department="<%= user.department || '' %>">
+                                <td style="color: #1f2324;">
+                                    <input type="checkbox" class="team-row-checkbox form-check-input" data-id="<%= user._id %>" style="cursor: pointer; width: 18px; height: 18px;">
+                                </td>
                                 <td style="color: #1f2324;">
                                     <div class="d-flex align-items-center">
                                         <img src="https://img.icons8.com/3d-fluency/94/user-male--v4.png" alt="user-male--v4"/>
@@ -517,7 +578,7 @@
                             <% }); %>
                         <% } else { %>
                             <tr>
-                                <td colspan="6" class="text-center py-5">
+                                <td colspan="7" class="text-center py-5">
                                     <i class="bi bi-people display-1 text-muted"></i>
                                     <h4 class="mt-3 text-muted">No Team Members Yet</h4>
                                     <p class="text-muted">Start building your team by adding your first team member.</p>
@@ -530,9 +591,20 @@
                     </tbody>
                 </table>
             </div>
+            
+            <!-- Delete Selected Button -->
+            <div id="deleteSelectedTeamContainer" class="mt-3 px-3" style="display: none;">
+                <button id="deleteSelectedTeamBtn" class="btn btn-danger">
+                    <i class="bi bi-trash me-2"></i>Delete Selected (<span id="selectedTeamCount">0</span>)
+                </button>
+            </div>
         </div>
     </div>
 </div>
+
+    <!-- footer -->
+<%-include('../par/footer.ejs')%>
+    <!-- footer -->
 
 <!-- Update Team Member Modal -->
 <div class="modal fade" id="updateTeamModal" tabindex="-1" aria-labelledby="updateTeamModalLabel" aria-hidden="true">
@@ -576,7 +648,7 @@
             <label for="updateDepartment" class="form-label">
               <i class="fas fa-building me-2"></i>Department
             </label>
-            <select class="form-control" id="updateDepartment" name="department" required>
+            <select class="form-control" id="updateDepartment" name="department" required onchange="this.className='form-control dept-'+this.value">
               <option value="">Select Department</option>
               <option value="Billing">Billing</option>
               <option value="Sales">Sales</option>
@@ -590,7 +662,7 @@
             <label for="updateRole" class="form-label">
               <i class="fas fa-user-tag me-2"></i>Role
             </label>
-            <select class="form-control" id="updateRole" name="role" required>
+            <select class="form-control" id="updateRole" name="role" required onchange="this.className='form-control role-'+this.value.replace(/ /g, '-')">
               <option value="">Select Role</option>
               <option value="Team Member">Team Member</option>
               <option value="Manager">Manager</option>
@@ -610,7 +682,7 @@
   </div>
 </div>
 
-<%- include('../par/footer.ejs') %>
+
 
 </body>
 <!-- JavaScript Libraries -->
@@ -620,6 +692,74 @@
 <!-- Template Javascript -->
 <script src="/js/main.js"></script>
 <script>
+    // Select All / Individual Checkbox Functionality for Team
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectAllCheckbox = document.getElementById('selectAllTeam');
+        const rowCheckboxes = document.querySelectorAll('.team-row-checkbox');
+        const deleteSelectedContainer = document.getElementById('deleteSelectedTeamContainer');
+        const deleteSelectedBtn = document.getElementById('deleteSelectedTeamBtn');
+        const selectedCountSpan = document.getElementById('selectedTeamCount');
+
+        // Select All functionality
+        if (selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', function() {
+                rowCheckboxes.forEach(checkbox => {
+                    checkbox.checked = this.checked;
+                });
+                updateDeleteButton();
+            });
+        }
+
+        // Individual checkbox functionality
+        rowCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const allChecked = Array.from(rowCheckboxes).every(cb => cb.checked);
+                if (selectAllCheckbox) selectAllCheckbox.checked = allChecked;
+                updateDeleteButton();
+            });
+        });
+
+        // Update delete button visibility and count
+        function updateDeleteButton() {
+            const selectedCheckboxes = Array.from(rowCheckboxes).filter(cb => cb.checked);
+            const count = selectedCheckboxes.length;
+            
+            if (count > 0) {
+                deleteSelectedContainer.style.display = 'block';
+                selectedCountSpan.textContent = count;
+            } else {
+                deleteSelectedContainer.style.display = 'none';
+            }
+        }
+
+        // Delete selected team members
+        if (deleteSelectedBtn) {
+            deleteSelectedBtn.addEventListener('click', function() {
+                const selectedCheckboxes = Array.from(rowCheckboxes).filter(cb => cb.checked);
+                const selectedIds = selectedCheckboxes.map(cb => cb.dataset.id);
+                
+                if (selectedIds.length === 0) return;
+                
+                if (confirm(`Are you sure you want to delete ${selectedIds.length} team member(s)?`)) {
+                    let deletePromises = selectedIds.map(id => {
+                        return fetch(`/deleteteam/${id}`, {
+                            method: 'POST'
+                        });
+                    });
+                    
+                    Promise.all(deletePromises)
+                        .then(() => {
+                            location.reload();
+                        })
+                        .catch(error => {
+                            console.error('Error deleting team members:', error);
+                            alert('Error deleting some team members. Please try again.');
+                        });
+                }
+            });
+        }
+    });
+
     // Team search functionality
     document.addEventListener('DOMContentLoaded', function() {
         const searchInput = document.getElementById('teamSearch');

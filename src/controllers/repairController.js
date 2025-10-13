@@ -275,6 +275,7 @@ exports.getRepairProducts = async (req, res) => {
       profileImagePath: user.user_img || "/uploads/default.png",
       firstName: user.first_name,
       lastName: user.last_name,
+      email: user.email,
       company: user.company,
       categories: categories,
       brand: brands,
@@ -284,6 +285,8 @@ exports.getRepairProducts = async (req, res) => {
       error_msg: req.flash("error_msg"),
       status: user.status,
       reson: user.denial_reason,
+      isAdmin: user.role === "admin",
+      isUser: user.role === "user"
     });
   } catch (error) {
     console.error("Error fetching repair products:", error.message);
@@ -397,6 +400,7 @@ exports.getClients = async (req, res) => {
       profileImagePath: user.user_img || "/uploads/default.png",
       firstName: user.first_name,
       lastName: user.last_name,
+      email: user.email,
       company: user.company,
       categories: categories,
       brand: brands,
@@ -406,6 +410,8 @@ exports.getClients = async (req, res) => {
       error_msg: req.flash("error_msg"),
       status: user.status,
       reson: user.denial_reason,
+      isAdmin: user.role === "admin",
+      isUser: user.role === "user"
     });
   } catch (error) {
     console.error("Error fetching clients:", error.message);

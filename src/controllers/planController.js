@@ -30,9 +30,12 @@ exports.createPlanPage = async (req,res) => {
               plans,
               profileImagePath,
               firstName: loggedInUser.first_name,
+              email: loggedInUser.email,
               users: users,
               notifications: notifications,
-              unreadCount: unreadCount
+              unreadCount: unreadCount,
+              isAdmin: loggedInUser.role === "admin",
+              isUser: loggedInUser.role === "user"
             });
     } catch (error) {
         console.log(error)
@@ -107,3 +110,37 @@ exports.deletePlan = async (req,res) => {
     console.log(error)
   }
  }
+
+exports.editPlan = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const plan = await planModel.findById(id);
+    res.json(plan);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Failed to fetch plan' });
+  }
+};
+
+exports.updatePlan = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { plan_name, plan_price, plan_limit, repairCustomer, inStock, inventory, teams, sportTicket } = req.body;
+    
+    await planModel.findByIdAndUpdate(id, {
+      plan_name,
+      plan_price,
+      plan_limit,
+      repairCustomer: repairCustomer || '',
+      inStock: inStock || '',
+      inventory: inventory || '',
+      teams: teams || '',
+      sportTicket: sportTicket === 'true' ? 'true' : 'false'
+    });
+    
+    res.redirect('/create-plan');
+  } catch (error) {
+    console.log(error);
+    res.redirect('/create-plan');
+  }
+};
