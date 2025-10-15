@@ -487,12 +487,55 @@ exports.deleteClient = async (req, res) => {
   }
 };
 
+exports.getCompletedTasksCount = async (req, res) => {
+   try {
+     const userId = req.session.userId;
+     if (!userId) {
+       return res.status(401).json({ error: "User not authenticated" });
+     }
+
+     // Get count of completed repairs for the current user
+     const completedCount = await Repair.countDocuments({
+       user_id: userId,
+       status: "Completed"
+     });
+
+     // Get last 7 days of completed repairs data for chart
+     const last7Days = [];
+     const today = new Date();
+
+     for (let i = 6; i >= 0; i--) {
+       const date = new Date(today);
+       date.setDate(today.getDate() - i);
+       const startOfDay = new Date(date.setHours(0, 0, 0, 0));
+       const endOfDay = new Date(date.setHours(23, 59, 59, 999));
+
+       const count = await Repair.countDocuments({
+         user_id: userId,
+         status: "Completed",
+         createdAt: { $gte: startOfDay, $lte: endOfDay }
+       });
+
+       last7Days.push(count);
+     }
+
+     res.json({
+       completedCount,
+       last7Days,
+       percentage: completedCount > 0 ? 16.8 : 0 // You can calculate this based on previous period
+     });
+   } catch (error) {
+     console.error("Error fetching completed tasks:", error.message);
+     return res.status(500).json({ error: "Internal Server Error" });
+   }
+ };
+
 exports.done = async (req, res) => {
-  try {
-    const repairs = await Repair.find();
-    res.render("your-ejs-file", { repairs: repairs });
-  } catch (error) {
-    console.error("Database error:", error.message);
-    return res.status(500).send("Database error");
-  }
-};
+   try {
+     const repairs = await Repair.find();
+     res.render("your-ejs-file", { repairs: repairs });
+   } catch (error) {
+     console.error("Database error:", error.message);
+     return res.status(500).send("Database error");
+   }
+ };

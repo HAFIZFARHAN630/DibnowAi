@@ -676,7 +676,7 @@
                   </a>
                     </div>
                 </div>
-
+<% if (isUser) { %>
                 <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
                     <a href="/pricing"></a>
                     <div class="patient-card position-relative" style="background-color: #F3E5F5; overflow: hidden; border-radius: 10px;">
@@ -685,6 +685,7 @@
                         <i class="bi bi-layers-fill position-absolute" style="font-size: 6.5rem; color: rgba(123, 31, 162, 0.2); bottom: -36px; right: 10px; z-index: 1;"></i>
                     </div>
                 </div>
+                <% } %>
 
                 <!-- User Count Cards - Admin Only -->
                 <% if (isAdmin) { %>
@@ -697,6 +698,8 @@
                         </a>
                     </div>
                 </div>
+
+                
 
                 <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
                     <a href="/admin/active-users">
@@ -1324,30 +1327,74 @@
 
                 // Tasks Chart with Real Data (Daily Repair Completions)
                 let tasksChart;
-                try {
-                    console.log('Starting tasks chart initialization...');
-                    const ctxTasksElement = document.getElementById('tasksChart');
-                    console.log('Tasks chart element found:', !!ctxTasksElement);
+                let chartData = {
+                    completedCount: 0,
+                    last7Days: [0, 0, 0, 0, 0, 0, 0],
+                    percentage: 0
+                };
 
-                    if (!ctxTasksElement) {
-                        console.error('Tasks chart canvas not found');
-                    } else {
+                // Function to fetch completed tasks data
+                async function fetchCompletedTasksData() {
+                    try {
+                        const response = await fetch('/api/completed-tasks');
+                        if (response.ok) {
+                            const data = await response.json();
+                            return data;
+                        }
+                    } catch (error) {
+                        console.error('Error fetching completed tasks data:', error);
+                    }
+                    return null;
+                }
+
+                // Function to update tasks chart
+                function updateTasksChart(data) {
+                    if (!data) return;
+
+                    chartData = data;
+                    const totalRepairs = data.completedCount;
+                    const last7Days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+                    const repairCounts = data.last7Days;
+                    const avgRepairs = repairCounts.length > 0 ? repairCounts.reduce((sum, repairs) => sum + repairs, 0) / repairCounts.length : 0;
+
+                    // Update the display with real repair data
+                    const tasksDisplay = document.querySelector('#tasksChart').closest('.custom-card').querySelector('h2');
+                    if (tasksDisplay) {
+                        const percentage = avgRepairs > 0 ? data.percentage : 0;
+                        const growthSymbol = percentage > 0 ? '↗' : '↘';
+                        const growthColor = percentage > 0 ? '#4caf50' : '#f44336';
+                        tasksDisplay.innerHTML = `${totalRepairs} <span style="color: ${growthColor};">${percentage}% ${growthSymbol}</span>`;
+                    }
+
+                    // Update chart if it exists
+                    if (tasksChart) {
+                        tasksChart.data.datasets[0].data = repairCounts;
+                        tasksChart.update();
+                    }
+                }
+
+                // Function to initialize tasks chart
+                async function initializeTasksChart() {
+                    try {
+                        console.log('Starting tasks chart initialization...');
+                        const ctxTasksElement = document.getElementById('tasksChart');
+                        console.log('Tasks chart element found:', !!ctxTasksElement);
+
+                        if (!ctxTasksElement) {
+                            console.error('Tasks chart canvas not found');
+                            return;
+                        }
+
                         const ctxTasks = ctxTasksElement.getContext('2d');
 
-                        // Sample repair completion data - you can replace this with real data
-                        const last7Days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-                        const repairCounts = [5, 3, 7, 2, 4, 1, 6];
-                        const totalRepairs = repairCounts.reduce((sum, repairs) => sum + repairs, 0);
-                        const avgRepairs = totalRepairs / 7;
-
-                        // Update the display with real repair data
-                        const tasksDisplay = document.querySelector('#tasksChart').closest('.custom-card').querySelector('h2');
-                        if (tasksDisplay) {
-                            const percentage = avgRepairs > 0 ? (((totalRepairs - avgRepairs) / avgRepairs) * 100).toFixed(1) : 0;
-                            const growthSymbol = percentage > 0 ? '↗' : '↘';
-                            const growthColor = percentage > 0 ? '#4caf50' : '#f44336';
-                            tasksDisplay.innerHTML = `${totalRepairs} <span style="color: ${growthColor};">${percentage}% ${growthSymbol}</span>`;
+                        // Fetch initial data
+                        const initialData = await fetchCompletedTasksData();
+                        if (initialData) {
+                            chartData = initialData;
                         }
+
+                        const last7Days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+                        const repairCounts = chartData.last7Days;
 
                         tasksChart = new Chart(ctxTasks, {
                             type: 'line',
@@ -1389,12 +1436,40 @@
                                 }
                             }
                         });
+
+                        // Update chart with initial data
+                        updateTasksChart(chartData);
                         console.log('Tasks chart created successfully');
-                        console.log('Chart data:', { labels: last7Days, data: repairCounts });
+                    } catch (error) {
+                        console.error('Error initializing tasks chart:', error);
                     }
-                } catch (error) {
-                    console.error('Error initializing tasks chart:', error);
                 }
+
+                // Function to refresh chart data
+                async function refreshTasksChart() {
+                    const data = await fetchCompletedTasksData();
+                    if (data) {
+                        updateTasksChart(data);
+                    }
+                }
+
+                // Make refresh function globally available for other pages
+                window.refreshDashboardChart = refreshTasksChart;
+
+                // Initialize chart
+                initializeTasksChart();
+
+                // Auto-refresh every 10 seconds
+                setInterval(refreshTasksChart, 10000);
+
+                // Listen for repair status updates from other pages
+                window.addEventListener('repairStatusUpdated', function(event) {
+                    if (event.detail && event.detail.status === 'Completed') {
+                        console.log('Repair status updated to Completed, refreshing chart...');
+                        // Refresh chart after a short delay to allow database update
+                        setTimeout(refreshTasksChart, 1000);
+                    }
+                });
 
                 // Website Visitors Chart
                 try {

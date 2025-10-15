@@ -203,6 +203,9 @@
       <table id="paginatedTable" class="min-w-full w-full border-collapse">
         <thead class="text-center">
           <tr class="bg-gradient-to-br from-[#667eea] to-[#764ba2] text-white text-sm font-semibold uppercase tracking-wide">
+            <th class="px-6 py-3" style="width: 50px; background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);">
+              <input type="checkbox" id="selectAllRequests" class="form-check-input" style="cursor: pointer; width: 18px; height: 18px;">
+            </th>
             <th class="px-6 py-3" style="  background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);">First Name</th>
             <th class="px-6 py-3" style="  background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);">Email</th>
             <th class="px-6 py-3" style="  background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);">Phone Number</th>
@@ -216,6 +219,9 @@
         <tbody class="bg-white">
           <% users.forEach(user => { %>
             <tr class="search-items text-center align-middle hover:bg-gray-50 transition-transform duration-200">
+              <td class="px-6 py-4">
+                <input type="checkbox" class="request-row-checkbox form-check-input" data-id="<%= user.id %>" style="cursor: pointer; width: 18px; height: 18px;">
+              </td>
               <td class="px-6 py-4 text-left font-semibold text-gray-800">
                 <i class="bi bi-person-circle text-primary me-2"></i>
                 <%= user.first_name %> <%= user.last_name %>
@@ -329,6 +335,16 @@
 
           </div>
       </div>
+<!-- Delete Selected Button -->
+<div class="mb-4">
+  <button id="deleteSelectedBtn"
+          data-table="requests"
+          class="btn btn-danger shadow-sm px-4 py-2 fw-semibold"
+          style="display: none;">
+    <i class="fas fa-trash-alt me-2"></i> Delete Selected
+  </button>
+</div>
+
 <!-- Pagination -->
 <div class="d-flex justify-content-between align-items-center mt-4 px-3">
   <span id="tableInfo" class="text-muted">Showing <span id="currentEntries">0</span> entries</span>
@@ -449,6 +465,70 @@
         alert("Error sending notification.");
       }
     });
+  });
+
+  // Delete Selected Requests functionality
+  document.addEventListener("DOMContentLoaded", () => {
+    const selectAll = document.getElementById("selectAllRequests");
+    const checkboxes = document.querySelectorAll(".request-row-checkbox");
+    const deleteBtn = document.getElementById("deleteSelectedBtn");
+
+    const toggleButton = () => {
+      const selected = document.querySelectorAll(".request-row-checkbox:checked").length;
+      deleteBtn.style.display = selected > 0 ? "inline-flex" : "none";
+    };
+
+    if (selectAll) {
+      selectAll.addEventListener("change", () => {
+        checkboxes.forEach(cb => {
+          if (cb.closest('tr').style.display !== 'none') {
+            cb.checked = selectAll.checked;
+          }
+        });
+        toggleButton();
+      });
+    }
+
+    checkboxes.forEach(cb => cb.addEventListener("change", () => {
+      const visibleCheckboxes = Array.from(checkboxes).filter(checkbox =>
+        checkbox.closest('tr').style.display !== 'none'
+      );
+      const allChecked = visibleCheckboxes.length > 0 && visibleCheckboxes.every(cb => cb.checked);
+      if (selectAll) selectAll.checked = allChecked;
+      toggleButton();
+    }));
+
+    deleteBtn.addEventListener("click", async () => {
+      const selectedIds = [...document.querySelectorAll(".request-row-checkbox:checked")].map(cb => cb.dataset.id);
+      if (selectedIds.length === 0) return alert("Please select at least one request to delete.");
+      if (!confirm(`Delete ${selectedIds.length} selected request(s)?`)) return;
+
+      try {
+        const tableName = deleteBtn.dataset.table; // "requests"
+        const res = await fetch(`/delete-selected/${tableName}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ selectedIds }),
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          selectedIds.forEach(id => {
+            const row = document.querySelector(`tr[data-user-id="${id}"]`);
+            if (row) row.remove();
+          });
+          alert("Selected requests deleted successfully.");
+          toggleButton();
+        } else {
+          alert("Error deleting requests: " + data.message);
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Something went wrong.");
+      }
+    });
+
+    toggleButton();
   });
 </script>
 <!-- footer -->

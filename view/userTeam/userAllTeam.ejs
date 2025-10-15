@@ -481,17 +481,23 @@
 
       @media (max-width: 768px) {
         .filter-container {
-          flex-direction: column;
-          align-items: flex-start;
+          justify-content: center !important;
+          align-items: center !important;
+          width: 100% !important;
+          text-align: center !important;
+          margin: 0 auto !important;
         }
-        
+
         .filter-select {
-          width: 100%;
+          width: 100% !important;
+          max-width: 300px !important;
         }
-        .card-body, card{
+
+        .card-body {
           width: 90vw;
         }
-        .content{
+
+        .content {
           overflow-x: hidden;
         }
       }
@@ -720,9 +726,12 @@
 </div>
 
 <!-- Delete Selected Button -->
-<div id="deleteSelectedTeamContainer" class="mt-3" style="display: none; margin-left: 20px;">
-  <button id="deleteSelectedTeamBtn" class="btn btn-danger">
-    <i class="bi bi-trash me-2"></i>Delete Selected (<span id="selectedTeamCount">0</span>)
+<div class="mb-4">
+  <button id="deleteSelectedBtn"
+          data-table="userteams"
+          class="btn btn-danger shadow-sm px-4 py-2 fw-semibold"
+          style="display: none;">
+    <i class="fas fa-trash-alt me-2"></i> Delete Selected
   </button>
 </div>
 
@@ -805,68 +814,67 @@
 
 
 <script>
-    // Checkbox functionality
-    document.addEventListener('DOMContentLoaded', function() {
-      const selectAllCheckbox = document.getElementById('selectAllTeam');
-      const rowCheckboxes = document.querySelectorAll('.team-row-checkbox');
-      const deleteSelectedContainer = document.getElementById('deleteSelectedTeamContainer');
-      const deleteSelectedBtn = document.getElementById('deleteSelectedTeamBtn');
-      const selectedCountSpan = document.getElementById('selectedTeamCount');
+    document.addEventListener("DOMContentLoaded", () => {
+      const selectAll = document.getElementById("selectAllTeam");
+      const checkboxes = document.querySelectorAll(".team-row-checkbox");
+      const deleteBtn = document.getElementById("deleteSelectedBtn");
 
-      if (selectAllCheckbox) {
-        selectAllCheckbox.addEventListener('change', function() {
-          const isChecked = this.checked;
-          rowCheckboxes.forEach(checkbox => {
-            if (checkbox.closest('tr').style.display !== 'none') {
-              checkbox.checked = isChecked;
+      const toggleButton = () => {
+        const selected = document.querySelectorAll(".team-row-checkbox:checked").length;
+        deleteBtn.style.display = selected > 0 ? "inline-flex" : "none";
+      };
+
+      if (selectAll) {
+        selectAll.addEventListener("change", () => {
+          checkboxes.forEach(cb => {
+            if (cb.closest('tr').style.display !== 'none') {
+              cb.checked = selectAll.checked;
             }
           });
-          updateDeleteButton();
+          toggleButton();
         });
       }
 
-      rowCheckboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-          const visibleCheckboxes = Array.from(rowCheckboxes).filter(cb => cb.closest('tr').style.display !== 'none');
-          const allChecked = visibleCheckboxes.length > 0 && visibleCheckboxes.every(cb => cb.checked);
-          if (selectAllCheckbox) selectAllCheckbox.checked = allChecked;
-          updateDeleteButton();
-        });
+      checkboxes.forEach(cb => cb.addEventListener("change", () => {
+        const visibleCheckboxes = Array.from(checkboxes).filter(checkbox =>
+          checkbox.closest('tr').style.display !== 'none'
+        );
+        const allChecked = visibleCheckboxes.length > 0 && visibleCheckboxes.every(cb => cb.checked);
+        if (selectAll) selectAll.checked = allChecked;
+        toggleButton();
+      }));
+
+      deleteBtn.addEventListener("click", async () => {
+        const selectedIds = [...document.querySelectorAll(".team-row-checkbox:checked")].map(cb => cb.dataset.id);
+        if (selectedIds.length === 0) return alert("Please select at least one team member to delete.");
+        if (!confirm(`Delete ${selectedIds.length} selected team member(s)?`)) return;
+
+        try {
+          const tableName = deleteBtn.dataset.table; // "userteams"
+          const res = await fetch(`/delete-selected/${tableName}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ selectedIds }),
+          });
+
+          const data = await res.json();
+          if (data.success) {
+            selectedIds.forEach(id => {
+              const row = document.querySelector(`tr[data-user-id="${id}"]`);
+              if (row) row.remove();
+            });
+            alert("Selected team members deleted successfully.");
+            toggleButton();
+          } else {
+            alert("Error deleting team members: " + data.message);
+          }
+        } catch (err) {
+          console.error(err);
+          alert("Something went wrong.");
+        }
       });
 
-      function updateDeleteButton() {
-        const selectedCheckboxes = Array.from(rowCheckboxes).filter(cb => cb.checked);
-        const count = selectedCheckboxes.length;
-        
-        if (count > 0) {
-          deleteSelectedContainer.style.display = 'block';
-          selectedCountSpan.textContent = count;
-        } else {
-          deleteSelectedContainer.style.display = 'none';
-        }
-      }
-
-      if (deleteSelectedBtn) {
-        deleteSelectedBtn.addEventListener('click', function() {
-          const selectedCheckboxes = Array.from(rowCheckboxes).filter(cb => cb.checked);
-          const selectedIds = selectedCheckboxes.map(cb => cb.dataset.id);
-          
-          if (selectedIds.length === 0) return;
-          
-          if (confirm(`Are you sure you want to delete ${selectedIds.length} team member(s)?`)) {
-            let deletePromises = selectedIds.map(id => {
-              return fetch(`/userteam/delete/${id}`, { method: 'POST' });
-            });
-            
-            Promise.all(deletePromises)
-              .then(() => { location.reload(); })
-              .catch(error => {
-                console.error('Error deleting team members:', error);
-                alert('Error deleting some team members. Please try again.');
-              });
-          }
-        });
-      }
+      toggleButton();
     });
 
     // Team search functionality

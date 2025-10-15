@@ -138,11 +138,24 @@
     </div>
 
     <% if (plans && plans.length > 0) { %>
+      <!-- Delete Selected Button -->
+      <div class="mb-4">
+        <button id="deleteSelectedBtn"
+                data-table="plans"
+                class="btn btn-danger shadow-sm px-4 py-2 fw-semibold"
+                style="display: none;">
+          <i class="fas fa-trash-alt me-2"></i> Delete Selected
+        </button>
+      </div>
+
       <!-- Desktop Table (hidden on small screens) -->
       <div class="hidden md:block bg-white shadow-sm rounded-lg overflow-x-auto">
         <table class="packages-table w-full min-w-[900px] table-auto divide-y table-puprle">
           <thead class="bg-gray-50">
             <tr class="table-puprle fw-bold">
+              <th class="px-4 py-3 text-left" style="width: 50px; background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%); color: white;">
+                <input type="checkbox" id="selectAllPlans" class="form-check-input" style="cursor: pointer; width: 18px; height: 18px;">
+              </th>
               <th  class="fw-bold" style=" background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%); color: white;" class="px-4 py-3 text-left text-sm font-medium text-gray-600" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">Package Name</th>
               <th  class="fw-bold"style=" background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%); color: white;" class="px-4 py-3 text-left text-sm font-medium text-gray-600">Price</th>
               <th class="fw-bold" style=" background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%); color: white;" class="px-4 py-3 text-left text-sm font-medium text-gray-600">Limit</th>
@@ -156,6 +169,9 @@
           <tbody class="bg-white divide-y divide-gray-100">
             <% plans.forEach(function(package) { %>
               <tr>
+                <td class="px-4 py-3">
+                  <input type="checkbox" class="plan-row-checkbox form-check-input" data-id="<%= package._id %>" style="cursor: pointer; width: 18px; height: 18px;">
+                </td>
                 <td class="px-4 py-3 text-sm text-gray-800"><strong><%= package.plan_name %></strong></td>
                 <td class="px-4 py-3 text-sm text-gray-700"><span class="package-price">Rs. <%= package.plan_price %></span></td>
                 <td class="px-4 py-3 text-sm text-gray-700"><%= package.plan_limit %></td>
@@ -377,6 +393,70 @@ window.onclick = function(event) {
     closeEditModal();
   }
 }
+
+// Delete Selected Plans functionality
+document.addEventListener("DOMContentLoaded", () => {
+  const selectAll = document.getElementById("selectAllPlans");
+  const checkboxes = document.querySelectorAll(".plan-row-checkbox");
+  const deleteBtn = document.getElementById("deleteSelectedBtn");
+
+  const toggleButton = () => {
+    const selected = document.querySelectorAll(".plan-row-checkbox:checked").length;
+    deleteBtn.style.display = selected > 0 ? "inline-flex" : "none";
+  };
+
+  if (selectAll) {
+    selectAll.addEventListener("change", () => {
+      checkboxes.forEach(cb => {
+        if (cb.closest('tr').style.display !== 'none') {
+          cb.checked = selectAll.checked;
+        }
+      });
+      toggleButton();
+    });
+  }
+
+  checkboxes.forEach(cb => cb.addEventListener("change", () => {
+    const visibleCheckboxes = Array.from(checkboxes).filter(checkbox =>
+      checkbox.closest('tr').style.display !== 'none'
+    );
+    const allChecked = visibleCheckboxes.length > 0 && visibleCheckboxes.every(cb => cb.checked);
+    if (selectAll) selectAll.checked = allChecked;
+    toggleButton();
+  }));
+
+  deleteBtn.addEventListener("click", async () => {
+    const selectedIds = [...document.querySelectorAll(".plan-row-checkbox:checked")].map(cb => cb.dataset.id);
+    if (selectedIds.length === 0) return alert("Please select at least one plan to delete.");
+    if (!confirm(`Delete ${selectedIds.length} selected plan(s)?`)) return;
+
+    try {
+      const tableName = deleteBtn.dataset.table; // "plans"
+      const res = await fetch(`/delete-selected/${tableName}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ selectedIds }),
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        selectedIds.forEach(id => {
+          const row = document.querySelector(`tr[data-id="${id}"]`);
+          if (row) row.remove();
+        });
+        alert("Selected plans deleted successfully.");
+        toggleButton();
+      } else {
+        alert("Error deleting plans: " + data.message);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong.");
+    }
+  });
+
+  toggleButton();
+});
 </script>
 
 

@@ -220,6 +220,70 @@ app.use("/", UserTeamsRoutes);
 // Add Admin Teams routes directly
 app.use("/", AdminTeamsRoutes);
 
+// Delete Selected Route - Reusable for all tables
+app.post('/delete-selected/:table', async (req, res) => {
+  const { selectedIds } = req.body;
+  const { table } = req.params;
+
+  try {
+    // Map the table name to its corresponding model
+    const models = {
+      repair: require("./src/models/repair"),
+      users: require("./src/models/user"),
+      clients: require("./src/models/user"),
+      tickets: require("./src/models/ticket"),
+      wallet: require("./src/models/wallet"),
+      plans: require("./src/models/plan.model"),
+      planrequests: require("./src/models/planRequest"),
+      complaints: require("./src/models/complaint"),
+      inventory: require("./src/models/inventery"),
+      soldproducts: require("./src/models/Sold_Products"),
+      notifications: require("./src/models/notification"),
+      transactions: require("./src/models/transaction"),
+      payments: require("./src/models/payments"),
+      categories: require("./src/models/categories"),
+      brands: require("./src/models/brand"),
+      help: require("./src/models/help"),
+      contactus: require("./src/models/contactus"),
+      teams: require("./src/models/adduser"),
+      adminteams: require("./src/models/adduser"),
+      userteams: require("./src/models/adduser"),
+    };
+
+    const Model = models[table];
+    if (!Model) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid table name: ${table}. Available tables: ${Object.keys(models).join(', ')}`
+      });
+    }
+
+    // Validate selectedIds
+    if (!selectedIds || !Array.isArray(selectedIds) || selectedIds.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'No items selected for deletion'
+      });
+    }
+
+    const result = await Model.deleteMany({ _id: { $in: selectedIds } });
+
+    res.json({
+      success: true,
+      message: `${result.deletedCount} record(s) deleted successfully from ${table}`,
+      deletedCount: result.deletedCount
+    });
+
+  } catch (err) {
+    console.error('Delete selected error:', err);
+    res.status(500).json({
+      success: false,
+      message: 'Error deleting records',
+      error: err.message
+    });
+  }
+});
+
 // 404 Middleware with logging
 app.use((req, res) => {
   console.log('404 - Route not found:', req.method, req.url);

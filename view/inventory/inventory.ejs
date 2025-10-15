@@ -101,12 +101,14 @@
       }
       @media screen and (max-width: 768px) {
         .action-buttons-b {
-          flex-wrap: wrap;
-          /* flex-direction: column; */
-          gap: 10px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          width: 100%;
         }
         .action-buttons-b button{
-          width: fit-content !important;
+          width: 100% !important;
+          margin-bottom: 10px;
         }
       }
       /* Reduce default container spacing */
@@ -452,9 +454,12 @@
       </div>
 
 <!-- Delete Selected Button -->
-<div id="deleteSelectedInventoryContainer" class="mt-3" style="display: none; margin-left: 20px;">
-  <button id="deleteSelectedInventoryBtn" class="btn btn-danger">
-    <i class="bi bi-trash me-2"></i>Delete Selected (<span id="selectedInventoryCount">0</span>)
+<div class="mb-4">
+  <button id="deleteSelectedBtn"
+          data-table="inventory"
+          class="btn btn-danger shadow-sm px-4 py-2 fw-semibold"
+          style="display: none;">
+    <i class="fas fa-trash-alt me-2"></i> Delete Selected
   </button>
 </div>
 
@@ -471,59 +476,67 @@
   
 </body>
 <script>
-  // Checkbox functionality
-  document.addEventListener('DOMContentLoaded', function() {
-    const selectAllCheckbox = document.getElementById('selectAllInventory');
-    const rowCheckboxes = document.querySelectorAll('.inventory-row-checkbox');
-    const deleteSelectedContainer = document.getElementById('deleteSelectedInventoryContainer');
-    const deleteSelectedBtn = document.getElementById('deleteSelectedInventoryBtn');
-    const selectedCountSpan = document.getElementById('selectedInventoryCount');
+  document.addEventListener("DOMContentLoaded", () => {
+    const selectAll = document.getElementById("selectAllInventory");
+    const checkboxes = document.querySelectorAll(".inventory-row-checkbox");
+    const deleteBtn = document.getElementById("deleteSelectedBtn");
 
-    if (selectAllCheckbox) {
-      selectAllCheckbox.addEventListener('change', function() {
-        const isChecked = this.checked;
-        rowCheckboxes.forEach(checkbox => {
-          if (checkbox.closest('tr').style.display !== 'none') {
-            checkbox.checked = isChecked;
+    const toggleButton = () => {
+      const selected = document.querySelectorAll(".inventory-row-checkbox:checked").length;
+      deleteBtn.style.display = selected > 0 ? "inline-flex" : "none";
+    };
+
+    if (selectAll) {
+      selectAll.addEventListener("change", () => {
+        checkboxes.forEach(cb => {
+          if (cb.closest('tr').style.display !== 'none') {
+            cb.checked = selectAll.checked;
           }
         });
-        updateDeleteButton();
+        toggleButton();
       });
     }
 
-    rowCheckboxes.forEach(checkbox => {
-      checkbox.addEventListener('change', function() {
-        const visibleCheckboxes = Array.from(rowCheckboxes).filter(cb => cb.closest('tr').style.display !== 'none');
-        const allChecked = visibleCheckboxes.length > 0 && visibleCheckboxes.every(cb => cb.checked);
-        if (selectAllCheckbox) selectAllCheckbox.checked = allChecked;
-        updateDeleteButton();
-      });
+    checkboxes.forEach(cb => cb.addEventListener("change", () => {
+      const visibleCheckboxes = Array.from(checkboxes).filter(checkbox =>
+        checkbox.closest('tr').style.display !== 'none'
+      );
+      const allChecked = visibleCheckboxes.length > 0 && visibleCheckboxes.every(cb => cb.checked);
+      if (selectAll) selectAll.checked = allChecked;
+      toggleButton();
+    }));
+
+    deleteBtn.addEventListener("click", async () => {
+      const selectedIds = [...document.querySelectorAll(".inventory-row-checkbox:checked")].map(cb => cb.dataset.id);
+      if (selectedIds.length === 0) return alert("Please select at least one inventory item to delete.");
+      if (!confirm(`Delete ${selectedIds.length} selected inventory item(s)?`)) return;
+
+      try {
+        const tableName = deleteBtn.dataset.table; // "inventory"
+        const res = await fetch(`/delete-selected/${tableName}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ selectedIds }),
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          selectedIds.forEach(id => {
+            const row = document.querySelector(`tr[data-user-id="${id}"]`);
+            if (row) row.remove();
+          });
+          alert("Selected inventory items deleted successfully.");
+          toggleButton();
+        } else {
+          alert("Error deleting inventory items: " + data.message);
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Something went wrong.");
+      }
     });
 
-    function updateDeleteButton() {
-      const selectedCheckboxes = Array.from(rowCheckboxes).filter(cb => cb.checked);
-      const count = selectedCheckboxes.length;
-      
-      if (count > 0) {
-        deleteSelectedContainer.style.display = 'block';
-        selectedCountSpan.textContent = count;
-      } else {
-        deleteSelectedContainer.style.display = 'none';
-      }
-    }
-
-    if (deleteSelectedBtn) {
-      deleteSelectedBtn.addEventListener('click', function() {
-        const selectedCheckboxes = Array.from(rowCheckboxes).filter(cb => cb.checked);
-        const selectedIds = selectedCheckboxes.map(cb => cb.dataset.id);
-        
-        if (selectedIds.length === 0) return;
-        
-        if (confirm(`Are you sure you want to delete ${selectedIds.length} item(s)?`)) {
-          alert('Delete functionality needs to be implemented on the server side.');
-        }
-      });
-    }
+    toggleButton();
   });
 
   // Table pagination

@@ -732,9 +732,12 @@ initializeChart();
 </div>
 
 <!-- Delete Selected Button -->
-<div id="deleteSelectedRepairContainer" class="mt-3" style="display: none; margin-left: 20px;">
-  <button id="deleteSelectedRepairBtn" class="btn btn-danger">
-    <i class="bi bi-trash me-2"></i>Delete Selected (<span id="selectedRepairCount">0</span>)
+<div class="mb-4">
+  <button id="deleteSelectedBtn"
+          data-table="repair"
+          class="btn btn-danger shadow-sm px-4 py-2 fw-semibold"
+          style="display: none;">
+    <i class="fas fa-trash-alt me-2"></i> Delete Selected
   </button>
 </div>
 
@@ -823,68 +826,67 @@ initializeChart();
   <!-- footer -->
 
 <script>
-// Checkbox functionality
-document.addEventListener('DOMContentLoaded', function() {
-  const selectAllCheckbox = document.getElementById('selectAllRepair');
-  const rowCheckboxes = document.querySelectorAll('.repair-row-checkbox');
-  const deleteSelectedContainer = document.getElementById('deleteSelectedRepairContainer');
-  const deleteSelectedBtn = document.getElementById('deleteSelectedRepairBtn');
-  const selectedCountSpan = document.getElementById('selectedRepairCount');
+document.addEventListener("DOMContentLoaded", () => {
+  const selectAll = document.getElementById("selectAllRepair");
+  const checkboxes = document.querySelectorAll(".repair-row-checkbox");
+  const deleteBtn = document.getElementById("deleteSelectedBtn");
 
-  if (selectAllCheckbox) {
-    selectAllCheckbox.addEventListener('change', function() {
-      const isChecked = this.checked;
-      rowCheckboxes.forEach(checkbox => {
-        if (checkbox.closest('tr').style.display !== 'none') {
-          checkbox.checked = isChecked;
+  const toggleButton = () => {
+    const selected = document.querySelectorAll(".repair-row-checkbox:checked").length;
+    deleteBtn.style.display = selected > 0 ? "inline-flex" : "none";
+  };
+
+  if (selectAll) {
+    selectAll.addEventListener("change", () => {
+      checkboxes.forEach(cb => {
+        if (cb.closest('tr').style.display !== 'none') {
+          cb.checked = selectAll.checked;
         }
       });
-      updateDeleteButton();
+      toggleButton();
     });
   }
 
-  rowCheckboxes.forEach(checkbox => {
-    checkbox.addEventListener('change', function() {
-      const visibleCheckboxes = Array.from(rowCheckboxes).filter(cb => cb.closest('tr').style.display !== 'none');
-      const allChecked = visibleCheckboxes.length > 0 && visibleCheckboxes.every(cb => cb.checked);
-      if (selectAllCheckbox) selectAllCheckbox.checked = allChecked;
-      updateDeleteButton();
-    });
+  checkboxes.forEach(cb => cb.addEventListener("change", () => {
+    const visibleCheckboxes = Array.from(checkboxes).filter(checkbox =>
+      checkbox.closest('tr').style.display !== 'none'
+    );
+    const allChecked = visibleCheckboxes.length > 0 && visibleCheckboxes.every(cb => cb.checked);
+    if (selectAll) selectAll.checked = allChecked;
+    toggleButton();
+  }));
+
+  deleteBtn.addEventListener("click", async () => {
+    const selectedIds = [...document.querySelectorAll(".repair-row-checkbox:checked")].map(cb => cb.dataset.id);
+    if (selectedIds.length === 0) return alert("Please select at least one repair item to delete.");
+    if (!confirm(`Delete ${selectedIds.length} selected repair item(s)?`)) return;
+
+    try {
+      const tableName = deleteBtn.dataset.table; // "repair"
+      const res = await fetch(`/delete-selected/${tableName}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ selectedIds }),
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        selectedIds.forEach(id => {
+          const row = document.querySelector(`tr[data-user-id="${id}"]`);
+          if (row) row.remove();
+        });
+        alert("Selected repair items deleted successfully.");
+        toggleButton();
+      } else {
+        alert("Error deleting repair items: " + data.message);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong.");
+    }
   });
 
-  function updateDeleteButton() {
-    const selectedCheckboxes = Array.from(rowCheckboxes).filter(cb => cb.checked);
-    const count = selectedCheckboxes.length;
-    
-    if (count > 0) {
-      deleteSelectedContainer.style.display = 'block';
-      selectedCountSpan.textContent = count;
-    } else {
-      deleteSelectedContainer.style.display = 'none';
-    }
-  }
-
-  if (deleteSelectedBtn) {
-    deleteSelectedBtn.addEventListener('click', function() {
-      const selectedCheckboxes = Array.from(rowCheckboxes).filter(cb => cb.checked);
-      const selectedIds = selectedCheckboxes.map(cb => cb.dataset.id);
-      
-      if (selectedIds.length === 0) return;
-      
-      if (confirm(`Are you sure you want to delete ${selectedIds.length} item(s)?`)) {
-        let deletePromises = selectedIds.map(id => {
-          return fetch(`/repair/${id}`, { method: 'POST' });
-        });
-        
-        Promise.all(deletePromises)
-          .then(() => { location.reload(); })
-          .catch(error => {
-            console.error('Error deleting items:', error);
-            alert('Error deleting some items. Please try again.');
-          });
-      }
-    });
-  }
+  toggleButton();
 });
 
 // QR Code Scanner
@@ -930,14 +932,29 @@ window.onclick = function (event) {
 function updateStatus(productId, status) {
     const selectElement = event.target;
     selectElement.className = 'status-select ' + status;
-    
+
     fetch(`/repair/${productId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: status }),
     })
     .then(response => {
-        if (response.ok) console.log("Status updated successfully");
+        if (response.ok) {
+            console.log("Status updated successfully");
+
+            // If status is changed to "Completed", trigger dashboard refresh
+            if (status === 'Completed') {
+                // Notify dashboard to refresh the completed tasks chart
+                if (window.refreshDashboardChart) {
+                    window.refreshDashboardChart();
+                }
+
+                // Also trigger a global event that index.ejs can listen to
+                window.dispatchEvent(new CustomEvent('repairStatusUpdated', {
+                    detail: { status: status, productId: productId }
+                }));
+            }
+        }
     })
     .catch(error => console.error("Error updating status:", error));
 }

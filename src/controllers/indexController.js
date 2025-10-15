@@ -113,7 +113,7 @@ exports.allusers = async (req, res) => {
     if (!userPlan && !latestPayment) {
       const trialExpiryDate = new Date();
       trialExpiryDate.setDate(trialExpiryDate.getDate() + 7);
-      
+
       const freeTrialPlan = new PlanRequest({
         user: userId,
         planName: "Free Trial",
@@ -124,7 +124,7 @@ exports.allusers = async (req, res) => {
         amount: 0,
         description: "Free Trial Plan - 7 days access"
       });
-      
+
       userPlan = await freeTrialPlan.save();
       await User.findByIdAndUpdate(userId, { plan_name: "Free Trial", plan_limit: 30 });
     }
@@ -191,28 +191,28 @@ exports.allusers = async (req, res) => {
       reson: user.denial_reason,
 
       plan_name: user.plan_name || "No Plan",
-       totalSales,
-       totalRepairs,
-       formattedTotalSales,
-       salesGrowth,
-       subscription,
-       matchedPackage,
-       latestPayment,
-       userPlan,
-       isUser: user.role === 'user',
-       isAdmin: user.role === 'admin', // Add admin check for template
-       // User count data for admin dashboard
-       totalUsers,
-       activeUsers,
-       expiredUsers,
-       freeTrialUsers,
-       paidUsers,
-       // Complaint counts for admin dashboard
-       totalComplaints,
-       pendingComplaints,
-       completedComplaints,
-       success_msg: req.flash("success_msg"),
-       error_msg: req.flash("error_msg"),
+      totalSales,
+      totalRepairs,
+      formattedTotalSales,
+      salesGrowth,
+      subscription,
+      matchedPackage,
+      latestPayment,
+      userPlan,
+      isUser: user.role === 'user',
+      isAdmin: user.role === 'admin', // Add admin check for template
+      // User count data for admin dashboard
+      totalUsers,
+      activeUsers,
+      expiredUsers,
+      freeTrialUsers,
+      paidUsers,
+      // Complaint counts for admin dashboard
+      totalComplaints,
+      pendingComplaints,
+      completedComplaints,
+      success_msg: req.flash("success_msg"),
+      error_msg: req.flash("error_msg"),
     });
   } catch (error) {
     console.error("Error fetching dashboard data:", error.message);

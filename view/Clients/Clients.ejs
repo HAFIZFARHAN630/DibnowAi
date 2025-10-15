@@ -169,6 +169,10 @@
       justify-content: center !important;
       align-items: center !important;
     }
+    .j-c-m-s .btn{
+      width: 100% !important;
+      margin-left: 30px;
+    }
     .hide-on-small{
       display: none !important;
     }
@@ -336,8 +340,13 @@
     .padd{
       padding: 18px;
     }
-    .center-on-small{
-      justify-content: center !important;
+   .center-on-small {
+        justify-content: center !important;
+        display: flex;
+
+        flex-direction: column;
+        width: 100% !important;
+        justify-content: center;
     }
   }
   #text-srh{
@@ -395,8 +404,11 @@
     <button class="btn btn-action btn-info" onclick="printTable()">
       <i class="fa fa-print"></i> Print
     </button>
-    <button class="btn btn-action btn-danger" onclick="deleteSelected()">
-      <i class="fa fa-trash"></i> Delete
+    <button id="deleteSelectedBtn"
+            data-table="clients"
+            class="btn btn-action btn-danger"
+            style="display: none;">
+      <i class="fas fa-trash-alt me-2"></i> Delete Selected
     </button>
   </div>
 
@@ -709,45 +721,68 @@
           XLSX.writeFile(wb, "clients_report.xlsx");
       }
    
-  // Delete  selected clients  Delete  selected clients
-    function toggleSelectAll(source) {
-      const checkboxes = document.querySelectorAll('.contact-chkbox');
-      checkboxes.forEach((checkbox) => {
-        checkbox.checked = source.checked;
+  document.addEventListener("DOMContentLoaded", () => {
+    const selectAll = document.getElementById("contact-check-all");
+    const checkboxes = document.querySelectorAll(".contact-chkbox");
+    const deleteBtn = document.getElementById("deleteSelectedBtn");
+
+    const toggleButton = () => {
+      const selected = document.querySelectorAll(".contact-chkbox:checked").length;
+      deleteBtn.style.display = selected > 0 ? "inline-flex" : "none";
+    };
+
+    if (selectAll) {
+      selectAll.addEventListener("change", () => {
+        checkboxes.forEach(cb => {
+          if (cb.closest('tr').style.display !== 'none') {
+            cb.checked = selectAll.checked;
+          }
+        });
+        toggleButton();
       });
     }
-  // Delete selected clients
-  function deleteSelected() {
-      const selectedIds = [];
-      document.querySelectorAll('.contact-chkbox:checked').forEach((checkbox) => {
-        selectedIds.push(checkbox.value);
-      });
-      if (selectedIds.length === 0) {
-        alert('Please select at least one client to delete.');
-        return;
-      }
-      if (confirm('Are you sure you want to delete the selected clients?')) {
-        fetch('/Clients/delete', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ ids: selectedIds }),
-        })
-          .then((response) => {
-            if (response.ok) {
-              alert('Clients deleted successfully.');
-              location.reload();
-            } else {
-              alert('Failed to delete clients.');
-            }
-          })
-          .catch((error) => {
-            console.error('Error:', error);
-            alert('An error occurred.');
+
+    checkboxes.forEach(cb => cb.addEventListener("change", () => {
+      const visibleCheckboxes = Array.from(checkboxes).filter(checkbox =>
+        checkbox.closest('tr').style.display !== 'none'
+      );
+      const allChecked = visibleCheckboxes.length > 0 && visibleCheckboxes.every(cb => cb.checked);
+      if (selectAll) selectAll.checked = allChecked;
+      toggleButton();
+    }));
+
+    deleteBtn.addEventListener("click", async () => {
+      const selectedIds = [...document.querySelectorAll(".contact-chkbox:checked")].map(cb => cb.value);
+      if (selectedIds.length === 0) return alert("Please select at least one client to delete.");
+      if (!confirm(`Delete ${selectedIds.length} selected client(s)?`)) return;
+
+      try {
+        const tableName = deleteBtn.dataset.table; // "clients"
+        const res = await fetch(`/delete-selected/${tableName}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ selectedIds }),
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          selectedIds.forEach(id => {
+            const row = document.querySelector(`tr[data-user-id="${id}"]`);
+            if (row) row.remove();
           });
+          alert("Selected clients deleted successfully.");
+          toggleButton();
+        } else {
+          alert("Error deleting clients: " + data.message);
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Something went wrong.");
       }
-    }
+    });
+
+    toggleButton();
+  });
   
   // Table pagination
   document.addEventListener("DOMContentLoaded", () => {

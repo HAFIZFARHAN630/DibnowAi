@@ -56,7 +56,6 @@ exports.allusers = async (req, res) => {
       firstName: user.first_name,
       lastName: user.last_name,
       phoneNumber: user.phone_number,
-      email: loggedInUser.email,
       email: user.email,
       company: user.company,
       address: user.address,

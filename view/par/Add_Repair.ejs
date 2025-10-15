@@ -222,9 +222,95 @@
   .modal-subtitle{
     visibility: hidden !important;
   }
-}
+  }
 
-</style>
+  /* Colorful Dropdown Styles for Brand and Device Type */
+  .professional-form .form-select#Brand,
+  .professional-form .form-select[name="device"] {
+    font-weight: 600;
+    color: #333;
+  }
+
+  .professional-form .form-select#Brand option,
+  .professional-form .form-select[name="device"] option {
+    font-weight: 600;
+    padding: 12px 16px;
+    color: white;
+    min-width: 180px;
+    display: block;
+  }
+
+  /* Brand Dropdown Colors */
+  .professional-form .form-select#Brand option[value="Apple"] { background: #007bff; color: white; }
+  .professional-form .form-select#Brand option[value="Samsung"] { background: #28a745; color: white; }
+  .professional-form .form-select#Brand option[value="Oppo"] { background: #ffc107; color: #333; }
+  .professional-form .form-select#Brand option[value="Xiaomi"] { background: #dc3545; color: white; }
+  .professional-form .form-select#Brand option[value="OnePlus"] { background: #6f42c1; color: white; }
+  .professional-form .form-select#Brand option[value="Realme"] { background: #fd7e14; color: white; }
+  .professional-form .form-select#Brand option[value="Vivo"] { background: #20c997; color: white; }
+
+  /* Device Type Dropdown Colors */
+  .professional-form .form-select#device option[value="phone"] { background: #007bff; color: white; }
+  .professional-form .form-select#device option[value="tablet"] { background: #28a745; color: white; }
+  .professional-form .form-select#device option[value="laptop"] { background: #ffc107; color: #333; }
+  .professional-form .form-select#device option[value="other"] { background: #6f42c1; color: white; }
+
+  /* Dynamic Select Background on Change - Brand */
+  .professional-form .form-select#Brand.brand-Apple { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); color: white; border-color: #007bff; }
+  .professional-form .form-select#Brand.brand-Samsung { background: linear-gradient(135deg, #28a745 0%, #218838 100%); color: white; border-color: #28a745; }
+  .professional-form .form-select#Brand.brand-Oppo { background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); color: #333; border-color: #ffc107; }
+  .professional-form .form-select#Brand.brand-Xiaomi { background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; border-color: #dc3545; }
+  .professional-form .form-select#Brand.brand-OnePlus { background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%); color: white; border-color: #6f42c1; }
+  .professional-form .form-select#Brand.brand-Realme { background: linear-gradient(135deg, #fd7e14 0%, #e8590c 100%); color: white; border-color: #fd7e14; }
+  .professional-form .form-select#Brand.brand-Vivo { background: linear-gradient(135deg, #20c997 0%, #1cb394 100%); color: white; border-color: #20c997; }
+
+  /* Dynamic Select Background on Change - Device Type */
+  .professional-form .form-select#device.device-phone { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); color: white; border-color: #007bff; }
+  .professional-form .form-select#device.device-tablet { background: linear-gradient(135deg, #28a745 0%, #218838 100%); color: white; border-color: #28a745; }
+  .professional-form .form-select#device.device-laptop { background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); color: #333; border-color: #ffc107; }
+  .professional-form .form-select#device.device-other { background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%); color: white; border-color: #6f42c1; }
+
+  /* Repair Status Dropdown Colors */
+  .professional-form .form-select[name="status"] option[value="Pending"] { background: #ffc107; color: #333; }
+  .professional-form .form-select[name="status"] option[value="Cancelled"] { background: #dc3545; color: white; }
+  .professional-form .form-select[name="status"] option[value="Progress"] { background: #007bff; color: white; }
+  .professional-form .form-select[name="status"] option[value="Completed"] { background: #28a745; color: white; }
+  .professional-form .form-select[name="status"] option[value="Delivered"] { background: #6f42c1; color: white; }
+
+  /* Dynamic Select Background on Change - Repair Status */
+  .professional-form .form-select[name="status"].status-Pending { background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); color: #333; border-color: #ffc107; }
+  .professional-form .form-select[name="status"].status-Cancelled { background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; border-color: #dc3545; }
+  .professional-form .form-select[name="status"].status-Progress { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); color: white; border-color: #007bff; }
+  .professional-form .form-select[name="status"].status-Completed { background: linear-gradient(135deg, #28a745 0%, #218838 100%); color: white; border-color: #28a745; }
+  .professional-form .form-select[name="status"].status-Delivered { background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%); color: white; border-color: #6f42c1; }
+
+  /* Inventory Brand Dropdown Colors (gadgetrModal) */
+  .professional-form .form-select#brand option[value="Apple"] { background: #007bff; color: white; }
+  .professional-form .form-select#brand option[value="Samsung"] { background: #28a745; color: white; }
+  .professional-form .form-select#brand option[value="Oppo"] { background: #ffc107; color: #333; }
+  .professional-form .form-select#brand option[value="Xiaomi"] { background: #dc3545; color: white; }
+  .professional-form .form-select#brand option[value="OnePlus"] { background: #6f42c1; color: white; }
+  .professional-form .form-select#brand option[value="Realme"] { background: #fd7e14; color: white; }
+  .professional-form .form-select#brand option[value="Vivo"] { background: #20c997; color: white; }
+
+  /* Inventory Category Dropdown Colors */
+  .professional-form .form-select#Category option[value="New Mobile"] { background: #007bff; color: white; }
+  .professional-form .form-select#Category option[value="Used Mobile"] { background: #28a745; color: white; }
+
+  /* Dynamic Select Background on Change - Inventory Brand */
+  .professional-form .form-select#brand.brand-Apple { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); color: white; border-color: #007bff; }
+  .professional-form .form-select#brand.brand-Samsung { background: linear-gradient(135deg, #28a745 0%, #218838 100%); color: white; border-color: #28a745; }
+  .professional-form .form-select#brand.brand-Oppo { background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); color: #333; border-color: #ffc107; }
+  .professional-form .form-select#brand.brand-Xiaomi { background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; border-color: #dc3545; }
+  .professional-form .form-select#brand.brand-OnePlus { background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%); color: white; border-color: #6f42c1; }
+  .professional-form .form-select#brand.brand-Realme { background: linear-gradient(135deg, #fd7e14 0%, #e8590c 100%); color: white; border-color: #fd7e14; }
+  .professional-form .form-select#brand.brand-Vivo { background: linear-gradient(135deg, #20c997 0%, #1cb394 100%); color: white; border-color: #20c997; }
+
+  /* Dynamic Select Background on Change - Inventory Category */
+  .professional-form .form-select#Category.category-New-Mobile { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); color: white; border-color: #007bff; }
+  .professional-form .form-select#Category.category-Used-Mobile { background: linear-gradient(135deg, #28a745 0%, #218838 100%); color: white; border-color: #28a745; }
+
+ </style>
 
 
 <!-- Repair Form -->
@@ -302,7 +388,7 @@
                   <div class="col-md-6">
                     <div class="form-group">
                       <label for="device" class="form-label">Device Type *</label>
-                      <select class="form-select" name="device" required>
+                      <select class="form-select" name="device" id="device" required>
                         <option value="" disabled selected>Select Device Type</option>
                         <option value="phone">Phone</option>
                         <option value="tablet">Tablet</option>
@@ -351,6 +437,70 @@
                     randomIdField.value = sequentialId;
                     counter++;
                     localStorage.setItem('counter', counter);
+
+                    // Dynamic dropdown color change for Brand, Device Type, and Status
+                    const brandSelect = document.getElementById('Brand');
+                    const deviceSelect = document.getElementById('device');
+                    const statusSelect = document.querySelector('select[name="status"]');
+
+                    if (brandSelect) {
+                      brandSelect.addEventListener('change', function() {
+                        // Remove previous brand classes
+                        this.className = this.className.replace(/brand-\w+/g, '');
+                        // Add new brand class
+                        if (this.value) {
+                          this.className += ' brand-' + this.value.replace(/ /g, '-');
+                        }
+                      });
+                    }
+
+                    if (deviceSelect) {
+                      deviceSelect.addEventListener('change', function() {
+                        // Remove previous device classes
+                        this.className = this.className.replace(/device-\w+/g, '');
+                        // Add new device class
+                        if (this.value) {
+                          this.className += ' device-' + this.value;
+                        }
+                      });
+                    }
+
+                    if (statusSelect) {
+                      statusSelect.addEventListener('change', function() {
+                        // Remove previous status classes
+                        this.className = this.className.replace(/status-\w+/g, '');
+                        // Add new status class
+                        if (this.value) {
+                          this.className += ' status-' + this.value;
+                        }
+                      });
+                    }
+
+                    // Dynamic dropdown color change for Inventory Brand and Category
+                    const inventoryBrandSelect = document.getElementById('brand');
+                    const inventoryCategorySelect = document.getElementById('Category');
+
+                    if (inventoryBrandSelect) {
+                      inventoryBrandSelect.addEventListener('change', function() {
+                        // Remove previous brand classes
+                        this.className = this.className.replace(/brand-\w+/g, '');
+                        // Add new brand class
+                        if (this.value) {
+                          this.className += ' brand-' + this.value.replace(/ /g, '-');
+                        }
+                      });
+                    }
+
+                    if (inventoryCategorySelect) {
+                      inventoryCategorySelect.addEventListener('change', function() {
+                        // Remove previous category classes
+                        this.className = this.className.replace(/category-\w+/g, '');
+                        // Add new category class
+                        if (this.value) {
+                          this.className += ' category-' + this.value.replace(/ /g, '-');
+                        }
+                      });
+                    }
                   });
                 </script>
         </form> 

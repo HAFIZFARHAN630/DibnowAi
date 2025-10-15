@@ -638,9 +638,12 @@
 </div>
 
 <!-- Delete Selected Button -->
-<div id="deleteSelectedContainer" class="mt-3 px-3" style="display: none;">
-  <button id="deleteSelectedBtn" class="btn btn-danger">
-    <i class="bi bi-trash me-2"></i>Delete Selected (<span id="selectedCount">0</span>)
+<div class="mb-4">
+  <button id="deleteSelectedBtn"
+          data-table="users"
+          class="btn btn-danger shadow-sm px-4 py-2 fw-semibold"
+          style="display: none;">
+    <i class="fas fa-trash-alt me-2"></i> Delete Selected
   </button>
 </div>
 
@@ -816,73 +819,67 @@
 </body>
   <!-- JavaScript Libraries -->
   <script>
-    // Select All / Individual Checkbox Functionality
-    document.addEventListener('DOMContentLoaded', function() {
-      const selectAllCheckbox = document.getElementById('selectAll');
-      const rowCheckboxes = document.querySelectorAll('.row-checkbox');
-      const deleteSelectedContainer = document.getElementById('deleteSelectedContainer');
-      const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
-      const selectedCountSpan = document.getElementById('selectedCount');
+    document.addEventListener("DOMContentLoaded", () => {
+      const selectAll = document.getElementById("selectAll");
+      const checkboxes = document.querySelectorAll(".row-checkbox");
+      const deleteBtn = document.getElementById("deleteSelectedBtn");
 
-      // Select All functionality
-      if (selectAllCheckbox) {
-        selectAllCheckbox.addEventListener('change', function() {
-          rowCheckboxes.forEach(checkbox => {
-            checkbox.checked = this.checked;
+      const toggleButton = () => {
+        const selected = document.querySelectorAll(".row-checkbox:checked").length;
+        deleteBtn.style.display = selected > 0 ? "inline-flex" : "none";
+      };
+
+      if (selectAll) {
+        selectAll.addEventListener("change", () => {
+          checkboxes.forEach(cb => {
+            if (cb.closest('tr').style.display !== 'none') {
+              cb.checked = selectAll.checked;
+            }
           });
-          updateDeleteButton();
+          toggleButton();
         });
       }
 
-      // Individual checkbox functionality
-      rowCheckboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-          const allChecked = Array.from(rowCheckboxes).every(cb => cb.checked);
-          if (selectAllCheckbox) selectAllCheckbox.checked = allChecked;
-          updateDeleteButton();
-        });
+      checkboxes.forEach(cb => cb.addEventListener("change", () => {
+        const visibleCheckboxes = Array.from(checkboxes).filter(checkbox =>
+          checkbox.closest('tr').style.display !== 'none'
+        );
+        const allChecked = visibleCheckboxes.length > 0 && visibleCheckboxes.every(cb => cb.checked);
+        if (selectAll) selectAll.checked = allChecked;
+        toggleButton();
+      }));
+
+      deleteBtn.addEventListener("click", async () => {
+        const selectedIds = [...document.querySelectorAll(".row-checkbox:checked")].map(cb => cb.dataset.id);
+        if (selectedIds.length === 0) return alert("Please select at least one user to delete.");
+        if (!confirm(`Delete ${selectedIds.length} selected user(s)?`)) return;
+
+        try {
+          const tableName = deleteBtn.dataset.table; // "users"
+          const res = await fetch(`/delete-selected/${tableName}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ selectedIds }),
+          });
+
+          const data = await res.json();
+          if (data.success) {
+            selectedIds.forEach(id => {
+              const row = document.querySelector(`tr[data-id="${id}"]`);
+              if (row) row.remove();
+            });
+            alert("Selected users deleted successfully.");
+            toggleButton();
+          } else {
+            alert("Error deleting users: " + data.message);
+          }
+        } catch (err) {
+          console.error(err);
+          alert("Something went wrong.");
+        }
       });
 
-      // Update delete button visibility and count
-      function updateDeleteButton() {
-        const selectedCheckboxes = Array.from(rowCheckboxes).filter(cb => cb.checked);
-        const count = selectedCheckboxes.length;
-        
-        if (count > 0) {
-          deleteSelectedContainer.style.display = 'block';
-          selectedCountSpan.textContent = count;
-        } else {
-          deleteSelectedContainer.style.display = 'none';
-        }
-      }
-
-      // Delete selected users
-      if (deleteSelectedBtn) {
-        deleteSelectedBtn.addEventListener('click', function() {
-          const selectedCheckboxes = Array.from(rowCheckboxes).filter(cb => cb.checked);
-          const selectedIds = selectedCheckboxes.map(cb => cb.dataset.id);
-          
-          if (selectedIds.length === 0) return;
-          
-          if (confirm(`Are you sure you want to delete ${selectedIds.length} user(s)?`)) {
-            // Delete each user
-            let deletePromises = selectedIds.map(id => {
-              return fetch(`/admin/delete/${id}`, {
-                method: 'POST'
-              });
-            });
-            
-            Promise.all(deletePromises)
-              .then(() => {
-                location.reload();
-              })
-              .catch(error => {
-                console.error('Error deleting users:', error);
-                alert('Error deleting some users. Please try again.');
-              });
-          }
-        });
-      }
+      toggleButton();
     });
 
     // Enhanced User Search Functionality
