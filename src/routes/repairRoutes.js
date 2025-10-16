@@ -2,19 +2,21 @@ const express = require("express");
 const router = express.Router();
 const upload = require("../middlewares/uploadMiddleware");
 const {
-   addProduct,
-   getRepairProducts,
-   getClients,
-   updateClients,
-   updateProduct,
-   deleteClients,
-   deleteClient,
-   deleteProduct,
-   deleteProducts,
-   getRepairPrices,
-   getCompletedTasksCount,
-   done,
- } = require("../controllers/repairController");
+    addProduct,
+    getRepairProducts,
+    getClients,
+    updateClients,
+    updateProduct,
+    deleteClients,
+    deleteClient,
+    deleteProduct,
+    deleteProducts,
+    getRepairPrices,
+    getCompletedTasksCount,
+    done,
+    getPublicTrackingPage,
+    trackRepairById,
+  } = require("../controllers/repairController");
 
 // Add product
 router.post("/repair", upload.single("deviceImage"), addProduct);
@@ -43,5 +45,9 @@ router.post("/Clients/:id", deleteClient);
 router.get("/api/repair-prices", getRepairPrices);
 router.get("/api/completed-tasks", getCompletedTasksCount);
 router.post("/update-status", done);
+
+// Public tracking routes (no authentication required)
+router.get("/track", getPublicTrackingPage);
+router.get("/track/:trackingId", trackRepairById);
 
 module.exports = router;

@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Repair Details - DIB-NOW</title>
+    <link rel="icon" href="\images\DIB-NOW-512.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="/bootstrap.css" rel="stylesheet">
+    <link href="/styles.css" rel="stylesheet">
+    <link href="/styles1.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      @keyframes slideIn {
+        from { opacity: 0; transform: translateX(-20px); }
+        to { opacity: 1; transform: translateX(0); }
+      }
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+      }
+      .fade-in-up { animation: fadeInUp 0.6s ease-out; }
+      .slide-in { animation: slideIn 0.6s ease-out; }
+      .pulse-animation { animation: pulse 2s infinite; }
+      .glass-morphism { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+      .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+
+      /* Status-based styling */
+      .status-pending { background: linear-gradient(135deg, #ef4444, #dc2626); }
+      .status-progress { background: linear-gradient(135deg, #f59e0b, #d97706); }
+      .status-completed { background: linear-gradient(135deg, #10b981, #059669); }
+      .status-delivered { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 min-h-screen">
+
+<!-- Hero Section -->
+<div class="relative overflow-hidden bg-gradient-to-r mt-10" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;">
+  <div class="absolute inset-0 bg-black opacity-10"></div>
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="text-center">
+      <h1 class="text-3xl md:text-5xl font-bold text-white mb-4 fade-in-up">
+        <i class="fas fa-check-circle mr-3 pulse-animation"></i>Repair Found
+      </h1>
+      <p class="text-lg md:text-xl text-green-100 mb-6 fade-in-up" style="animation-delay: 0.2s;">
+        Here are the details for your repair
+      </p>
+    </div>
+  </div>
+</div>
+
+<% if (repair) { %>
+<!-- Repair Details Card -->
+<div class="max-w-6xl mx-auto mt-8 px-4 mb-12 fade-in-up" style="animation-delay: 0.4s;">
+  <div class="glass-morphism rounded-2xl shadow-2xl p-6 border border-white/20">
+    <!-- Header -->
+    <div class="text-center mb-6">
+      <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+        <i class="fas fa-wrench text-2xl text-white"></i>
+      </div>
+      <h2 class="text-2xl font-bold text-gray-800 mb-2">📋 Repair Details</h2>
+      <p class="text-gray-600">Complete information about your repair request</p>
+    </div>
+
+    <!-- Tracking Information Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Left Column -->
+      <div class="space-y-4">
+        <!-- Tracking ID -->
+        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100">
+          <div class="flex items-center justify-between mb-2">
+            <label class="text-sm font-semibold text-blue-700 uppercase tracking-wide">Tracking ID</label>
+            <i class="fas fa-hashtag text-blue-500"></i>
+          </div>
+          <p class="text-lg font-bold text-blue-800 font-mono break-all"><%= repair._id %></p>
+        </div>
+
+        <!-- Customer Information -->
+        <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 border border-green-100">
+          <div class="flex items-center mb-3">
+            <i class="fas fa-user-circle text-green-600 text-lg mr-2"></i>
+            <label class="text-sm font-semibold text-green-700 uppercase tracking-wide">Customer Information</label>
+          </div>
+          <div class="space-y-2">
+            <div>
+              <p class="text-xs text-green-600 uppercase tracking-wide">Full Name</p>
+              <p class="text-base font-semibold text-green-800"><%= repair.fullName || 'N/A' %></p>
+            </div>
+            <div>
+              <p class="text-xs text-green-600 uppercase tracking-wide">Mobile Number</p>
+              <p class="text-base font-semibold text-green-800"><%= repair.mobileNumber || 'N/A' %></p>
+            </div>
+            <div>
+              <p class="text-xs text-green-600 uppercase tracking-wide">Email</p>
+              <p class="text-base font-semibold text-green-800"><%= repair.email || 'N/A' %></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Device Information -->
+        <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-4 border border-purple-100">
+          <div class="flex items-center mb-3">
+            <i class="fas fa-mobile-alt text-purple-600 text-lg mr-2"></i>
+            <label class="text-sm font-semibold text-purple-700 uppercase tracking-wide">Device Information</label>
+          </div>
+          <div class="space-y-2">
+            <div>
+              <p class="text-xs text-purple-600 uppercase tracking-wide">Device</p>
+              <p class="text-base font-semibold text-purple-800"><%= repair.device || 'N/A' %></p>
+            </div>
+            <div>
+              <p class="text-xs text-purple-600 uppercase tracking-wide">Brand</p>
+              <p class="text-base font-semibold text-purple-800"><%= repair.brand || 'N/A' %></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column -->
+      <div class="space-y-4">
+        <!-- Status -->
+        <div class="bg-gradient-to-r from-<%=
+          repair.status === 'Completed' ? 'green' :
+          repair.status === 'In Progress' ? 'amber' :
+          repair.status === 'Delivered' ? 'cyan' :
+          'red'
+        %>-50 to-<%=
+          repair.status === 'Completed' ? 'emerald' :
+          repair.status === 'In Progress' ? 'orange' :
+          repair.status === 'Delivered' ? 'teal' :
+          'rose'
+        %>-50 rounded-xl p-4 border border-<%=
+          repair.status === 'Completed' ? 'green' :
+          repair.status === 'In Progress' ? 'amber' :
+          repair.status === 'Delivered' ? 'cyan' :
+          'red'
+        %>-100">
+          <div class="flex items-center justify-between mb-2">
+            <label class="text-sm font-semibold <%=
+              repair.status === 'Completed' ? 'text-green-700' :
+              repair.status === 'In Progress' ? 'text-amber-700' :
+              repair.status === 'Delivered' ? 'text-cyan-700' :
+              'text-red-700'
+            %> uppercase tracking-wide">Repair Status</label>
+            <i class="fas fa-<%=
+              repair.status === 'Completed' ? 'check-circle' :
+              repair.status === 'In Progress' ? 'clock' :
+              repair.status === 'Delivered' ? 'truck' :
+              'times-circle'
+            %> <%=
+              repair.status === 'Completed' ? 'text-green-600' :
+              repair.status === 'In Progress' ? 'text-amber-600' :
+              repair.status === 'Delivered' ? 'text-cyan-600' :
+              'text-red-600'
+            %>"></i>
+          </div>
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold <%=
+            repair.status === 'Completed' ? 'status-completed' :
+            repair.status === 'In Progress' ? 'status-progress' :
+            repair.status === 'Delivered' ? 'status-delivered' :
+            'status-pending'
+          %> text-white shadow-lg">
+            <i class="fas fa-<%=
+              repair.status === 'Completed' ? 'check' :
+              repair.status === 'In Progress' ? 'tools' :
+              repair.status === 'Delivered' ? 'truck' :
+              'clock'
+            %> mr-2"></i>
+            <%= repair.status || 'Pending' %>
+          </span>
+        </div>
+
+        <!-- Problem Description -->
+        <div class="bg-gradient-to-r from-gray-50 to-slate-50 rounded-xl p-4 border border-gray-100">
+          <div class="flex items-center justify-between mb-2">
+            <label class="text-sm font-semibold text-gray-700 uppercase tracking-wide">Problem Description</label>
+            <i class="fas fa-exclamation-triangle text-gray-500"></i>
+          </div>
+          <p class="text-gray-700 leading-relaxed"><%= repair.gadgetProblem || 'N/A' %></p>
+        </div>
+
+        <!-- Price & Image -->
+        <div class="grid grid-cols-2 gap-4">
+          <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-4 border border-emerald-100 text-center">
+            <div class="flex items-center justify-center mb-2">
+              <i class="fas fa-dollar-sign text-emerald-600 mr-2"></i>
+              <label class="text-sm font-semibold text-emerald-700 uppercase tracking-wide">Price</label>
+            </div>
+            <p class="text-xl font-bold text-emerald-800">$<%= repair.Price || '0.00' %></p>
+          </div>
+
+          <div class="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-xl p-4 border border-indigo-100 text-center">
+            <div class="flex items-center justify-center mb-2">
+              <i class="fas fa-image text-indigo-600 mr-2"></i>
+              <label class="text-sm font-semibold text-indigo-700 uppercase tracking-wide">Device Image</label>
+            </div>
+            <div class="w-12 h-12 bg-gradient-to-br from-indigo-200 to-purple-200 rounded-full flex items-center justify-center mx-auto">
+              <% if (repair.deviceImage) { %>
+                <img src="<%= repair.deviceImage %>" alt="Device Image" class="w-10 h-10 object-cover rounded-full">
+              <% } else { %>
+                <i class="fas fa-mobile-alt text-indigo-400 text-lg"></i>
+              <% } %>
+            </div>
+          </div>
+        </div>
+
+        <!-- Full Device Image -->
+        <% if (repair.deviceImage) { %>
+        <div class="bg-gradient-to-r from-gray-50 to-slate-50 rounded-xl p-4 border border-gray-100 text-center">
+          <label class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3 block">Device Preview</label>
+          <div class="relative inline-block">
+            <img src="<%= repair.deviceImage %>" alt="Device Image" class="w-32 h-32 object-cover rounded-xl border-4 border-white shadow-lg">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-xl"></div>
+          </div>
+        </div>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex flex-col sm:flex-row gap-3 mt-6 pt-4 border-t border-gray-200">
+      <button onclick="window.location.href='/track'" class="flex-1 bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white font-semibold py-2 px-4 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+        <i class="fas fa-search mr-2"></i>Track Another Repair
+      </button>
+      <button onclick="window.location.href='/contact'" class="flex-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-2 px-4 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+        <i class="fas fa-headset mr-2"></i>Contact Support
+      </button>
+    </div>
+  </div>
+</div>
+
+<% } else { %>
+<!-- Not Found -->
+<div class="max-w-4xl mx-auto mt-8 px-4 mb-12 fade-in-up" style="animation-delay: 0.4s;">
+  <div class="glass-morphism rounded-2xl shadow-2xl p-8 border border-white/20 text-center">
+    <div class="w-16 h-16 bg-gradient-to-br from-red-500 to-rose-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+      <i class="fas fa-exclamation-triangle text-2xl text-white"></i>
+    </div>
+    <h2 class="text-2xl font-bold text-gray-800 mb-4">Repair Not Found</h2>
+    <p class="text-gray-600 mb-6"><%= error_msg || 'No repair found with this Tracking ID. Please check your tracking ID and try again.' %></p>
+
+    <div class="space-y-3">
+      <button onclick="window.location.href='/track'" class="bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white font-semibold py-2 px-6 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+        <i class="fas fa-search mr-2"></i>Try Another Tracking ID
+      </button>
+      <p class="text-sm text-gray-500">Need help? <a href="/contact" class="text-indigo-600 hover:text-indigo-700 font-semibold">Contact our support team</a></p>
+    </div>
+  </div>
+</div>
+<% } %>
+
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+<script src="js/main.js"></script>
+
+<script>
+  // Enhanced functionality for result page
+  document.addEventListener('DOMContentLoaded', function() {
+    // Copy tracking ID functionality
+    const trackingIdElement = document.querySelector('.font-mono');
+    if (trackingIdElement) {
+      trackingIdElement.addEventListener('click', function() {
+        navigator.clipboard.writeText(this.textContent).then(() => {
+          showNotification('Tracking ID copied to clipboard!', 'success');
+        }).catch(() => {
+          showNotification('Failed to copy tracking ID', 'error');
+        });
+      });
+
+      trackingIdElement.style.cursor = 'pointer';
+      trackingIdElement.title = 'Click to copy tracking ID';
+    }
+
+    // Notification system
+    window.showNotification = function(message, type = 'info') {
+      const notification = document.createElement('div');
+      notification.className = `fixed top-4 right-4 px-4 py-3 rounded-xl shadow-xl z-50 transform translate-x-full transition-transform duration-300 ${
+        type === 'success' ? 'bg-green-500 text-white' :
+        type === 'error' ? 'bg-red-500 text-white' :
+        'bg-blue-500 text-white'
+      }`;
+      notification.innerHTML = `
+        <div class="flex items-center">
+          <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'} mr-2"></i>
+          <span class="text-sm">${message}</span>
+        </div>
+      `;
+
+      document.body.appendChild(notification);
+
+      // Animate in
+      setTimeout(() => {
+        notification.style.transform = 'translateX(0)';
+      }, 100);
+
+      // Remove after 4 seconds
+      setTimeout(() => {
+        notification.style.transform = 'translateX(full)';
+        setTimeout(() => {
+          notification.remove();
+        }, 300);
+      }, 4000);
+    };
+
+    // Add smooth scrolling for better UX
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+
+    // Status-based animations
+    const statusElements = document.querySelectorAll('[class*="status-"]');
+    statusElements.forEach((element, index) => {
+      setTimeout(() => {
+        element.style.transform = 'scale(1.05)';
+        setTimeout(() => {
+          element.style.transform = 'scale(1)';
+        }, 200);
+      }, index * 100);
+    });
+
+    // Add hover effects to information cards
+    document.querySelectorAll('.glass-morphism .bg-gradient-to-r').forEach(card => {
+      card.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-2px)';
+        this.style.boxShadow = '0 10px 25px rgba(0,0,0,0.1)';
+      });
+
+      card.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0)';
+        this.style.boxShadow = '';
+      });
+    });
+  });
+
+  // Print functionality
+  function printDetails() {
+    window.print();
+  }
+
+  // Share functionality
+  function shareTracking() {
+    const trackingId = document.querySelector('.font-mono')?.textContent;
+    if (trackingId && navigator.share) {
+      navigator.share({
+        title: 'Repair Tracking',
+        text: `Track my repair: ${trackingId}`,
+        url: window.location.href
+      });
+    } else {
+      // Fallback: copy to clipboard
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        showNotification('Tracking link copied to clipboard!', 'success');
+      });
+    }
+  }
+</script>
+
+<!-- Custom styles for result page -->
+<style>
+  .glass-morphism {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  /* Enhanced focus styles */
+  button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  }
+
+  /* Smooth transitions */
+  * {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  /* Print styles */
+  @media print {
+    .no-print {
+      display: none !important;
+    }
+    body {
+      background: white !important;
+    }
+  }
+
+  /* Break long words in tracking ID */
+  .break-all {
+    word-break: break-all;
+  }
+</style>
+
+</body>
+</html>

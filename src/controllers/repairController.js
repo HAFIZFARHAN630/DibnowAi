@@ -2,6 +2,7 @@ const User = require("../models/user");
 const Repair = require("../models/repair");
 const Category = require("../models/categories");
 const Brand = require("../models/brand");
+const mongoose = require("mongoose");
 
 exports.addProduct = async (req, res) => {
   try {
@@ -537,5 +538,60 @@ exports.done = async (req, res) => {
    } catch (error) {
      console.error("Database error:", error.message);
      return res.status(500).send("Database error");
+   }
+ };
+
+ // Public tracking methods (no authentication required)
+ exports.getPublicTrackingPage = async (req, res) => {
+   try {
+     res.render("track", {
+       title: "Track Your Repair",
+       error_msg: req.flash("error_msg"),
+       success_msg: req.flash("success_msg")
+     });
+   } catch (error) {
+     console.error("Error rendering public tracking page:", error.message);
+     res.status(500).render("track", {
+       title: "Track Your Repair",
+       error_msg: "Something went wrong. Please try again.",
+       success_msg: ""
+     });
+   }
+ };
+
+ exports.trackRepairById = async (req, res) => {
+   try {
+     const trackingId = req.params.trackingId;
+
+     // Validate ObjectId format
+     if (!mongoose.Types.ObjectId.isValid(trackingId)) {
+       req.flash("error_msg", "Invalid tracking ID format.");
+       return res.redirect("/track");
+     }
+
+     // Find repair by ID (tracking ID is the MongoDB ObjectId)
+     const repair = await Repair.findById(trackingId);
+
+     if (!repair) {
+       return res.render("trackResult", {
+         title: "Repair Not Found",
+         repair: null,
+         error_msg: "No repair found with this Tracking ID. Please check your tracking ID and try again.",
+         success_msg: ""
+       });
+     }
+
+     // Render result page with repair details
+     res.render("trackResult", {
+       title: "Repair Details",
+       repair: repair,
+       error_msg: "",
+       success_msg: ""
+     });
+
+   } catch (error) {
+     console.error("Error tracking repair:", error.message);
+     req.flash("error_msg", "Something went wrong while searching for your repair. Please try again.");
+     res.redirect("/track");
    }
  };
