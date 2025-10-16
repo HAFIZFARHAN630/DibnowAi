@@ -77,7 +77,7 @@
             <label class="text-sm font-semibold text-blue-700 uppercase tracking-wide">Tracking ID</label>
             <i class="fas fa-hashtag text-blue-500"></i>
           </div>
-          <p class="text-lg font-bold text-blue-800 font-mono break-all"><%= foundType === 'repair' ? (repair._id || repair.random_id) : ticket.ticketId %></p>
+          <p class="text-lg font-bold text-blue-800 font-mono break-all"><%= foundType === 'repair' ? (repair._id || repair.random_id || 'N/A') : (ticket.ticketId || 'N/A') %></p>
         </div>
 
         <% if (foundType === 'repair') { %>
@@ -126,7 +126,8 @@
         </div>
         <% } %>
 
-        <!-- Device Information -->
+        <!-- Device Information (Repair only) -->
+        <% if (foundType === 'repair') { %>
         <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-4 border border-purple-100">
           <div class="flex items-center mb-3">
             <i class="fas fa-mobile-alt text-purple-600 text-lg mr-2"></i>
@@ -143,6 +144,7 @@
             </div>
           </div>
         </div>
+        <% } %>
       </div>
 
       <!-- Right Column -->
@@ -253,7 +255,8 @@
           <p class="text-gray-700 leading-relaxed"><%= foundType === 'repair' ? (repair.gadgetProblem || 'N/A') : (ticket.description || 'N/A') %></p>
         </div>
 
-        <!-- Price & Image -->
+        <!-- Price & Image (Repair only) -->
+        <% if (foundType === 'repair') { %>
         <div class="grid grid-cols-2 gap-4">
           <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-4 border border-emerald-100 text-center">
             <div class="flex items-center justify-center mb-2">
@@ -287,6 +290,7 @@
             <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-xl"></div>
           </div>
         </div>
+        <% } %>
         <% } %>
       </div>
     </div>

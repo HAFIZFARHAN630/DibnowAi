@@ -551,6 +551,13 @@ exports.done = async (req, res) => {
  // Public tracking methods (no authentication required)
  exports.getPublicTrackingPage = async (req, res) => {
    try {
+     // If trackingId is provided as query parameter, redirect to the processing function
+     const trackingId = req.query.trackingId?.trim();
+     if (trackingId) {
+       console.log("Redirecting to track processing with ID:", trackingId);
+       return res.redirect(`/track/${trackingId}`);
+     }
+
      res.render("track", {
        title: "Track Your Repair",
        error_msg: req.flash("error_msg"),
@@ -568,7 +575,8 @@ exports.done = async (req, res) => {
 
  exports.trackRepairById = async (req, res) => {
    try {
-     const trackingId = req.params.trackingId?.trim();
+     // Check both URL parameter and query parameter for tracking ID
+     const trackingId = (req.params.trackingId || req.query.trackingId)?.trim();
 
      if (!trackingId) {
        req.flash("error_msg", "Please provide a tracking ID.");
@@ -647,6 +655,7 @@ exports.done = async (req, res) => {
          title: "Not Found",
          repair: null,
          ticket: null,
+         foundType: null,
          error_msg: `No repair or ticket found with Tracking ID: "${trackingId}".
 
 🔍 Troubleshooting Tips:
@@ -677,6 +686,13 @@ Your tracking ID should be either:
    } catch (error) {
      console.error("Error tracking repair/ticket:", error.message);
      req.flash("error_msg", "Something went wrong while searching. Please try again.");
-     res.redirect("/track");
+     res.render("trackResult", {
+       title: "Error",
+       repair: null,
+       ticket: null,
+       foundType: null,
+       error_msg: "Something went wrong while searching. Please try again.",
+       success_msg: ""
+     });
    }
  };

@@ -11,31 +11,9 @@
         z-index: 10;
     }
 
-    .footer-content {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 20px;
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        flex-wrap: wrap;
-        gap: 40px;
-    }
+   
 
-    .footer-section {
-        flex: 1;
-        min-width: 250px;
-        padding: 0 15px;
-    }
-
-    .footer-section:first-child {
-        padding-left: 0;
-    }
-
-    .footer-section:last-child {
-        padding-right: 0;
-    }
-
+   
     .footer-title {
         font-size: 18px;
         font-weight: 700;
@@ -45,68 +23,25 @@
         letter-spacing: 1px;
     }
 
-    .footer-links {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
+    
 
-    .footer-links li {
-        margin-bottom: 8px;
-    }
+    
 
-    .footer-links a {
-        color: #000000;
-        text-decoration: none;
-        font-size: 14px;
-        transition: all 0.3s ease;
-        opacity: 0.8;
-    }
-
-    .footer-links a:hover {
-        color: #000000;
-        opacity: 1;
-        text-decoration: underline;
-    }
-
-    .footer-social {
-        display: flex;
-        gap: 15px;
-        margin-top: 15px;
-    }
-
-    .footer-social a {
-        width: 40px;
-        height: 40px;
-        background: rgba(0, 0, 0, 0.1);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #000000;
-        font-size: 18px;
-        transition: all 0.3s ease;
-    }
-
-    .footer-social a:hover {
-        background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);
-        transform: translateY(-2px);
-        color: #ffffff;
-    }
+    
+  
 
     .footer-bottom {
         text-align: center;
-        padding-top: 25px;
-        border-top: 1px solid rgba(0, 0, 0, 0.1);
-        margin-top: 30px;
-        font-size: 13px;
+        padding-top: 15px;
+       font-weight: 600;
+        font-size: 15px;
         opacity: 0.8;
     }
 
     .footer-copyright {
         max-width: 1200px;
         margin: 0 auto;
-        padding: 0 20px;
+        padding: 0 15px;
     }
 
     /* Responsive Design */
@@ -115,15 +50,7 @@
             padding: 15px 0;
         }
 
-        .footer-content {
-            flex-direction: column;
-            text-align: center;
-            gap: 25px;
-        }
-
-        .footer-section {
-            min-width: auto;
-        }
+       
 
         .footer-title {
             font-size: 16px;
@@ -140,63 +67,20 @@
            
         }
 
-        .footer-content {
-            padding: 0 15px;
-            gap: 20px;
-             display: flex;
-            justify-content: center !important;
-            flex-direction: column;
-            align-items: center;
-        }
+       
 
         .footer-section {
             padding: 0 10px;
         }
 
-        .footer-title {
-            font-size: 14px;
-            margin-bottom: 10px;
-        }
+        
 
-        .footer-links a {
-            font-size: 13px;
-        }
-
-        .footer-social a {
-            width: 35px;
-            height: 35px;
-            font-size: 16px;
-        }
+        
     }
 
     /* Center all footer sections on very small screens (below 576px) */
     @media (max-width: 576px) {
-        .footer-content {
-            justify-content: center !important;
-            text-align: center;
-            max-width: 100%;
-            padding: 0 10px;
-        }
-
-        .footer-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-width: 267px;
-            max-width: 100%;
-            text-align: center;
-            margin-bottom: 15px;
-        }
-
-        .footer-social {
-            justify-content: center;
-        }
-
-        .footer-links {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+        
 
         .footer {
             max-width: 100%;
@@ -248,53 +132,20 @@
 </style>
 
 <footer class="footer">
-    <div class="footer-content">
-        <div class="footer-section">
-            <div class="footer-title">DibNow</div>
-            <p style="color: #000000; opacity: 0.8; font-size: 14px; line-height: 1.6;">
-                Your trusted partner for innovative solutions and exceptional service.
-            </p>
-        </div>
+   
+        
 
-        <div class="footer-section">
-            <div class="footer-title">Quick Links</div>
-            <ul class="footer-links">
-                <li><a href="/pricing">Pricing</a></li>
-                <li><a href="/contactUs">Contact</a></li>
-                <li><a href="/Help">Help</a></li>
-                <li><a href="/Setting">Settings</a></li>
-            </ul>
-        </div>
 
-        <div class="footer-section">
-            <div class="footer-title">Support</div>
-            <ul class="footer-links">
-                <li><a href="/Help">Documentation</a></li>
-                <li><a href="/contactUs">Get Help</a></li>
-                <li><a href="/Request">Request</a></li>
-                <li><a href="/tracking">Track</a></li>
-            </ul>
-        </div>
-
-        <div class="footer-section">
-            <div class="footer-title">Connect</div>
-            <div class="footer-social">
-                <a href="https://www.facebook.com/clicktaketechnologies" title="Facebook" target="_blank"><i class="fab fa-facebook-f"></i></a>
-                <a href="https://www.instagram.com/clicktaketech/" title="Instagram" target="_blank"><i class="fab fa-instagram"></i></a>
-                <a href="https://www.youtube.com/@clicktaketechnologies/featured" title="YouTube" target="_blank"><i class="fab fa-youtube"></i></a>
-                <a href="https://www.linkedin.com/company/click-take-technologies?originalSubdomain=pk" title="LinkedIn" target="_blank"><i class="fab fa-linkedin-in"></i></a>
-                <a href="https://www.tiktok.com/@clicktaketechnologiesuk" title="TikTok" target="_blank"><i class="fab fa-tiktok"></i></a>
-            </div>
-        </div>
-    </div>
 
     <div class="footer-bottom">
         <div class="footer-copyright">
             <p style="color: #000000 !important; margin: 0; opacity: 1;">
                 © <%= new Date().getFullYear() %>  <%- description %> |
-                <a href="/privacy" style="color: #000000; text-decoration: none; opacity: 0.8;">Privacy Policy</a> |
-                <a href="/terms" style="color: #000000; text-decoration: none; opacity: 0.8;">Terms of Service</a>
+                
             </p>
         </div>
     </div>
 </footer>
+
+
+

@@ -51,7 +51,7 @@
 <!-- Search Form -->
 <div class="max-w-4xl mx-auto -mt-8 px-4 relative z-10 fade-in-up" style="animation-delay: 0.4s;">
   <div class="glass-morphism rounded-2xl shadow-2xl p-6 border border-white/20">
-    <form action="/track/<%= typeof trackingId !== 'undefined' ? trackingId : '' %>" method="GET" class="space-y-4">
+    <form id="trackingForm" action="" method="GET" class="space-y-4">
       <div class="text-center mb-4">
         <h2 class="text-xl font-bold text-gray-800 mb-2">Enter Your Tracking ID</h2>
         <p class="text-gray-600 text-sm">Get real-time updates on your repair status</p>
@@ -156,7 +156,7 @@
     }
 
     // Form submission enhancement
-    const trackForm = document.querySelector('form');
+    const trackForm = document.getElementById('trackingForm');
     if (trackForm) {
       trackForm.addEventListener('submit', function(e) {
         const trackingId = document.getElementById('trackingId').value.trim();
@@ -166,6 +166,9 @@
           showNotification('Please enter a tracking ID', 'error');
           return false;
         }
+
+        // Set the form action to include the tracking ID as a query parameter
+        this.action = `/track?trackingId=${encodeURIComponent(trackingId)}`;
 
         // Show loading state
         const submitBtn = this.querySelector('button[type="submit"]');
