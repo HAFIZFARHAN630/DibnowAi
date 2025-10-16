@@ -54,17 +54,17 @@
   </div>
 </div>
 
-<% if (repair) { %>
-<!-- Repair Details Card -->
+<% if (repair || ticket) { %>
+<!-- Details Card -->
 <div class="max-w-6xl mx-auto mt-8 px-4 mb-12 fade-in-up" style="animation-delay: 0.4s;">
   <div class="glass-morphism rounded-2xl shadow-2xl p-6 border border-white/20">
     <!-- Header -->
     <div class="text-center mb-6">
       <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-        <i class="fas fa-wrench text-2xl text-white"></i>
+        <i class="fas fa-<%= foundType === 'repair' ? 'wrench' : 'ticket-alt' %> text-2xl text-white"></i>
       </div>
-      <h2 class="text-2xl font-bold text-gray-800 mb-2">📋 Repair Details</h2>
-      <p class="text-gray-600">Complete information about your repair request</p>
+      <h2 class="text-2xl font-bold text-gray-800 mb-2">📋 <%= foundType === 'repair' ? 'Repair Details' : 'Ticket Details' %></h2>
+      <p class="text-gray-600">Complete information about your <%= foundType === 'repair' ? 'repair request' : 'support ticket' %></p>
     </div>
 
     <!-- Tracking Information Grid -->
@@ -77,10 +77,11 @@
             <label class="text-sm font-semibold text-blue-700 uppercase tracking-wide">Tracking ID</label>
             <i class="fas fa-hashtag text-blue-500"></i>
           </div>
-          <p class="text-lg font-bold text-blue-800 font-mono break-all"><%= repair._id %></p>
+          <p class="text-lg font-bold text-blue-800 font-mono break-all"><%= foundType === 'repair' ? (repair._id || repair.random_id) : ticket.ticketId %></p>
         </div>
 
-        <!-- Customer Information -->
+        <% if (foundType === 'repair') { %>
+        <!-- Customer Information (Repair) -->
         <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 border border-green-100">
           <div class="flex items-center mb-3">
             <i class="fas fa-user-circle text-green-600 text-lg mr-2"></i>
@@ -101,6 +102,29 @@
             </div>
           </div>
         </div>
+        <% } else { %>
+        <!-- Ticket Information -->
+        <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 border border-green-100">
+          <div class="flex items-center mb-3">
+            <i class="fas fa-ticket-alt text-green-600 text-lg mr-2"></i>
+            <label class="text-sm font-semibold text-green-700 uppercase tracking-wide">Ticket Information</label>
+          </div>
+          <div class="space-y-2">
+            <div>
+              <p class="text-xs text-green-600 uppercase tracking-wide">Title</p>
+              <p class="text-base font-semibold text-green-800"><%= ticket.title || 'N/A' %></p>
+            </div>
+            <div>
+              <p class="text-xs text-green-600 uppercase tracking-wide">Category</p>
+              <p class="text-base font-semibold text-green-800"><%= ticket.category || 'N/A' %></p>
+            </div>
+            <div>
+              <p class="text-xs text-green-600 uppercase tracking-wide">Priority</p>
+              <p class="text-base font-semibold text-green-800"><%= ticket.priority || 'N/A' %></p>
+            </div>
+          </div>
+        </div>
+        <% } %>
 
         <!-- Device Information -->
         <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-4 border border-purple-100">
@@ -124,6 +148,7 @@
       <!-- Right Column -->
       <div class="space-y-4">
         <!-- Status -->
+        <% if (foundType === 'repair') { %>
         <div class="bg-gradient-to-r from-<%=
           repair.status === 'Completed' ? 'green' :
           repair.status === 'In Progress' ? 'amber' :
@@ -174,14 +199,58 @@
             <%= repair.status || 'Pending' %>
           </span>
         </div>
+        <% } else { %>
+        <div class="bg-gradient-to-r from-<%=
+          ticket.status === 'Closed' ? 'green' :
+          ticket.status === 'In Progress' ? 'amber' :
+          'red'
+        %>-50 to-<%=
+          ticket.status === 'Closed' ? 'emerald' :
+          ticket.status === 'In Progress' ? 'orange' :
+          'rose'
+        %>-50 rounded-xl p-4 border border-<%=
+          ticket.status === 'Closed' ? 'green' :
+          ticket.status === 'In Progress' ? 'amber' :
+          'red'
+        %>-100">
+          <div class="flex items-center justify-between mb-2">
+            <label class="text-sm font-semibold <%=
+              ticket.status === 'Closed' ? 'text-green-700' :
+              ticket.status === 'In Progress' ? 'text-amber-700' :
+              'text-red-700'
+            %> uppercase tracking-wide">Ticket Status</label>
+            <i class="fas fa-<%=
+              ticket.status === 'Closed' ? 'check-circle' :
+              ticket.status === 'In Progress' ? 'clock' :
+              'times-circle'
+            %> <%=
+              ticket.status === 'Closed' ? 'text-green-600' :
+              ticket.status === 'In Progress' ? 'text-amber-600' :
+              'text-red-600'
+            %>"></i>
+          </div>
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold <%=
+            ticket.status === 'Closed' ? 'status-completed' :
+            ticket.status === 'In Progress' ? 'status-progress' :
+            'status-pending'
+          %> text-white shadow-lg">
+            <i class="fas fa-<%=
+              ticket.status === 'Closed' ? 'check' :
+              ticket.status === 'In Progress' ? 'clock' :
+              'clock'
+            %> mr-2"></i>
+            <%= ticket.status || 'Open' %>
+          </span>
+        </div>
+        <% } %>
 
-        <!-- Problem Description -->
+        <!-- Description -->
         <div class="bg-gradient-to-r from-gray-50 to-slate-50 rounded-xl p-4 border border-gray-100">
           <div class="flex items-center justify-between mb-2">
-            <label class="text-sm font-semibold text-gray-700 uppercase tracking-wide">Problem Description</label>
+            <label class="text-sm font-semibold text-gray-700 uppercase tracking-wide"><%= foundType === 'repair' ? 'Problem Description' : 'Description' %></label>
             <i class="fas fa-exclamation-triangle text-gray-500"></i>
           </div>
-          <p class="text-gray-700 leading-relaxed"><%= repair.gadgetProblem || 'N/A' %></p>
+          <p class="text-gray-700 leading-relaxed"><%= foundType === 'repair' ? (repair.gadgetProblem || 'N/A') : (ticket.description || 'N/A') %></p>
         </div>
 
         <!-- Price & Image -->
@@ -225,7 +294,7 @@
     <!-- Action Buttons -->
     <div class="flex flex-col sm:flex-row gap-3 mt-6 pt-4 border-t border-gray-200">
       <button onclick="window.location.href='/track'" class="flex-1 bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white font-semibold py-2 px-4 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
-        <i class="fas fa-search mr-2"></i>Track Another Repair
+        <i class="fas fa-search mr-2"></i>Track Another <%= foundType === 'repair' ? 'Repair' : 'Ticket' %>
       </button>
       <button onclick="window.location.href='/contact'" class="flex-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-2 px-4 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
         <i class="fas fa-headset mr-2"></i>Contact Support
@@ -256,8 +325,8 @@
 
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
-<script src="js/main.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tempusdominus-bootstrap-4@5.39.0/build/js/tempusdominus-bootstrap-4.min.js"></script>
+<script src="/js/main.js"></script>
 
 <script>
   // Enhanced functionality for result page

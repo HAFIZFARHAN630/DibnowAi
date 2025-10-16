@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const Repair = require("../models/repair");
+const Ticket = require("../models/ticket");
 const Category = require("../models/categories");
 const Brand = require("../models/brand");
 const mongoose = require("mongoose");
@@ -86,23 +87,28 @@ exports.addProduct = async (req, res) => {
 
         const trackingId = newRepair._id.toString();
 
-    // Send email with tracking id (Gmail via nodemailer)
+    // Send email with tracking id (Brevo via API)
     try {
-      const nodemailer = require("nodemailer");
+      const SibApiV3Sdk = require('sib-api-v3-sdk');
 
-      const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-          user: process.env.EMAIL_USER, // set in env
-          pass: process.env.EMAIL_PASS, // app password recommended
+      // Configure Brevo API
+      const defaultClient = SibApiV3Sdk.ApiClient.instance;
+      const apiKey = defaultClient.authentications['api-key'];
+      apiKey.apiKey = process.env.BREVO_API_KEY;
+
+      const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+
+      const sendSmtpEmail = {
+        sender: {
+          name: process.env.EMAIL_NAME || "Dibnow Notifications",
+          email: process.env.EMAIL_FROM || "no-reply@dibnow.com"
         },
-      });
-
-      const mailOptions = {
-        from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
-        to: userEmail,
+        to: [{
+          email: userEmail,
+          name: fullName || "Customer"
+        }],
         subject: `Repair Registered — Tracking ID ${trackingId}`,
-        html: `
+        htmlContent: `
 <!doctype html>
 <html>
 <head>
@@ -171,7 +177,7 @@ exports.addProduct = async (req, res) => {
           </div>
         </div>
 
-        <a class="cta" href="${process.env.APP_URL || 'https://yourapp.com'}/track?trackingId=${trackingId}" target="_blank" rel="noopener">Track your repair</a>
+        <a class="cta" href="${process.env.APP_BASE_URL || 'https://apps.dibnow.com'}/track?trackingId=${trackingId}" target="_blank" rel="noopener">Track your repair</a>
 
         <div class="steps">
           <div class="step">
@@ -207,7 +213,7 @@ exports.addProduct = async (req, res) => {
       </div>
 
       <div class="footer">
-        <div>Need to change anything? Visit <a href="${process.env.APP_URL || 'https://yourapp.com'}" target="_blank" style="color:#0b1220; text-decoration:none;">your dashboard</a> and update the request.</div>
+        <div>Need to change anything? Visit <a href="${process.env.APP_BASE_URL || 'https://apps.dibnow.com'}" target="_blank" style="color:#0b1220; text-decoration:none;">your dashboard</a> and update the request.</div>
         <div style="margin-top:8px;">This is an automated message — do not share the tracking id publicly.</div>
       </div>
     </div>
@@ -218,10 +224,11 @@ exports.addProduct = async (req, res) => {
 
       };
 
-      await transporter.sendMail(mailOptions);
-      console.log("Tracking email sent to:", userEmail, " TrackingId:", trackingId);
+      await apiInstance.sendTransacEmail(sendSmtpEmail);
+      console.log("✅ Tracking email sent successfully via Brevo to:", userEmail, " TrackingId:", trackingId);
     } catch (emailErr) {
-      console.error("Failed to send tracking email:", emailErr);
+      console.error("❌ Failed to send tracking email via Brevo:", emailErr.message);
+      console.error("🔧 Make sure your .env file has: BREVO_API_KEY, EMAIL_FROM, EMAIL_NAME");
       // don't block user flow if email fails
     }
 
@@ -561,37 +568,115 @@ exports.done = async (req, res) => {
 
  exports.trackRepairById = async (req, res) => {
    try {
-     const trackingId = req.params.trackingId;
+     const trackingId = req.params.trackingId?.trim();
 
-     // Validate ObjectId format
-     if (!mongoose.Types.ObjectId.isValid(trackingId)) {
-       req.flash("error_msg", "Invalid tracking ID format.");
+     if (!trackingId) {
+       req.flash("error_msg", "Please provide a tracking ID.");
        return res.redirect("/track");
      }
 
-     // Find repair by ID (tracking ID is the MongoDB ObjectId)
-     const repair = await Repair.findById(trackingId);
+     console.log("Searching for tracking ID:", trackingId);
 
-     if (!repair) {
+     // First try to find REPAIR by MongoDB ObjectId (direct _id match)
+     let repair = null;
+     let ticket = null;
+     let foundType = null;
+
+     console.log("🔍 Searching for tracking ID:", trackingId);
+     console.log("🔍 Is valid ObjectId:", mongoose.Types.ObjectId.isValid(trackingId));
+
+     if (mongoose.Types.ObjectId.isValid(trackingId)) {
+       repair = await Repair.findById(trackingId);
+       if (repair) {
+         foundType = "repair";
+         console.log("✅ Found repair by ObjectId:", repair._id);
+       }
+     }
+
+     // If not found as repair ObjectId, try to find by random_id field in repairs
+     if (!repair && trackingId.length > 0) {
+       repair = await Repair.findOne({ random_id: trackingId });
+       if (repair) {
+         foundType = "repair";
+         console.log("✅ Found repair by random_id:", repair._id);
+       } else {
+         console.log("❌ No repair found with random_id:", trackingId);
+       }
+     }
+
+     // If still not found as repair, try to find TICKET by ticketId
+     if (!repair && trackingId.length > 0) {
+       console.log("🔍 Searching for ticket with ID:", trackingId);
+       // Try exact match first
+       ticket = await Ticket.findOne({ ticketId: trackingId });
+       if (ticket) {
+         foundType = "ticket";
+         console.log("✅ Found ticket by ticketId:", ticket._id);
+       } else {
+         // Try case-insensitive match for ticketId
+         ticket = await Ticket.findOne({
+           ticketId: { $regex: new RegExp(`^${trackingId}$`, 'i') }
+         });
+         if (ticket) {
+           foundType = "ticket";
+           console.log("✅ Found ticket by case-insensitive ticketId:", ticket._id);
+         } else {
+           console.log("❌ No ticket found with ticketId:", trackingId);
+         }
+       }
+     }
+
+     // Debug: Show recent repairs and tickets for troubleshooting
+     if (!repair && !ticket) {
+       console.log("🔍 DEBUG: Checking recent records...");
+       const recentRepairs = await Repair.find({}).sort({ _id: -1 }).limit(3);
+       const recentTickets = await Ticket.find({}).sort({ _id: -1 }).limit(3);
+       console.log("Recent repairs:", recentRepairs.map(r => ({ id: r._id, random_id: r.random_id })));
+       console.log("Recent tickets:", recentTickets.map(t => ({ id: t._id, ticketId: t.ticketId })));
+     }
+
+     if (!repair && !ticket) {
+       console.log("❌ No repair or ticket found for tracking ID:", trackingId);
+
+       // Check if this looks like a repair ObjectId format
+       if (mongoose.Types.ObjectId.isValid(trackingId)) {
+         console.log("💡 Valid ObjectId format but no repair found. This might be a different record type.");
+       }
+
        return res.render("trackResult", {
-         title: "Repair Not Found",
+         title: "Not Found",
          repair: null,
-         error_msg: "No repair found with this Tracking ID. Please check your tracking ID and try again.",
+         ticket: null,
+         error_msg: `No repair or ticket found with Tracking ID: "${trackingId}".
+
+🔍 Troubleshooting Tips:
+• Make sure you're using the PUBLIC tracking system at /track (not /tracking)
+• Check that the ID is exactly as provided in your email
+• Try copying and pasting the ID directly from your email
+• Contact support if you continue having issues
+
+Your tracking ID should be either:
+• A 24-character MongoDB ID (e.g., 650a7b8c9f1e2d3a4b5c6d7e)
+• A custom ticket ID (e.g., TCK-20251016-152646-0TVS)`,
          success_msg: ""
        });
      }
 
-     // Render result page with repair details
+     console.log(`${foundType} found successfully`);
+
+     // Render result page with repair or ticket details
      res.render("trackResult", {
-       title: "Repair Details",
+       title: foundType === "repair" ? "Repair Details" : "Ticket Details",
        repair: repair,
+       ticket: ticket,
+       foundType: foundType,
        error_msg: "",
        success_msg: ""
      });
 
    } catch (error) {
-     console.error("Error tracking repair:", error.message);
-     req.flash("error_msg", "Something went wrong while searching for your repair. Please try again.");
+     console.error("Error tracking repair/ticket:", error.message);
+     req.flash("error_msg", "Something went wrong while searching. Please try again.");
      res.redirect("/track");
    }
  };
