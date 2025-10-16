@@ -38,18 +38,24 @@ exports.allusers = async (req, res) => {
       });
     }
 
-    // Format data for display
-    const users = manualPaymentRequests.map(req => ({
-      id: req.user._id,
-      first_name: req.user.first_name,
-      last_name: req.user.last_name,
-      email: req.user.email,
-      phone_number: req.user.phone_number,
-      transfer_id: req.user.transfer_id || 'N/A',
-      amount: req.amount,
-      plan_name: req.planName,
-      planRequestId: req._id
-    }));
+    // Format data for display - convert GBP to PKR for admin view
+    const users = manualPaymentRequests.map(req => {
+      const baseAmount = parseFloat(req.amount) || 0;
+      const convertedAmount = baseAmount * 397.1863; // Convert to PKR
+
+      return {
+        id: req.user._id,
+        first_name: req.user.first_name,
+        last_name: req.user.last_name,
+        email: req.user.email,
+        phone_number: req.user.phone_number,
+        transfer_id: req.user.transfer_id || 'N/A',
+        amount: baseAmount, // Keep base amount for calculations
+        displayAmount: convertedAmount.toFixed(2), // PKR amount for display
+        plan_name: req.planName,
+        planRequestId: req._id
+      };
+    });
 
     // Get notification data for admin
     let notifications = [];

@@ -74,16 +74,20 @@ function computeSignature(merchantId, basketId, amount, currency, securedKey) {
  * Initiate PayFast payment - Following Official PayFast OAuth2 Workflow
  */
 exports.initiatePayment = async (req, res) => {
-  try {
-    const { plan, amount } = req.body;
-    const userId = req.session.userId;
+   try {
+     const { plan, amount } = req.body;
+     const userId = req.session.userId;
 
-    if (!plan || !amount || !userId) {
-      return res.status(400).json({
-        success: false,
-        message: "Plan, amount, and user session required"
-      });
-    }
+     console.log('🚀 PayFast initiatePayment called with:', { plan, amount, userId });
+     console.log('📋 Full request body:', JSON.stringify(req.body, null, 2));
+
+     if (!plan || !amount || !userId) {
+       console.error('❌ Missing required fields:', { plan: !!plan, amount: !!amount, userId: !!userId });
+       return res.status(400).json({
+         success: false,
+         message: "Plan, amount, and user session required"
+       });
+     }
 
     const user = await User.findById(userId).select('first_name last_name email phone_number');
     if (!user) {
@@ -99,17 +103,34 @@ exports.initiatePayment = async (req, res) => {
     }
     
     const basketId = `ITEM-${Date.now()}`;
-    const pkrAmount = parseFloat(amount).toFixed(2);
-    
+    const eurAmount = parseFloat(amount).toFixed(2);
+    const { convertToGPA } = require("../config/currencyUtils");
+    const pkrAmount = convertToGPA(eurAmount).toFixed(2);
+
+    console.log('💰 Amount validation:', {
+      originalAmount: amount,
+      eurAmount: eurAmount,
+      pkrAmount: pkrAmount,
+      conversionRate: 1.5,
+      isNaN: isNaN(pkrAmount),
+      isLessThanOrEqualToZero: parseFloat(pkrAmount) <= 0
+    });
+
     // Validate amount
     if (isNaN(pkrAmount) || parseFloat(pkrAmount) <= 0) {
+      console.error('❌ Amount validation failed:', {
+        amount,
+        pkrAmount,
+        isNaN: isNaN(pkrAmount),
+        parseFloatResult: parseFloat(pkrAmount)
+      });
       throw new Error('Invalid payment amount');
     }
     
     const orderDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
     // Get access token from PayFast
-    console.log('🔑 Requesting PayFast token:', { basketId, pkrAmount, merchantId: process.env.PAYFAST_MERCHANT_ID });
+    console.log('🔑 Requesting PayFast token:', { basketId, eurAmount, pkrAmount, merchantId: process.env.PAYFAST_MERCHANT_ID });
     const token = await getAccessToken(basketId, pkrAmount);
     console.log('✅ Token received, length:', token.length);
 
@@ -121,7 +142,7 @@ exports.initiatePayment = async (req, res) => {
     const payment = new Payments({
       user: userId,
       plan,
-      amount: parseFloat(amount),
+      amount: parseFloat(eurAmount), // Store EUR amount in database
       gateway: 'payfast',
       status: 'pending',
       transaction_id: basketId,
@@ -134,15 +155,15 @@ exports.initiatePayment = async (req, res) => {
     await Transaction.create({
       user: userId,
       type: 'plan_purchase',
-      amount: parseFloat(amount),
+      amount: parseFloat(eurAmount), // Store EUR amount in transaction
       status: 'pending',
       gateway: 'payfast',
       reference: basketId,
-      description: `${plan} plan purchase via PayFast (Pending)`
+      description: `${plan} plan purchase via PayFast (Pending) - €${eurAmount} (PKR ${pkrAmount})`
     });
     console.log(`✅ Pending transaction created for basket ${basketId}`);
 
-    console.log('PayFast: Initiating payment', { basketId, pkrAmount, tokenLength: token.length });
+    console.log('PayFast: Initiating payment', { basketId, eurAmount, pkrAmount, tokenLength: token.length });
 
     // Generate professional HTML form matching addteam.ejs styling
     const html = `<!DOCTYPE html>
@@ -313,8 +334,8 @@ exports.initiatePayment = async (req, res) => {
         <span class="info-value">${plan}</span>
       </div>
       <div class="info-row">
-        <span class="info-label"><i class="fas fa-money-bill-wave me-2"></i>Amount (PKR):</span>
-        <span class="info-value">₨ ${pkrAmount}</span>
+        <span class="info-label"><i class="fas fa-money-bill-wave me-2"></i>Amount (EUR):</span>
+        <span class="info-value">€ ${eurAmount}</span>
       </div>
       <div class="info-row">
         <span class="info-label"><i class="fas fa-receipt me-2"></i>Transaction ID:</span>
@@ -359,7 +380,7 @@ exports.initiatePayment = async (req, res) => {
     <script>
       console.log('✅ PayFast payment form loaded');
       console.log('📋 Transaction ID: ${basketId}');
-      console.log('💰 Amount: ₨${pkrAmount} PKR');
+      console.log('💰 Amount: €${eurAmount} EUR (PKR ${pkrAmount})');
       
       setTimeout(() => {
         console.log('🚀 Auto-submitting form to PayFast...');

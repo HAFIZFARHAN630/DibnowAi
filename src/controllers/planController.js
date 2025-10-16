@@ -43,34 +43,49 @@ exports.createPlanPage = async (req,res) => {
  }
 
 exports.postPlan = async (req, res) => {
-  try {
-    console.log('Received plan data:', req.body);
+   try {
+     console.log('Received plan data:', req.body);
 
-    const {
-      plan_name,
-      plan_price,
-      plan_limit,
-      repairCustomer,
-      inStock,
-      inventory,
-      sportTicket,
-      teams
-    } = req.body;
+     const {
+       plan_name,
+       plan_price,
+       plan_limit,
+       repairCustomer,
+       inStock,
+       inventory,
+       sportTicket,
+       teams
+     } = req.body;
 
-    const plan = new planModel({
-      plan_name: plan_name || '',
-      plan_price: plan_price || '',
-      plan_limit: plan_limit || '',
-      repairCustomer: repairCustomer !== undefined ? String(repairCustomer) : '',
-      inStock: inStock !== undefined ? String(inStock) : '',
-      inventory: inventory !== undefined ? String(inventory) : '',
-      teams: teams !== undefined ? String(teams) : '',
-      sportTicket: req.body.sportTicket ? 'true' : 'false',
+     // Store the base GBP price (no conversion needed for plan storage)
+     const basePrice = parseFloat(plan_price) || 0;
+     console.log(`Storing base GBP price: ${basePrice}`);
+
+     const plan = new planModel({
+       plan_name: plan_name || '',
+       plan_price: basePrice,
+       plan_limit: plan_limit || '',
+       repairCustomer: repairCustomer !== undefined ? String(repairCustomer) : '',
+       inStock: inStock !== undefined ? String(inStock) : '',
+       inventory: inventory !== undefined ? String(inventory) : '',
+       teams: teams !== undefined ? String(teams) : '',
+       sportTicket: req.body.sportTicket ? 'true' : 'false',
+     });
+
+    console.log('📋 Plan object before saving:', {
+      plan_name: plan.plan_name,
+      plan_price: plan.plan_price,
+      plan_price_type: typeof plan.plan_price
     });
 
     const saved = await plan.save();
 
-    console.log('Saved plan document:', saved);
+    console.log('✅ Saved plan document:', {
+      id: saved._id,
+      plan_name: saved.plan_name,
+      plan_price: saved.plan_price,
+      plan_price_type: typeof saved.plan_price
+    });
 
     // Notify all logged-in users about the new plan
     if (req.app.locals.notificationService) {
@@ -123,20 +138,24 @@ exports.editPlan = async (req, res) => {
 };
 
 exports.updatePlan = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { plan_name, plan_price, plan_limit, repairCustomer, inStock, inventory, teams, sportTicket } = req.body;
-    
-    await planModel.findByIdAndUpdate(id, {
-      plan_name,
-      plan_price,
-      plan_limit,
-      repairCustomer: repairCustomer || '',
-      inStock: inStock || '',
-      inventory: inventory || '',
-      teams: teams || '',
-      sportTicket: sportTicket === 'true' ? 'true' : 'false'
-    });
+   try {
+     const { id } = req.params;
+     const { plan_name, plan_price, plan_limit, repairCustomer, inStock, inventory, teams, sportTicket } = req.body;
+
+     // Store the base GBP price (no conversion needed for plan storage)
+     const basePrice = parseFloat(plan_price) || 0;
+     console.log(`Updating plan: Storing base GBP price ${basePrice}`);
+
+     await planModel.findByIdAndUpdate(id, {
+       plan_name,
+       plan_price: basePrice,
+       plan_limit,
+       repairCustomer: repairCustomer || '',
+       inStock: inStock || '',
+       inventory: inventory || '',
+       teams: teams || '',
+       sportTicket: sportTicket === 'true' ? 'true' : 'false'
+     });
     
     res.redirect('/create-plan');
   } catch (error) {

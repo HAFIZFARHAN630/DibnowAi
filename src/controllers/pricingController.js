@@ -83,7 +83,14 @@ exports.allUsers = [
         }
       }
 
+      console.log('🏠 Rendering pricing page - fetching plans from database...');
       const plans = await planModel.find()
+
+      console.log(`📋 Rendering pricing page with ${plans.length} plans:`);
+      plans.forEach(plan => {
+        console.log(`  - ${plan.plan_name}: ${plan.plan_price} (type: ${typeof plan.plan_price})`);
+      });
+
       res.render("pricing/pricing", {
         plans,
         profileImagePath,
@@ -138,32 +145,87 @@ exports.addSubscription = [
       return res.redirect("/pricing");
     }
   
-    // Define plan prices - GBP for Stripe/PayPal, PKR for PayFast/Manual
-    const planPricesGBP = {
-      FREE_TRIAL: "0.00",
-      BASIC: "20.88",
-      STANDARD: "35.88",
-      PREMIUM: "55.88",
-    };
-    
-    const planPricesPKR = {
-      FREE_TRIAL: "0.00",
-      BASIC: "10.00",
-      STANDARD: "30.00",
-      PREMIUM: "50.00",
-    };
-    
-    // Use appropriate prices based on payment method
-    const planPrices = (paymentMethod === 'payfast' || paymentMethod === 'manual') 
-      ? planPricesPKR 
-      : planPricesGBP;
+    // Get plan price from database for the selected plan
+    console.log(`🔍 Looking for plan: "${plan}" in database...`);
 
-    // Validate if the selected plan is valid
-    if (!planPrices[plan]) {
-      return res.status(400).send("Invalid plan selected.");
+    // Try multiple approaches to find the plan
+    let selectedPlan;
+
+    // 1. Try exact match first (case-sensitive)
+    selectedPlan = await planModel.findOne({ plan_name: plan });
+
+    // 2. If not found, try case-insensitive search
+    if (!selectedPlan) {
+      console.log(`🔄 Plan not found with exact match, trying case-insensitive...`);
+      selectedPlan = await planModel.findOne({
+        plan_name: { $regex: new RegExp(`^${plan}$`, 'i') }
+      });
     }
 
-    const expectedAmount = parseFloat(planPrices[plan]);
+    // 3. If still not found, try partial match (contains)
+    if (!selectedPlan) {
+      console.log(`🔄 Plan not found with case-insensitive, trying partial match...`);
+      selectedPlan = await planModel.findOne({
+        plan_name: { $regex: plan, $options: 'i' }
+      });
+    }
+
+    // 4. If still not found, try uppercase match
+    if (!selectedPlan) {
+      console.log(`🔄 Plan not found with partial match, trying uppercase...`);
+      selectedPlan = await planModel.findOne({
+        plan_name: plan.toUpperCase()
+      });
+    }
+
+    if (!selectedPlan) {
+      console.error(`❌ Plan not found in database: "${plan}"`);
+      console.log(`📋 Available plans in database:`);
+      const allPlans = await planModel.find({}, 'plan_name plan_price');
+      allPlans.forEach(p => console.log(`  - ${p.plan_name}: ${p.plan_price}`));
+      return res.status(400).json({
+        success: false,
+        message: `Plan "${plan}" not found. Please contact administrator.`
+      });
+    }
+
+    console.log(`📋 Raw plan data from database:`, {
+      plan_name: selectedPlan.plan_name,
+      plan_price: selectedPlan.plan_price,
+      plan_price_type: typeof selectedPlan.plan_price,
+      plan_price_length: selectedPlan.plan_price ? selectedPlan.plan_price.length : 'null',
+      plan_limit: selectedPlan.plan_limit
+    });
+
+    const expectedAmount = parseFloat(selectedPlan.plan_price) || 0;
+    console.log(`✅ Found plan: ${plan}`);
+    console.log(`📋 Plan processing (GPA):`, {
+      raw_plan_price: selectedPlan.plan_price,
+      parseFloat_result: parseFloat(selectedPlan.plan_price),
+      expectedAmount: expectedAmount,
+      isNaN: isNaN(expectedAmount)
+    });
+
+    if (expectedAmount === 0) {
+      console.error(`❌ Plan ${plan} has zero price in database`);
+      console.error(`📋 Plan data:`, {
+        plan_name: selectedPlan.plan_name,
+        plan_price: selectedPlan.plan_price,
+        plan_price_type: typeof selectedPlan.plan_price,
+        plan_price_length: selectedPlan.plan_price ? selectedPlan.plan_price.length : 'null/undefined'
+      });
+
+      // Check if this is a data issue that can be fixed
+      if (selectedPlan.plan_price === "0" || selectedPlan.plan_price === "" || !selectedPlan.plan_price) {
+        console.error(`🚨 Plan has invalid price field. This might need manual database fix.`);
+      }
+
+      return res.status(400).json({
+        success: false,
+        message: `Plan "${plan}" has invalid price (${selectedPlan.plan_price}). Please contact administrator.`
+      });
+    }
+
     const submittedAmount = parseFloat(amount);
 
     // Validate supported payment methods
@@ -180,8 +242,8 @@ exports.addSubscription = [
       
       // Auto-fill amount if not provided
       if (!amount || amount === '') {
-        amount = planPrices[plan];
-        console.log(`✅ Auto-filled amount for ${plan}: ${amount}`);
+        amount = expectedAmount; // Use GPA price from database
+        console.log(`✅ Auto-filled amount for ${plan}: ${amount} (GPA)`);
       }
 
       // Validate amount is not less than plan price
@@ -312,14 +374,26 @@ exports.addSubscription = [
         console.log("Initializing Stripe with key length:", secretKey.length);
         const stripeInstance = new Stripe(secretKey);
 
+        // Convert GBP amount to PKR for Stripe using the rate that includes 4% fee
+        // Stripe expects amounts in the smallest currency unit (paisa for PKR)
+        const gbpAmount = parseFloat(expectedAmount);
+        const conversionRate = 397.1863;
+        const pkrAmount = gbpAmount * conversionRate; // Amount in PKR
+        const stripeAmount = Math.round(pkrAmount * 100); // Convert to paisa (smallest unit)
+
+        console.log(`💰 Stripe conversion: £${gbpAmount} → PKR ${pkrAmount.toFixed(2)} → Stripe Amount: ${stripeAmount} paisa`);
+
         const session = await stripeInstance.checkout.sessions.create({
           payment_method_types: ["card"],
           line_items: [
             {
               price_data: {
-                currency: "gbp",
-                product_data: { name: plan },
-                unit_amount: Math.round(parseFloat(planPrices[plan]) * 100),
+                currency: "pkr",
+                product_data: {
+                  name: `${plan} Plan`,
+                  description: `£${gbpAmount.toFixed(2)} GBP / PKR ${pkrAmount.toFixed(2)} PKR`
+                },
+                unit_amount: stripeAmount,
               },
               quantity: 1,
             },
@@ -349,15 +423,21 @@ exports.addSubscription = [
               item_list: {
                 items: [
                   {
-                    name: plan,
+                    name: `${plan} Plan - £${parseFloat(expectedAmount).toFixed(2)} GBP`,
                     sku: plan,
-                    price: planPrices[plan],
-                    currency: "GBP",
+                    price: (parseFloat(expectedAmount) * 397.1863).toFixed(2),
+                    currency: "PKR",
                     quantity: 1,
                   },
                 ],
               },
-              amount: { currency: "GBP", total: planPrices[plan] },
+              amount: {
+                currency: "PKR",
+                total: (parseFloat(expectedAmount) * 397.1863).toFixed(2),
+                details: {
+                  subtotal: (parseFloat(expectedAmount) * 397.1863).toFixed(2),
+                }
+              },
               description: `Payment for the ${plan} plan.`,
             },
           ],
@@ -383,8 +463,9 @@ exports.addSubscription = [
         });
       } else if (paymentMethod === 'payfast') {
         // Use PayFast controller
-        req.body.amount = planPrices[plan];
+        req.body.amount = expectedAmount; // Use GPA price from database
         req.body.plan = plan;
+        console.log(`PayFast payment: Plan ${plan}, GPA Amount: ${expectedAmount}`);
         return payfastController.initiatePayment(req, res);
       } else if (paymentMethod === 'wallet') {
         try {
@@ -502,13 +583,10 @@ exports.paymentSuccess = [
       const expiryDate = new Date(startDate);
       expiryDate.setDate(expiryDate.getDate() + 30); // 30 days expiry
 
-      const planPrices = {
-        BASIC: 20.88,
-        STANDARD: 35.88,
-        PREMIUM: 55.88,
-      };
-
-      const amount = planPrices[plan] || 0;
+      // Get plan price from database for the selected plan
+      const selectedPlanData = await planModel.findOne({ plan_name: plan });
+      const amount = selectedPlanData ? parseFloat(selectedPlanData.plan_price) || 0 : 0;
+      console.log(`Payment success: Plan ${plan}, GPA Amount: ${amount}`);
 
       // Check if payment method is online (Stripe, PayPal, PayFast)
       const isOnlinePayment = ['stripe', 'paypal', 'payfast'].includes(gateway);
@@ -605,26 +683,18 @@ exports.paymentSuccess = [
 ];
 
 // Function to subscribe and update plan limits
-async function subscribePlan(userId, planType) {
-  try {
-    let planLimit;
+ async function subscribePlan(userId, planType) {
+   try {
+     // Get plan limits from database for the selected plan
+     const selectedPlan = await planModel.findOne({ plan_name: planType });
 
-    // Determine the plan limit based on the selected plan
-    switch (planType) {
-      case "BASIC":
-        planLimit = 300;
-        break;
-      case "STANDARD":
-        planLimit = 500;
-        break;
-      case "PREMIUM":
-        planLimit = 1000;
-        break;
-      case "FREE_TRIAL":
-      default:
-        planLimit = 30;
-        break;
-    }
+     if (!selectedPlan) {
+       console.log("Plan not found in database");
+       return;
+     }
+
+     // Use plan_limit from database, fallback to repairCustomer if not set
+     let planLimit = parseInt(selectedPlan.plan_limit) || parseInt(selectedPlan.repairCustomer) || 30;
 
     // Retrieve the current plan limit from the database
     const user = await User.findById(userId).select("plan_limit");
@@ -847,51 +917,76 @@ exports.freeTrial = [
   },
 ];
 
-// Get plan prices from backend
+// Get plan prices from backend - now fetches from database
 exports.getPlanPrices = async (req, res) => {
   try {
-    // const planPrices = {
-    //   FREE_TRIAL: "0.00",
-    //   BASIC: "20.88",
-    //   STANDARD: "35.88",
-    //   PREMIUM: "55.88",
-    // };
-    const planPrices = {
-  FREE_TRIAL: "0.00",
-  BASIC: "10.00",      // test price
-  STANDARD: "30.00",   // test price
-  PREMIUM: "50.00",    // test price
-};
+    console.log('🔍 GET /plan-prices called - fetching plans from database...');
 
-    // Add PKR conversions (1 GBP = 397.1863 PKR with 4% fee)
-    // const gbpToPkrRate = 397.1863;
-    const gbpToPkrRate = 1; 
-    const planPricesPkr = {};
+    // Fetch current plan prices from database
+    let plans;
+    try {
+      plans = await planModel.find({}, 'plan_name plan_price');
+      console.log(`📋 Found ${plans.length} plans in database:`);
+      plans.forEach(plan => {
+        console.log(`  - ${plan.plan_name}: ${plan.plan_price} (type: ${typeof plan.plan_price})`);
+      });
+    } catch (dbError) {
+      console.error('❌ Database error fetching plans:', dbError.message);
+      return res.json({
+        success: false,
+        message: "Database error: " + dbError.message
+      });
+    }
 
-    Object.keys(planPrices).forEach(plan => {
-      const gbpAmount = parseFloat(planPrices[plan]);
-      const pkrAmount = gbpAmount * gbpToPkrRate;
-      planPricesPkr[plan] = pkrAmount.toFixed(2);
-    });
+    if (!plans || plans.length === 0) {
+      console.error('❌ No plans found in database');
+      return res.json({
+        success: false,
+        message: "No plans available"
+      });
+    }
 
-    res.json({
-      success: true,
-      planPrices: planPrices,
-      planPricesPkr: planPricesPkr,
-      conversionRate: {
-        gbp: 1,
-        pkr: gbpToPkrRate,
-        note: "Includes 4% conversion fee"
-      }
-    });
-  } catch (error) {
-    console.error("Error fetching plan prices:", error.message);
-    res.json({
-      success: false,
-      message: "Error fetching plan prices"
-    });
-  }
-};
+     const planPrices = {};
+     const planPricesPkr = {};
+
+     // Convert to expected format for frontend (GPA only)
+     plans.forEach(plan => {
+       const originalPlanName = plan.plan_name;
+       const planNameUpper = originalPlanName?.toUpperCase() || 'UNKNOWN';
+       const planNameOriginal = originalPlanName; // Keep original case for display
+       const gpaPrice = Number(plan.plan_price) || 0;
+
+       console.log(`📋 Processing plan for frontend: ${planNameOriginal}, GPA Price: ${gpaPrice}`);
+
+       // Store GPA amounts for both original case and uppercase for compatibility
+       planPrices[planNameOriginal] = gpaPrice.toFixed(2); // For original case (e.g., "Premium")
+       planPrices[planNameUpper] = gpaPrice.toFixed(2);     // For uppercase (e.g., "PREMIUM")
+
+       // Keep GPA amounts in "PKR" field for frontend compatibility (but it's actually GPA)
+       planPricesPkr[planNameOriginal] = gpaPrice.toFixed(2);
+       planPricesPkr[planNameUpper] = gpaPrice.toFixed(2);
+     });
+
+     console.log(`📋 Final GPA plan prices for frontend (Euro display):`, { planPrices, planPricesPkr });
+
+     res.json({
+       success: true,
+       planPrices: planPrices,
+       planPricesPkr: planPricesPkr,
+       conversionRate: {
+         gbp: 1,
+         pkr: 1,
+         note: "Prices from database"
+       }
+     });
+   } catch (error) {
+     console.error("Error fetching plan prices:", error.message);
+     res.json({
+       success: false,
+       message: "Error fetching plan prices"
+     });
+   }
+ };
 
 // Backend route to handle the subscription
 exports.handleSubscription = async (req, res) => {
@@ -953,21 +1048,19 @@ exports.insertTransfer = async (req, res) => {
     const plan = pendingPayment ? pendingPayment.plan : 'BASIC'; // default if no pending
     const paymentMethod = pendingPayment ? pendingPayment.paymentMethod : 'bank'; // default to bank
 
-    // Define plan prices for validation - TEMPORARY PKR FOR TESTING
-    const planPrices = {
-      FREE_TRIAL: 0.00,
-      BASIC: 10.00,
-      STANDARD: 30.00,
-      PREMIUM: 50.00,
-    };
+    // Plan prices are now handled dynamically from admin-created plans
+    // This function validates payments for existing plan selections
 
-    const expectedAmount = planPrices[plan];
+    // Get plan price from database for validation
+    const selectedPlanData = await planModel.findOne({ plan_name: plan });
+    const expectedAmount = selectedPlanData ? parseFloat(selectedPlanData.plan_price) || 0 : 0;
+    console.log(`Transfer validation: Plan ${plan}, GPA Price: €${expectedAmount}`);
     const submittedAmount = parseFloat(amount);
 
     // Validate amount is not less than plan price
     if (submittedAmount < expectedAmount) {
       req.flash("error_msg",
-        `Amount too low! ${paymentMethod.toUpperCase()} plan requires £${expectedAmount} but you entered £${submittedAmount}. Please enter the correct amount or contact admin if you have a discount.`
+        `Amount too low! ${paymentMethod.toUpperCase()} plan requires €${expectedAmount} but you entered €${submittedAmount}. Please enter the correct amount or contact admin if you have a discount.`
       );
       return res.redirect("/pricing");
     }

@@ -460,70 +460,8 @@
               </div>
             </div>    
             
-            <!-- Pricing Plans -->
-<div class="card-container flex flex-wrap">
-  <!-- Free Trial Card -->
-  <div class="card free-trial">
-    <div class="title">FREE TRIAL</div>
-    <div class="price-circle">£0</div>
-    <div class="price"><small>PER MONTH</small></div>
-    <ul class="features">
-      <li>✔ 30 Repair Customer</li>
-      <li>✔ 30 In Stock</li>
-      <li>✔ 30 Inventory</li>
-      <li>✔ Sport Ticket</li>
-      <li>✔ 2 Teams</li>
-    </ul>
-    <a href="#" class="btn try-now">TRY NOW</a>
-  </div>
 
-  <!-- Basic Card -->
-  <div class="card basic">
-    <div class="title">BASIC</div>
-    <div class="price-circle">£20.88</div>
-    <div class="price"><small>PER MONTH</small></div>
-    <ul class="features">
-      <li>✔ 300 Repair Customer</li>
-      <li>✔ 300 In Stock</li>
-      <li>✔ 300 Inventory</li>
-      <li>✔ Sport Ticket</li>
-      <li>✔ 6 Teams</li>
-    </ul>
-    <a href="#" class="btn btn-select-plan" data-plan="BASIC">BUY NOW</a>
-  </div>
-
-  <!-- Standard Card -->
-  <div class="card standard">
-    <div class="title">STANDARD</div>
-    <div class="price-circle">£35.88</div>
-    <div class="price"><small>PER MONTH</small></div>
-    <ul class="features">
-      <li>✔ 500 Repair Customer</li>
-      <li>✔ 500 In Stock</li>
-      <li>✔ 500 Inventory</li>
-      <li>✔ Sport Ticket</li>
-      <li>✔ 10 Teams</li>
-    </ul>
-    <a href="#" class="btn btn-select-plan" data-plan="STANDARD">BUY NOW</a>
-  </div>
-
-  <!-- Premium Card -->
-  <div class="card premium">
-    <div class="title">PREMIUM</div>
-    <div class="price-circle">£55.88</div>
-    <div class="price"><small>PER MONTH</small></div>
-    <ul class="features">
-      <li>✔ Unlimited Repair</li>
-      <li>✔ Unlimited In Stock</li>
-      <li>✔ Unlimited Inventory</li>
-      <li>✔ Unlimited Sport Ticket</li>
-      <li>✔ Unlimited Teams</li>
-    </ul>
-    <a href="#" class="btn btn-select-plan" data-plan="PREMIUM">BUY NOW</a>
-  </div>
-</div>
-
-<% /* Pricing Plans - dynamic from backend (plans) */ %>
+<% /* Pricing Plans - dynamic from backend (plans) only */ %>
 
 <% if (plans && plans.length > 0) { %>
   <div class="card-container" style="display: flex !important; gap: 100px !important; flex-wrap: wrap !important; align-items: center !important; justify-content: center !important;">
@@ -536,7 +474,7 @@
          const inventory = plan.inventory || '0';
          const teams = plan.teams || '0';
          const sport = (plan.sportTicket === 'true' || plan.sportTicket === true || plan.sportTicket === 'on');
-         const modalId = 'planModal-' + plan._id;
+         const modalId = 'planModal-' + (plan._id || i);
          const variant = ['free-trial','basic','standard','premium'][i % 4];
     %>
 
@@ -545,7 +483,7 @@
           <div class="card-body d-flex flex-column">
             <div class="title h6 text-uppercase fw-bold mb-2"><%= name %></div>
 
-            <div class="price-circle display-5 fw-bold my-2">£<%= price %></div>
+            <div class="price-circle display-5 fw-bold my-2">€<%= price %></div>
             <div class="price mb-3 " style="color:#FFFFFC ;"><%= limit %> Days </div>
 
             <ul class="features list-unstyled mb-3 d-flex flex-column align-items-center justify-content-center">
@@ -568,7 +506,7 @@
               <a href="#"
                  class="btn btn-primary btn-select-plan"
                  data-plan="<%= name %>"
-                 data-bs-toggle="modal" 
+                 data-bs-toggle="modal"
                  data-bs-target="#<%= modalId %>">
                 BUY NOW
               </a>
@@ -645,21 +583,9 @@
                       <input type="hidden" id="amount" name="amount" value="">
 
                       <!-- Expected Amount Display with PKR conversion - Always visible for manual payment -->
-                      <div id="expectedAmountInfo" class="mt-2" style="background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%); border: 2px solid rgba(255, 255, 255, 0.25); color: white; padding: 15px; border-radius: 12px; text-align: center; font-size: 14px; box-shadow: 0 4px 15px rgba(0, 51, 204, 0.3);">
-                        <div style="font-size: 18px; margin-bottom: 8px;">
-                          <strong>💰 Required Amount</strong>
-                        </div>
-                        <div id="expectedAmountPKR" style="font-size: 20px; font-weight: bold; color: #00E676; margin-bottom: 5px; font-weight: 600;">
-                          ₨ 3.00 PKR
-                        </div>
-                        <div style="font-size: 13px; opacity: 0.9; padding: 5px; background: rgba(255,255,255,0.1); border-radius: 6px; margin-top: 5px;">
-                          🧪 Testing Mode - PayFast & Manual Only
-                        </div>
-                      </div>
+                     
 
-                      <small class="form-text text-success">
-                        ✅ <strong>Amount auto-filled: ₨<span id="expectedAmountText">3.00</span></strong> (No manual entry needed)
-                      </small>
+                      
                       <!-- Auto-fetched amount display -->
                       <div id="autoAmountDisplay" class="mt-3" style="display: none; position: relative; z-index: 1000; width: 100%;">
                         <div style="background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%); border: 2px solid rgba(255, 255, 255, 0.25); color: white; padding: 15px; border-radius: 12px; box-shadow: 0 8px 25px rgba(0, 51, 204, 0.3); text-align: center;">
@@ -667,7 +593,7 @@
                             <strong>📋 Auto-filled Amount</strong>
                           </div>
                           <div id="displayAmount" style="font-size: 18px; font-weight: bold; color: #ffffff; text-shadow: 0 1px 3px rgba(0,0,0,0.3);">
-                            ₨ 0.00
+                            € <span id="dynamicDisplayAmount">0.00</span>
                           </div>
                         </div>
                       </div>
@@ -718,14 +644,14 @@
                 planPricesPkr = {
                     'FREE': 0,
                     'FREE TRIAL': 0,
-                    'BASIC': 8293.25,
+                    'BASIC': 8291.25,
                     'STANDARD': 14250.43,
                     'PREMIUM': 22191.38
                 };
                 conversionRate = {
                     gbp: 1,
                     pkr: 397.1863,
-                    note: "Includes 4% conversion fee"
+                    note: "GPA conversion rate"
                 };
             }
         } catch (error) {
@@ -741,14 +667,14 @@
             planPricesPkr = {
                 'FREE': 0,
                 'FREE TRIAL': 0,
-                'BASIC': 8293.25,
+                'BASIC': 8291.25,
                 'STANDARD': 14250.43,
                 'PREMIUM': 22191.38
             };
             conversionRate = {
                 gbp: 1,
                 pkr: 397.1863,
-                note: "Includes 4% conversion fee"
+                note: "GPA conversion rate"
             };
         }
     }
@@ -769,30 +695,32 @@
                 const expectedAmountDisplay = document.getElementById('expectedAmountDisplay');
                 const expectedAmountText = document.getElementById('expectedAmountText');
                 const expectedAmountPKR = document.getElementById('expectedAmountPKR');
+                const dynamicPkrAmount = document.getElementById('dynamicPkrAmount');
                 const expectedAmountInfo = document.getElementById('expectedAmountInfo');
 
-                if (planPrices[currentPlan] && expectedAmountInfo) {
-                    const pkrAmount = planPrices[currentPlan];
+                if (planPricesPkr[currentPlan] || planPricesPkr[currentPlan.toUpperCase()]) {
+                    const pkrAmount = parseFloat(planPricesPkr[currentPlan] || planPricesPkr[currentPlan.toUpperCase()]);
 
-                    // Update all displays
-                    if (expectedAmountDisplay) expectedAmountDisplay.textContent = pkrAmount;
-                    if (expectedAmountText) expectedAmountText.textContent = pkrAmount;
-                    if (expectedAmountPKR) expectedAmountPKR.textContent = `₨ ${pkrAmount} PKR`;
+                    // Update all displays with GPA amount (Euro symbol)
+                    if (expectedAmountDisplay) expectedAmountDisplay.textContent = pkrAmount.toFixed(2);
+                    if (expectedAmountText) expectedAmountText.textContent = expectedAmount.toFixed(2);
+                    if (expectedAmountPKR) expectedAmountPKR.innerHTML = `£${expectedAmount.toFixed(2)} GBP / PKR ${(expectedAmount * 397.1863).toFixed(2)} PKR`;
+                    if (dynamicPkrAmount) dynamicPkrAmount.textContent = (expectedAmount * 397.1863).toFixed(2);
 
                     // Show the amount info
                     expectedAmountInfo.style.display = 'block';
 
                     console.log('📋 Updated expected amount displays:', {
-                        pkr: pkrAmount,
+                        pkr: pkrAmount.toFixed(2),
                         plan: currentPlan
                     });
                 }
 
                 // Set amount field and update displays
                 const amountField = document.querySelector('input[name="amount"]');
-                if (amountField && planPrices[currentPlan]) {
-                    const expectedAmount = planPrices[currentPlan];
-                    const pkrAmount = planPricesPkr[currentPlan] ? parseFloat(planPricesPkr[currentPlan]) : 0;
+                if (amountField && (planPrices[currentPlan] || planPrices[currentPlan.toUpperCase()])) {
+                    const expectedAmount = planPrices[currentPlan] || planPrices[currentPlan.toUpperCase()];
+                    const pkrAmount = parseFloat(planPricesPkr[currentPlan] || planPricesPkr[currentPlan.toUpperCase()] || 0);
 
                     amountField.value = expectedAmount;
                     updateExpectedAmountDisplay(expectedAmount, pkrAmount);
@@ -835,19 +763,19 @@
                     <small style="font-size: 14px; opacity: 0.9;">No payment required</small>
                 `;
             } else if (pkrAmount > 0 || amount > 0) {
-                // Show PKR amount only (testing mode)
+                // Show GPA amount with Euro symbol
                 displayAmount.innerHTML = `
                     <div style="color: #00E676; font-size: 20px; margin-bottom: 5px;">
-                        ₨ ${amount} PKR
+                        € ${amount} GPA
                     </div>
                     <div style="font-size: 12px; opacity: 0.8;">
-                        🧪 Testing Mode
+                        💰 GPA Currency
                     </div>
                 `;
             } else {
                 // Fallback
                 displayAmount.innerHTML = `
-                    <span style="color: #ffffff; font-size: 20px;">₨ ${amount} PKR</span>
+                    <span style="color: #ffffff; font-size: 20px;">£${amount}</span>
                 `;
             }
 
@@ -878,6 +806,8 @@
             // Get amount based on current plan from backend data
             if (planPrices[currentPlan]) {
                 amount = parseFloat(planPrices[currentPlan]);
+            } else if (planPrices[currentPlan.toUpperCase()]) {
+                amount = parseFloat(planPrices[currentPlan.toUpperCase()]);
             } else {
                 // Fallback: try to extract from selected plan text
                 const selectedPlanElement = document.getElementById('selectedPlan');
@@ -886,6 +816,8 @@
                     const planName = planText.replace('You selected the ', '').replace(' plan.', '');
                     if (planPrices[planName]) {
                         amount = parseFloat(planPrices[planName]);
+                    } else if (planPrices[planName.toUpperCase()]) {
+                        amount = parseFloat(planPrices[planName.toUpperCase()]);
                     } else {
                         console.log(`❌ Plan not found in prices: ${planName}`);
                         amount = 0; // Default to free
@@ -897,15 +829,17 @@
             }
 
             // Get PKR amount for display
-            const pkrAmount = planPricesPkr[currentPlan] ? parseFloat(planPricesPkr[currentPlan]) : 0;
+            const pkrAmount = (planPricesPkr[currentPlan] || planPricesPkr[currentPlan.toUpperCase()]) ?
+                parseFloat(planPricesPkr[currentPlan] || planPricesPkr[currentPlan.toUpperCase()]) : 0;
 
-            console.log(`📋 Plan: ${currentPlan}, Amount: £${amount}, PKR: ${pkrAmount}`);
+            console.log(`📋 Plan: ${currentPlan}, GPA Amount: €${amount}, GPA Display: ${pkrAmount}`);
 
-            // Set the amount in the manual payment form immediately
+            // Set the amount in the manual payment form immediately (GPA amount for backend processing)
             const amountField = document.querySelector('input[name="amount"]');
             if (amountField) {
                 amountField.value = amount;
-                console.log(`✅ Set amount field to: £${amount}`);
+                console.log(`✅ Set amount field to: £${amount} (GPA)`);
+                console.log(`📋 Amount field value set:`, amountField.value);
 
                 // Show visual display of auto-filled amount
                 showAutoFillDisplay(amount, pkrAmount, conversionRate);
@@ -961,8 +895,8 @@
         }
     }
 
-    // Show amount warning
-    function showAmountWarning(expected, entered) {
+    // Show amount too high warning
+    function showAmountHighWarning(expected, entered) {
         hideAmountWarning(); // Remove any existing warning
 
         const warningDiv = document.createElement('div');
@@ -988,7 +922,7 @@
         warningDiv.innerHTML = `
             <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
                 <i class="fas fa-exclamation-triangle"></i>
-                <span>Amount too low! Requires £${expected}, you entered £${entered}</span>
+                <span>Amount too high! Requires €${expected}, you entered €${entered}</span>
             </div>
         `;
 
@@ -1064,7 +998,7 @@
         successDiv.innerHTML = `
             <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
                 <i class="fas fa-check-circle"></i>
-                <span>✓ Perfect! Amount matches plan price: £${expected}</span>
+                <span>✓ Perfect! Amount matches plan price: €${expected}</span>
             </div>
         `;
 
@@ -1084,22 +1018,25 @@
     }
 
     // Update expected amount display
-    function updateExpectedAmountDisplay(pkrAmount) {
+    function updateExpectedAmountDisplay(gpaAmount, pkrAmount) {
         const expectedAmountDisplay = document.getElementById('expectedAmountDisplay');
         const expectedAmountText = document.getElementById('expectedAmountText');
         const expectedAmountPKR = document.getElementById('expectedAmountPKR');
+        const dynamicPkrAmount = document.getElementById('dynamicPkrAmount');
         const expectedAmountInfo = document.getElementById('expectedAmountInfo');
 
         if (expectedAmountInfo) {
-            // Update all amount displays
-            if (expectedAmountDisplay) expectedAmountDisplay.textContent = pkrAmount;
-            if (expectedAmountText) expectedAmountText.textContent = pkrAmount;
-            if (expectedAmountPKR) expectedAmountPKR.textContent = `₨ ${pkrAmount} PKR`;
+            // Update all amount displays with PKR for user display
+            const displayAmount = pkrAmount.toFixed(2);
+            if (expectedAmountDisplay) expectedAmountDisplay.textContent = displayAmount;
+            if (expectedAmountText) expectedAmountText.textContent = gbpAmount.toFixed(2);
+            if (expectedAmountPKR) expectedAmountPKR.innerHTML = `£${gbpAmount.toFixed(2)} GBP / PKR ${(gbpAmount * 397.1863).toFixed(2)} PKR`;
+            if (dynamicPkrAmount) dynamicPkrAmount.textContent = (gbpAmount * 397.1863).toFixed(2);
 
             // Show the amount info
             expectedAmountInfo.style.display = 'block';
 
-            console.log(`💰 Updated expected amount display: ₨${pkrAmount} PKR`);
+            console.log(`💰 Updated expected amount display: €${displayAmount} GPA`);
         }
     }
 
@@ -1184,7 +1121,7 @@
                         },
                         body: JSON.stringify({
                             plan: currentPlan,
-                            amount: planPrices[currentPlan] || '20.88'
+                            amount: planPrices[currentPlan] || planPrices[currentPlan.toUpperCase()] || '0'
                         })
                     });
 

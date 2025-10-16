@@ -203,8 +203,12 @@
 
         <div class="amount-highlight">
             <div class="detail-row">
-                <span class="detail-label">Total Amount:</span>
-                <span class="detail-value">£<%= amount %></span>
+                <span class="detail-label">Plan Price:</span>
+                <span class="detail-value">£<%= amount %> GBP</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Amount in PKR:</span>
+                <span class="detail-value">PKR <%= (parseFloat(amount) * 397.1863).toFixed(2) %></span>
             </div>
         </div>
 

@@ -66,7 +66,7 @@
         <!-- plan_price (simple input) -->
         <div class="col-md-6">
           <div class="form-group" style="margin-bottom: 25px;">
-            <label for="plan_price" style="font-weight: 600; color: #ffffff; margin-bottom: 12px; font-size: 18px; display: block; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);">Price (PKR) *</label>
+            <label for="plan_price" style="font-weight: 600; color: #ffffff; margin-bottom: 12px; font-size: 18px; display: block; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);">Price (GBP) *</label>
             <input type="text" name="plan_price" id="plan_price" required placeholder="2999" style="width: 100%; height: 60px; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 15px; padding: 18px 25px; font-size: 18px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%); transition: all 0.3s ease; outline: none; backdrop-filter: blur(10px);">
           </div>
         </div>
@@ -131,7 +131,7 @@
   </div>
 
   <!-- All Packages Table -->
-  <div class="packages-section">
+  <div class="packages-section mb-5">
     <div class="section-title flex items-center gap-2 text-lg font-semibold text-gray-800 mb-4">
       <i class="fas fa-list"></i>
       All Packages
@@ -173,7 +173,7 @@
                   <input type="checkbox" class="plan-row-checkbox form-check-input" data-id="<%= package._id %>" style="cursor: pointer; width: 18px; height: 18px;">
                 </td>
                 <td class="px-4 py-3 text-sm text-gray-800"><strong><%= package.plan_name %></strong></td>
-                <td class="px-4 py-3 text-sm text-gray-700"><span class="package-price">Rs. <%= package.plan_price %></span></td>
+                <td class="px-4 py-3 text-sm text-gray-700"><span class="package-price">£<%= package.plan_price %></span></td>
                 <td class="px-4 py-3 text-sm text-gray-700"><%= package.plan_limit %></td>
                 <td class="px-4 py-3 text-sm text-gray-700"><%= package.repairCustomer %></td>
                 <td class="px-4 py-3 text-sm text-gray-700"><%= package.inStock %></td>
@@ -209,7 +209,7 @@
 
             <div class="mobile-card-row flex justify-between text-sm text-gray-700 py-1">
               <span class="mobile-card-label font-medium">Price:</span>
-              <span class="mobile-card-value mobile-price">Rs. <%= package.plan_price %></span>
+              <span class="mobile-card-value mobile-price">£<%= package.plan_price %></span>
             </div>
 
             <div class="mobile-card-row flex justify-between text-sm text-gray-700 py-1">
@@ -298,7 +298,7 @@
 
           <div class="col-md-6">
             <div class="form-group" style="margin-bottom: 25px;">
-              <label for="edit_plan_price" style="font-weight: 600; color: #ffffff; margin-bottom: 12px; font-size: 18px; display: block;">Price (PKR) *</label>
+              <label for="edit_plan_price" style="font-weight: 600; color: #ffffff; margin-bottom: 12px; font-size: 18px; display: block;">Price (GBP) *</label>
               <input type="text" name="plan_price" id="edit_plan_price" required placeholder="2999"
                 style="width: 100%; height: 60px; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 15px; padding: 18px 25px; font-size: 18px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%); outline: none;">
             </div>

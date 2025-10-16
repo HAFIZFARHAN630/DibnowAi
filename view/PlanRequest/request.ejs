@@ -860,9 +860,11 @@
   </style>
 
 <body>
-  <%- include ('../par/sidebar.ejs') %>
-  <%- include ('../par/header.ejs') %>
-  <div class="container-scroller">
+  <div class="body-wrapper">
+    <%- include ('../par/sidebar.ejs') %>
+    <%- include ('../par/header.ejs') %>
+    <div class="main-content">
+      <div class="container-scroller">
       <div class="container-fluid page-body-wrapper" style="padding: 0 !important;">
             <div class="main-panel">
               <% if (messages.success) { %>
@@ -901,7 +903,7 @@
             <th class="px-2 py-3 text-left" style=" background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);">Invoice Status</th>
             <th class="px-2 py-3 text-left" style=" background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);">Start Date</th>
             <th class="px-2 py-3 text-left" style=" background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);">Expiry Date</th>
-            <th class="px-2 py-3 text-left" style=" background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);">Amount</th>
+            <th class="px-2 py-3 text-left" style=" background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);">Amount (PKR) - Converted</th>
             <th class="px-2 py-3 text-left" style=" background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);">Action</th>
           </tr>
         </thead>
@@ -950,7 +952,7 @@
 
                 <td class="px-2 py-4"><%= new Date(planRequest.startDate).toLocaleDateString() %></td>
                 <td class="px-2 py-4"><%= new Date(planRequest.expiryDate).toLocaleDateString() %></td>
-                <td class="px-2 py-4"><%= planRequest.amount || 0 %></td>
+                <td class="px-2 py-4">₨<%= (parseFloat(planRequest.amount) * 397.1863).toFixed(2) %></td>
 
                 <td class="px-2 py-4">
                   <div class="flex flex-wrap items-center gap-2">
@@ -1027,7 +1029,7 @@
               <div><span class="text-xs text-gray-500">Start</span><div><%= new Date(planRequest.startDate).toLocaleDateString() %></div></div>
               <div><span class="text-xs text-gray-500">Expiry</span><div><%= new Date(planRequest.expiryDate).toLocaleDateString() %></div></div>
               <div><span class="text-xs text-gray-500">Invoice</span><div><%= planRequest.invoiceStatus %></div></div>
-              <div><span class="text-xs text-gray-500">Amount</span><div><%= planRequest.amount || 0 %></div></div>
+              <div><span class="text-xs text-gray-500">Amount (PKR)</span><div>₨<%= (parseFloat(planRequest.amount) * 397.1863).toFixed(2) %></div></div>
             </div>
 
             <div class="mt-4 flex gap-2 justify-end">

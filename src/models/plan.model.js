@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 
 const plannSchema = new Schema({
     plan_name:{type:String},
-    plan_price:{type:String},
+    plan_price:{type:Number, default: 0}, // Changed to Number for proper calculations
     plan_limit:{type:String},
   repairCustomer: { type: String },
   inStock:        { type: String },
@@ -13,4 +13,4 @@ const plannSchema = new Schema({
   teams:          { type: String }
 });
 
-module.exports = mongoose.model('plann', plannSchema);
+module.exports = mongoose.model('planns', plannSchema);

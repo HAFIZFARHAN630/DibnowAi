@@ -677,6 +677,15 @@ initializeChart();
   </table>
 </div>
 
+
+<!-- Pagination -->
+      <div class="d-flex justify-content-between align-items-center mt-3">
+        <span id="tableInfo" class="text-muted">Showing 1 to 10 of <%= products.length %> entries</span>
+        <nav style="margin-right:31px;">
+          <ul class="pagination" id="pagination"></ul>
+        </nav>
+      </div>
+
 <!-- Card layout (shown on small screens) -->
 <div class="d-xl-block d-xl-none">
   <% products.forEach(product => { %>
@@ -741,13 +750,7 @@ initializeChart();
   </button>
 </div>
 
-      <!-- Pagination -->
-      <div class="d-flex justify-content-between align-items-center mt-3">
-        <span id="tableInfo" class="text-muted">Showing 1 to 10 of <%= products.length %> entries</span>
-        <nav style="margin-right:31px;">
-          <ul class="pagination" id="pagination"></ul>
-        </nav>
-      </div>
+      
     </div>
   <!-- Content End -->
 
