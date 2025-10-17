@@ -625,6 +625,7 @@ initializeChart();
         <th>Full Name</th>
         <th>Product Name</th>
         <th>Price</th>
+        <th>Tracking ID</th>
         <th>Status</th>
         <th class="text-center">Action</th>
       </tr>
@@ -641,6 +642,11 @@ initializeChart();
         </td>
         <td><span class="usr-location text-dark"><%= product.brand %></span></td>
         <td><span class="usr-price text-dark"><%= product.Price %></span></td>
+        <td>
+          <span class="usr-tracking-id text-dark font-mono" style="font-size: 12px; background: #f8f9fa; padding: 4px 8px; border-radius: 4px; display: inline-block;" title="Click to copy" onclick="copyToClipboard('<%= product.random_id %>')">
+            <%= product.random_id || 'N/A' %>
+          </span>
+        </td>
         <td>
           <select class="status-select <%= product.status %>" onchange="updateStatus('<%= product.id %>', this.value)">
             <option value="Pending" <%= product.status === 'Pending' ? 'selected' : '' %>>Pending</option>
@@ -697,6 +703,12 @@ initializeChart();
 
       <p class="mb-2"><span class="fw-semibold text-secondary">Product:</span> <%= product.brand %></p>
       <p class="mb-2"><span class="fw-semibold text-secondary">Price:</span> $<%= product.Price %></p>
+      <p class="mb-2">
+        <span class="fw-semibold text-secondary">Tracking ID:</span>
+        <span class="font-mono text-primary" style="font-size: 14px; background: #f8f9fa; padding: 2px 6px; border-radius: 3px;" onclick="copyToClipboard('<%= product.random_id %>')" title="Click to copy">
+          <%= product.random_id || 'N/A' %>
+        </span>
+      </p>
 
       <div class="mb-3">
         <span class="fw-semibold text-secondary me-2">Status:</span>
@@ -910,6 +922,7 @@ function generateQRCode(userId, userName, userNumber, productName, price, status
                "Number: " + userNumber + "\n" +
                "Product: " + productName + "\n" +
                "Price: " + price + "\n" +
+               "Tracking ID: " + trackingId + "\n" +
                "Status: " + status + "\n" +
                "ID: " + userId;
   
@@ -930,6 +943,49 @@ window.onclick = function (event) {
   }
 };
 // End QR Code Scanner
+
+// Copy tracking ID to clipboard
+function copyToClipboard(text) {
+  if (text && text !== 'N/A') {
+    navigator.clipboard.writeText(text).then(() => {
+      // Show success feedback
+      showNotification('Tracking ID copied to clipboard!', 'success');
+    }).catch(() => {
+      showNotification('Failed to copy tracking ID', 'error');
+    });
+  }
+}
+
+// Notification system
+function showNotification(message, type = 'info') {
+  const notification = document.createElement('div');
+  notification.className = `fixed top-4 right-4 px-6 py-4 rounded-2xl shadow-xl z-50 transform translate-x-full transition-transform duration-300 ${
+    type === 'success' ? 'bg-green-500 text-white' :
+    type === 'error' ? 'bg-red-500 text-white' :
+    'bg-blue-500 text-white'
+  }`;
+  notification.innerHTML = `
+    <div class="flex items-center">
+      <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'} mr-3"></i>
+      <span>${message}</span>
+    </div>
+  `;
+
+  document.body.appendChild(notification);
+
+  // Animate in
+  setTimeout(() => {
+    notification.style.transform = 'translateX(0)';
+  }, 100);
+
+  // Remove after 4 seconds
+  setTimeout(() => {
+    notification.style.transform = 'translateX(full)';
+    setTimeout(() => {
+      notification.remove();
+    }, 300);
+  }, 4000);
+}
 
 // Update status
 function updateStatus(productId, status) {
@@ -965,21 +1021,22 @@ function updateStatus(productId, status) {
 // Search Filter
 document.getElementById('text-srh').addEventListener('input', function () {
    const searchTerm = this.value.toLowerCase();
-   const tableRows = document.querySelectorAll('#paginatedTable tbody .search-items'); 
-   
+   const tableRows = document.querySelectorAll('#paginatedTable tbody .search-items');
+
    tableRows.forEach(row => {
      const fullName = row.querySelector('td:first-child .usr-name').textContent.toLowerCase();
      const productName = row.querySelector('td:nth-child(2) .usr-location').textContent.toLowerCase();
+     const trackingId = row.querySelector('td:nth-child(4) .usr-tracking-id').textContent.toLowerCase();
 
-     if (fullName.includes(searchTerm) || productName.includes(searchTerm)) {
+     if (fullName.includes(searchTerm) || productName.includes(searchTerm) || trackingId.includes(searchTerm)) {
        row.style.display = '';
      } else {
        row.style.display = 'none';
      }
    });
-   
+
    updatePaginationAfterFilter();
-});
+ });
 
 // Filter by Status
 function filterTable() {
@@ -991,7 +1048,7 @@ function filterTable() {
    statusFilterEl.className = 'form-selects w-100 filter-' + statusFilter;
    
    tableRows.forEach(row => {
-     const productStatus = row.querySelector('td:nth-child(4) select').value;
+     const productStatus = row.querySelector('td:nth-child(5) select').value;
      
      if (statusFilter === 'All' || productStatus === statusFilter) {
        row.style.display = '';
@@ -1116,6 +1173,7 @@ function printTable(userId) {
     let userNumber = userRow.querySelector('.usr-select') ? userRow.querySelector('.usr-select').innerText : 'N/A';
     let productName = userRow.querySelector('.usr-location') ? userRow.querySelector('.usr-location').innerText : 'N/A';
     let price = userRow.querySelector('.usr-price') ? userRow.querySelector('.usr-price').innerText : 'N/A';
+    let trackingId = userRow.querySelector('.usr-tracking-id') ? userRow.querySelector('.usr-tracking-id').innerText : 'N/A';
     let status = userRow.querySelector('.status-select') ? userRow.querySelector('.status-select').value : 'N/A';
 
     // Create simple invoice data for QR code
@@ -1126,6 +1184,7 @@ function printTable(userId) {
                        "Number: " + userNumber + "\n" +
                        "Product: " + productName + "\n" +
                        "Price: " + price + "\n" +
+                       "Tracking ID: " + trackingId + "\n" +
                        "Status: " + status + "\n" +
                        "ID: " + userId;
     let qrCodeURL = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodeURIComponent(invoiceData);
@@ -1163,6 +1222,7 @@ function printTable(userId) {
                 <div class="info-section">
                     <div><h5>Product</h5><p>${productName}</p></div>
                     <div><h5>Price</h5><p>${price}</p></div>
+                    <div><h5>Tracking ID</h5><p>${trackingId}</p></div>
                     <div><h5>Status</h5><p>${status}</p></div>
                 </div>
                 <div class="qr-code">

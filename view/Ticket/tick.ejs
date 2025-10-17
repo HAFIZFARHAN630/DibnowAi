@@ -58,6 +58,134 @@
       .priority-indicator:hover::before {
         left: 100%;
       }
+
+      /* Colorful Dropdown Styles for Ticket Form */
+      select#category,
+      select#priority {
+        font-weight: 600;
+        color: #333;
+        background: white;
+      }
+
+      /* Category Dropdown Colors - Always Visible */
+      select#category option {
+        background: white;
+        color: #333;
+        padding: 8px 12px;
+      }
+
+      select#category option[value="Repair"] {
+        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%) !important;
+        color: white !important;
+        font-weight: 600;
+      }
+
+      select#category option[value="Inventory"] {
+        background: linear-gradient(135deg, #28a745 0%, #218838 100%) !important;
+        color: white !important;
+        font-weight: 600;
+      }
+
+      select#category option[value="Sales"] {
+        background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%) !important;
+        color: white !important;
+        font-weight: 600;
+      }
+
+      /* Priority Dropdown Colors - Always Visible */
+      select#priority option {
+        background: white;
+        color: #333;
+        padding: 8px 12px;
+      }
+
+      select#priority option[value="Low"] {
+        background: linear-gradient(135deg, #28a745 0%, #218838 100%) !important;
+        color: white !important;
+        font-weight: 600;
+      }
+
+      select#priority option[value="Medium"] {
+        background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%) !important;
+        color: #333 !important;
+        font-weight: 600;
+      }
+
+      select#priority option[value="High"] {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important;
+        color: white !important;
+        font-weight: 600;
+      }
+
+      /* Default option styling */
+      select#category option[value=""],
+      select#priority option[value=""] {
+        background: #f8f9fa !important;
+        color: #6c757d !important;
+        font-weight: normal;
+      }
+
+      /* Hover effects for dropdown options */
+      /* select#category option:hover,
+      select#priority option:hover {
+        transform: scale(1.02) !important;
+        transition: all 0.2s ease !important;
+        box-shadow: inset 0 0 10px rgba(255,255,255,0.3) !important;
+      } */
+
+      /* Enhanced focus effects */
+      /* select#category:focus,
+      select#priority:focus {
+        border-color: #007bff !important;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25) !important;
+        transform: translateY(-1px) !important;
+        transition: all 0.3s ease !important;
+      } */
+
+      /* Option hover animations
+      select#category option:not([value=""]):hover,
+      select#priority option:not([value=""]):hover {
+        padding-left: 16px !important;
+        transition: padding-left 0.2s ease !important;
+      } */
+
+      /* Dynamic Select Background on Change - Category */
+      select#category.category-Repair {
+        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%) !important;
+        color: white !important;
+        border-color: #007bff !important;
+      }
+
+      select#category.category-Inventory {
+        background: linear-gradient(135deg, #28a745 0%, #218838 100%) !important;
+        color: white !important;
+        border-color: #28a745 !important;
+      }
+
+      select#category.category-Sales {
+        background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%) !important;
+        color: white !important;
+        border-color: #6f42c1 !important;
+      }
+
+      /* Dynamic Select Background on Change - Priority */
+      select#priority.priority-Low {
+        background: linear-gradient(135deg, #28a745 0%, #218838 100%) !important;
+        color: white !important;
+        border-color: #28a745 !important;
+      }
+
+      select#priority.priority-Medium {
+        background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%) !important;
+        color: #333 !important;
+        border-color: #ffc107 !important;
+      }
+
+      select#priority.priority-High {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important;
+        color: white !important;
+        border-color: #dc3545 !important;
+      }
     </style>
 </head>
 <body class="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 min-h-screen">
@@ -131,48 +259,12 @@
           <label for="category" class="block text-sm font-bold text-gray-700 uppercase tracking-wide mb-3">
             <i class="fas fa-tag mr-2 text-indigo-600"></i>Category
           </label>
-          <div class="space-y-3">
-            <div class="grid grid-cols-1 gap-2">
-              <div class="category-card bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-2xl p-4 hover:border-blue-400 focus-within:border-blue-500">
-                <input type="radio" id="repair" name="category" value="Repair" class="sr-only" checked>
-                <label for="repair" class="flex items-center cursor-pointer">
-                  <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center mr-4">
-                    <i class="fas fa-tools text-white text-lg"></i>
-                  </div>
-                  <div>
-                    <h3 class="font-semibold text-gray-800">Repair</h3>
-                    <p class="text-sm text-gray-600">Device repair issues</p>
-                  </div>
-                </label>
-              </div>
-
-              <div class="category-card bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-2xl p-4 hover:border-green-400 focus-within:border-green-500">
-                <input type="radio" id="inventory" name="category" value="Inventory" class="sr-only">
-                <label for="inventory" class="flex items-center cursor-pointer">
-                  <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center mr-4">
-                    <i class="fas fa-boxes text-white text-lg"></i>
-                  </div>
-                  <div>
-                    <h3 class="font-semibold text-gray-800">Inventory</h3>
-                    <p class="text-sm text-gray-600">Stock and parts management</p>
-                  </div>
-                </label>
-              </div>
-
-              <div class="category-card bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-200 rounded-2xl p-4 hover:border-purple-400 focus-within:border-purple-500">
-                <input type="radio" id="sales" name="category" value="Sales" class="sr-only">
-                <label for="sales" class="flex items-center cursor-pointer">
-                  <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center mr-4">
-                    <i class="fas fa-shopping-cart text-white text-lg"></i>
-                  </div>
-                  <div>
-                    <h3 class="font-semibold text-gray-800">Sales</h3>
-                    <p class="text-sm text-gray-600">Sales and customer service</p>
-                  </div>
-                </label>
-              </div>
-            </div>
-          </div>
+          <select id="category" name="category" required class="w-full rounded-2xl border-2 border-gray-200 px-6 py-4 text-lg  bg-black  text-white ">
+            <option value="" disabled selected>Select Category</option>
+            <option value="Repair">Repair - Device repair issues</option>
+            <option value="Inventory">Inventory - Stock and parts management</option>
+            <option value="Sales">Sales - Sales and customer service</option>
+          </select>
         </div>
 
         <!-- Priority Selection -->
@@ -180,46 +272,12 @@
           <label for="priority" class="block text-sm font-bold text-gray-700 uppercase tracking-wide mb-3">
             <i class="fas fa-exclamation-triangle mr-2 text-indigo-600"></i>Priority Level
           </label>
-          <div class="space-y-3">
-            <div class="priority-indicator bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-2xl p-4 hover:border-green-400">
-              <input type="radio" id="low" name="priority" value="Low" class="sr-only">
-              <label for="low" class="flex items-center cursor-pointer">
-                <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center mr-4">
-                  <i class="fas fa-check-circle text-white"></i>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-gray-800">Low</h3>
-                  <p class="text-sm text-gray-600">General inquiries</p>
-                </div>
-              </label>
-            </div>
-
-            <div class="priority-indicator bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-200 rounded-2xl p-4 hover:border-amber-400">
-              <input type="radio" id="medium" name="priority" value="Medium" class="sr-only" checked>
-              <label for="medium" class="flex items-center cursor-pointer">
-                <div class="w-10 h-10 bg-gradient-to-br from-amber-500 to-orange-600 rounded-full flex items-center justify-center mr-4">
-                  <i class="fas fa-exclamation-circle text-white"></i>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-gray-800">Medium</h3>
-                  <p class="text-sm text-gray-600">Standard support requests</p>
-                </div>
-              </label>
-            </div>
-
-            <div class="priority-indicator bg-gradient-to-r from-red-50 to-rose-50 border-2 border-red-200 rounded-2xl p-4 hover:border-red-400">
-              <input type="radio" id="high" name="priority" value="High" class="sr-only">
-              <label for="high" class="flex items-center cursor-pointer">
-                <div class="w-10 h-10 bg-gradient-to-br from-red-500 to-rose-600 rounded-full flex items-center justify-center mr-4">
-                  <i class="fas fa-exclamation-triangle text-white"></i>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-gray-800">High</h3>
-                  <p class="text-sm text-gray-600">Urgent issues</p>
-                </div>
-              </label>
-            </div>
-          </div>
+          <select id="priority" name="priority" required class="w-full rounded-2xl border-2 border-gray-200 px-6 py-4 text-lg   bg-black text-white ">
+            <option value="" disabled selected>Select Priority Level</option>
+            <option value="Low">Low - General inquiries</option>
+            <option value="Medium">Medium - Standard support requests</option>
+            <option value="High">High - Urgent issues</option>
+          </select>
         </div>
       </div>
 
@@ -263,6 +321,19 @@
           </div>
           <input type="file" name="attachment" id="attachment" accept="image/*,.pdf,.doc,.docx" multiple class="hidden" />
         </label>
+
+        <!-- Image Preview Area -->
+        <div id="imagePreview" class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4" style="display: none;">
+          <!-- Selected images will appear here -->
+        </div>
+
+        <!-- Selected Files List -->
+        <div id="selectedFiles" class="mt-4 space-y-2" style="display: none;">
+          <h4 class="text-sm font-semibold text-gray-700">Selected Files:</h4>
+          <div id="filesList" class="text-sm text-gray-600">
+            <!-- Selected files will be listed here -->
+          </div>
+        </div>
       </div>
 
       <!-- Action Buttons -->
@@ -318,10 +389,7 @@
    
 
 
-<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
-<script src="js/main.js"></script>
+
 
 <script>
   // Enhanced form functionality
@@ -383,32 +451,152 @@
       }
     };
 
-    // Category card interactions
-    document.querySelectorAll('.category-card').forEach(card => {
-      card.addEventListener('click', function() {
-        const input = this.querySelector('input[type="radio"]');
-        if (input) input.checked = true;
+    // Category dropdown color change
+    const categorySelect = document.getElementById('category');
+    if (categorySelect) {
+      categorySelect.addEventListener('change', function() {
+        // Remove previous category classes
+        this.className = this.className.replace(/category-\w+/g, '');
+        // Add new category class
+        if (this.value) {
+          this.className += ' category-' + this.value;
+        }
       });
-    });
+    }
 
-    // Priority indicator interactions
-    document.querySelectorAll('.priority-indicator').forEach(indicator => {
-      indicator.addEventListener('click', function() {
-        const input = this.querySelector('input[type="radio"]');
-        if (input) input.checked = true;
+    // Priority dropdown color change
+    const prioritySelect = document.getElementById('priority');
+    if (prioritySelect) {
+      prioritySelect.addEventListener('change', function() {
+        // Remove previous priority classes
+        this.className = this.className.replace(/priority-\w+/g, '');
+        // Add new priority class
+        if (this.value) {
+          this.className += ' priority-' + this.value;
+        }
       });
-    });
+    }
 
-    // File upload enhancement
+    // File upload enhancement with preview
     const fileInput = document.getElementById('attachment');
+    const imagePreview = document.getElementById('imagePreview');
+    const selectedFiles = document.getElementById('selectedFiles');
+    const filesList = document.getElementById('filesList');
+
     if (fileInput) {
       fileInput.addEventListener('change', function(e) {
         const files = e.target.files;
         if (files.length > 0) {
-          const fileNames = Array.from(files).map(file => file.name).join(', ');
-          showNotification(`${files.length} file(s) selected: ${fileNames}`, 'info');
+          // Clear previous previews
+          imagePreview.innerHTML = '';
+          filesList.innerHTML = '';
+
+          // Show preview and files list containers
+          imagePreview.style.display = 'grid';
+          selectedFiles.style.display = 'block';
+
+          Array.from(files).forEach((file, index) => {
+            const fileExtension = file.name.split('.').pop().toLowerCase();
+            const isImage = ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(fileExtension);
+
+            if (isImage) {
+              // Create image preview
+              const imgContainer = document.createElement('div');
+              imgContainer.className = 'relative group';
+
+              const img = document.createElement('img');
+              img.src = URL.createObjectURL(file);
+              img.alt = file.name;
+              img.className = 'w-full h-32 object-cover rounded-lg border-2 border-gray-200 group-hover:border-indigo-300 transition-all duration-300';
+              img.style.maxHeight = '200px';
+
+              const removeBtn = document.createElement('button');
+              removeBtn.type = 'button';
+              removeBtn.className = 'absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full text-xs hover:bg-red-600 transition-colors duration-200';
+              removeBtn.innerHTML = '×';
+              removeBtn.onclick = function() {
+                removeFile(index);
+              };
+
+              imgContainer.appendChild(img);
+              imgContainer.appendChild(removeBtn);
+              imagePreview.appendChild(imgContainer);
+            }
+
+            // Add to files list
+            const fileItem = document.createElement('div');
+            fileItem.className = 'flex items-center justify-between bg-gray-100 rounded-lg px-3 py-2';
+
+            const fileInfo = document.createElement('div');
+            fileInfo.className = 'flex items-center';
+
+            const fileIcon = document.createElement('i');
+            if (isImage) {
+              fileIcon.className = 'fas fa-image text-indigo-500 mr-2';
+            } else if (fileExtension === 'pdf') {
+              fileIcon.className = 'fas fa-file-pdf text-red-500 mr-2';
+            } else {
+              fileIcon.className = 'fas fa-file text-gray-500 mr-2';
+            }
+
+            const fileName = document.createElement('span');
+            fileName.textContent = file.name;
+            fileName.className = 'text-sm text-gray-700 truncate';
+
+            const fileSize = document.createElement('span');
+            fileSize.textContent = `(${formatFileSize(file.size)})`;
+            fileSize.className = 'text-xs text-gray-500 ml-2';
+
+            fileInfo.appendChild(fileIcon);
+            fileInfo.appendChild(fileName);
+            fileInfo.appendChild(fileSize);
+
+            const removeFileBtn = document.createElement('button');
+            removeFileBtn.type = 'button';
+            removeFileBtn.className = 'text-red-500 hover:text-red-700 transition-colors duration-200';
+            removeFileBtn.innerHTML = '<i class="fas fa-times"></i>';
+            removeFileBtn.onclick = function() {
+              removeFile(index);
+            };
+
+            fileItem.appendChild(fileInfo);
+            fileItem.appendChild(removeFileBtn);
+            filesList.appendChild(fileItem);
+          });
+
+          showNotification(`${files.length} file(s) selected and ready for upload`, 'success');
+        } else {
+          // Hide containers if no files
+          imagePreview.style.display = 'none';
+          selectedFiles.style.display = 'none';
         }
       });
+    }
+
+    // Function to remove a file from selection
+    function removeFile(index) {
+      const dt = new DataTransfer();
+      const files = fileInput.files;
+
+      for (let i = 0; i < files.length; i++) {
+        if (i !== index) {
+          dt.items.add(files[i]);
+        }
+      }
+
+      fileInput.files = dt.files;
+
+      // Trigger change event to refresh previews
+      fileInput.dispatchEvent(new Event('change'));
+    }
+
+    // Function to format file size
+    function formatFileSize(bytes) {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     }
 
     // Form validation enhancement
@@ -488,6 +676,10 @@
     });
   });
 </script>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+<script src="js/main.js"></script>
 <!-- footer -->
   <%- include('../par/footer.ejs') %>
   <!-- footer -->

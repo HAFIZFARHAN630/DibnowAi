@@ -24,12 +24,22 @@ exports.addProduct = async (req, res) => {
       random_id,
     } = req.body;
 
+    // Generate tracking ID if not provided
+    const generateTrackingId = () => {
+      const now = new Date();
+      const dateStr = now.getFullYear().toString() +
+                     (now.getMonth() + 1).toString().padStart(2, '0') +
+                     now.getDate().toString().padStart(2, '0');
+      const randomStr = Math.random().toString(36).substring(2, 8).toUpperCase();
+      return `RPR-${dateStr}-${randomStr}`;
+    };
+
     // Safeguards for missing data
     const defaultEmail = "hYd2e@example.com";
     const userEmail = email || defaultEmail;
     const deviceImage = req.file ? `/uploads/${req.file.filename}` : "/uploads/1737205923556.jpg";
     const price = Price && !isNaN(Price) ? parseFloat(Price) : 0;
-    const randomId = random_id || "0000";
+    const randomId = random_id || generateTrackingId();
 
     // Fetch user profile
     const user = await User.findById(req.session.userId).select(
@@ -85,7 +95,7 @@ exports.addProduct = async (req, res) => {
 
 
 
-        const trackingId = newRepair._id.toString();
+        const trackingId = randomId;
 
     // Send email with tracking id (Brevo via API)
     try {
@@ -603,10 +613,15 @@ exports.done = async (req, res) => {
 
      // If not found as repair ObjectId, try to find by random_id field in repairs
      if (!repair && trackingId.length > 0) {
-       repair = await Repair.findOne({ random_id: trackingId });
+       // Try case-insensitive match for random_id (to handle case differences)
+       repair = await Repair.findOne({
+         random_id: { $regex: new RegExp(`^${trackingId}$`, 'i') }
+       });
        if (repair) {
          foundType = "repair";
-         console.log("✅ Found repair by random_id:", repair._id);
+         console.log("✅ Found repair by case-insensitive random_id:", repair._id);
+         console.log("📋 Stored random_id:", repair.random_id);
+         console.log("🔍 Searched random_id:", trackingId);
        } else {
          console.log("❌ No repair found with random_id:", trackingId);
        }

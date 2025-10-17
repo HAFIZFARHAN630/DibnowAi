@@ -14,7 +14,8 @@
     backdrop-filter: blur(15px);
     border: 2px solid rgba(255, 255, 255, 0.3);
     width: 100%;
-    overflow-x: hidden;   /* prevent horizontal overflow */
+    overflow-x: hidden;
+    /* prevent horizontal overflow */
     word-wrap: break-word;
   }
 
@@ -38,12 +39,14 @@
     width: 100%;
     margin: 0;
   }
+
   @media screen and (max-width: 767px) {
     .professional-modal .modal-title {
       font-size: 22px !important;
       width: 75% !important;
     }
   }
+
   .professional-modal .modal-subtitle {
     color: rgba(255, 255, 255, 0.9);
     font-size: 18px;
@@ -128,21 +131,21 @@
     box-shadow: 0 10px 30px rgba(0, 184, 148, 0.4);
     text-transform: uppercase;
     margin-top: 1rem;
-}
+  }
 
-/* Hover effect */
-.professional-submit-btn:hover {
+  /* Hover effect */
+  .professional-submit-btn:hover {
     background: linear-gradient(135deg, #00E676 0%, #00C853 100%);
     transform: translateY(-3px);
     box-shadow: 0 15px 40px rgba(0, 200, 83, 0.5);
     color: #ffffff;
-}
+  }
 
-/* Click (active) effect */
-.professional-submit-btn:active {
+  /* Click (active) effect */
+  .professional-submit-btn:active {
     transform: scale(0.97);
     box-shadow: 0 5px 20px rgba(0, 200, 83, 0.4);
-}
+  }
 
 
   /* Responsive Design */
@@ -178,50 +181,48 @@
     }
   }
 
- @media (max-width: 500px) {
-  .professional-modal .modal-dialog {
-    margin: 5px !important;
-  }
+  @media (max-width: 500px) {
+    .professional-modal .modal-dialog {
+      margin: 5px !important;
+    }
 
-  .professional-modal .modal-header,
-  .professional-modal .modal-body {
-    /* padding: 10px !important; */
-  }
+    
 
-  .professional-modal .modal-title {
-    font-size: 18px;
-    /* line-height: 1.2; */
-  }
+    .professional-modal .modal-title {
+      font-size: 18px;
+      /* line-height: 1.2; */
+    }
 
-  .professional-modal .modal-subtitle {
-    font-size: 12px;
-    line-height: 1.4;
-    margin-top: 4px;
-  }
+    .professional-modal .modal-subtitle {
+      font-size: 12px;
+      line-height: 1.4;
+      margin-top: 4px;
+    }
 
-  /* ✅ Stack inputs vertically instead of side by side */
-  .professional-modal .col-md-6,
-  .professional-modal .col-md-4 {
-    width: 100% !important;
-    flex: 0 0 100% !important;
-    max-width: 100% !important;
-  }
+    /* ✅ Stack inputs vertically instead of side by side */
+    .professional-modal .col-md-6,
+    .professional-modal .col-md-4 {
+      width: 100% !important;
+      flex: 0 0 100% !important;
+      max-width: 100% !important;
+    }
 
-  .professional-form .form-control,
-  .professional-form .form-select {
-    height: 40px;
-    font-size: 14px;
-    padding: 8px 10px;
-  }
+    .professional-form .form-control,
+    .professional-form .form-select {
+      height: 40px;
+      font-size: 14px;
+      padding: 8px 10px;
+    }
 
-  .professional-submit-btn {
-    height: 40px;
-    font-size: 14px;
-    margin-top: 8px;
-  }
-  .modal-subtitle{
-    visibility: hidden !important;
-  }
+    .professional-submit-btn {
+      height: 40px;
+      font-size: 14px;
+      margin-top: 8px;
+    }
+
+    .modal-subtitle {
+      visibility: hidden !important;
+    }
   }
 
   /* Colorful Dropdown Styles for Brand and Device Type */
@@ -241,280 +242,565 @@
   }
 
   /* Brand Dropdown Colors */
-  .professional-form .form-select#Brand option[value="Apple"] { background: #007bff; color: white; }
-  .professional-form .form-select#Brand option[value="Samsung"] { background: #28a745; color: white; }
-  .professional-form .form-select#Brand option[value="Oppo"] { background: #ffc107; color: #333; }
-  .professional-form .form-select#Brand option[value="Xiaomi"] { background: #dc3545; color: white; }
-  .professional-form .form-select#Brand option[value="OnePlus"] { background: #6f42c1; color: white; }
-  .professional-form .form-select#Brand option[value="Realme"] { background: #fd7e14; color: white; }
-  .professional-form .form-select#Brand option[value="Vivo"] { background: #20c997; color: white; }
+  .professional-form .form-select#Brand option[value="Apple"] {
+    background: #007bff;
+    color: white;
+  }
+
+  .professional-form .form-select#Brand option[value="Samsung"] {
+    background: #28a745;
+    color: white;
+  }
+
+  .professional-form .form-select#Brand option[value="Oppo"] {
+    background: #ffc107;
+    color: #333;
+  }
+
+  .professional-form .form-select#Brand option[value="Xiaomi"] {
+    background: #dc3545;
+    color: white;
+  }
+
+  .professional-form .form-select#Brand option[value="OnePlus"] {
+    background: #6f42c1;
+    color: white;
+  }
+
+  .professional-form .form-select#Brand option[value="Realme"] {
+    background: #fd7e14;
+    color: white;
+  }
+
+  .professional-form .form-select#Brand option[value="Vivo"] {
+    background: #20c997;
+    color: white;
+  }
 
   /* Device Type Dropdown Colors */
-  .professional-form .form-select#device option[value="phone"] { background: #007bff; color: white; }
-  .professional-form .form-select#device option[value="tablet"] { background: #28a745; color: white; }
-  .professional-form .form-select#device option[value="laptop"] { background: #ffc107; color: #333; }
-  .professional-form .form-select#device option[value="other"] { background: #6f42c1; color: white; }
+  .professional-form .form-select#device option[value="phone"] {
+    background: #007bff;
+    color: white;
+  }
+
+  .professional-form .form-select#device option[value="tablet"] {
+    background: #28a745;
+    color: white;
+  }
+
+  .professional-form .form-select#device option[value="laptop"] {
+    background: #ffc107;
+    color: #333;
+  }
+
+  .professional-form .form-select#device option[value="other"] {
+    background: #6f42c1;
+    color: white;
+  }
 
   /* Dynamic Select Background on Change - Brand */
-  .professional-form .form-select#Brand.brand-Apple { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); color: white; border-color: #007bff; }
-  .professional-form .form-select#Brand.brand-Samsung { background: linear-gradient(135deg, #28a745 0%, #218838 100%); color: white; border-color: #28a745; }
-  .professional-form .form-select#Brand.brand-Oppo { background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); color: #333; border-color: #ffc107; }
-  .professional-form .form-select#Brand.brand-Xiaomi { background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; border-color: #dc3545; }
-  .professional-form .form-select#Brand.brand-OnePlus { background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%); color: white; border-color: #6f42c1; }
-  .professional-form .form-select#Brand.brand-Realme { background: linear-gradient(135deg, #fd7e14 0%, #e8590c 100%); color: white; border-color: #fd7e14; }
-  .professional-form .form-select#Brand.brand-Vivo { background: linear-gradient(135deg, #20c997 0%, #1cb394 100%); color: white; border-color: #20c997; }
+  .professional-form .form-select#Brand.brand-Apple {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: white;
+    border-color: #007bff;
+  }
+
+  .professional-form .form-select#Brand.brand-Samsung {
+    background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+    color: white;
+    border-color: #28a745;
+  }
+
+  .professional-form .form-select#Brand.brand-Oppo {
+    background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+    color: #333;
+    border-color: #ffc107;
+  }
+
+  .professional-form .form-select#Brand.brand-Xiaomi {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    color: white;
+    border-color: #dc3545;
+  }
+
+  .professional-form .form-select#Brand.brand-OnePlus {
+    background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%);
+    color: white;
+    border-color: #6f42c1;
+  }
+
+  .professional-form .form-select#Brand.brand-Realme {
+    background: linear-gradient(135deg, #fd7e14 0%, #e8590c 100%);
+    color: white;
+    border-color: #fd7e14;
+  }
+
+  .professional-form .form-select#Brand.brand-Vivo {
+    background: linear-gradient(135deg, #20c997 0%, #1cb394 100%);
+    color: white;
+    border-color: #20c997;
+  }
 
   /* Dynamic Select Background on Change - Device Type */
-  .professional-form .form-select#device.device-phone { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); color: white; border-color: #007bff; }
-  .professional-form .form-select#device.device-tablet { background: linear-gradient(135deg, #28a745 0%, #218838 100%); color: white; border-color: #28a745; }
-  .professional-form .form-select#device.device-laptop { background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); color: #333; border-color: #ffc107; }
-  .professional-form .form-select#device.device-other { background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%); color: white; border-color: #6f42c1; }
+  .professional-form .form-select#device.device-phone {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: white;
+    border-color: #007bff;
+  }
+
+  .professional-form .form-select#device.device-tablet {
+    background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+    color: white;
+    border-color: #28a745;
+  }
+
+  .professional-form .form-select#device.device-laptop {
+    background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+    color: #333;
+    border-color: #ffc107;
+  }
+
+  .professional-form .form-select#device.device-other {
+    background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%);
+    color: white;
+    border-color: #6f42c1;
+  }
 
   /* Repair Status Dropdown Colors */
-  .professional-form .form-select[name="status"] option[value="Pending"] { background: #ffc107; color: #333; }
-  .professional-form .form-select[name="status"] option[value="Cancelled"] { background: #dc3545; color: white; }
-  .professional-form .form-select[name="status"] option[value="Progress"] { background: #007bff; color: white; }
-  .professional-form .form-select[name="status"] option[value="Completed"] { background: #28a745; color: white; }
-  .professional-form .form-select[name="status"] option[value="Delivered"] { background: #6f42c1; color: white; }
+  .professional-form .form-select[name="status"] option[value="Pending"] {
+    background: #ffc107;
+    color: #333;
+  }
+
+  .professional-form .form-select[name="status"] option[value="Cancelled"] {
+    background: #dc3545;
+    color: white;
+  }
+
+  .professional-form .form-select[name="status"] option[value="Progress"] {
+    background: #007bff;
+    color: white;
+  }
+
+  .professional-form .form-select[name="status"] option[value="Completed"] {
+    background: #28a745;
+    color: white;
+  }
+
+  .professional-form .form-select[name="status"] option[value="Delivered"] {
+    background: #6f42c1;
+    color: white;
+  }
 
   /* Dynamic Select Background on Change - Repair Status */
-  .professional-form .form-select[name="status"].status-Pending { background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); color: #333; border-color: #ffc107; }
-  .professional-form .form-select[name="status"].status-Cancelled { background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; border-color: #dc3545; }
-  .professional-form .form-select[name="status"].status-Progress { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); color: white; border-color: #007bff; }
-  .professional-form .form-select[name="status"].status-Completed { background: linear-gradient(135deg, #28a745 0%, #218838 100%); color: white; border-color: #28a745; }
-  .professional-form .form-select[name="status"].status-Delivered { background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%); color: white; border-color: #6f42c1; }
+  .professional-form .form-select[name="status"].status-Pending {
+    background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+    color: #333;
+    border-color: #ffc107;
+  }
+
+  .professional-form .form-select[name="status"].status-Cancelled {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    color: white;
+    border-color: #dc3545;
+  }
+
+  .professional-form .form-select[name="status"].status-Progress {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: white;
+    border-color: #007bff;
+  }
+
+  .professional-form .form-select[name="status"].status-Completed {
+    background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+    color: white;
+    border-color: #28a745;
+  }
+
+  .professional-form .form-select[name="status"].status-Delivered {
+    background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%);
+    color: white;
+    border-color: #6f42c1;
+  }
 
   /* Inventory Brand Dropdown Colors (gadgetrModal) */
-  .professional-form .form-select#brand option[value="Apple"] { background: #007bff; color: white; }
-  .professional-form .form-select#brand option[value="Samsung"] { background: #28a745; color: white; }
-  .professional-form .form-select#brand option[value="Oppo"] { background: #ffc107; color: #333; }
-  .professional-form .form-select#brand option[value="Xiaomi"] { background: #dc3545; color: white; }
-  .professional-form .form-select#brand option[value="OnePlus"] { background: #6f42c1; color: white; }
-  .professional-form .form-select#brand option[value="Realme"] { background: #fd7e14; color: white; }
-  .professional-form .form-select#brand option[value="Vivo"] { background: #20c997; color: white; }
+  .professional-form .form-select#brand option[value="Apple"] {
+    background: #007bff;
+    color: white;
+  }
+
+  .professional-form .form-select#brand option[value="Samsung"] {
+    background: #28a745;
+    color: white;
+  }
+
+  .professional-form .form-select#brand option[value="Oppo"] {
+    background: #ffc107;
+    color: #333;
+  }
+
+  .professional-form .form-select#brand option[value="Xiaomi"] {
+    background: #dc3545;
+    color: white;
+  }
+
+  .professional-form .form-select#brand option[value="OnePlus"] {
+    background: #6f42c1;
+    color: white;
+  }
+
+  .professional-form .form-select#brand option[value="Realme"] {
+    background: #fd7e14;
+    color: white;
+  }
+
+  .professional-form .form-select#brand option[value="Vivo"] {
+    background: #20c997;
+    color: white;
+  }
 
   /* Inventory Category Dropdown Colors */
-  .professional-form .form-select#Category option[value="New Mobile"] { background: #007bff; color: white; }
-  .professional-form .form-select#Category option[value="Used Mobile"] { background: #28a745; color: white; }
+  .professional-form .form-select#Category option[value="New Mobile"] {
+    background: #007bff;
+    color: white;
+  }
+
+  .professional-form .form-select#Category option[value="Used Mobile"] {
+    background: #28a745;
+    color: white;
+  }
 
   /* Dynamic Select Background on Change - Inventory Brand */
-  .professional-form .form-select#brand.brand-Apple { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); color: white; border-color: #007bff; }
-  .professional-form .form-select#brand.brand-Samsung { background: linear-gradient(135deg, #28a745 0%, #218838 100%); color: white; border-color: #28a745; }
-  .professional-form .form-select#brand.brand-Oppo { background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); color: #333; border-color: #ffc107; }
-  .professional-form .form-select#brand.brand-Xiaomi { background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; border-color: #dc3545; }
-  .professional-form .form-select#brand.brand-OnePlus { background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%); color: white; border-color: #6f42c1; }
-  .professional-form .form-select#brand.brand-Realme { background: linear-gradient(135deg, #fd7e14 0%, #e8590c 100%); color: white; border-color: #fd7e14; }
-  .professional-form .form-select#brand.brand-Vivo { background: linear-gradient(135deg, #20c997 0%, #1cb394 100%); color: white; border-color: #20c997; }
+  .professional-form .form-select#brand.brand-Apple {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: white;
+    border-color: #007bff;
+  }
+
+  .professional-form .form-select#brand.brand-Samsung {
+    background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+    color: white;
+    border-color: #28a745;
+  }
+
+  .professional-form .form-select#brand.brand-Oppo {
+    background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+    color: #333;
+    border-color: #ffc107;
+  }
+
+  .professional-form .form-select#brand.brand-Xiaomi {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    color: white;
+    border-color: #dc3545;
+  }
+
+  .professional-form .form-select#brand.brand-OnePlus {
+    background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%);
+    color: white;
+    border-color: #6f42c1;
+  }
+
+  .professional-form .form-select#brand.brand-Realme {
+    background: linear-gradient(135deg, #fd7e14 0%, #e8590c 100%);
+    color: white;
+    border-color: #fd7e14;
+  }
+
+  .professional-form .form-select#brand.brand-Vivo {
+    background: linear-gradient(135deg, #20c997 0%, #1cb394 100%);
+    color: white;
+    border-color: #20c997;
+  }
 
   /* Dynamic Select Background on Change - Inventory Category */
-  .professional-form .form-select#Category.category-New-Mobile { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); color: white; border-color: #007bff; }
-  .professional-form .form-select#Category.category-Used-Mobile { background: linear-gradient(135deg, #28a745 0%, #218838 100%); color: white; border-color: #28a745; }
+  .professional-form .form-select#Category.category-New-Mobile {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: white;
+    border-color: #007bff;
+  }
 
- </style>
+  .professional-form .form-select#Category.category-Used-Mobile {
+    background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+    color: white;
+    border-color: #28a745;
+  }
+</style>
 
 
 <!-- Repair Form -->
-<div class="modal fade professional-modal" id="gadgetRepairModal" tabindex="-1" aria-labelledby="gadgetRepairModalLabel" aria-hidden="true">
+<div class="modal fade professional-modal" id="gadgetRepairModal" tabindex="-1" aria-labelledby="gadgetRepairModalLabel"
+  aria-hidden="true">
   <div class="modal-dialog">
-      <div class="modal-content">
-          <div class="modal-header">
-              <h2 class="modal-title" id="gadgetRepairModalLabel">
-                <i class="fa-solid fa-tools me-3"></i>Add Repair Customer
-              </h2>
-              <p class="modal-subtitle">Create a new repair service request with customer details</p>
-              <button type="button" class="professional-close-btn" data-bs-dismiss="modal" aria-label="Close">
-                 <i class="fas fa-times"></i>
-              </button>
-          </div>
-          <div class="modal-body">
-              <form action="/repair" method="POST" enctype="multipart/form-data" class="professional-form">
-                <div class="row" style="display: none;">
-                  <div class="col-md-6">
-                    <input type="text" class="form-control" name="random_id" id="randomId" readonly required>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="gadgetRepairModalLabel">
+          <i class="fa-solid fa-tools me-3"></i>Add Repair Customer
+        </h2>
+        <p class="modal-subtitle">Create a new repair service request with customer details</p>
+        <button type="button" class="professional-close-btn" data-bs-dismiss="modal" aria-label="Close">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="text-center">
+                  <small class="form-text text-muted"
+                    style="font-style: italic; color: rgba(255,255,255,0.8) !important; font-size: 14px; letter-spacing: 0.5px;">This unique tracking ID will be used to track your repair status publicly.</small>
+                </div>
+      <div class="modal-body">
+        <form action="/repair" method="POST" enctype="multipart/form-data" class="professional-form">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="trackingIdDisplay" class="form-label">Tracking ID</label>
+
+                <div class="d-flex justify-content-center mb-3">
+                  <div style="max-width: 800px; width: 100%; position: relative; box-shadow: 0 4px 15px rgba(255,255,255,0.1); border-radius: 15px; overflow: hidden;">
+                    <input type="text" class="form-control" name="random_id" id="randomId" readonly required
+                      style="background-color: #f8f9fa; font-weight: 800; font-size: 18px; letter-spacing: 1px;  border: none; color: black; height: 65px; padding-right: 60px;">
+
+                    <div style="position: absolute; right: 0; top: 0; height: 100%; display: flex;">
+                      <button type="button" class="btn btn-professional-copy" onclick="copyTrackingId()" id="copyBtn"
+                        style="background:linear-gradient(135deg, #007bff 0%, #0056b3 100%) ; color: white; border: none; border-radius: 0; min-width: 80px; font-weight: 600; height: 100%; border-left: 2px solid rgba(255,255,255,0.2);">
+                        <i class="fas fa-copy me-1"></i>Copy
+                      </button>
+                      <button type="button" class="btn btn-professional-generate" onclick="generateNewTrackingId()"
+                        style="background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); color: white; border: none; border-radius: 0; min-width: 100px; font-weight: 600; height: 100%; border-left: 1px solid rgba(255,255,255,0.2);">
+                        <i class="fas fa-sync-alt me-1"></i>Generate
+                      </button>
+                    </div>
                   </div>
                 </div>
+
                 
-                <div class="row">
-                  <div class="col-md-6">
-                    <div class="form-group">
-                      <label for="fullName" class="form-label">Full Name *</label>
-                      <input type="text" class="form-control" name="fullName" required placeholder="Enter customer full name">
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="form-group">
-                      <label for="mobileNumber" class="form-label">Mobile Number *</label>
-                      <input type="tel" class="form-control" name="mobileNumber" required placeholder="Enter mobile number">
-                    </div>
-                  </div>
-                </div>
-
-                <div class="row">
-                  <div class="col-md-6">
-                    <div class="form-group">
-                      <label for="Price" class="form-label">Repair Price</label>
-                      <input type="number" class="form-control" name="Price" placeholder="Enter repair price">
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="form-group">
-                      <label for="email" class="form-label">Email Address</label>
-                      <input type="email" class="form-control" name="email" placeholder="Enter email address">
-                    </div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-md-6">
-                    <div class="form-group">
-                      <label for="brand" class="form-label">Brand Name *</label>
-                      <select class="form-select" name="brand" id="Brand" required>
-                        <option value="" disabled selected>Select Brand</option>
-                        <% brand.forEach(brand => { %>
-                        <option value="<%= brand.name %>">
-                          <%= brand.name %>
-                        </option>
-                        <% }); %>
-                        <option value="Apple">Apple</option>
-                        <option value="Samsung">Samsung</option>
-                        <option value="Oppo">Oppo</option>
-                        <option value="Xiaomi">Xiaomi</option>
-                        <option value="OnePlus">OnePlus</option>
-                        <option value="Realme">Realme</option>
-                        <option value="Vivo">Vivo</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div class="col-md-6">
-                    <div class="form-group">
-                      <label for="device" class="form-label">Device Type *</label>
-                      <select class="form-select" name="device" id="device" required>
-                        <option value="" disabled selected>Select Device Type</option>
-                        <option value="phone">Phone</option>
-                        <option value="tablet">Tablet</option>
-                        <option value="laptop">Laptop</option>
-                        <option value="other">Other</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-md-6">
-                    <div class="form-group">
-                      <label for="deviceImage" class="form-label">Device Image</label>
-                      <input type="file" class="form-control" name="deviceImage" accept="image/*">
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="form-group">
-                      <label for="status" class="form-label">Repair Status *</label>
-                      <select class="form-select" name="status" required>
-                        <option value="" disabled selected>Select Status</option>
-                        <option value="Pending">Pending</option>
-                        <option value="Cancelled">Cancelled</option>
-                        <option value="Progress">In Progress</option>
-                        <option value="Completed">Completed</option>
-                        <option value="Delivered">Delivered</option>
-                      </select>
-                    </div>
-                  </div> 
-                </div>
-
-                <div class="form-group">
-                  <label for="gadgetProblem" class="form-label">Device Problem Description</label>
-                  <textarea class="form-control" id="gadgetProblem" name="gadgetProblem" rows="3" placeholder="Describe the device problem in detail"></textarea>
-                </div>
-                
-                <button type="submit" class="professional-submit-btn">
-                  <i class="fa-solid fa-tools me-2"></i>Create Repair Request
-                </button>
-                
-                <script>
-                  let counter = localStorage.getItem('counter') ? parseInt(localStorage.getItem('counter')) : 1000;
-                  document.addEventListener('DOMContentLoaded', () => {
-                    const randomIdField = document.getElementById('randomId');
-                    const sequentialId = `ID-${counter}`;
-                    randomIdField.value = sequentialId;
-                    counter++;
-                    localStorage.setItem('counter', counter);
-
-                    // Dynamic dropdown color change for Brand, Device Type, and Status
-                    const brandSelect = document.getElementById('Brand');
-                    const deviceSelect = document.getElementById('device');
-                    const statusSelect = document.querySelector('select[name="status"]');
-
-                    if (brandSelect) {
-                      brandSelect.addEventListener('change', function() {
-                        // Remove previous brand classes
-                        this.className = this.className.replace(/brand-\w+/g, '');
-                        // Add new brand class
-                        if (this.value) {
-                          this.className += ' brand-' + this.value.replace(/ /g, '-');
-                        }
-                      });
-                    }
-
-                    if (deviceSelect) {
-                      deviceSelect.addEventListener('change', function() {
-                        // Remove previous device classes
-                        this.className = this.className.replace(/device-\w+/g, '');
-                        // Add new device class
-                        if (this.value) {
-                          this.className += ' device-' + this.value;
-                        }
-                      });
-                    }
-
-                    if (statusSelect) {
-                      statusSelect.addEventListener('change', function() {
-                        // Remove previous status classes
-                        this.className = this.className.replace(/status-\w+/g, '');
-                        // Add new status class
-                        if (this.value) {
-                          this.className += ' status-' + this.value;
-                        }
-                      });
-                    }
-
-                    // Dynamic dropdown color change for Inventory Brand and Category
-                    const inventoryBrandSelect = document.getElementById('brand');
-                    const inventoryCategorySelect = document.getElementById('Category');
-
-                    if (inventoryBrandSelect) {
-                      inventoryBrandSelect.addEventListener('change', function() {
-                        // Remove previous brand classes
-                        this.className = this.className.replace(/brand-\w+/g, '');
-                        // Add new brand class
-                        if (this.value) {
-                          this.className += ' brand-' + this.value.replace(/ /g, '-');
-                        }
-                      });
-                    }
-
-                    if (inventoryCategorySelect) {
-                      inventoryCategorySelect.addEventListener('change', function() {
-                        // Remove previous category classes
-                        this.className = this.className.replace(/category-\w+/g, '');
-                        // Add new category class
-                        if (this.value) {
-                          this.className += ' category-' + this.value.replace(/ /g, '-');
-                        }
-                      });
-                    }
-                  });
-                </script>
-        </form> 
+              </div>
+            </div>
           </div>
+
+
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="fullName" class="form-label">Full Name *</label>
+                <input type="text" class="form-control" name="fullName" required placeholder="Enter customer full name">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="mobileNumber" class="form-label">Mobile Number *</label>
+                <input type="tel" class="form-control" name="mobileNumber" required placeholder="Enter mobile number">
+              </div>
+            </div>
           </div>
-</div>       
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="Price" class="form-label">Repair Price</label>
+                <input type="number" class="form-control" name="Price" placeholder="Enter repair price">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="email" class="form-label">Email Address</label>
+                <input type="email" class="form-control" name="email" placeholder="Enter email address">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="brand" class="form-label">Brand Name *</label>
+                <select class="form-select" name="brand" id="Brand" required>
+                  <option value="" disabled selected>Select Brand</option>
+                  <% brand.forEach(brand=> { %>
+                    <option value="<%= brand.name %>">
+                      <%= brand.name %>
+                    </option>
+                    <% }); %>
+                      <option value="Apple">Apple</option>
+                      <option value="Samsung">Samsung</option>
+                      <option value="Oppo">Oppo</option>
+                      <option value="Xiaomi">Xiaomi</option>
+                      <option value="OnePlus">OnePlus</option>
+                      <option value="Realme">Realme</option>
+                      <option value="Vivo">Vivo</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="device" class="form-label">Device Type *</label>
+                <select class="form-select" name="device" id="device" required>
+                  <option value="" disabled selected>Select Device Type</option>
+                  <option value="phone">Phone</option>
+                  <option value="tablet">Tablet</option>
+                  <option value="laptop">Laptop</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="deviceImage" class="form-label">Device Image</label>
+                <input type="file" class="form-control" name="deviceImage" accept="image/*">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="status" class="form-label">Repair Status *</label>
+                <select class="form-select" name="status" required>
+                  <option value="" disabled selected>Select Status</option>
+                  <option value="Pending">Pending</option>
+                  <option value="Cancelled">Cancelled</option>
+                  <option value="Progress">In Progress</option>
+                  <option value="Completed">Completed</option>
+                  <option value="Delivered">Delivered</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="gadgetProblem" class="form-label">Device Problem Description</label>
+            <textarea class="form-control" id="gadgetProblem" name="gadgetProblem" rows="3"
+              placeholder="Describe the device problem in detail"></textarea>
+          </div>
+
+          <button type="submit" class="professional-submit-btn">
+            <i class="fa-solid fa-tools me-2"></i>Create Repair Request
+          </button>
+
+          <script>
+            // Generate tracking ID in format RPR-YYYYMMDD-XXXXXX
+            function generateTrackingId() {
+              const now = new Date();
+              const year = now.getFullYear();
+              const month = (now.getMonth() + 1).toString().padStart(2, '0');
+              const day = now.getDate().toString().padStart(2, '0');
+              const randomStr = Math.random().toString(36).substring(2, 8).toUpperCase();
+              return `RPR-${year}${month}${day}-${randomStr}`;
+            }
+
+            document.addEventListener('DOMContentLoaded', () => {
+              const randomIdField = document.getElementById('randomId');
+              if (randomIdField && !randomIdField.value) {
+                randomIdField.value = generateTrackingId();
+              }
+
+              // Dynamic dropdown color change for Brand, Device Type, and Status
+              const brandSelect = document.getElementById('Brand');
+              const deviceSelect = document.getElementById('device');
+              const statusSelect = document.querySelector('select[name="status"]');
+
+              if (brandSelect) {
+                brandSelect.addEventListener('change', function () {
+                  // Remove previous brand classes
+                  this.className = this.className.replace(/brand-\w+/g, '');
+                  // Add new brand class
+                  if (this.value) {
+                    this.className += ' brand-' + this.value.replace(/ /g, '-');
+                  }
+                });
+              }
+
+              if (deviceSelect) {
+                deviceSelect.addEventListener('change', function () {
+                  // Remove previous device classes
+                  this.className = this.className.replace(/device-\w+/g, '');
+                  // Add new device class
+                  if (this.value) {
+                    this.className += ' device-' + this.value;
+                  }
+                });
+              }
+
+              if (statusSelect) {
+                statusSelect.addEventListener('change', function () {
+                  // Remove previous status classes
+                  this.className = this.className.replace(/status-\w+/g, '');
+                  // Add new status class
+                  if (this.value) {
+                    this.className += ' status-' + this.value;
+                  }
+                });
+              }
+
+              // Dynamic dropdown color change for Inventory Brand and Category
+              const inventoryBrandSelect = document.getElementById('brand');
+              const inventoryCategorySelect = document.getElementById('Category');
+
+              if (inventoryBrandSelect) {
+                inventoryBrandSelect.addEventListener('change', function () {
+                  // Remove previous brand classes
+                  this.className = this.className.replace(/brand-\w+/g, '');
+                  // Add new brand class
+                  if (this.value) {
+                    this.className += ' brand-' + this.value.replace(/ /g, '-');
+                  }
+                });
+              }
+
+              if (inventoryCategorySelect) {
+                inventoryCategorySelect.addEventListener('change', function () {
+                  // Remove previous category classes
+                  this.className = this.className.replace(/category-\w+/g, '');
+                  // Add new category class
+                  if (this.value) {
+                    this.className += ' category-' + this.value.replace(/ /g, '-');
+                  }
+                });
+              }
+            });
+
+            // Copy tracking ID to clipboard
+            function copyTrackingId() {
+              const trackingIdField = document.getElementById('randomId');
+              const copyBtn = document.getElementById('copyBtn');
+
+              if (trackingIdField && trackingIdField.value) {
+                navigator.clipboard.writeText(trackingIdField.value).then(() => {
+                  // Show success feedback
+                  const originalText = copyBtn.innerHTML;
+                  copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                  copyBtn.classList.remove('btn-outline-secondary');
+                  copyBtn.classList.add('btn-success');
+
+                  setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                    copyBtn.classList.remove('btn-success');
+                    copyBtn.classList.add('btn-outline-secondary');
+                  }, 2000);
+                }).catch(() => {
+                  alert('Failed to copy tracking ID');
+                });
+              }
+            }
+
+            // Generate new tracking ID
+            function generateNewTrackingId() {
+              const randomIdField = document.getElementById('randomId');
+              if (randomIdField) {
+                randomIdField.value = generateTrackingId();
+              }
+            }
+          </script>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>
 <!--end Repair Form -->
 
 
 
-<!-- Add Product form -->  
+<!-- Add Product form -->
 <!-- Modal for Adding Inventory -->
-<div class="modal fade professional-modal" id="gadgetrModal" tabindex="-1" aria-labelledby="gadgetrModalLabel" aria-hidden="true">
+<div class="modal fade professional-modal" id="gadgetrModal" tabindex="-1" aria-labelledby="gadgetrModalLabel"
+  aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -533,14 +819,16 @@
             <div class="col-md-6">
               <div class="form-group">
                 <label for="product_name" class="form-label">Item Name *</label>
-                <input type="text" name="product_name" class="form-control" id="product_name" required placeholder="Enter product name">
+                <input type="text" name="product_name" class="form-control" id="product_name" required
+                  placeholder="Enter product name">
               </div>
             </div>
 
             <div class="col-md-6">
               <div class="form-group">
                 <label for="Model" class="form-label">Model *</label>
-                <input type="text" name="Model" class="form-control" id="Model" required placeholder="Enter model number">
+                <input type="text" name="Model" class="form-control" id="Model" required
+                  placeholder="Enter model number">
               </div>
             </div>
           </div>
@@ -551,16 +839,18 @@
                 <label for="Brand" class="form-label">Brand *</label>
                 <select class="form-select" name="Brand" id="brand" required>
                   <option value="" disabled selected>Select Brand</option>
-                  <% brand.forEach(brand => { %>
-                  <option value="<%= brand.name %>"><%= brand.name %></option>
-                  <% }); %>
-                  <option value="Apple">Apple</option>
-                  <option value="Samsung">Samsung</option>
-                  <option value="Oppo">Oppo</option>
-                  <option value="Xiaomi">Xiaomi</option>
-                  <option value="OnePlus">OnePlus</option>
-                  <option value="Realme">Realme</option>
-                  <option value="Vivo">Vivo</option>
+                  <% brand.forEach(brand=> { %>
+                    <option value="<%= brand.name %>">
+                      <%= brand.name %>
+                    </option>
+                    <% }); %>
+                      <option value="Apple">Apple</option>
+                      <option value="Samsung">Samsung</option>
+                      <option value="Oppo">Oppo</option>
+                      <option value="Xiaomi">Xiaomi</option>
+                      <option value="OnePlus">OnePlus</option>
+                      <option value="Realme">Realme</option>
+                      <option value="Vivo">Vivo</option>
                 </select>
               </div>
             </div>
@@ -570,11 +860,13 @@
                 <label for="Category" class="form-label">Category *</label>
                 <select class="form-select" name="Category" id="Category" required>
                   <option value="" disabled selected>Select Category</option>
-                  <% categories.forEach(product => { %>
-                  <option value="<%= product.name %>"><%= product.name %></option>
-                  <% }); %>
-                  <option value="New Mobile">New Mobile</option>
-                  <option value="Used Mobile">Used Mobile</option>
+                  <% categories.forEach(product=> { %>
+                    <option value="<%= product.name %>">
+                      <%= product.name %>
+                    </option>
+                    <% }); %>
+                      <option value="New Mobile">New Mobile</option>
+                      <option value="Used Mobile">Used Mobile</option>
                 </select>
               </div>
             </div>
@@ -591,21 +883,24 @@
             <div class="col-md-4">
               <div class="form-group">
                 <label for="Sale_Price" class="form-label">Sale Price *</label>
-                <input type="number" name="Sale_Price" class="form-control" id="Sale_Price" required placeholder="Enter sale price">
+                <input type="number" name="Sale_Price" class="form-control" id="Sale_Price" required
+                  placeholder="Enter sale price">
               </div>
             </div>
 
             <div class="col-md-4">
               <div class="form-group">
                 <label for="Retail_Price" class="form-label">Retail Price *</label>
-                <input type="number" name="Retail_Price" class="form-control" id="Retail_Price" required placeholder="Enter retail price">
+                <input type="number" name="Retail_Price" class="form-control" id="Retail_Price" required
+                  placeholder="Enter retail price">
               </div>
             </div>
 
             <div class="col-md-4">
               <div class="form-group">
                 <label for="imei_number" class="form-label">IMEI/Serial Number</label>
-                <input type="text" name="imei_number" class="form-control" id="imei_number" placeholder="Enter IMEI or serial number">
+                <input type="text" name="imei_number" class="form-control" id="imei_number"
+                  placeholder="Enter IMEI or serial number">
               </div>
             </div>
           </div>
@@ -628,7 +923,8 @@
 
           <div class="form-group">
             <label for="gadgetProblem" class="form-label">Product Details</label>
-            <textarea class="form-control" id="gadgetProblem" name="gadget_problem" rows="3" placeholder="Describe product specifications and details"></textarea>
+            <textarea class="form-control" id="gadgetProblem" name="gadget_problem" rows="3"
+              placeholder="Describe product specifications and details"></textarea>
           </div>
 
           <button type="submit" class="professional-submit-btn">
@@ -644,72 +940,76 @@
 
 
 <!-- Brand form -->
-<div class="modal fade professional-modal" id="brandModal" tabindex="-1" aria-labelledby="brandModalLabel" aria-hidden="true">
-<div class="modal-dialog">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h2 class="modal-title" id="brandModalLabel">
-        <i class="fa-solid fa-tags me-3"></i>Add Brand
-      </h2>
-      <p class="modal-subtitle">Create a new brand for your product catalog</p>
-      <button type="button" class="professional-close-btn" data-bs-dismiss="modal" aria-label="Close">                
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
-    <div class="modal-body">
-      <form class="professional-form" action="/Brand" method="post">
-        <div class="form-group">
-          <label for="name" class="form-label">Brand Name *</label>
-          <input type="text" id="name" name="name" required class="form-control" placeholder="Enter brand name">
-        </div>
-
-        <div class="form-group">
-          <label for="description" class="form-label">Description</label>
-          <textarea id="description" name="description" class="form-control" rows="3" placeholder="Enter brand description"></textarea>
-        </div>
-
-        <button type="submit" class="professional-submit-btn">
-          <i class="fa-solid fa-tags me-2"></i>Add Brand
+<div class="modal fade professional-modal" id="brandModal" tabindex="-1" aria-labelledby="brandModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="brandModalLabel">
+          <i class="fa-solid fa-tags me-3"></i>Add Brand
+        </h2>
+        <p class="modal-subtitle">Create a new brand for your product catalog</p>
+        <button type="button" class="professional-close-btn" data-bs-dismiss="modal" aria-label="Close">
+          <i class="fas fa-times"></i>
         </button>
-      </form>
+      </div>
+      <div class="modal-body">
+        <form class="professional-form" action="/Brand" method="post">
+          <div class="form-group">
+            <label for="name" class="form-label">Brand Name *</label>
+            <input type="text" id="name" name="name" required class="form-control" placeholder="Enter brand name">
+          </div>
+
+          <div class="form-group">
+            <label for="description" class="form-label">Description</label>
+            <textarea id="description" name="description" class="form-control" rows="3"
+              placeholder="Enter brand description"></textarea>
+          </div>
+
+          <button type="submit" class="professional-submit-btn">
+            <i class="fa-solid fa-tags me-2"></i>Add Brand
+          </button>
+        </form>
+      </div>
     </div>
   </div>
-</div>
 </div>
 <!-- Brand form -->
 
 
 <!-- Categories form -->
-<div class="modal fade professional-modal" id="categoriesModal" tabindex="-1" aria-labelledby="categoriesModalLabel" aria-hidden="true">
-<div class="modal-dialog">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h2 class="modal-title" id="categoriesModalLabel">
-        <i class="fa-solid fa-list me-3"></i>Add Category
-      </h2>
-      <p class="modal-subtitle">Create a new product category for better organization</p>
-      <button type="button" class="professional-close-btn" data-bs-dismiss="modal" aria-label="Close">                
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
-    <div class="modal-body">
-      <form class="professional-form" action="/category" method="post">
-        <div class="form-group">
-          <label for="name" class="form-label">Category Name *</label>
-          <input type="text" id="name" name="name" required class="form-control" placeholder="Enter category name">
-        </div>
-
-        <div class="form-group">
-          <label for="description" class="form-label">Description</label>
-          <textarea id="description" name="description" class="form-control" rows="3" placeholder="Enter category description"></textarea>
-        </div>
-
-        <button type="submit" class="professional-submit-btn">
-          <i class="fa-solid fa-list me-2"></i>Add Category
+<div class="modal fade professional-modal" id="categoriesModal" tabindex="-1" aria-labelledby="categoriesModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="categoriesModalLabel">
+          <i class="fa-solid fa-list me-3"></i>Add Category
+        </h2>
+        <p class="modal-subtitle">Create a new product category for better organization</p>
+        <button type="button" class="professional-close-btn" data-bs-dismiss="modal" aria-label="Close">
+          <i class="fas fa-times"></i>
         </button>
-      </form>
+      </div>
+      <div class="modal-body">
+        <form class="professional-form" action="/category" method="post">
+          <div class="form-group">
+            <label for="name" class="form-label">Category Name *</label>
+            <input type="text" id="name" name="name" required class="form-control" placeholder="Enter category name">
+          </div>
+
+          <div class="form-group">
+            <label for="description" class="form-label">Description</label>
+            <textarea id="description" name="description" class="form-control" rows="3"
+              placeholder="Enter category description"></textarea>
+          </div>
+
+          <button type="submit" class="professional-submit-btn">
+            <i class="fa-solid fa-list me-2"></i>Add Category
+          </button>
+        </form>
+      </div>
     </div>
   </div>
-</div>
 </div>
 <!-- Categories form -->

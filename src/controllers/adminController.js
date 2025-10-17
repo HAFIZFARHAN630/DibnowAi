@@ -578,8 +578,8 @@ exports.settings = async (req, res) => {
       isUser: loggedInUser.role === "user",
       isAdmin: loggedInUser.role === "admin",
       users: users,
-      title: "Website title",
-      description: "Website description",
+      title: info.title,
+      description: info.description,
     });
   } catch (error) {
     console.log(error)
