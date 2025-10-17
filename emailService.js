@@ -1,12 +1,12 @@
 const handlebars = require('handlebars');
 const fs = require('fs');
 const path = require('path');
-const { brevoClient } = require('./emailConfig');
+const { mailtrapClient } = require('./emailConfig');
 require("dotenv").config();
 
 const APP_BASE_URL = process.env.APP_BASE_URL || "http://localhost:3000";
 
-// Generic sendEmail function using Brevo API
+// Generic sendEmail function using Mailtrap API
 async function sendEmail(templateName, toEmail, subject, context) {
     console.log(`🔍 [EMAIL] Preparing to send ${templateName} email`);
     console.log("   - To:", toEmail);
@@ -34,19 +34,27 @@ async function sendEmail(templateName, toEmail, subject, context) {
         htmlContent: htmlContent,
     };
 
-    console.log("🔍 [EMAIL] Sending via Brevo API...");
+    console.log("🔍 [EMAIL] Sending via Mailtrap API...");
     console.log("   - From:", process.env.EMAIL_NAME, `<${process.env.EMAIL_FROM}>`);
 
     try {
-        const response = await brevoClient.sendTransacEmail(emailData);
+        const response = await mailtrapClient.send({
+            from: {
+                email: process.env.EMAIL_FROM,
+                name: process.env.EMAIL_NAME,
+            },
+            to: [{ email: toEmail }],
+            subject: subject,
+            html: htmlContent,
+        });
         console.log(`✅ [EMAIL] ${templateName} sent successfully`);
-        console.log("   - Message ID:", response.messageId);
-        console.log("   - Response:", response.response);
+        console.log("   - Message ID:", response.message_ids?.[0] || 'N/A');
+        console.log("   - Response:", response);
         return response;
     } catch (error) {
         console.error(`❌ [EMAIL] Failed to send ${templateName}:`, error.message);
-        console.error("❌ [EMAIL] Error code:", error.code);
-        console.error("❌ [EMAIL] Error response:", error.response);
+        console.error("❌ [EMAIL] Error code:", error.code || error.statusCode);
+        console.error("❌ [EMAIL] Error response:", error.response?.data || error.response);
         console.error("❌ [EMAIL] Full error:", error);
         throw error;
     }

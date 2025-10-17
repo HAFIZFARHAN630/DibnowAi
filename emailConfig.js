@@ -1,9 +1,9 @@
-const SibApiV3Sdk = require('@sendinblue/client');
+const { MailtrapClient } = require("mailtrap");
+const dotenv = require("dotenv");
+dotenv.config();
 
-const brevoClient = new SibApiV3Sdk.TransactionalEmailsApi();
-brevoClient.setApiKey(
-    SibApiV3Sdk.TransactionalEmailsApiApiKeys.apiKey,
-    process.env.BREVO_API_KEY
-);
+const TOKEN = process.env.MAILTRAP_TOKEN;
 
-module.exports = { brevoClient };
+const mailtrapClient = new MailtrapClient({ token: TOKEN });
+
+module.exports = { mailtrapClient };

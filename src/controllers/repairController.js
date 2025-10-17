@@ -97,16 +97,9 @@ exports.addProduct = async (req, res) => {
 
         const trackingId = randomId;
 
-    // Send email with tracking id (Brevo via API)
+    // Send email with tracking id (Mailtrap via API)
     try {
-      const SibApiV3Sdk = require('sib-api-v3-sdk');
-
-      // Configure Brevo API
-      const defaultClient = SibApiV3Sdk.ApiClient.instance;
-      const apiKey = defaultClient.authentications['api-key'];
-      apiKey.apiKey = process.env.BREVO_API_KEY;
-
-      const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+      const { mailtrapClient } = require('../../emailConfig');
 
       const sendSmtpEmail = {
         sender: {
@@ -234,11 +227,19 @@ exports.addProduct = async (req, res) => {
 
       };
 
-      await apiInstance.sendTransacEmail(sendSmtpEmail);
-      console.log("✅ Tracking email sent successfully via Brevo to:", userEmail, " TrackingId:", trackingId);
+      await mailtrapClient.send({
+        from: {
+          email: process.env.EMAIL_FROM,
+          name: process.env.EMAIL_NAME,
+        },
+        to: [{ email: userEmail }],
+        subject: `Repair Registered — Tracking ID ${trackingId}`,
+        html: sendSmtpEmail.htmlContent,
+      });
+      console.log("✅ Tracking email sent successfully via Mailtrap to:", userEmail, " TrackingId:", trackingId);
     } catch (emailErr) {
-      console.error("❌ Failed to send tracking email via Brevo:", emailErr.message);
-      console.error("🔧 Make sure your .env file has: BREVO_API_KEY, EMAIL_FROM, EMAIL_NAME");
+      console.error("❌ Failed to send tracking email via Mailtrap:", emailErr.message);
+      console.error("🔧 Make sure your .env file has: MAILTRAP_TOKEN, EMAIL_FROM, EMAIL_NAME");
       // don't block user flow if email fails
     }
 
