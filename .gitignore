@@ -1,8 +1,4 @@
-.env 
-# Environment Variables
- .env .env.local .env.*.local 
- .env.development .env.test 
- .env.production 
+
  # IDE files
   .idea/ 
   .vscode/
