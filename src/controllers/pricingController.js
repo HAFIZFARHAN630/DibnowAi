@@ -206,7 +206,8 @@ exports.addSubscription = [
       isNaN: isNaN(expectedAmount)
     });
 
-    if (expectedAmount === 0) {
+    // Allow Free Trial with $0 price, but validate other plans
+    if (expectedAmount === 0 && plan.toLowerCase() !== 'free trial') {
       console.error(`❌ Plan ${plan} has zero price in database`);
       console.error(`📋 Plan data:`, {
         plan_name: selectedPlan.plan_name,
@@ -215,15 +216,15 @@ exports.addSubscription = [
         plan_price_length: selectedPlan.plan_price ? selectedPlan.plan_price.length : 'null/undefined'
       });
 
-      // Check if this is a data issue that can be fixed
-      if (selectedPlan.plan_price === "0" || selectedPlan.plan_price === "" || !selectedPlan.plan_price) {
-        console.error(`🚨 Plan has invalid price field. This might need manual database fix.`);
-      }
-
       return res.status(400).json({
         success: false,
         message: `Plan "${plan}" has invalid price (${selectedPlan.plan_price}). Please contact administrator.`
       });
+    }
+
+    // Free Trial special handling
+    if (plan.toLowerCase() === 'free trial' && expectedAmount === 0) {
+      console.log(`✅ Free Trial plan detected - allowing $0 price`);
     }
 
     const submittedAmount = parseFloat(amount);
@@ -235,7 +236,8 @@ exports.addSubscription = [
 
     // Handle manual payment with transaction details
     if (paymentMethod === 'manual') {
-      if (!transfer_id) {
+      // Free Trial doesn't require transfer_id
+      if (!transfer_id && plan.toLowerCase() !== 'free trial') {
         req.flash("error_msg", "Transaction ID is required for manual payment.");
         return res.redirect("/pricing");
       }
@@ -246,8 +248,8 @@ exports.addSubscription = [
         console.log(`✅ Auto-filled amount for ${plan}: ${amount} (GPA)`);
       }
 
-      // Validate amount is not less than plan price
-      if (submittedAmount < expectedAmount) {
+      // Validate amount is not less than plan price (skip for Free Trial)
+      if (submittedAmount < expectedAmount && plan.toLowerCase() !== 'free trial') {
         req.flash("error_msg",
           `Amount too low! Plan requires £${expectedAmount} but you entered £${submittedAmount}. Please enter the correct amount or contact admin if you have a discount.`
         );
@@ -260,40 +262,59 @@ exports.addSubscription = [
         const expiryDate = new Date(startDate);
         expiryDate.setDate(expiryDate.getDate() + 30);
 
+        // Free Trial auto-activates, others need admin approval
+        const isFreeTrialPlan = plan.toLowerCase() === 'free trial';
+        const planStatus = isFreeTrialPlan ? 'Active' : 'Pending';
+        const invoiceStatus = isFreeTrialPlan ? 'Paid' : 'Unpaid';
+
         const newPlanRequest = new PlanRequest({
           user: req.session.userId,
           planName: plan,
           amount: parseFloat(amount),
           startDate,
           expiryDate,
-          status: 'Pending',
-          invoiceStatus: 'Unpaid',
-          description: `Manual payment - awaiting admin verification. Transfer ID: ${transfer_id}`
+          status: planStatus,
+          invoiceStatus: invoiceStatus,
+          description: isFreeTrialPlan 
+            ? 'Free Trial - Auto-activated'
+            : `Manual payment - awaiting admin verification. Transfer ID: ${transfer_id}`
         });
 
         console.log("Creating Manual Payment PlanRequest:", {
           user: req.session.userId,
           planName: plan,
           amount: parseFloat(amount),
-          transfer_id: transfer_id
+          transfer_id: transfer_id,
+          isFreeTrialPlan,
+          status: planStatus
         });
 
         await newPlanRequest.save();
         console.log("Manual Payment PlanRequest saved successfully:", newPlanRequest._id);
 
-        // Update user record with transfer details
-        await User.findByIdAndUpdate(req.session.userId, {
-          transfer_id: transfer_id,
+        // Update user record
+        const userUpdate = {
+          transfer_id: transfer_id || 'FREE_TRIAL',
           amount: parseFloat(amount)
-        });
+        };
+
+        // Auto-activate Free Trial
+        if (isFreeTrialPlan) {
+          userUpdate.plan_name = plan;
+          userUpdate.subscription_date = startDate;
+          await subscribePlan(req.session.userId, plan);
+          console.log("✅ Free Trial plan auto-activated");
+        }
+
+        await User.findByIdAndUpdate(req.session.userId, userUpdate);
         console.log("User record updated with transfer details");
 
-        // Create transaction record for manual payment (pending status)
+        // Create transaction record
         const newTransaction = new Transaction({
           user: req.session.userId,
           type: 'payment',
           amount: parseFloat(amount),
-          status: 'pending'
+          status: isFreeTrialPlan ? 'success' : 'pending'
         });
         await newTransaction.save();
         console.log("Manual payment transaction saved successfully");
@@ -305,14 +326,16 @@ exports.addSubscription = [
             await req.app.locals.notificationService.createNotification(
               req.session.userId,
               user.first_name,
-              "Manual Payment Pending"
+              isFreeTrialPlan ? "Free Trial Activated" : "Manual Payment Pending"
             );
           }
         }
 
         req.flash(
           "success_msg",
-          `Your manual payment for ${plan} plan has been submitted. Please wait for admin verification before your package is activated.`
+          isFreeTrialPlan
+            ? `Your ${plan} has been activated! Enjoy your free trial.`
+            : `Your manual payment for ${plan} plan has been submitted. Please wait for admin verification before your package is activated.`
         );
         return res.redirect("/index");
       } catch (manualPaymentError) {
