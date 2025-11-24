@@ -58,7 +58,7 @@ exports.profile = async (req, res) => {
     // Set profile image path
     const profileImagePath = userResults.user_img || '/img/dumi img.png';
 
-    res.render("contactus/contactUs", {
+    res.render("contactUs/contactUs", {
       user: userResults,
       message: null,
       isAdmin,
@@ -127,7 +127,7 @@ exports.AllComplaint = async (req, res) => {
     // Set profile image path
     const profileImagePath = userResults.user_img || '/img/dumi img.png';
 
-    res.render("contactus/contactUs", {
+    res.render("contactUs/contactUs", {
       users: complaintResults,
       user: userResults,
       message: null,
