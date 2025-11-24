@@ -157,10 +157,14 @@
         color: white !important;
         border: none !important;
         font-weight: 600 !important;
-        padding: 8px 16px !important;
+        padding: 10px 24px !important;
+        min-width: 120px !important;
         border-radius: 8px !important;
         transition: all 0.3s ease !important;
         box-shadow: 0 2px 8px rgba(0, 51, 204, 0.3) !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
       }
 
       .pagination .page-link:hover {
@@ -172,6 +176,10 @@
         background: linear-gradient(135deg, #6b7280 0%, #9ca3af 100%) !important;
         opacity: 0.6 !important;
         cursor: not-allowed !important;
+      }
+
+      .pagination .page-item {
+        margin: 0 4px !important;
       }
     </style>
 
@@ -189,8 +197,8 @@
           <div class="card card-body py-3">
               <div class="row align-items-center">
                   <div class="col-md-12">
-                      <div class="d-flex justify-content-between align-items-center">
-                          <h4 class="mb-4 mb-sm-0 card-title"> Request</h4>
+                      <div class="d-flex justify-content-center align-items-center">
+                          <h4 class="mb-4 mb-sm-0 card-title fs-6 fw-bold"> User  Manual-Payment Request</h4>
                 
                       </div>
                   </div>
@@ -394,12 +402,12 @@
 
       function updatePagination() {
         const pagination = document.getElementById('pagination');
-        if (!pagination || totalPages <= 1) return;
+        if (!pagination) return;
         pagination.innerHTML = '';
 
         const prevLi = document.createElement('li');
         prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
-        prevLi.innerHTML = `<a class="page-link" href="#">Previous</a>`;
+        prevLi.innerHTML = `<a class="page-link" href="#"><i class="bi bi-chevron-left me-1"></i> Previous</a>`;
         prevLi.addEventListener('click', (e) => {
           e.preventDefault();
           if (currentPage > 1) showPage(currentPage - 1);
@@ -408,7 +416,7 @@
 
         const nextLi = document.createElement('li');
         nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
-        nextLi.innerHTML = `<a class="page-link" href="#">Next</a>`;
+        nextLi.innerHTML = `<a class="page-link" href="#">Next <i class="bi bi-chevron-right ms-1"></i></a>`;
         nextLi.addEventListener('click', (e) => {
           e.preventDefault();
           if (currentPage < totalPages) showPage(currentPage + 1);
@@ -416,7 +424,7 @@
         pagination.appendChild(nextLi);
       }
 
-      if (totalRows > rowsPerPage) showPage(1);
+      if (totalRows > 0) showPage(1);
     }, 100);
   });
 

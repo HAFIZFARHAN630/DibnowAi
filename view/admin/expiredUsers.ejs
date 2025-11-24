@@ -305,7 +305,7 @@
                 <div class="row align-items-center">
                     <div class="col-md-12 ">
                         <div class="d-sm-flex align-items-center justify-content-between">
-                            <h4 class="mb-4 mb-sm-0 card-title me-1">Expired Users <i class="bi bi-person-x"></i></h4>
+                            <h4 class="mb-4 mb-sm-0 card-title me-1 fw-bold fs-6 "> <i class="bi bi-person-x"></i>&nbsp;Expired Users Online and Manual</h4>
                             <a href="/admin" class="btn btn-gradient">Back to All Users</a>
                         </div>
                     </div>
@@ -351,6 +351,7 @@
         <tbody class="bg-white">
           <% if (expiredUsers && expiredUsers.length > 0) { %>
             <% expiredUsers.forEach((payment) => { %>
+              <% if (payment.user) { %>
               <tr class="hover:bg-gray-50 transition">
                 <td class="px-6 py-4">
                   <input type="checkbox" class="expired-row-checkbox form-check-input" data-id="<%= payment._id %>" style="cursor: pointer; width: 18px; height: 18px;">
@@ -377,6 +378,7 @@
                   <span class="status-expired">Expired</span>
                 </td>
               </tr>
+              <% } %>
             <% }) %>
           <% } else { %>
             <tr>
@@ -399,6 +401,7 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       <% if (expiredUsers && expiredUsers.length > 0) { %>
         <% expiredUsers.forEach((payment) => { %>
+          <% if (payment.user) { %>
           <div class="bg-white rounded-lg border border-gray-100 shadow-sm p-4 flex flex-col">
             <!-- Header -->
             <div class="flex items-start gap-3">
@@ -444,6 +447,7 @@
               <span class="status-expired text-xs inline-flex items-center px-3 py-1 rounded-full">Expired</span>
             </div>
           </div>
+          <% } %>
         <% }) %>
       <% } else { %>
         <div class="col-span-1">

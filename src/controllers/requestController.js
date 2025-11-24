@@ -18,44 +18,35 @@ exports.allusers = async (req, res) => {
 
     const profileImagePath = loggedInUser.user_img || "/uploads/default.png";
 
-    // Get pending manual payment requests with user details
-    const manualPaymentRequests = await PlanRequest.find({ 
-      status: 'Pending',
-      invoiceStatus: 'Unpaid'
-    })
-    .populate('user', 'first_name last_name email phone_number transfer_id amount')
+    // Get all plan requests with user details (remove strict filtering for debugging)
+    const manualPaymentRequests = await PlanRequest.find({})
+    .populate('user')
     .sort({ createdAt: -1 });
 
-    console.log('📋 Manual Payment Requests Found:', manualPaymentRequests.length);
-    if (manualPaymentRequests.length > 0) {
-      console.log('📋 Request Details:', JSON.stringify(manualPaymentRequests, null, 2));
-    } else {
-      // Check all PlanRequests to debug
-      const allRequests = await PlanRequest.find({}).populate('user');
-      console.log('📋 Total PlanRequests in DB:', allRequests.length);
-      allRequests.forEach((req, i) => {
-        console.log(`${i+1}. Plan: ${req.planName}, Status: ${req.status}, Invoice: ${req.invoiceStatus}, User: ${req.user ? req.user.email : 'N/A'}`);
-      });
-    }
+    console.log('📋 Total Plan Requests Found:', manualPaymentRequests.length);
 
     // Format data for display - convert GBP to PKR for admin view
-    const users = manualPaymentRequests.map(req => {
-      const baseAmount = parseFloat(req.amount) || 0;
-      const convertedAmount = baseAmount * 397.1863; // Convert to PKR
+    const users = manualPaymentRequests
+      .filter(req => req.user) // Only include requests with valid user
+      .map(req => {
+        const baseAmount = parseFloat(req.amount) || 0;
+        const convertedAmount = baseAmount * 397.1863;
 
-      return {
-        id: req.user._id,
-        first_name: req.user.first_name,
-        last_name: req.user.last_name,
-        email: req.user.email,
-        phone_number: req.user.phone_number,
-        transfer_id: req.user.transfer_id || 'N/A',
-        amount: baseAmount, // Keep base amount for calculations
-        displayAmount: convertedAmount.toFixed(2), // PKR amount for display
-        plan_name: req.planName,
-        planRequestId: req._id
-      };
-    });
+        return {
+          id: req.user._id,
+          first_name: req.user.first_name || 'N/A',
+          last_name: req.user.last_name || '',
+          email: req.user.email || 'N/A',
+          phone_number: req.user.phone_number || 'N/A',
+          transfer_id: req.user.transfer_id || 'N/A',
+          amount: baseAmount,
+          displayAmount: convertedAmount.toFixed(2),
+          plan_name: req.planName || 'N/A',
+          planRequestId: req._id
+        };
+      });
+
+    console.log('📋 Formatted Users:', users.length);
 
     // Get notification data for admin
     let notifications = [];
