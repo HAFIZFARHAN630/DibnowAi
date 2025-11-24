@@ -82,6 +82,10 @@ exports.allusers = async (req, res) => {
       users: [],
       notifications: [],
       unreadCount: 0,
+      profileImagePath: "/uploads/default.png",
+      firstName: "User",
+      email: "",
+      isUser: false,
       error_msg: "Unable to load request data. Please try again."
     });
   }
