@@ -52,12 +52,11 @@ exports.postPlan = async (req, res) => {
        plan_limit,
        repairCustomer,
        inStock,
-       inventory,
-       sportTicket,
+       category,
+       brand,
        teams
      } = req.body;
 
-     // Store the base GBP price (no conversion needed for plan storage)
      const basePrice = parseFloat(plan_price) || 0;
      console.log(`Storing base GBP price: ${basePrice}`);
 
@@ -67,9 +66,9 @@ exports.postPlan = async (req, res) => {
        plan_limit: plan_limit || '',
        repairCustomer: repairCustomer !== undefined ? String(repairCustomer) : '',
        inStock: inStock !== undefined ? String(inStock) : '',
-       inventory: inventory !== undefined ? String(inventory) : '',
-       teams: teams !== undefined ? String(teams) : '',
-       sportTicket: req.body.sportTicket ? 'true' : 'false',
+       category: category !== undefined ? parseInt(category) : 0,
+       brand: brand !== undefined ? parseInt(brand) : 0,
+       teams: teams !== undefined ? String(teams) : ''
      });
 
     console.log('📋 Plan object before saving:', {
@@ -140,9 +139,8 @@ exports.editPlan = async (req, res) => {
 exports.updatePlan = async (req, res) => {
    try {
      const { id } = req.params;
-     const { plan_name, plan_price, plan_limit, repairCustomer, inStock, inventory, teams, sportTicket } = req.body;
+     const { plan_name, plan_price, plan_limit, repairCustomer, inStock, category, brand, teams } = req.body;
 
-     // Store the base GBP price (no conversion needed for plan storage)
      const basePrice = parseFloat(plan_price) || 0;
      console.log(`Updating plan: Storing base GBP price ${basePrice}`);
 
@@ -152,9 +150,9 @@ exports.updatePlan = async (req, res) => {
        plan_limit,
        repairCustomer: repairCustomer || '',
        inStock: inStock || '',
-       inventory: inventory || '',
-       teams: teams || '',
-       sportTicket: sportTicket === 'true' ? 'true' : 'false'
+       category: category ? parseInt(category) : 0,
+       brand: brand ? parseInt(brand) : 0,
+       teams: teams || ''
      });
     
     res.redirect('/create-plan');

@@ -471,9 +471,12 @@
          const limit = plan.plan_limit || '';
          const repair = plan.repairCustomer || '0';
          const inStock = plan.inStock || '0';
-         const inventory = plan.inventory || '0';
          const teams = plan.teams || '0';
-         const sport = (plan.sportTicket === 'true' || plan.sportTicket === true || plan.sportTicket === 'on');
+         const category = plan.category || 0;
+         const brand = plan.brand || 0;
+          
+
+         
          const modalId = 'planModal-' + (plan._id || i);
          const variant = ['free-trial','basic','standard','premium'][i % 4];
     %>
@@ -484,19 +487,15 @@
             <div class="title h6 text-uppercase fw-bold mb-2"><%= name %></div>
 
             <div class="price-circle display-5 fw-bold my-2">€<%= price %></div>
-            <div class="price mb-3 " style="color:#FFFFFC ;"><%= limit %> Days </div>
+            <div class="price mb-3 " style="color:#FFFFFC ;"><%= limit %>  </div>
 
             <ul class="features list-unstyled mb-3 d-flex flex-column align-items-center justify-content-center">
               <li class="mb-1">✔ <strong><%= repair %></strong> Repair Customer</li>
               <li class="mb-1">✔ <strong><%= inStock %></strong> In Stock</li>
-              <li class="mb-1">✔ <strong><%= inventory %></strong> Inventory</li>
-             <li class="mb-1">
-  <% if (sport) { %>
-    <span class="">✔ Sport Ticket</span>
-  <% } else { %>
-    <span class="text-muted">✖ Sport Ticket</span>
-  <% } %>
-</li>
+              <li class="mb-1">✔ <strong><%= category %></strong> Category</li>
+              <li class="mb-1">✔ <strong><%= brand %></strong> Brand</li>
+             
+ 
 
               <li class="mb-1">✔ <strong><%= teams %></strong> Teams</li>
             </ul>

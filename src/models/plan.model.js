@@ -4,12 +4,12 @@ const Schema = mongoose.Schema;
 
 const plannSchema = new Schema({
     plan_name:{type:String},
-    plan_price:{type:Number, default: 0}, // Changed to Number for proper calculations
+    plan_price:{type:Number, default: 0},
     plan_limit:{type:String},
   repairCustomer: { type: String },
   inStock:        { type: String },
-  inventory:      { type: String },
-  sportTicket:    { type: String },
+  category:    { type: Number, default: 0 },
+  brand:      { type: Number, default: 0 },
   teams:          { type: String }
 });
 
