@@ -1,82 +1,237 @@
-<!-- SweetAlert2 -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 <script>
-const submittingForms = new Set();
-
-function handleFormSubmit(formId, url, itemType) {
-  const form = document.getElementById(formId);
-  if (!form) return;
+// Handle Add Brand Form Submission with Limit Check
+document.addEventListener('DOMContentLoaded', function() {
+  const brandForm = document.querySelector('#brandModal form');
+  const categoryForm = document.querySelector('#categoriesModal form');
+  const inventoryForm = document.querySelector('#gadgetrModal form');
+  const repairForm = document.querySelector('#gadgetRepairModal form');
   
-  form.addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    // Prevent duplicate submissions
-    if (submittingForms.has(formId)) {
-      console.log(`Form ${formId} is already being submitted`);
-      return;
-    }
-    
-    submittingForms.add(formId);
-    const submitBtn = this.querySelector('button[type="submit"]');
-    const originalBtnText = submitBtn?.innerHTML;
-    
-    try {
-      // Disable submit button
-      if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
-      }
-      
+  if (brandForm) {
+    brandForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
       const formData = new FormData(this);
       
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {'Accept': 'application/json'},
-        body: formData
-      });
-      
-      const data = await response.json();
-      
-      if (data.limitReached) {
-        Swal.fire({
-          icon: 'warning',
-          title: 'Limit Reached!',
-          html: `<p style="font-size: 16px;">Your ${itemType} limit is completed.</p><p style="font-size: 14px; color: #666;">Please upgrade your plan to add more.</p>`,
-          confirmButtonText: 'Upgrade Plan',
-          confirmButtonColor: '#0033cc',
-          showCancelButton: true,
-          cancelButtonText: 'Close',
-          allowOutsideClick: false
-        }).then((result) => {
-          if (result.isConfirmed) {
-            window.location.href = '/pricing';
-          }
+      try {
+        const response = await fetch('/Brand', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+          body: new URLSearchParams(formData)
         });
-      } else if (data.success) {
-        window.location.reload();
-      } else {
-        Swal.fire({icon: 'error', title: 'Error', text: data.message || `Failed to add ${itemType}`});
+        
+        const data = await response.json();
+        
+        if (data.limitReached) {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Limit Reached!',
+            html: `<p>${data.message}</p><p style="margin-top: 10px;">Upgrade your plan to add more brands.</p>`,
+            confirmButtonText: 'Upgrade Plan',
+            showCancelButton: true,
+            cancelButtonText: 'Close',
+            confirmButtonColor: '#00C853',
+            cancelButtonColor: '#6c757d'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              window.location.href = '/pricing';
+            }
+          });
+        } else if (data.success) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: data.message || 'Brand added successfully',
+            confirmButtonColor: '#00C853'
+          }).then(() => {
+            window.location.reload();
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: data.message || 'Failed to add brand',
+            confirmButtonColor: '#dc3545'
+          });
+        }
+      } catch (error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error!',
+          text: 'Something went wrong. Please try again.',
+          confirmButtonColor: '#dc3545'
+        });
       }
-    } catch (error) {
-      console.error('Error:', error);
-      this.submit();
-    } finally {
-      // Re-enable submit button and remove from submitting set
-      submittingForms.delete(formId);
-      if (submitBtn && originalBtnText) {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalBtnText;
+    });
+  }
+  
+  if (categoryForm) {
+    categoryForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      
+      try {
+        const response = await fetch('/category', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+          body: new URLSearchParams(formData)
+        });
+        
+        const data = await response.json();
+        
+        if (data.limitReached) {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Limit Reached!',
+            html: `<p>${data.message}</p><p style="margin-top: 10px;">Upgrade your plan to add more categories.</p>`,
+            confirmButtonText: 'Upgrade Plan',
+            showCancelButton: true,
+            cancelButtonText: 'Close',
+            confirmButtonColor: '#00C853',
+            cancelButtonColor: '#6c757d'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              window.location.href = '/pricing';
+            }
+          });
+        } else if (data.success) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: data.message || 'Category added successfully',
+            confirmButtonColor: '#00C853'
+          }).then(() => {
+            window.location.reload();
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: data.message || 'Failed to add category',
+            confirmButtonColor: '#dc3545'
+          });
+        }
+      } catch (error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error!',
+          text: 'Something went wrong. Please try again.',
+          confirmButtonColor: '#dc3545'
+        });
       }
-    }
-  });
-}
-
-// Handle all form submissions
-handleFormSubmit('addRepairForm', '/repair', 'repair customer');
-handleFormSubmit('addInventoryForm', '/in_stock', 'inventory');
-handleFormSubmit('addBrandForm', '/Brand', 'brand');
-handleFormSubmit('addCategoryForm', '/category', 'category');
-handleFormSubmit('addTeamForm', '/userteam/add', 'team member');
+    });
+  }
+  
+  if (inventoryForm) {
+    inventoryForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      
+      try {
+        const response = await fetch('/in_stock', {
+          method: 'POST',
+          headers: {'Accept': 'application/json'},
+          body: formData
+        });
+        
+        const data = await response.json();
+        
+        if (data.limitReached) {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Limit Reached!',
+            html: `<p>${data.message}</p><p style="margin-top: 10px;">Upgrade your plan to add more inventory items.</p>`,
+            confirmButtonText: 'Upgrade Plan',
+            showCancelButton: true,
+            cancelButtonText: 'Close',
+            confirmButtonColor: '#00C853',
+            cancelButtonColor: '#6c757d'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              window.location.href = '/pricing';
+            }
+          });
+        } else if (data.success) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: data.message || 'Inventory item added successfully',
+            confirmButtonColor: '#00C853'
+          }).then(() => {
+            window.location.reload();
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: data.message || 'Failed to add inventory item',
+            confirmButtonColor: '#dc3545'
+          });
+        }
+      } catch (error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error!',
+          text: 'Something went wrong. Please try again.',
+          confirmButtonColor: '#dc3545'
+        });
+      }
+    });
+  }
+  
+  if (repairForm) {
+    repairForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      
+      try {
+        const response = await fetch('/repair', {
+          method: 'POST',
+          headers: {'Accept': 'application/json'},
+          body: formData
+        });
+        
+        const data = await response.json();
+        
+        if (data.limitReached) {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Limit Reached!',
+            html: `<p>${data.message}</p><p style="margin-top: 10px;">Upgrade your plan to add more repair customers.</p>`,
+            confirmButtonText: 'Upgrade Plan',
+            showCancelButton: true,
+            cancelButtonText: 'Close',
+            confirmButtonColor: '#00C853',
+            cancelButtonColor: '#6c757d'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              window.location.href = '/pricing';
+            }
+          });
+        } else if (data.success) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: data.message || 'Repair customer added successfully',
+            confirmButtonColor: '#00C853'
+          }).then(() => {
+            window.location.reload();
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: data.message || 'Failed to add repair customer',
+            confirmButtonColor: '#dc3545'
+          });
+        }
+      } catch (error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error!',
+          text: 'Something went wrong. Please try again.',
+          confirmButtonColor: '#dc3545'
+        });
+      }
+    });
+  }
+});
 </script>

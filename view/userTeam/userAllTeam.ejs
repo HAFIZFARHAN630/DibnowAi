@@ -557,17 +557,7 @@
           </h4>
           <small class="text-muted d-block">
             Plan: <strong><%= plan_name %></strong> |
-            <% if (plan_name === 'FREE' || plan_name === 'FREE TRIAL') { %>
-                Limit: 2 members
-            <% } else if (plan_name === 'BASIC') { %>
-                Limit: 6 members
-            <% } else if (plan_name === 'STANDARD') { %>
-                Limit: 10 members
-            <% } else if (plan_name === 'PREMIUM') { %>
-                Limit: Unlimited members
-            <% } else { %>
-                No plan assigned
-            <% } %>
+            Limit: <%= teamLimit === 'unlimited' ? 'Unlimited' : teamLimit %> members
           </small>
         </div>
 

@@ -39,7 +39,6 @@ exports.allusers = async (req, res) => {
       completedRepairs,
       teams,
       teamCount,
-      deliveredRepairs,
       subscription,
       matchedPackage,
       latestPayment,
@@ -70,7 +69,6 @@ exports.allusers = async (req, res) => {
       user.role === 'admin'
         ? AddUser.countDocuments() // Admin sees total team count
         : AddUser.countDocuments({ user_id: userId }), // User sees their own team count
-      Repair.find({ status: 'Delivered' }).select('Price'),
       PlanRequest.findOne({ user: userId, status: 'Active' }).sort({ createdAt: -1 }),
       Payments.findOne({ user: userId, status: 'active' }).sort({ createdAt: -1 }),
       Payments.findOne({ user: userId, status: 'active' }).sort({ createdAt: -1 }),
@@ -86,6 +84,11 @@ exports.allusers = async (req, res) => {
       Complaint.countDocuments({ status: 'Pending' }),
       Complaint.countDocuments({ status: 'Complete' })
     ]);
+
+    // Role-based repair sales query (fetch after Promise.all)
+    const deliveredRepairs = await (user.role === 'admin'
+      ? Repair.find({ status: 'Delivered' }).select('Price') // Admin sees all delivered repairs
+      : Repair.find({ status: 'Delivered', user_id: userId }).select('Price')); // User sees only their own
 
     // Prioritize paid plans over Free Trial
     if (!userPlan && latestPayment) {
