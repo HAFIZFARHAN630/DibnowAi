@@ -23,7 +23,7 @@
 
 
                 <a href="/index" class="navbar-brand d-flex d-lg-none me-4">
-                    <img  src="<%= info?.favicon ? '/uploads/' + info.favicon : '/images/DIB-NOW-512.png' %>"  alt="Profile Image" alt="Logo" style="width: 82px; height: auto; border: none; border-radius: 0;">
+                    <img  src="<%= info?.favicon ? '/uploads/' + info.favicon : '/images/DIB-NOW-512.png' %>"  alt="Profile Image" alt="Logo" style="width: 60px; height: auto; border: none; border-radius: 0;">
                 </a>
                 
                 
@@ -120,6 +120,8 @@
                 </div>
             </nav>
         <!-- Navbar End -->
+
+        <%- include('limitHandlerScript.ejs') %>
 
         <!-- Logout Modal -->
         <div id="logoutModal" class="modal fade" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">

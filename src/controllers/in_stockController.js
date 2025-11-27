@@ -101,14 +101,7 @@ exports.additems = async (req, res) => {
       return res.redirect("/pricing");
     }
 
-    // Check stock limit
-    const currentStock = await Inventory.countDocuments({ user_id: req.session.userId });
-    const stockLimit = user.plan_limit || 0;
-
-    if (currentStock >= stockLimit) {
-      req.flash("error_msg", "Stock limit exceeded. Upgrade your plan.");
-      return res.redirect("/in_stock");
-    }
+    // Limit check is handled by middleware
 
     // Create new inventory item
     const newItem = new Inventory({
@@ -127,6 +120,10 @@ exports.additems = async (req, res) => {
     });
 
     await newItem.save();
+    
+    if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+      return res.json({ success: true, message: "Inventory added successfully" });
+    }
     
     // Create notification for adding inventory
     if (req.app.locals.notificationService) {

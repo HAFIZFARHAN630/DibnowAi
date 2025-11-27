@@ -20,6 +20,11 @@
     <!-- Custom Stylesheet -->
     <link href="styles.css" rel="stylesheet">
     <link href="styles1.css" rel="stylesheet">
+    
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
     <style>
         /* Form Inputs and Select */
 .gadget-input,
@@ -47,6 +52,7 @@
     <!-- Navbar Start -->
     <%- include('../par/header.ejs') %>
     <!-- Navbar End -->
+     <%- include('../par/limitHandlerScript.ejs') %>
 
     <!-- Alert Messages -->
     <% if (success_msg.length > 0) { %>
@@ -72,7 +78,7 @@
                             <h4 class="mb-4 mb-sm-0 card-title me-1">Categories</h4>
                             <i class="bi bi-tags"></i>
                         </div>
-                        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addcategoryModal">
+                        <button class="btn btn-success" id="addCategoryBtn" data-bs-toggle="modal" data-bs-target="#addcategoryModal">
                           <i class="bi bi-tags"></i> Add New category
                       </button>
                     </div>
@@ -131,7 +137,7 @@
               <i class="fas fa-times gadget-close-btn" data-bs-dismiss="modal" aria-label="Close"></i>
             </button>
             </div>
-          <form class="gadget-form mt-4" action="/category" method="post">
+          <form class="gadget-form mt-4" id="addCategoryForm" action="/category" method="post">
             <div class="form-group">
               <label for="name" class="form-label">Category Name:</label>
               <input type="text" id="name" name="name" required class="gadget-input">
@@ -187,15 +193,57 @@
     <!-- footer -->
     <%-include('../par/footer.ejs')%>
     <!-- footer -->
-</body>
-
-  </script>
   <!-- JavaScript Libraries -->
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
- <!-- Template Javascript -->
   <script src="js/main.js"></script>
- 
- </html>
+  
+  <script>
+    document.getElementById('addCategoryForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      
+      try {
+        const response = await fetch('/category', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+          body: new URLSearchParams(formData)
+        });
+        
+        const data = await response.json();
+        
+        if (data.limitReached) {
+          document.getElementById('addCategoryBtn').disabled = true;
+          document.getElementById('addCategoryBtn').classList.add('btn-secondary');
+          document.getElementById('addCategoryBtn').classList.remove('btn-success');
+          
+          Swal.fire({
+            icon: 'warning',
+            title: 'Limit Reached!',
+            html: '<p style="font-size: 16px;">Your category limit is completed.</p><p style="font-size: 14px; color: #666;">Please upgrade your plan to add more categories.</p>',
+            confirmButtonText: 'Upgrade Plan',
+            confirmButtonColor: '#0033cc',
+            showCancelButton: true,
+            cancelButtonText: 'Close',
+            allowOutsideClick: false
+          }).then((result) => {
+            if (result.isConfirmed) {
+              window.location.href = '/pricing';
+            }
+          });
+          
+          setTimeout(() => { window.location.href = '/pricing'; }, 5000);
+        } else if (data.success) {
+          window.location.reload();
+        } else {
+          Swal.fire({icon: 'error', title: 'Error', text: data.message || 'Failed to add category'});
+        }
+      } catch (error) {
+        Swal.fire({icon: 'error', title: 'Error', text: 'Something went wrong. Please try again.'});
+      }
+    });
+  </script>
+</body>
+</html>
  

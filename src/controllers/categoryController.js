@@ -52,6 +52,11 @@ exports.addcategory = async (req, res) => {
   try {
     const { name, description } = req.body;
     
+    if (!req.session.userId) {
+      req.flash("error_msg", "Please log in to add categories");
+      return res.redirect("/sign_in");
+    }
+    
     const newCategory = new Category({
       name,
       description,
@@ -72,10 +77,19 @@ exports.addcategory = async (req, res) => {
       }
     }
     
+    if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+      return res.json({ success: true, message: "Category added successfully" });
+    }
+    
     req.flash("success_msg", "Category added successfully");
     res.redirect("/category");
   } catch (error) {
     console.error("Error inserting category:", error.message);
+    
+    if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+      return res.json({ success: false, message: "Failed to add category. Please try again." });
+    }
+    
     req.flash("error_msg", "Failed to add category. Please try again.");
     res.redirect("/category");
   }

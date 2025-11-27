@@ -47,6 +47,11 @@ exports.addbrand = async (req, res) => {
   try {
     const { name, description } = req.body;
     
+    if (!req.session.userId) {
+      req.flash("error_msg", "Please log in to add brands");
+      return res.redirect("/sign_in");
+    }
+    
     const newBrand = new Brand({
       name,
       description,
@@ -67,10 +72,19 @@ exports.addbrand = async (req, res) => {
       }
     }
     
+    if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+      return res.json({ success: true, message: "Brand added successfully" });
+    }
+    
     req.flash("success_msg", "Brand added successfully");
     res.redirect("/Brand");
   } catch (error) {
     console.error("Error inserting brand:", error.message);
+    
+    if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+      return res.json({ success: false, message: "Failed to add brand. Please try again." });
+    }
+    
     req.flash("error_msg", "Failed to add brand. Please try again.");
     res.redirect("/Brand");
   }

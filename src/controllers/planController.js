@@ -64,11 +64,11 @@ exports.postPlan = async (req, res) => {
        plan_name: plan_name || '',
        plan_price: basePrice,
        plan_limit: plan_limit || '',
-       repairCustomer: repairCustomer !== undefined ? String(repairCustomer) : '',
-       inStock: inStock !== undefined ? String(inStock) : '',
-       category: category !== undefined ? parseInt(category) : 0,
-       brand: brand !== undefined ? parseInt(brand) : 0,
-       teams: teams !== undefined ? String(teams) : ''
+       repairCustomer: repairCustomer !== undefined ? String(repairCustomer) : '0',
+       inStock: inStock !== undefined ? String(inStock) : '0',
+       category: category !== undefined ? String(category) : '0',
+       brand: brand !== undefined ? String(brand) : '0',
+       teams: teams !== undefined ? String(teams) : '0'
      });
 
     console.log('📋 Plan object before saving:', {
@@ -148,12 +148,49 @@ exports.updatePlan = async (req, res) => {
        plan_name,
        plan_price: basePrice,
        plan_limit,
-       repairCustomer: repairCustomer || '',
-       inStock: inStock || '',
-       category: category ? parseInt(category) : 0,
-       brand: brand ? parseInt(brand) : 0,
-       teams: teams || ''
+       repairCustomer: repairCustomer || '0',
+       inStock: inStock || '0',
+       category: category || '0',
+       brand: brand || '0',
+       teams: teams || '0'
      });
+
+     // Auto-sync all users with this plan
+     console.log(`🔄 Starting auto-sync for plan: ${plan_name}`);
+     const User = require("../models/user");
+     const usersWithThisPlan = await User.find({ plan_name: plan_name });
+     
+     console.log(`📋 Found ${usersWithThisPlan.length} users with plan: ${plan_name}`);
+     usersWithThisPlan.forEach(user => {
+       console.log(`  - User: ${user._id} (${user.first_name || 'No name'})`);
+     });
+     
+     if (usersWithThisPlan.length > 0) {
+       const newPlanLimits = {
+         repairCustomer: parseInt(repairCustomer) || 0,
+         category: parseInt(category) || 0,
+         brand: parseInt(brand) || 0,
+         teams: parseInt(teams) || 0,
+         inStock: parseInt(inStock) || 0
+       };
+       
+       console.log(`🔄 Updating users with new limits:`, newPlanLimits);
+       
+       const updateResult = await User.updateMany(
+         { plan_name: plan_name },
+         { planLimits: newPlanLimits }
+       );
+       
+       console.log(`✅ Auto-sync result:`, {
+         matched: updateResult.matchedCount,
+         modified: updateResult.modifiedCount,
+         acknowledged: updateResult.acknowledged
+       });
+       
+       console.log(`✅ Auto-synced ${usersWithThisPlan.length} users with updated ${plan_name} plan limits`);
+     } else {
+       console.log(`⚠️ No users found with plan name: ${plan_name}`);
+     }
     
     res.redirect('/create-plan');
   } catch (error) {

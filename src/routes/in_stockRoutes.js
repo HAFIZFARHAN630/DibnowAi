@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const upload = require("../middlewares/uploadMiddleware");
+const { checkLimit } = require("../middlewares/checkLimitMiddleware");
+const Inventory = require("../models/inventery");
 
 const {
   viewitems,
@@ -15,7 +17,7 @@ router.get("/inStock_details/:id", desProducts);
 
 // View and add items
 router.get("/in_stock", viewitems);
-router.post("/in_stock", upload.single("device_image"), additems);
+router.post("/in_stock", checkLimit("inStock", Inventory), upload.single("device_image"), additems);
 router.post("/update/:id", upload.single("device_image"), updateitems);
 router.post("/delete/:id", deleteitems);
 

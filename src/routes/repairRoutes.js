@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const upload = require("../middlewares/uploadMiddleware");
+const { checkLimit } = require("../middlewares/checkLimitMiddleware");
+const Repair = require("../models/repair");
 const {
     addProduct,
     getRepairProducts,
@@ -19,7 +21,7 @@ const {
   } = require("../controllers/repairController");
 
 // Add product
-router.post("/repair", upload.single("deviceImage"), addProduct);
+router.post("/repair", checkLimit("repairCustomer", Repair), upload.single("deviceImage"), addProduct);
 
 // Select product
 router.get("/repair", getRepairProducts);

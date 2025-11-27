@@ -1,5 +1,7 @@
 const express = require("express");
 const router = express.Router();
+const { checkLimit } = require("../middlewares/checkLimitMiddleware");
+const Category = require("../models/categories");
 
 const {
   getcategory,
@@ -12,7 +14,7 @@ const {
 router.get("/category", getcategory);
 
 // insert category
-router.post("/category", addcategory);
+router.post("/category", checkLimit("category", Category), addcategory);
 
 // delete category
 router.post("/category/delete/:id", deletecategory);

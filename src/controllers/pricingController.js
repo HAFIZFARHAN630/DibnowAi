@@ -708,7 +708,6 @@ exports.paymentSuccess = [
 // Function to subscribe and update plan limits
  async function subscribePlan(userId, planType) {
    try {
-     // Get plan limits from database for the selected plan
      const selectedPlan = await planModel.findOne({ plan_name: planType });
 
      if (!selectedPlan) {
@@ -716,10 +715,8 @@ exports.paymentSuccess = [
        return;
      }
 
-     // Use plan_limit from database, fallback to repairCustomer if not set
-     let planLimit = parseInt(selectedPlan.plan_limit) || parseInt(selectedPlan.repairCustomer) || 30;
+     let planLimit = parseInt(selectedPlan.plan_limit) || parseInt(selectedPlan.repairCustomer) || 0;
 
-    // Retrieve the current plan limit from the database
     const user = await User.findById(userId).select("plan_limit");
     if (!user) {
       console.log("User not found");
@@ -729,8 +726,30 @@ exports.paymentSuccess = [
     const currentPlanLimit = user.plan_limit || 0;
     const newPlanLimit = currentPlanLimit + planLimit;
     
-    await User.findByIdAndUpdate(userId, { plan_limit: newPlanLimit });
-    console.log(`User's plan limit updated to: ${newPlanLimit}`);
+    const planLimits = {
+      repairCustomer: parseInt(selectedPlan.repairCustomer) || 0,
+      category: parseInt(selectedPlan.category) || 0,
+      brand: parseInt(selectedPlan.brand) || 0,
+      teams: parseInt(selectedPlan.teams) || 0,
+      inStock: parseInt(selectedPlan.inStock) || 0
+    };
+    
+    console.log(`📋 Setting planLimits for user ${userId}:`, planLimits);
+    console.log(`📋 Plan data from DB:`, {
+      repairCustomer: selectedPlan.repairCustomer,
+      category: selectedPlan.category,
+      brand: selectedPlan.brand,
+      teams: selectedPlan.teams,
+      inStock: selectedPlan.inStock
+    });
+    
+    const updateResult = await User.findByIdAndUpdate(userId, { 
+      plan_limit: newPlanLimit,
+      planLimits: planLimits
+    }, { new: true });
+    
+    console.log(`✅ User's plan limit updated to: ${newPlanLimit}`);
+    console.log(`✅ User's planLimits updated to:`, updateResult.planLimits);
   } catch (error) {
     console.error("Error updating plan limit:", error.message);
   }

@@ -100,7 +100,24 @@ exports.signup = async (req, res) => {
 
       await newUser.save();
 
-      // Auto-assign Free Trial plan
+      // Auto-assign Free Trial plan with limits from database
+      const PlanModel = require("../models/plan.model");
+      const freeTrialPlanData = await PlanModel.findOne({ plan_name: /^free trial$/i });
+      
+      if (freeTrialPlanData) {
+        // Assign plan name and limits to user
+        newUser.plan_name = "Free Trial";
+        newUser.planLimits = {
+          repairCustomer: parseInt(freeTrialPlanData.repairCustomer) || 0,
+          category: parseInt(freeTrialPlanData.category) || 0,
+          brand: parseInt(freeTrialPlanData.brand) || 0,
+          teams: parseInt(freeTrialPlanData.teams) || 0,
+          inStock: parseInt(freeTrialPlanData.inStock) || 0
+        };
+        await newUser.save();
+        console.log(`✅ Plan name and limits assigned to new user:`, newUser.plan_name, newUser.planLimits);
+      }
+
       const trialExpiryDate = new Date();
       trialExpiryDate.setDate(trialExpiryDate.getDate() + 7); // 7 days trial
 
@@ -110,7 +127,7 @@ exports.signup = async (req, res) => {
         status: "Active",
         startDate: new Date(),
         expiryDate: trialExpiryDate,
-        invoiceStatus: "Unpaid",
+        invoiceStatus: "Paid",
         amount: 0,
         description: "Free Trial Plan - 7 days access"
       });
@@ -281,20 +298,33 @@ exports.signin = async (req, res) => {
           status: "Active",
           startDate: new Date(),
           expiryDate: trialExpiryDate,
-          invoiceStatus: "Unpaid",
+          invoiceStatus: "Paid",
           amount: 0,
           description: "Free Trial Plan - 7 days access"
         });
 
         const savedPlan = await freeTrialPlan.save();
 
-        // Also update the User model to maintain consistency
-        await User.findByIdAndUpdate(user._id, {
-          plan_name: "Free Trial",
-          plan_limit: 30
-        });
+        // Fetch Free Trial plan limits from database and assign to user
+        const PlanModel = require("../models/plan.model");
+        const freeTrialPlanData = await PlanModel.findOne({ plan_name: /^free trial$/i });
+        
+        if (freeTrialPlanData) {
+          user.planLimits = {
+            repairCustomer: parseInt(freeTrialPlanData.repairCustomer) || 0,
+            category: parseInt(freeTrialPlanData.category) || 0,
+            brand: parseInt(freeTrialPlanData.brand) || 0,
+            teams: parseInt(freeTrialPlanData.teams) || 0,
+            inStock: parseInt(freeTrialPlanData.inStock) || 0
+          };
+        }
+        
+        user.plan_name = "Free Trial";
+        user.plan_limit = 30;
+        await user.save();
 
         console.log(`✅ Free Trial plan assigned to NEW user: ${user.email}`);
+        console.log(`✅ Plan limits assigned:`, user.planLimits);
         console.log(`📅 Trial expires: ${trialExpiryDate.toLocaleDateString()}`);
         console.log(`💾 Plan saved with ID: ${savedPlan._id}`);
 
@@ -331,13 +361,26 @@ exports.signin = async (req, res) => {
           existingPlan.description = 'Free Trial Plan - Renewed';
           await existingPlan.save();
 
-          // Also update the User model
-          await User.findByIdAndUpdate(user._id, {
-            plan_name: "Free Trial",
-            plan_limit: 30
-          });
+          // Fetch Free Trial plan limits and assign to user
+          const PlanModel = require("../models/plan.model");
+          const freeTrialPlanData = await PlanModel.findOne({ plan_name: /^free trial$/i });
+          
+          if (freeTrialPlanData) {
+            user.planLimits = {
+              repairCustomer: parseInt(freeTrialPlanData.repairCustomer) || 0,
+              category: parseInt(freeTrialPlanData.category) || 0,
+              brand: parseInt(freeTrialPlanData.brand) || 0,
+              teams: parseInt(freeTrialPlanData.teams) || 0,
+              inStock: parseInt(freeTrialPlanData.inStock) || 0
+            };
+          }
+          
+          user.plan_name = "Free Trial";
+          user.plan_limit = 30;
+          await user.save();
 
           console.log(`✅ Plan renewed for user: ${user.email}`);
+          console.log(`✅ Plan limits assigned:`, user.planLimits);
 
           // Create notification for Free Trial plan renewal
           if (req.app.locals.notificationService) {

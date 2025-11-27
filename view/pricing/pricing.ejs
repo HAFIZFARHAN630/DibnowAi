@@ -501,14 +501,24 @@
             </ul>
 
             <div class="mt-auto">
-              <!-- data-plan set to BASIC for every plan as requested -->
-              <a href="#"
-                 class="btn btn-primary btn-select-plan"
-                 data-plan="<%= name %>"
-                 data-bs-toggle="modal"
-                 data-bs-target="#<%= modalId %>">
-                BUY NOW
-              </a>
+              <% 
+                const userCurrentPlan = (plan_name || '').toLowerCase().trim();
+                const planNameLower = name.toLowerCase().trim();
+                const isActivePlan = userCurrentPlan === planNameLower;
+              %>
+              <% if (isActivePlan) { %>
+                <button class="btn btn-success" disabled style="cursor: not-allowed; color: white !important; background: green !important; opacity: 1 !important;">
+                  ACTIVE PLAN
+                </button>
+              <% } else { %>
+                <a href="#"
+                   class="btn btn-primary btn-select-plan"
+                   data-plan="<%= name %>"
+                   data-bs-toggle="modal"
+                   data-bs-target="#<%= modalId %>">
+                  BUY NOW
+                </a>
+              <% } %>
             </div>
           </div>
         </div>

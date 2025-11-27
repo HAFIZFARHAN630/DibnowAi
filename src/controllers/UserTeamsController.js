@@ -161,7 +161,12 @@ exports.createTeam = async (req, res) => {
     console.log('Debug: User team limit:', userLimit);
     console.log('Debug: Current team count:', existingMembersCount);
 
+    // Allow up to the limit (e.g., if limit is 2, allow 0, 1, 2 but block at 2)
     if (existingMembersCount >= userLimit) {
+       if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+         return res.status(403).json({ success: false, limitReached: true, message: "Your limit is completed. Please upgrade your plan." });
+       }
+       
        const planNames = {
          'FREE': 'FREE TRIAL',
          'BASIC': 'BASIC',
@@ -251,6 +256,10 @@ exports.createTeam = async (req, res) => {
       }
     }
 
+    if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+      return res.json({ success: true, message: "Team member added successfully" });
+    }
+    
     req.flash("success_msg", "Team member added successfully!");
     res.redirect("/userteam/list");
   } catch (error) {

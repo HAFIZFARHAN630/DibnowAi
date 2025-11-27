@@ -1,5 +1,7 @@
 const express = require("express");
 const router = express.Router();
+const { checkLimit } = require("../middlewares/checkLimitMiddleware");
+const Brand = require("../models/brand");
 
 const {
   getbrand,
@@ -12,7 +14,7 @@ const {
 router.get("/Brand", getbrand);
 
 // insert brand
-router.post("/Brand", addbrand);
+router.post("/Brand", checkLimit("brand", Brand), addbrand);
 
 // delete brand
 router.post("/Brand/delete/:id", deletebrand);

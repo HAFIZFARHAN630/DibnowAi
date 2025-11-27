@@ -67,12 +67,15 @@ exports.addProduct = async (req, res) => {
       return res.redirect("/pricing");
     }
 
-    // Check stock limit
-    const currentStock = await Repair.countDocuments({ user_id: req.session.userId });
-    const stockLimit = user.plan_limit || 0;
+    // Limit check is handled by middleware
 
-    if (currentStock >= stockLimit) {
-      req.flash("error_msg", "You have reached your stock limit. Please upgrade your plan.");
+    // Check for duplicate tracking ID
+    const existingRepair = await Repair.findOne({ random_id: randomId });
+    if (existingRepair) {
+      if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+        return res.json({ success: false, message: "Tracking ID already exists. Please generate a new one." });
+      }
+      req.flash("error_msg", "Tracking ID already exists. Please try again.");
       return res.redirect("/repair");
     }
 
@@ -92,6 +95,10 @@ exports.addProduct = async (req, res) => {
     });
 
     await newRepair.save();
+    
+    if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+      return res.json({ success: true, message: "Repair added successfully" });
+    }
 
 
 

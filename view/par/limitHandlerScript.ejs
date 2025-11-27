@@ -1,0 +1,82 @@
+<!-- SweetAlert2 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+const submittingForms = new Set();
+
+function handleFormSubmit(formId, url, itemType) {
+  const form = document.getElementById(formId);
+  if (!form) return;
+  
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    // Prevent duplicate submissions
+    if (submittingForms.has(formId)) {
+      console.log(`Form ${formId} is already being submitted`);
+      return;
+    }
+    
+    submittingForms.add(formId);
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const originalBtnText = submitBtn?.innerHTML;
+    
+    try {
+      // Disable submit button
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
+      }
+      
+      const formData = new FormData(this);
+      
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {'Accept': 'application/json'},
+        body: formData
+      });
+      
+      const data = await response.json();
+      
+      if (data.limitReached) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Limit Reached!',
+          html: `<p style="font-size: 16px;">Your ${itemType} limit is completed.</p><p style="font-size: 14px; color: #666;">Please upgrade your plan to add more.</p>`,
+          confirmButtonText: 'Upgrade Plan',
+          confirmButtonColor: '#0033cc',
+          showCancelButton: true,
+          cancelButtonText: 'Close',
+          allowOutsideClick: false
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = '/pricing';
+          }
+        });
+      } else if (data.success) {
+        window.location.reload();
+      } else {
+        Swal.fire({icon: 'error', title: 'Error', text: data.message || `Failed to add ${itemType}`});
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      this.submit();
+    } finally {
+      // Re-enable submit button and remove from submitting set
+      submittingForms.delete(formId);
+      if (submitBtn && originalBtnText) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalBtnText;
+      }
+    }
+  });
+}
+
+// Handle all form submissions
+handleFormSubmit('addRepairForm', '/repair', 'repair customer');
+handleFormSubmit('addInventoryForm', '/in_stock', 'inventory');
+handleFormSubmit('addBrandForm', '/Brand', 'brand');
+handleFormSubmit('addCategoryForm', '/category', 'category');
+handleFormSubmit('addTeamForm', '/userteam/add', 'team member');
+</script>
