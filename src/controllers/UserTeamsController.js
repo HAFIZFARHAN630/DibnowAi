@@ -1,6 +1,7 @@
 const User = require("../models/user");
 const AddUser = require("../models/adduser");
 const Notification = require("../models/notification");
+const Plan = require("../models/plan.model");
 
 // Show Add Team Form for Users
 exports.addTeamForm = async (req, res) => {
@@ -27,20 +28,15 @@ exports.addTeamForm = async (req, res) => {
 
     // Get current team count for plan limit display
     const currentTeamCount = await AddUser.countDocuments({ user_id: userId });
-    const planLimits = {
-      'FREE': 2,
-      'FREE TRIAL': 2,
-      'BASIC': 6,
-      'STANDARD': 10,
-      'PREMIUM': Infinity
-    };
-    const userPlanKey = user.plan_name?.toUpperCase();
-    const userLimit = planLimits[userPlanKey] || 0;
+    
+    // Fetch plan limit from database (case-insensitive)
+    const userPlan = await Plan.findOne({ plan_name: { $regex: new RegExp(`^${user.plan_name}$`, 'i') } });
+    const userLimit = userPlan?.teams === 'unlimited' ? Infinity : parseInt(userPlan?.teams || 0);
 
     // Create plan limit message
     let planLimitMessage = null;
     if (userLimit > 0 && userLimit !== Infinity) {
-      planLimitMessage = `Your ${user.plan_name} plan allows up to ${userLimit} team members. You currently have ${currentTeamCount} team members.`;
+      planLimitMessage = `Your ${user.plan_name} plan allows up to ${userLimit} team member${userLimit > 1 ? 's' : ''}. You currently have ${currentTeamCount} team member${currentTeamCount !== 1 ? 's' : ''}.`;
     } else if (userLimit === Infinity) {
       planLimitMessage = `Your ${user.plan_name} plan has unlimited team members.`;
     } else {
@@ -109,94 +105,14 @@ exports.createTeam = async (req, res) => {
       return res.redirect("/userteam/add");
     }
 
-    // Get user to check plan limits
-    const user = await User.findById(userIdString).select("plan_name");
+    // Get user for notifications
+    const user = await User.findById(userIdString).select("first_name");
     if (!user) {
       req.flash("error_msg", "User not found.");
       return res.redirect("/userteam/add");
     }
 
-    // Check plan limits
-    const planLimits = {
-      'FREE': 2,
-      'FREE TRIAL': 2,
-      'BASIC': 6,
-      'STANDARD': 10,
-      'PREMIUM': Infinity
-    };
-    // Case-insensitive plan name matching
-    const userPlanKey = user.plan_name?.toUpperCase();
-    const userLimit = planLimits[userPlanKey] || 0;
-
-    // Count existing team members for this user
-    console.log('Counting existing members with userId:', userIdString);
-    let existingMembersCount = 0;
-
-    try {
-      // Try with string ID first
-      existingMembersCount = await AddUser.countDocuments({ user_id: userIdString });
-      console.log('String ID count:', existingMembersCount);
-    } catch (error) {
-      console.log('String ID count failed, trying ObjectId...');
-      try {
-        const mongoose = require('mongoose');
-        const objectId = mongoose.Types.ObjectId(userIdString);
-        existingMembersCount = await AddUser.countDocuments({ user_id: objectId });
-        console.log('ObjectId count:', existingMembersCount);
-      } catch (error2) {
-        console.log('ObjectId count failed, trying MongoDB ObjectId...');
-        try {
-          const { ObjectId } = require('mongodb');
-          const objectId = new ObjectId(userIdString);
-          existingMembersCount = await AddUser.countDocuments({ user_id: objectId });
-          console.log('MongoDB ObjectId count:', existingMembersCount);
-        } catch (error3) {
-          console.log('All count strategies failed, using 0');
-          existingMembersCount = 0;
-        }
-      }
-    }
-
-    console.log('Debug: User plan:', user.plan_name);
-    console.log('Debug: User team limit:', userLimit);
-    console.log('Debug: Current team count:', existingMembersCount);
-
-    // Allow up to the limit (e.g., if limit is 2, allow 0, 1, 2 but block at 2)
-    if (existingMembersCount >= userLimit) {
-       if (req.xhr || req.headers.accept.indexOf('json') > -1) {
-         return res.status(403).json({ success: false, limitReached: true, message: "Your limit is completed. Please upgrade your plan." });
-       }
-       
-       const planNames = {
-         'FREE': 'FREE TRIAL',
-         'BASIC': 'BASIC',
-         'STANDARD': 'STANDARD',
-         'PREMIUM': 'PREMIUM'
-       };
-       const planDisplayName = planNames[user.plan_name] || user.plan_name;
-
-       let restrictionMessage = `Your current plan (${planDisplayName}) allows only ${userLimit} team members. `;
-
-       // Add specific guidance for Free Trial users
-       if (user.plan_name?.toUpperCase() === 'FREE TRIAL' || user.plan_name?.toUpperCase() === 'FREE') {
-         restrictionMessage += `To add more team members, please upgrade to a paid plan. `;
-         restrictionMessage += `Basic plan allows 6 members, Standard allows 10 members, and Premium has unlimited members.`;
-       } else {
-         restrictionMessage += `Please upgrade to a higher plan to increase your team limit.`;
-       }
-
-       // Create notification for plan limit exceeded
-       if (req.app.locals.notificationService) {
-         await req.app.locals.notificationService.createNotification(
-           userIdString,
-           user.first_name || 'User',
-           `Team Limit Exceeded - ${planDisplayName} allows only ${userLimit} members`
-         );
-       }
-
-       req.flash("error_msg", restrictionMessage);
-       return res.redirect("/userteam/add");
-     }
+    // Limit check is handled by middleware
 
     // Create new team member
     console.log('Creating team member with data:', {
@@ -394,16 +310,9 @@ exports.listTeams = async (req, res) => {
      console.log('Debug: Users to render count:', usersToRender.length);
      console.log('Debug: Users to render type:', typeof usersToRender);
 
-     // Add plan limit information to the team list view
-     const planLimits = {
-       'FREE': 2,
-       'FREE TRIAL': 2,
-       'BASIC': 6,
-       'STANDARD': 10,
-       'PREMIUM': Infinity
-     };
-     const userPlanKey = user.plan_name?.toUpperCase();
-     const userLimit = planLimits[userPlanKey] || 0;
+     // Fetch plan limit from database (case-insensitive)
+     const userPlan = await Plan.findOne({ plan_name: { $regex: new RegExp(`^${user.plan_name}$`, 'i') } });
+     const userLimit = userPlan?.teams === 'unlimited' ? Infinity : parseInt(userPlan?.teams || 0);
 
      let planLimitInfo = null;
      if (userLimit > 0 && userLimit !== Infinity) {

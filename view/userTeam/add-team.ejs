@@ -17,6 +17,8 @@
     <!-- Template Stylesheet -->
     <link href="/styles.css" rel="stylesheet">
     <link href="/styles1.css" rel="stylesheet">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         .professional-form {
@@ -292,10 +294,7 @@
                 <div class="alert alert-info mb-4">
                     <i class="fas fa-info-circle me-2"></i>
                     <strong>Plan: <%= plan_name %></strong> - You can add up to
-                    <% if (plan_name === 'FREE') { %>2 team members<% } %>
-                    <% if (plan_name === 'BASIC') { %>6 team members<% } %>
-                    <% if (plan_name === 'STANDARD') { %>10 team members<% } %>
-                    <% if (plan_name === 'PREMIUM') { %>unlimited team members<% } %>
+                    <% if (teamLimit === Infinity) { %>unlimited team members<% } else { %><%= teamLimit %> team members<% } %>
                 </div>
 
                 <form action="/userteam/add" method="POST" id="addUserTeamForm">
@@ -413,47 +412,53 @@ document.getElementById('addUserTeamForm').addEventListener('submit', function(e
             phone: document.getElementById('phone').value
         })
     })
-    .then(response => {
-        console.log('Response status:', response.status);
-        console.log('Response headers:', response.headers);
-
-        // Check if the response is a redirect (status 300-399)
-        if (response.status >= 300 && response.status < 400) {
-            console.log('Redirect response detected, redirecting to team list');
-            window.location.href = '/userteam/list';
-        } else if (response.ok) {
-            console.log('Success response, redirecting to team list');
-            window.location.href = '/userteam/list';
-        } else {
-            console.log('Error response:', response.status);
-            // Error - show error message
-            return response.json().then(data => {
-                console.log('Error response data:', data);
-                if (data && data.message) {
-                    alert(data.message);
-                } else {
-                    alert('Error creating team member. Please check your input and try again.');
-                }
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-            }).catch(() => {
-                // If we can't parse JSON, try text
-                return response.text().then(text => {
-                    console.log('Error response text:', text);
-                    if (text.includes('error_msg')) {
-                        alert('Error creating team member. Please check your input and try again.');
-                    } else {
-                        alert('An error occurred while creating the team member.');
-                    }
-                    submitBtn.innerHTML = originalText;
-                    submitBtn.disabled = false;
-                });
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: data.message || 'Team member added successfully',
+                confirmButtonColor: '#00C853'
+            }).then(() => {
+                window.location.href = '/userteam/list';
             });
+        } else if (data.limitReached) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Limit Reached!',
+                html: `<p>${data.message}</p><p style="margin-top: 10px;">Upgrade your plan to add more team members.</p>`,
+                confirmButtonText: 'Upgrade Plan',
+                showCancelButton: true,
+                cancelButtonText: 'Close',
+                confirmButtonColor: '#00C853',
+                cancelButtonColor: '#6c757d'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '/pricing';
+                }
+            });
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: data.message || 'Failed to add team member',
+                confirmButtonColor: '#dc3545'
+            });
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
         }
     })
     .catch(error => {
-        console.error('Network error:', error);
-        alert('Network error occurred. Please check your connection and try again.');
+        console.error('Error:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: 'Network error occurred. Please try again.',
+            confirmButtonColor: '#dc3545'
+        });
         submitBtn.innerHTML = originalText;
         submitBtn.disabled = false;
     });

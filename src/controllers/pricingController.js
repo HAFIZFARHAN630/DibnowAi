@@ -24,13 +24,14 @@ exports.allUsers = [
     try {
       const userId = req.session.userId;
 
-      // Fetch current user and all users concurrently
-      const [user, allUsers, paymentSettings] = await Promise.all([
+      // Fetch current user, all users, payment settings, and wallet balance concurrently
+      const [user, allUsers, paymentSettings, wallet] = await Promise.all([
         User.findById(userId).select(
           "first_name last_name phone_number email company address user_img country currency plan_name status denial_reason role"
         ),
         User.find(),
-        PaymentSettings.find({ enabled: true }).lean()
+        PaymentSettings.find({ enabled: true }).lean(),
+        Wallet.findOne({ user: userId }).select("balance")
       ]);
 
       if (!user) {
@@ -110,7 +111,8 @@ exports.allUsers = [
         error_msg: req.flash("error_msg"),
         status: user.status,
         reson: user.denial_reason,
-        enabledGateways: enabledGateways
+        enabledGateways: enabledGateways,
+        walletBalance: wallet ? wallet.balance : 0
       });
     } catch (error) {
       console.error("Error fetching pricing data:", error.message);
@@ -493,14 +495,22 @@ exports.addSubscription = [
       } else if (paymentMethod === 'wallet') {
         try {
           const wallet = await Wallet.findOne({ user: req.session.userId });
-          if (!wallet || wallet.balance < parseFloat(amount)) {
-            req.flash("error_msg", "Insufficient wallet balance. Please top-up first.");
+          
+          // Use expected amount from database for wallet payment
+          const walletAmount = expectedAmount;
+          
+          console.log(`💰 Wallet payment check: Balance=${wallet?.balance || 0}, Required=${walletAmount}`);
+          
+          if (!wallet || wallet.balance < walletAmount) {
+            req.flash("error_msg", `Insufficient wallet balance. You need €${walletAmount.toFixed(2)} but only have €${wallet?.balance?.toFixed(2) || '0.00'}. Please top up your wallet.`);
             return res.redirect("/pricing");
           }
     
-          // Deduct from balance
-          wallet.balance -= parseFloat(amount);
+          // Deduct from balance using expected amount from database
+          wallet.balance -= walletAmount;
           await wallet.save();
+          
+          console.log(`✅ Wallet balance deducted: €${walletAmount}, New balance: €${wallet.balance}`);
     
           // Create payment record
           const startDate = new Date();
@@ -511,7 +521,7 @@ exports.addSubscription = [
           const newPayment = new Payments({
             user: req.session.userId,
             plan,
-            amount: parseFloat(amount),
+            amount: walletAmount,
             gateway: paymentMethod,
             startDate,
             expiryDate,
@@ -530,7 +540,7 @@ exports.addSubscription = [
               invoiceStatus: 'Paid',
               startDate,
               expiryDate,
-              amount: parseFloat(amount),
+              amount: walletAmount,
               description: 'Wallet payment - Plan activated automatically'
             },
             { upsert: true, new: true }
@@ -546,7 +556,7 @@ exports.addSubscription = [
           const newTransaction = new Transaction({
             user: req.session.userId,
             type: 'plan_purchase',
-            amount: parseFloat(amount),
+            amount: walletAmount,
             status: 'success',
             gateway: 'wallet',
             description: `${plan} plan purchase via Wallet`
@@ -565,9 +575,11 @@ exports.addSubscription = [
             }
           }
     
+          console.log(`✅ Wallet payment completed successfully for ${plan} plan`);
+          
           req.flash(
             "success_msg",
-            `Your ${plan} plan has been activated using wallet balance.`
+            `Your ${plan} plan has been activated using wallet balance. €${walletAmount.toFixed(2)} deducted.`
           );
           res.redirect("/index");
         } catch (error) {

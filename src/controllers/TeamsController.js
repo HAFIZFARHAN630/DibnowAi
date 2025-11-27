@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const AddUser = require("../models/adduser");
+const Plan = require("../models/plan.model");
 
 // Fetch Team profile data
 exports.SelectTeam = async (req, res) => {
@@ -277,32 +278,39 @@ exports.createTeam = async (req, res) => {
     const userId = req.userId;
 
     if (!name || !email || !role) {
+      if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+        return res.status(400).json({ success: false, message: "All fields are required." });
+      }
       req.flash("error_msg", "All fields are required.");
       return res.redirect("/team/add");
     }
 
     // Get user to check plan limits
-    const user = await User.findById(userId).select("plan_name");
+    const user = await User.findById(userId).select("plan_name first_name");
     if (!user) {
+      if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+        return res.status(404).json({ success: false, message: "User not found." });
+      }
       req.flash("error_msg", "User not found.");
       return res.redirect("/team/add");
     }
 
-    // Check plan limits
-    const planLimits = {
-      'FREE': 2,
-      'BASIC': 6,
-      'STANDARD': 10,
-      'PREMIUM': Infinity
-    };
-
-    const userLimit = planLimits[user.plan_name] || 0;
+    // Fetch plan limit from database
+    const userPlan = await Plan.findOne({ plan_name: { $regex: new RegExp(`^${user.plan_name}$`, 'i') } });
+    const userLimit = userPlan?.teams === 'unlimited' ? Infinity : parseInt(userPlan?.teams || 0);
 
     // Count existing team members for this user
     const existingMembersCount = await AddUser.countDocuments({ user_id: userId });
 
     if (existingMembersCount >= userLimit) {
-      req.flash("error_msg", "You have reached your team member limit. Please upgrade.");
+      if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+        return res.status(403).json({
+          success: false,
+          limitReached: true,
+          message: `You have reached your limit of ${userLimit}. Please upgrade your plan.`
+        });
+      }
+      req.flash("error_msg", `You have reached your limit of ${userLimit}. Please upgrade your plan.`);
       return res.redirect("/team/add");
     }
 
@@ -315,10 +323,18 @@ exports.createTeam = async (req, res) => {
     });
 
     await newTeamMember.save();
+    
+    if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+      return res.json({ success: true, message: "Team member added successfully" });
+    }
+    
     req.flash("success_msg", "Team member added successfully!");
     res.redirect("/team/list");
   } catch (error) {
     console.error("Error creating team member:", error.message);
+    if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+      return res.status(500).json({ success: false, message: "Failed to add team member. Please try again." });
+    }
     req.flash("error_msg", "Failed to add team member. Please try again.");
     res.redirect("/team/add");
   }
