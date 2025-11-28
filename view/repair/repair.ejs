@@ -451,6 +451,20 @@ justify-content: flex-end;
           width: 100% important;
         }
       }
+      
+      /* Force hide mobile cards on desktop */
+      @media (min-width: 1200px) {
+        .d-block.d-xl-none {
+          display: none !important;
+        }
+      }
+      
+      /* Force hide desktop table on mobile */
+      @media (max-width: 1199px) {
+        .d-none.d-xl-block {
+          display: none !important;
+        }
+      }
     </style>
    
 </head>
@@ -671,7 +685,7 @@ initializeChart();
 
                         
     <div class="card card-body" >
-<!-- Table (shown on md+ screens) -->
+<!-- Table (shown on xl+ screens) -->
 <div class="table-responsive d-none d-xl-block">
   <table class="table search-table align-middle text-nowrap" id="paginatedTable">
     <thead class="header-item text-center">
@@ -719,11 +733,9 @@ initializeChart();
               <i class="fa fa-print"></i> Print
             </button>
 
-            <form action="/repair/<%= product.id %>" method="POST">
-              <button type="submit" class="btn btn-link text-danger">
-                <i class="fa-solid fa-trash-can text-danger"></i>
-              </button>
-            </form>
+            <button type="button" class="btn btn-link text-danger" onclick="deleteRepair('<%= product.id %>')">
+              <i class="fa-solid fa-trash-can text-danger"></i>
+            </button>
 
             <button class="btn text-primary" onclick="generateQRCode('<%= product.id %>', '<%= product.fullName %>', '<%= product.mobileNumber %>', '<%= product.brand %>', '<%= product.Price %>', '<%= product.status %>')">
               <i class="fas fa-qrcode"></i> Generate QR
@@ -750,7 +762,7 @@ initializeChart();
       </div>
 
 <!-- Card layout (shown on small screens) -->
-<div class="d-xl-block d-xl-none">
+<div class="d-block d-xl-none">
   <% products.forEach(product => { %>
   <div class="card mb-4 shadow-sm border-0">
     <div class="card-body">
@@ -784,11 +796,9 @@ initializeChart();
           <i class="fa fa-print"></i>
         </button>
 
-        <form action="/repair/<%= product.id %>" method="POST" class="d-inline">
-          <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
-            <i class="fa-solid fa-trash-can"></i>
-          </button>
-        </form>
+        <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteRepair('<%= product.id %>')" title="Delete">
+          <i class="fa-solid fa-trash-can"></i>
+        </button>
 
         <button class="btn btn-sm btn-outline-primary"
           onclick="generateQRCode('<%= product.id %>', '<%= product.fullName %>', '<%= product.mobileNumber %>', '<%= product.brand %>', '<%= product.Price %>', '<%= product.status %>')" title="Generate QR">
@@ -848,14 +858,14 @@ initializeChart();
               <div class="row">
                 <div class="row ">
                   <div class="col-md-6 ">
-                      <label for="brand" class="form-label">Brand Name</label>
-                      <select class="form-select gadget-select" name="brand" id="Brand" required>
+                      <label for="brand-<%= product.id %>" class="form-label">Brand Name</label>
+                      <select class="form-select gadget-select" name="brand" id="brand-<%= product.id %>" required>
                           <% brand.forEach(brand => { %>
-                              <option value="<%= brand.name %>">
+                              <option value="<%= brand.name %>" <%= product.brand === brand.name ? 'selected' : '' %>>
                                 <%= brand.name %>
                               </option>
                             <% }); %>
-                            <option value="Vivo">Vivo</option>
+                            <option value="Vivo" <%= product.brand === 'Vivo' ? 'selected' : '' %>>Vivo</option>
                       </select>  
                   </div>
                 <div class="form-group col-md-6">
@@ -1213,6 +1223,17 @@ function updatePaginationAfterFilter() {
   showPage(1);
 }
 
+
+// Delete repair
+function deleteRepair(repairId) {
+  if (!confirm('Are you sure you want to delete this repair?')) return;
+  
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = `/repair/delete/${repairId}`;
+  document.body.appendChild(form);
+  form.submit();
+}
 
 // Print button
 function printTable(userId) {

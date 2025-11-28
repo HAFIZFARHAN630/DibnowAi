@@ -29,9 +29,9 @@ router.get("/repair", getRepairProducts);
 // Update product
 router.put("/repair/:id", updateProduct);
 
-// Select product
+// Delete products
 router.post("/repair/delete", deleteProducts);
-router.post("/repair/:id", deleteProduct);
+router.post("/repair/delete/:id", deleteProduct);
 
 // Select clients
 router.get("/Clients", getClients);

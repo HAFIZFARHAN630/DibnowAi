@@ -720,23 +720,41 @@ exports.paymentSuccess = [
 // Function to subscribe and update plan limits
  async function subscribePlan(userId, planType) {
    try {
-     const selectedPlan = await planModel.findOne({ plan_name: planType });
+     console.log(`🔄 subscribePlan called for user ${userId}, plan: ${planType}`);
+     
+     // Try case-insensitive search for plan
+     let selectedPlan = await planModel.findOne({ plan_name: planType });
+     
+     if (!selectedPlan) {
+       console.log(`🔄 Exact match not found, trying case-insensitive...`);
+       selectedPlan = await planModel.findOne({
+         plan_name: { $regex: new RegExp(`^${planType}$`, 'i') }
+       });
+     }
 
      if (!selectedPlan) {
-       console.log("Plan not found in database");
+       console.log(`❌ Plan "${planType}" not found in database`);
        return;
      }
 
+     console.log(`📋 Found plan in DB:`, {
+       plan_name: selectedPlan.plan_name,
+       repairCustomer: selectedPlan.repairCustomer,
+       category: selectedPlan.category,
+       brand: selectedPlan.brand,
+       teams: selectedPlan.teams,
+       inStock: selectedPlan.inStock
+     });
+
      let planLimit = parseInt(selectedPlan.plan_limit) || parseInt(selectedPlan.repairCustomer) || 0;
 
-    const user = await User.findById(userId).select("plan_limit");
+    const user = await User.findById(userId).select("plan_limit planLimits");
     if (!user) {
-      console.log("User not found");
+      console.log("❌ User not found");
       return;
     }
 
-    const currentPlanLimit = user.plan_limit || 0;
-    const newPlanLimit = currentPlanLimit + planLimit;
+    console.log(`📋 BEFORE UPDATE - User planLimits:`, user.planLimits);
     
     const planLimits = {
       repairCustomer: parseInt(selectedPlan.repairCustomer) || 0,
@@ -746,24 +764,32 @@ exports.paymentSuccess = [
       inStock: parseInt(selectedPlan.inStock) || 0
     };
     
-    console.log(`📋 Setting planLimits for user ${userId}:`, planLimits);
-    console.log(`📋 Plan data from DB:`, {
-      repairCustomer: selectedPlan.repairCustomer,
-      category: selectedPlan.category,
-      brand: selectedPlan.brand,
-      teams: selectedPlan.teams,
-      inStock: selectedPlan.inStock
-    });
+    console.log(`📋 NEW planLimits to set:`, planLimits);
+    console.log(`📋 Specifically brand limit: ${planLimits.brand}`);
     
-    const updateResult = await User.findByIdAndUpdate(userId, { 
-      plan_limit: newPlanLimit,
-      planLimits: planLimits
-    }, { new: true });
+    const updateResult = await User.findByIdAndUpdate(
+      userId, 
+      { 
+        $set: {
+          plan_limit: planLimit,
+          planLimits: planLimits
+        }
+      }, 
+      { new: true, runValidators: false }
+    );
     
-    console.log(`✅ User's plan limit updated to: ${newPlanLimit}`);
-    console.log(`✅ User's planLimits updated to:`, updateResult.planLimits);
+    console.log(`✅ AFTER UPDATE - User's plan limit: ${updateResult.plan_limit}`);
+    console.log(`✅ AFTER UPDATE - User's planLimits:`, updateResult.planLimits);
+    console.log(`✅ AFTER UPDATE - Brand limit specifically: ${updateResult.planLimits?.brand}`);
+    
+    // Double verify with fresh query
+    const verifyUser = await User.findById(userId).select("planLimits plan_name");
+    console.log(`🔍 VERIFICATION - Plan name: ${verifyUser.plan_name}`);
+    console.log(`🔍 VERIFICATION - planLimits:`, verifyUser.planLimits);
+    console.log(`🔍 VERIFICATION - Brand limit: ${verifyUser.planLimits?.brand}`);
   } catch (error) {
-    console.error("Error updating plan limit:", error.message);
+    console.error("❌ Error updating plan limit:", error.message);
+    console.error("❌ Error stack:", error.stack);
   }
 }
 

@@ -396,7 +396,9 @@ exports.updatePlanRequest = async (req, res) => {
     );
 
     // If status is being set to 'Active' and invoice is 'Paid', activate the user's plan
-    if (status === 'Active' && invoiceStatus === 'Paid' && planRequest.status !== 'Active') {
+    if (status === 'Active' && invoiceStatus === 'Paid') {
+      console.log(`🔄 Admin approving plan: ${planRequest.planName} for user ${planRequest.user}`);
+      console.log(`   Previous status: ${planRequest.status}, New status: ${status}`);
       try {
         // Create a Payments record for the activated plan
         const newPayment = new Payments({
@@ -416,28 +418,47 @@ exports.updatePlanRequest = async (req, res) => {
           plan_name: planRequest.planName
         });
 
-        // Update plan limits
-        let planLimit;
-        switch (planRequest.planName) {
-          case "BASIC":
-            planLimit = 300;
-            break;
-          case "STANDARD":
-            planLimit = 500;
-            break;
-          case "PREMIUM":
-            planLimit = 1000;
-            break;
-          default:
-            planLimit = 30;
-            break;
-        }
+        // Update plan limits dynamically from database
+        const planModel = require("../models/plan.model");
+        let selectedPlan = await planModel.findOne({ 
+          plan_name: { $regex: new RegExp(`^${planRequest.planName}$`, 'i') } 
+        });
 
-        const user = await User.findById(planRequest.user).select("plan_limit");
-        if (user) {
-          const currentPlanLimit = user.plan_limit || 0;
-          const newPlanLimit = currentPlanLimit + planLimit;
-          await User.findByIdAndUpdate(planRequest.user, { plan_limit: newPlanLimit });
+        if (selectedPlan) {
+          console.log(`📋 Found plan "${selectedPlan.plan_name}" in database:`, {
+            repairCustomer: selectedPlan.repairCustomer,
+            category: selectedPlan.category,
+            brand: selectedPlan.brand,
+            teams: selectedPlan.teams,
+            inStock: selectedPlan.inStock
+          });
+
+          const planLimit = parseInt(selectedPlan.plan_limit) || parseInt(selectedPlan.repairCustomer) || 0;
+          const planLimits = {
+            repairCustomer: parseInt(selectedPlan.repairCustomer) || 0,
+            category: parseInt(selectedPlan.category) || 0,
+            brand: parseInt(selectedPlan.brand) || 0,
+            teams: parseInt(selectedPlan.teams) || 0,
+            inStock: parseInt(selectedPlan.inStock) || 0
+          };
+          
+          console.log(`🔄 Updating user ${planRequest.user} with planLimits:`, planLimits);
+          
+          const updatedUser = await User.findByIdAndUpdate(
+            planRequest.user, 
+            { 
+              $set: {
+                plan_limit: planLimit,
+                planLimits: planLimits
+              }
+            },
+            { new: true }
+          );
+          
+          console.log(`✅ User updated - New planLimits:`, updatedUser.planLimits);
+          console.log(`✅ Specifically brand limit: ${updatedUser.planLimits.brand}`);
+        } else {
+          console.log(`❌ Plan "${planRequest.planName}" not found in database`);
         }
 
         // Create transaction record

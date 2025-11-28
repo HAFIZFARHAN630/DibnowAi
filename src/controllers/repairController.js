@@ -6,9 +6,13 @@ const Brand = require("../models/brand");
 const mongoose = require("mongoose");
 
 exports.addProduct = async (req, res) => {
+  const requestId = Math.random().toString(36).substring(7);
+  console.log(`[${requestId}] ===== REPAIR ADD REQUEST START =====`);
+  console.log(`[${requestId}] Tracking ID from form:`, req.body.random_id);
+  
   try {
     if (!req.session.userId) {
-      console.error("User not logged in or session expired");
+      console.error(`[${requestId}] User not logged in or session expired`);
       return res.redirect("/sign_in");
     }
 
@@ -95,8 +99,10 @@ exports.addProduct = async (req, res) => {
     });
 
     await newRepair.save();
+    console.log(`[${requestId}] ✅ Repair saved to database with ID:`, newRepair._id);
     
     if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+      console.log(`[${requestId}] Returning JSON response`);
       return res.json({ success: true, message: "Repair added successfully" });
     }
 
@@ -329,12 +335,14 @@ exports.getRepairProducts = async (req, res) => {
 exports.deleteProduct = async (req, res) => {
   try {
     const clientId = req.params.id;
-    await Repair.findByIdAndDelete(clientId);
-    req.flash("success_msg", "Client deleted successfully");
+    console.log("Delete repair - ID:", clientId);
+    const result = await Repair.findByIdAndDelete(clientId);
+    console.log("Delete result:", result);
+    req.flash("success_msg", "Repair deleted successfully");
     res.redirect("/repair");
   } catch (error) {
     console.error("Error deleting repair product:", error.message);
-    req.flash("error_msg", "Failed to delete client. Please try again.");
+    req.flash("error_msg", "Failed to delete repair. Please try again.");
     res.redirect("/repair");
   }
 };

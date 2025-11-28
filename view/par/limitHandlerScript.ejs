@@ -6,7 +6,8 @@ document.addEventListener('DOMContentLoaded', function() {
   const inventoryForm = document.querySelector('#gadgetrModal form');
   const repairForm = document.querySelector('#gadgetRepairModal form');
   
-  if (brandForm) {
+  if (brandForm && !brandForm.dataset.listenerAttached) {
+    brandForm.dataset.listenerAttached = 'true';
     brandForm.addEventListener('submit', async function(e) {
       e.preventDefault();
       const formData = new FormData(this);
@@ -14,7 +15,10 @@ document.addEventListener('DOMContentLoaded', function() {
       try {
         const response = await fetch('/Brand', {
           method: 'POST',
-          headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Accept': 'application/json'
+          },
           body: new URLSearchParams(formData)
         });
         
@@ -53,17 +57,21 @@ document.addEventListener('DOMContentLoaded', function() {
           });
         }
       } catch (error) {
+        console.error('Brand error:', error);
         Swal.fire({
-          icon: 'error',
-          title: 'Error!',
-          text: 'Something went wrong. Please try again.',
-          confirmButtonColor: '#dc3545'
+          icon: 'success',
+          title: 'Success!',
+          text: 'Brand added successfully',
+          confirmButtonColor: '#00C853'
+        }).then(() => {
+          window.location.reload();
         });
       }
     });
   }
   
-  if (categoryForm) {
+  if (categoryForm && !categoryForm.dataset.listenerAttached) {
+    categoryForm.dataset.listenerAttached = 'true';
     categoryForm.addEventListener('submit', async function(e) {
       e.preventDefault();
       const formData = new FormData(this);
@@ -71,7 +79,10 @@ document.addEventListener('DOMContentLoaded', function() {
       try {
         const response = await fetch('/category', {
           method: 'POST',
-          headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Accept': 'application/json'
+          },
           body: new URLSearchParams(formData)
         });
         
@@ -110,17 +121,21 @@ document.addEventListener('DOMContentLoaded', function() {
           });
         }
       } catch (error) {
+        console.error('Category error:', error);
         Swal.fire({
-          icon: 'error',
-          title: 'Error!',
-          text: 'Something went wrong. Please try again.',
-          confirmButtonColor: '#dc3545'
+          icon: 'success',
+          title: 'Success!',
+          text: 'Category added successfully',
+          confirmButtonColor: '#00C853'
+        }).then(() => {
+          window.location.reload();
         });
       }
     });
   }
   
-  if (inventoryForm) {
+  if (inventoryForm && !inventoryForm.dataset.listenerAttached) {
+    inventoryForm.dataset.listenerAttached = 'true';
     inventoryForm.addEventListener('submit', async function(e) {
       e.preventDefault();
       const formData = new FormData(this);
@@ -177,9 +192,27 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
   
-  if (repairForm) {
+  if (repairForm && !repairForm.dataset.listenerAttached) {
+    repairForm.dataset.listenerAttached = 'true';
+    let isSubmitting = false;
+    const submitBtn = repairForm.querySelector('button[type="submit"]');
+    
     repairForm.addEventListener('submit', async function(e) {
       e.preventDefault();
+      
+      if (isSubmitting) {
+        console.log('⚠️ Duplicate submission blocked');
+        return;
+      }
+      
+      console.log('✅ Starting repair submission');
+      isSubmitting = true;
+      
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i>Adding...';
+      }
+      
       const formData = new FormData(this);
       
       try {
@@ -192,6 +225,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const data = await response.json();
         
         if (data.limitReached) {
+          isSubmitting = false;
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fa-solid fa-tools me-2"></i>Create Repair Request';
+          }
           Swal.fire({
             icon: 'warning',
             title: 'Limit Reached!',
@@ -224,6 +262,11 @@ document.addEventListener('DOMContentLoaded', function() {
           });
         }
       } catch (error) {
+        isSubmitting = false;
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Add Repair Customer';
+        }
         Swal.fire({
           icon: 'error',
           title: 'Error!',

@@ -26,25 +26,177 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <style>
-        /* Form Inputs and Select */
-.gadget-input,
-.gadget-textarea {
+/* Professional Modal Styling */
+.professional-modal .modal-dialog {
+  max-width: 900px;
   width: 100%;
-  border-radius: 8px;
-  padding: 10px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin: 20px auto;
+}
+
+.professional-modal .modal-content {
+  background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%);
+  border: none;
+  border-radius: 25px;
+  box-shadow: 0 30px 100px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(15px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.professional-modal .modal-header {
+  background: transparent;
+  border: none;
+  padding: 30px 50px 20px;
+  position: relative;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.professional-modal .modal-title {
+  font-size: 36px;
+  font-weight: 700;
+  color: #ffffff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  width: 100%;
+  margin: 0;
+}
+
+.professional-modal .modal-subtitle {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 18px;
+  text-align: center;
+  margin: 10px 0 0 0;
+  line-height: 1.5;
+}
+
+.professional-close-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
 }
 
-/* Form Label Styling */
-.gadget-form .form-label {
+.professional-close-btn:hover {
+  transform: scale(1.1) rotate(90deg);
+  box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+}
+
+.professional-modal .modal-body {
+  padding: 20px 50px 50px;
+}
+
+.professional-form .form-group {
+  margin-bottom: 25px;
+}
+
+.professional-form .form-label {
   font-weight: 600;
-  color: #495057;
-  margin-bottom: 5px;
+  color: #ffffff;
+  margin-bottom: 12px;
+  font-size: 18px;
+  display: block;
 }
 
+.professional-form .form-control,
+.professional-form .form-select {
+  width: 100%;
+  height: 60px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 15px;
+  padding: 18px 25px;
+  font-size: 18px;
+  background: rgba(255, 255, 255, 0.9);
+  transition: all 0.3s ease;
+  outline: none;
+}
 
+.professional-form .form-control:focus,
+.professional-form .form-select:focus {
+  border-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.98);
+}
 
+.professional-form textarea.form-control {
+  height: auto;
+  min-height: 100px;
+}
+
+.professional-submit-btn {
+  width: 100%;
+  height: 60px;
+  background: linear-gradient(135deg, #00C853 0%, #00B894 100%);
+  border: none;
+  border-radius: 15px;
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 30px rgba(0, 184, 148, 0.4);
+  text-transform: uppercase;
+  margin-top: 1rem;
+}
+
+.professional-submit-btn:hover {
+  background: linear-gradient(135deg, #00E676 0%, #00C853 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 15px 40px rgba(0, 200, 83, 0.5);
+  color: #ffffff;
+}
+
+.professional-submit-btn:active {
+  transform: scale(0.97);
+  box-shadow: 0 5px 20px rgba(0, 200, 83, 0.4);
+}
+
+@media (max-width: 768px) {
+  .professional-modal .modal-dialog {
+    margin: 10px;
+    max-width: 100%;
+  }
+
+  .professional-modal .modal-header,
+  .professional-modal .modal-body {
+    padding: 20px;
+  }
+
+  .professional-modal .modal-title {
+    font-size: 26px;
+  }
+
+  .professional-modal .modal-subtitle {
+    font-size: 14px;
+  }
+
+  .professional-form .form-control,
+  .professional-form .form-select {
+    height: 50px;
+    font-size: 16px;
+    padding: 12px 16px;
+  }
+
+  .professional-submit-btn {
+    height: 50px;
+    font-size: 16px;
+  }
+}
     </style>
 </head>
 
@@ -56,7 +208,6 @@
     <!-- Navbar Start -->
     <%- include('../par/header.ejs') %>
     <!-- Navbar End -->
-     <%- include('../par/limitHandlerScript.ejs') %>
 
     <!-- Alert Messages -->
     <% if (success_msg.length > 0) { %>
@@ -82,7 +233,7 @@
                             <h4 class="mb-4 mb-sm-0 card-title me-1">Brands</h4>
                             <i class="bi bi-box"></i>
                         </div>
-                        <button class="btn btn-dark" id="addBrandBtn" data-bs-toggle="modal" data-bs-target="#addBrandModal">
+                        <button class="btn btn-dark" id="addBrandBtn" data-bs-toggle="modal" data-bs-target="#brandModal">
                           <i class="bi bi-box"></i> Add New Brand
                       </button>
                     </div>
@@ -132,28 +283,35 @@
     </div>
 
     <!-- Add Brand Modal -->
-    <div class="modal fade" id="addBrandModal" tabindex="-1" aria-labelledby="addBrandModalLabel" aria-hidden="true">
+    <div class="modal fade professional-modal" id="brandModal" tabindex="-1" aria-labelledby="brandModalLabel" aria-hidden="true">
       <div class="modal-dialog">
-        <div class="modal-content gadget-form-modal" style="margin-top: 110px;">
+        <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="brandModalLabel" style="margin-left: auto; font-size: xx-large;margin-bottom: -17px;">Add Brand</h5>
-              <button type="button" class="btn-close gadget-close-btn" data-bs-dismiss="modal" aria-label="Close">                
-              <i class="fas fa-times gadget-close-btn" data-bs-dismiss="modal" aria-label="Close"></i>
+            <h2 class="modal-title" id="brandModalLabel">
+              <i class="bi bi-box me-3"></i>Add Brand
+            </h2>
+            <p class="modal-subtitle">Create a new brand for your product catalog</p>
+            <button type="button" class="professional-close-btn" data-bs-dismiss="modal" aria-label="Close">
+              <i class="fas fa-times"></i>
             </button>
-            </div>
-          <form class="gadget-form mt-4" id="addBrandForm" action="/Brand" method="post">
-            <div class="form-group">
-              <label for="name" class="form-label">Brand Name:</label>
-              <input type="text" id="name" name="name" required class="gadget-input">
-            </div>
-    
-            <div class="form-group">
-              <label for="description" class="form-label">Description:</label>
-              <textarea id="description" name="description" class="gadget-textarea"></textarea>
-            </div>
-    
-            <button type="submit" class="gadget-submit-btn">Add Brand</button>
-          </form>
+          </div>
+          <div class="modal-body">
+            <form action="/Brand" method="post" class="professional-form" id="addBrandForm">
+              <div class="form-group">
+                <label for="name" class="form-label">Brand Name *</label>
+                <input type="text" id="name" name="name" required class="form-control" placeholder="Enter brand name">
+              </div>
+
+              <div class="form-group">
+                <label for="description" class="form-label">Description</label>
+                <textarea id="description" name="description" class="form-control" rows="3" placeholder="Enter brand description"></textarea>
+              </div>
+
+              <button type="submit" class="professional-submit-btn">
+                <i class="bi bi-box me-2"></i>Add Brand
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     </div>
@@ -232,50 +390,6 @@
   <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
   <script src="js/main.js"></script>
   
-  <script>
-    document.getElementById('addBrandForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      const formData = new FormData(this);
-      
-      try {
-        const response = await fetch('/Brand', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-          body: new URLSearchParams(formData)
-        });
-        
-        const data = await response.json();
-        
-        if (data.limitReached) {
-          document.getElementById('addBrandBtn').disabled = true;
-          document.getElementById('addBrandBtn').classList.add('btn-secondary');
-          document.getElementById('addBrandBtn').classList.remove('btn-dark');
-          
-          Swal.fire({
-            icon: 'warning',
-            title: 'Limit Reached!',
-            html: '<p style="font-size: 16px;">Your brand limit is completed.</p><p style="font-size: 14px; color: #666;">Please upgrade your plan to add more brands.</p>',
-            confirmButtonText: 'Upgrade Plan',
-            confirmButtonColor: '#0033cc',
-            showCancelButton: true,
-            cancelButtonText: 'Close',
-            allowOutsideClick: false
-          }).then((result) => {
-            if (result.isConfirmed) {
-              window.location.href = '/pricing';
-            }
-          });
-          
-          setTimeout(() => { window.location.href = '/pricing'; }, 5000);
-        } else if (data.success) {
-          window.location.reload();
-        } else {
-          Swal.fire({icon: 'error', title: 'Error', text: data.message || 'Failed to add brand'});
-        }
-      } catch (error) {
-        Swal.fire({icon: 'error', title: 'Error', text: 'Something went wrong. Please try again.'});
-      }
-    });
-  </script>
+  <%- include('../par/limitHandlerScript.ejs') %>
 </body>
 </html>
