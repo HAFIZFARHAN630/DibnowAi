@@ -4,6 +4,24 @@ const Category = require("../models/categories");
 const Brand = require("../models/brand");
 const SoldItem = require("../models/Sold_Products");
 
+exports.getSoldItemsAPI = async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const soldItems = await SoldItem.find({ user_id: userId })
+      .select("Product Price Type sale_date")
+      .sort({ sale_date: -1 });
+
+    return res.json({ soldItems });
+  } catch (error) {
+    console.error("Error fetching sold items:", error);
+    return res.status(500).json({ error: "Server error", soldItems: [] });
+  }
+};
+
 exports.getInventory = async (req, res) => {
   try {
     const userId = req.session.userId;

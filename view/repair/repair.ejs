@@ -493,59 +493,76 @@ justify-content: flex-end;
     <!-- Chart Container -->
     <div class="col-12 col-md-12">
       <div class="h-100 p-4" style="border-radius: 15px; background-color: #fff; max-width: 100%; width: 100%;">
-        <!-- Overview Content -->
         <h6 class="text-dark mb-3">Monthly Earnings</h6>
+        <p id="todayIndicator" style="font-size: 13px; color: #4CAF50; font-weight: 600; margin-bottom: 10px;"></p>
         <div style="position: relative; height: 300px;">
           <canvas id="earningsChart"></canvas>
         </div>
       </div>
     </div>
 <!-- Script for Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <script>
 const ctx = document.getElementById('earningsChart').getContext('2d');
 
-// Function to fetch repair prices from the backend
 async function fetchRepairPrices() {
   try {
     const response = await fetch('/api/repair-prices');
     if (!response.ok) throw new Error("Failed to fetch repair prices");
-    const prices = await response.json();
-    return prices;
+    const data = await response.json();
+    console.log('Repair prices data:', data);
+    return data;
   } catch (error) {
     console.error("Error fetching repair prices:", error);
     return [];
   }
 }
 
-// Function to initialize the chart
-async function initializeChart() {
-  const prices = await fetchRepairPrices();
+function createGradient(ctx, colorStart, colorEnd) {
+  const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+  gradient.addColorStop(0, colorStart);
+  gradient.addColorStop(1, colorEnd);
+  return gradient;
+}
 
-  const createGradient = (ctx, colorStart, colorEnd) => {
-    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-    gradient.addColorStop(0, colorStart);
-    gradient.addColorStop(1, colorEnd);
-    return gradient;
-  };
+async function initializeChart() {
+  const pricesData = await fetchRepairPrices();
+  
+  if (!pricesData || pricesData.length === 0) {
+    console.log('No data available for chart');
+    document.getElementById('todayIndicator').textContent = 'No repair data available';
+    return;
+  }
+
+  const todayData = pricesData.find(d => d.isToday);
+  const indicator = document.getElementById('todayIndicator');
+  if (todayData) {
+    indicator.innerHTML = '• Today\'s Earnings: €' + todayData.price.toFixed(2) + ' (Green point on chart)';
+  } else {
+    indicator.textContent = '';
+  }
 
   const gradientBlue = createGradient(ctx, 'rgba(0, 176, 255, 0.8)', 'rgba(0, 176, 255, 0)');
 
   const chartData = {
-    labels: Array.from({ length: prices.length }, (_, i) => i + 1), // Generate labels for each price
-    datasets: [
-      {
-        label: 'Repair Prices',
-        data: prices,
-        borderColor: 'rgba(0, 176, 255, 1)',
-        backgroundColor: gradientBlue,
-        pointBackgroundColor: '#fff',
-        pointBorderColor: '#00b0ff',
-        pointRadius: 5,
-        fill: true,
-        tension: 0.4,
-      },
-    ],
+    labels: pricesData.map((d, i) => {
+      if (d.date) {
+        return new Date(d.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      }
+      return `Day ${i + 1}`;
+    }),
+    datasets: [{
+      label: 'Repair Prices',
+      data: pricesData.map(d => d.price || d),
+      borderColor: 'rgba(0, 176, 255, 1)',
+      backgroundColor: gradientBlue,
+      pointBackgroundColor: pricesData.map(d => d.isToday ? '#4CAF50' : '#fff'),
+      pointBorderColor: pricesData.map(d => d.isToday ? '#4CAF50' : '#00b0ff'),
+      pointRadius: pricesData.map(d => d.isToday ? 10 : 5),
+      pointBorderWidth: pricesData.map(d => d.isToday ? 3 : 2),
+      fill: true,
+      tension: 0.5,
+    }],
   };
 
   new Chart(ctx, {
@@ -557,7 +574,43 @@ async function initializeChart() {
       plugins: {
         title: {
           display: true,
-          text: 'Repair Prices Over Time',
+          text: 'Daily Repair Prices',
+          font: { size: 20 },
+        },
+        legend: {
+          labels: {
+            color: '#333',
+            font: { size: 14 },
+          },
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              const price = context.parsed.y;
+              const isToday = pricesData[context.dataIndex].isToday;
+              return 'Price: €' + price.toFixed(2) + (isToday ? ' 🟢 TODAY' : '');
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: {
+            color: '#333',
+            maxTicksLimit: 10,
+          },
+          grid: {
+            color: 'rgba(0, 0, 0, 0.1)',
+          },
+        },
+        y: {
+          beginAtZero: true,
+          ticks: {
+            color: '#333',
+          },
+          grid: {
+            color: 'rgba(0, 0, 0, 0.1)',
+          },
         },
       },
     },
@@ -565,6 +618,7 @@ async function initializeChart() {
 }
 initializeChart();
 </script>
+
 
 <div class="body-wrapper" style="margin-top: 8rem !important;">
   <div class="">
@@ -1255,6 +1309,7 @@ function printTable(userId) {
         <!-- Template Javascript -->
         <script src="js/main.js"></script>
         <script src="js/updateStatus.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     </html>
 
 

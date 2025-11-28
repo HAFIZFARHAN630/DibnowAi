@@ -391,9 +391,27 @@ exports.getRepairPrices = async (req, res) => {
       return res.status(400).json({ error: "User ID is required" });
     }
 
-    const repairs = await Repair.find({ user_id: userId }).select("Price");
-    const prices = repairs.map((repair) => repair.Price);
-    res.json(prices);
+    const repairs = await Repair.find({ user_id: userId }).select("Price createdAt").sort({ createdAt: 1 });
+    const now = new Date();
+    const todayDateStr = now.toISOString().split('T')[0];
+    const yesterday = new Date(now);
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayDateStr = yesterday.toISOString().split('T')[0];
+    
+    const pricesWithDates = repairs.map((repair) => {
+      const repairDateStr = new Date(repair.createdAt).toISOString().split('T')[0];
+      return {
+        price: repair.Price,
+        date: repair.createdAt,
+        isToday: repairDateStr === todayDateStr,
+        isYesterday: repairDateStr === yesterdayDateStr
+      };
+    });
+    
+    console.log('Today:', todayDateStr, '| Yesterday:', yesterdayDateStr);
+    console.log('Repairs:', pricesWithDates);
+    
+    res.json(pricesWithDates);
   } catch (error) {
     console.error("Error fetching repair prices:", error.message);
     return res.status(500).json({ error: "Internal Server Error" });
@@ -526,29 +544,36 @@ exports.getCompletedTasksCount = async (req, res) => {
        status: "Completed"
      });
 
-     // Get last 7 days of completed repairs data for chart
-     const last7Days = [];
-     const today = new Date();
+     // Get monthly completed repairs data for the current year
+     const currentYear = new Date().getFullYear();
+     const monthlyData = [];
 
-     for (let i = 6; i >= 0; i--) {
-       const date = new Date(today);
-       date.setDate(today.getDate() - i);
-       const startOfDay = new Date(date.setHours(0, 0, 0, 0));
-       const endOfDay = new Date(date.setHours(23, 59, 59, 999));
+     for (let month = 0; month < 12; month++) {
+       const startOfMonth = new Date(currentYear, month, 1);
+       const endOfMonth = new Date(currentYear, month + 1, 0, 23, 59, 59, 999);
 
        const count = await Repair.countDocuments({
          user_id: userId,
          status: "Completed",
-         createdAt: { $gte: startOfDay, $lte: endOfDay }
+         createdAt: { $gte: startOfMonth, $lte: endOfMonth }
        });
 
-       last7Days.push(count);
+       monthlyData.push(count);
      }
+
+     // Calculate percentage growth (compare current month with previous month)
+     const currentMonth = new Date().getMonth();
+     const currentMonthCount = monthlyData[currentMonth] || 0;
+     const previousMonthCount = currentMonth > 0 ? (monthlyData[currentMonth - 1] || 0) : 0;
+     const percentage = previousMonthCount > 0 
+       ? (((currentMonthCount - previousMonthCount) / previousMonthCount) * 100).toFixed(1)
+       : 0;
 
      res.json({
        completedCount,
-       last7Days,
-       percentage: completedCount > 0 ? 16.8 : 0 // You can calculate this based on previous period
+       monthlyData,
+       percentage: parseFloat(percentage),
+       currentMonth: currentMonth
      });
    } catch (error) {
      console.error("Error fetching completed tasks:", error.message);
