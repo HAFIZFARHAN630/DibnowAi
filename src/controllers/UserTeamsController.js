@@ -101,6 +101,9 @@ exports.createTeam = async (req, res) => {
     console.log('User ID string:', userIdString);
 
     if (!name || !email || !role) {
+      if (req.headers['content-type']?.includes('application/json')) {
+        return res.json({ success: false, message: "All fields are required." });
+      }
       req.flash("error_msg", "All fields are required.");
       return res.redirect("/userteam/add");
     }
@@ -108,6 +111,9 @@ exports.createTeam = async (req, res) => {
     // Get user for notifications
     const user = await User.findById(userIdString).select("first_name");
     if (!user) {
+      if (req.headers['content-type']?.includes('application/json')) {
+        return res.json({ success: false, message: "User not found." });
+      }
       req.flash("error_msg", "User not found.");
       return res.redirect("/userteam/add");
     }
@@ -172,7 +178,7 @@ exports.createTeam = async (req, res) => {
       }
     }
 
-    if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+    if (req.headers['content-type']?.includes('application/json') || req.xhr || req.headers.accept?.indexOf('json') > -1) {
       return res.json({ success: true, message: "Team member added successfully" });
     }
     
@@ -184,16 +190,22 @@ exports.createTeam = async (req, res) => {
     console.error("Error stack:", error.stack);
 
     // Handle specific MongoDB errors
+    let errorMessage = "Failed to add team member. Please try again.";
     if (error.code === 11000) {
-      req.flash("error_msg", "A team member with this email already exists.");
+      errorMessage = "A team member with this email already exists.";
     } else if (error.name === 'ValidationError') {
-      const validationErrors = Object.values(error.errors).map(err => err.message);
-      req.flash("error_msg", validationErrors.join(", "));
+      errorMessage = Object.values(error.errors).map(err => err.message).join(", ");
     } else if (error.message.includes('ObjectId')) {
-      req.flash("error_msg", "Invalid user session. Please sign in again.");
+      errorMessage = "Invalid user session. Please sign in again.";
+    }
+    
+    if (req.headers['content-type']?.includes('application/json')) {
+      return res.json({ success: false, message: errorMessage });
+    }
+    
+    req.flash("error_msg", errorMessage);
+    if (error.message.includes('ObjectId')) {
       return res.redirect("/sign_in");
-    } else {
-      req.flash("error_msg", "Failed to add team member. Please try again.");
     }
     res.redirect("/userteam/add");
   }

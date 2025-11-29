@@ -9,7 +9,7 @@ const User = require("../models/user");
 const checkLimit = (featureName, Model) => {
   return async (req, res, next) => {
     try {
-      const userId = req.session?.userId || req.user?._id;
+      const userId = req.userId || req.session?.userId || req.user?._id;
       
       if (!userId) {
         return res.status(401).json({
