@@ -1293,63 +1293,7 @@
             <% } %>
 
 
-            <!-- Team Members Section -->
-<div class="container-fluid p-4">
-    <div class="row">
-        <div class="col-12 mb-4">
-            <div class="custom-card text-white" style="background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%); border: none; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0, 51, 204, 0.3);">
-                <h5 class="mb-4 text-white" style="font-weight: 700; font-size: 1.1rem; text-align: center;">
-                    <i class="bi bi-people-fill me-2"></i><%= isAdmin ? 'All Teams' : 'Recently Added Team Member' %>
-                    <% if (teams && teams.length > 0) { %>
-                        <span class="badge ms-2" style="background: rgba(255,255,255,0.25); color: white; padding: 5px 12px; border-radius: 20px; font-weight: 600;"><%= teams.length %></span>
-                    <% } %>
-                </h5>
-                <div class="row">
-                <% if (teams && teams.length > 0) { %>
-                    <% if (isAdmin) { %>
-                        <!-- Admin: Show all team members -->
-                        <% teams.slice(-8).reverse().forEach(team => { %>
-                        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
-                            <div class="custom-product-item d-flex align-items-center p-3" style="background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); transition: all 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">
-                                <img src="<%= team.image ? '/uploads/' + team.image : 'https://img.icons8.com/3d-fluency/94/user-male--v4.png' %>" alt="<%= team.name %>" class="me-3" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(255,255,255,0.3); box-shadow: 0 4px 8px rgba(0,0,0,0.2);" onerror="this.src='https://img.icons8.com/3d-fluency/94/user-male--v4.png'"/>
-                                <div>
-                                    <strong style="color: white; font-size: 1rem;"><%= team.name %></strong>
-                                </div>
-                            </div>
-                        </div>
-                        <% }); %>
-                    <% } else { %>
-                        <!-- User: Show their own team members with plan limit consideration -->
-                        <% teams.forEach(team => { %>
-                        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
-                            <div class="custom-product-item d-flex align-items-center p-3" style="background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); transition: all 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">
-                                <img src="<%= team.image ? '/uploads/' + team.image : 'https://img.icons8.com/3d-fluency/94/user-male--v4.png' %>" alt="<%= team.name %>" class="me-3" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(255,255,255,0.3); box-shadow: 0 4px 8px rgba(0,0,0,0.2);" onerror="this.src='https://img.icons8.com/3d-fluency/94/user-male--v4.png'"/>
-                                <div>
-                                    <strong style="color: white; font-size: 1rem;"><%= team.name %></strong>
-                                </div>
-                            </div>
-                        </div>
-                        <% }); %>
-                        <!-- Show plan limit message for free users if they have limited access -->
-                        <% if ((plan_name === 'FREE TRIAL' || plan_name === 'Free Trial') && teamCount > 5) { %>
-                        <div class="col-12">
-                            <div class="alert mt-3 py-2" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); border-radius: 10px; color: white; font-size: 0.85rem;">
-                                <i class="bi bi-info-circle me-1"></i>
-                                Showing 5 of <%= teamCount %> team members. Upgrade for full access.
-                            </div>
-                        </div>
-                        <% } %>
-                    <% } %>
-                <% } else { %>
-                    <div class="col-12">
-                        <p style="color: rgba(255,255,255,0.8); text-align: center; padding: 20px;">No team members added yet.</p>
-                    </div>
-                <% } %>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+ 
 
 
         <!-- Scripts -->
@@ -2255,8 +2199,7 @@
             <!-- Recent Sales Start -->
 
 
-
-                    <!-- Table Content -->
+     <!-- Table Content -->
                     <div class="container-fluid p-4">
                         <div class="row justify-content-center">
 
@@ -2494,6 +2437,201 @@
                         </div>
                     </div>
 
+
+
+
+<!-- Brands & Categories Section -->
+<div class="container-fluid p-4">
+    <div class="row justify-content-center">
+        <!-- All Brands Section -->
+        <div class="col-md-6 mb-4">
+            <div class="custom-card" style="background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%); border: none; border-radius: 20px; padding: 25px; height: 400px; overflow: auto; box-shadow: 0 10px 30px rgba(0, 51, 204, 0.3);">
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                    <h4 class="mb-0 text-white" style="font-weight: 700; font-size: 1.5rem;"><i class="bi bi-tag-fill me-2"></i>Recently Added Brands</h4>
+                    <div class="d-flex align-items-center">
+                        <a href="/AllBrand" class="btn" style="background: rgba(255,255,255,0.2); color: white; border: 2px solid rgba(255,255,255,0.3); border-radius: 10px; padding: 8px 16px; font-weight: 600; transition: all 0.3s;"><i class="bi bi-tag"></i> See All Brands</a>
+                    </div>
+                </div>
+                <div class="table-responsive hide-on-small" style="overflow: auto; width: 100%;">
+                    <table class="table table-hover mb-0" style="background-color: transparent;">
+                        <thead class="text-center hide-on-small">
+                            <tr style="border-bottom: 2px solid rgba(255,255,255,0.2);">
+                                <th class="text-white" style="font-weight: 600; padding: 12px;">Brand Name</th>
+                                <th class="text-white" style="font-weight: 600; padding: 12px;">Description</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-center">
+                            <% if (brands && brands.length > 0) { %>
+                                <% brands.slice(0, 6).forEach(brand => { %>
+                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); transition: all 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='transparent'">
+                                        <td class="text-white" style="padding: 12px; font-weight: 600;"><%= brand.name %></td>
+                                        <td class="text-white" style="padding: 12px;"><%= brand.description || 'N/A' %></td>
+                                    </tr>
+                                <% }) %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="2" class="text-center text-white" style="padding: 30px;">No brands found.</td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="product-cards">
+                    <% if (brands && brands.length > 0) { %>
+                        <% brands.slice(0, 6).forEach(brand => { %>
+                            <div class="product-card">
+                                <div class="card-row">
+                                    <div class="card-col" style="flex:1;">
+                                        <div class="label">Brand Name</div>
+                                        <div class="value"><%= brand.name %></div>
+                                    </div>
+                                    <div class="card-col" style="flex:1;">
+                                        <div class="label">Description</div>
+                                        <div class="value"><%= brand.description || 'N/A' %></div>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }) %>
+                    <% } else { %>
+                        <div class="product-card">
+                            <div class="card-row">
+                                <div class="card-col">
+                                    <div class="label">No brands found.</div>
+                                </div>
+                            </div>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+
+        <!-- All Categories Section -->
+        <div class="col-md-6 mb-4">
+            <div class="custom-card" style="background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%); border: none; border-radius: 20px; padding: 25px; height: 400px; overflow: auto; box-shadow: 0 10px 30px rgba(0, 51, 204, 0.3);">
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                    <h4 class="mb-0 text-white" style="font-weight: 700; font-size: 1.5rem;"><i class="bi bi-grid-3x3-gap-fill me-2"></i>Recently Added Categories</h4>
+                    <div class="d-flex align-items-center">
+                        <a href="/Allcategories" class="btn" style="background: rgba(255,255,255,0.2); color: white; border: 2px solid rgba(255,255,255,0.3); border-radius: 10px; padding: 8px 16px; font-weight: 600; transition: all 0.3s;"><i class="bi bi-grid"></i> See All Categories</a>
+                    </div>
+                </div>
+                <div class="table-responsive hide-on-small" style="overflow: auto; width: 100%;">
+                    <table class="table table-hover mb-0" style="background-color: transparent;">
+                        <thead class="text-center hide-on-small">
+                            <tr style="border-bottom: 2px solid rgba(255,255,255,0.2);">
+                                <th class="text-white" style="font-weight: 600; padding: 12px;">Category Name</th>
+                                <th class="text-white" style="font-weight: 600; padding: 12px;">Description</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-center">
+                            <% if (categories && categories.length > 0) { %>
+                                <% categories.slice(0, 6).forEach(category => { %>
+                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); transition: all 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='transparent'">
+                                        <td class="text-white" style="padding: 12px; font-weight: 600;"><%= category.name %></td>
+                                        <td class="text-white" style="padding: 12px;"><%= category.description || 'N/A' %></td>
+                                    </tr>
+                                <% }) %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="2" class="text-center text-white" style="padding: 30px;">No categories found.</td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="product-cards">
+                    <% if (categories && categories.length > 0) { %>
+                        <% categories.slice(0, 6).forEach(category => { %>
+                            <div class="product-card">
+                                <div class="card-row">
+                                    <div class="card-col" style="flex:1;">
+                                        <div class="label">Category Name</div>
+                                        <div class="value"><%= category.name %></div>
+                                    </div>
+                                    <div class="card-col" style="flex:1;">
+                                        <div class="label">Description</div>
+                                        <div class="value"><%= category.description || 'N/A' %></div>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }) %>
+                    <% } else { %>
+                        <div class="product-card">
+                            <div class="card-row">
+                                <div class="card-col">
+                                    <div class="label">No categories found.</div>
+                                </div>
+                            </div>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+           <!-- Team Members Section -->
+<div class="container-fluid p-4">
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="custom-card text-white" style="background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%); border: none; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0, 51, 204, 0.3);">
+                <h5 class="mb-4 text-white" style="font-weight: 700; font-size: 1.1rem; text-align: center;">
+                    <i class="bi bi-people-fill me-2"></i><%= isAdmin ? 'All Teams' : 'Recently Added Team Member' %>
+                    <% if (teams && teams.length > 0) { %>
+                        <span class="badge ms-2" style="background: rgba(255,255,255,0.25); color: white; padding: 5px 12px; border-radius: 20px; font-weight: 600;"><%= teams.length %></span>
+                    <% } %>
+                </h5>
+                <div class="row">
+                <% if (teams && teams.length > 0) { %>
+                    <% if (isAdmin) { %>
+                        <!-- Admin: Show all team members -->
+                        <% teams.slice(-8).reverse().forEach(team => { %>
+                        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+                            <div class="custom-product-item d-flex align-items-center p-3" style="background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); transition: all 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">
+                                <img src="<%= team.image ? '/uploads/' + team.image : 'https://img.icons8.com/3d-fluency/94/user-male--v4.png' %>" alt="<%= team.name %>" class="me-3" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(255,255,255,0.3); box-shadow: 0 4px 8px rgba(0,0,0,0.2);" onerror="this.src='https://img.icons8.com/3d-fluency/94/user-male--v4.png'"/>
+                                <div>
+                                    <strong style="color: white; font-size: 1rem;"><%= team.name %></strong>
+                                </div>
+                            </div>
+                        </div>
+                        <% }); %>
+                    <% } else { %>
+                        <!-- User: Show their own team members with plan limit consideration -->
+                        <% teams.forEach(team => { %>
+                        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+                            <div class="custom-product-item d-flex align-items-center p-3" style="background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); transition: all 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">
+                                <img src="<%= team.image ? '/uploads/' + team.image : 'https://img.icons8.com/3d-fluency/94/user-male--v4.png' %>" alt="<%= team.name %>" class="me-3" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(255,255,255,0.3); box-shadow: 0 4px 8px rgba(0,0,0,0.2);" onerror="this.src='https://img.icons8.com/3d-fluency/94/user-male--v4.png'"/>
+                                <div>
+                                    <strong style="color: white; font-size: 1rem;"><%= team.name %></strong>
+                                </div>
+                            </div>
+                        </div>
+                        <% }); %>
+                        <!-- Show plan limit message for free users if they have limited access -->
+                        <% if ((plan_name === 'FREE TRIAL' || plan_name === 'Free Trial') && teamCount > 5) { %>
+                        <div class="col-12">
+                            <div class="alert mt-3 py-2" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); border-radius: 10px; color: white; font-size: 0.85rem;">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Showing 5 of <%= teamCount %> team members. Upgrade for full access.
+                            </div>
+                        </div>
+                        <% } %>
+                    <% } %>
+                <% } else { %>
+                    <div class="col-12">
+                        <p style="color: rgba(255,255,255,0.8); text-align: center; padding: 20px;">No team members added yet.</p>
+                    </div>
+                <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+                   
 
       <!-- Recent Sales End -->
  <!-- footer -->

@@ -7,6 +7,8 @@ const Inventory = require("../models/inventery");
 const SoldItem = require("../models/Sold_Products");
 const AddUser = require("../models/adduser");
 const Complaint = require("../models/complaint");
+const Brand = require("../models/brand");
+const Category = require("../models/categories");
 
 exports.allusers = async (req, res) => {
   try {
@@ -52,7 +54,10 @@ exports.allusers = async (req, res) => {
       // Complaint counts
       totalComplaints,
       pendingComplaints,
-      completedComplaints
+      completedComplaints,
+      // Brands and Categories
+      brands,
+      categories
     ] = await Promise.all([
       Repair.find({ user_id: userId }).sort({ _id: -1 }),
       Inventory.find({ user_id: userId }).sort({ _id: -1 }),
@@ -82,7 +87,10 @@ exports.allusers = async (req, res) => {
       // Complaint counts for admin dashboard
       Complaint.countDocuments(),
       Complaint.countDocuments({ status: 'Pending' }),
-      Complaint.countDocuments({ status: 'Complete' })
+      Complaint.countDocuments({ status: 'Complete' }),
+      // Fetch brands and categories
+      Brand.find({ user_id: userId }).select('name description').sort({ _id: -1 }),
+      Category.find({ user_id: userId }).select('name description').sort({ _id: -1 })
     ]);
 
     // Role-based repair sales query (fetch after Promise.all)
@@ -230,6 +238,9 @@ exports.allusers = async (req, res) => {
       totalComplaints,
       pendingComplaints,
       completedComplaints,
+      // Brands and Categories
+      brands: brands || [],
+      categories: categories || [],
       success_msg: req.flash("success_msg"),
       error_msg: req.flash("error_msg"),
     });
