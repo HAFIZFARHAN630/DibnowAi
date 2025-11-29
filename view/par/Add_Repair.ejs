@@ -367,7 +367,7 @@
   }
 
   /* Repair Status Dropdown Colors */
-  .professional-form .form-select[name="status"] option[value="Pending"] {
+  .professional-form .form-select[name="status"] option[value="Booking"] {
     background: #ffc107;
     color: #333;
   }
@@ -393,7 +393,7 @@
   }
 
   /* Dynamic Select Background on Change - Repair Status */
-  .professional-form .form-select[name="status"].status-Pending {
+  .professional-form .form-select[name="status"].status-Booking {
     background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
     color: #333;
     border-color: #ffc107;
@@ -535,9 +535,9 @@
     <div class="modal-content">
       <div class="modal-header">
         <h2 class="modal-title" id="gadgetRepairModalLabel">
-          <i class="fa-solid fa-tools me-3"></i>Add Repair Customer
+          <i class="fa-solid fa-tools me-3"></i>Create Repair Request
         </h2>
-        <p class="modal-subtitle">Create a new repair service request with customer details</p>
+        <p class="modal-subtitle">Add customer details to initiate a repair service</p>
         <button type="button" class="professional-close-btn" data-bs-dismiss="modal" aria-label="Close">
           <i class="fas fa-times"></i>
         </button>
@@ -596,7 +596,7 @@
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
-                <label for="Price" class="form-label">Repair Price</label>
+                <label for="Price" class="form-label">Estimated Repair Price</label>
                 <input type="number" class="form-control" name="Price" placeholder="Enter repair price">
               </div>
             </div>
@@ -648,7 +648,7 @@
             <div class="col-md-6">
               <div class="form-group">
                 <label for="deviceImage" class="form-label">Device Image</label>
-                <input type="file" class="form-control" name="deviceImage" accept="image/*">
+                <input type="file" class="form-control" name="deviceImage" accept="image/*" placeholder="Upload device photo for reference">
               </div>
             </div>
             <div class="col-md-6">
@@ -656,7 +656,7 @@
                 <label for="status" class="form-label">Repair Status *</label>
                 <select class="form-select" name="status" required>
                   <option value="" disabled selected>Select Status</option>
-                  <option value="Pending">Pending</option>
+                  <option value="Booking">Booking</option>
                   <option value="Cancelled">Cancelled</option>
                   <option value="Progress">In Progress</option>
                   <option value="Completed">Completed</option>
@@ -667,9 +667,9 @@
           </div>
 
           <div class="form-group">
-            <label for="gadgetProblem" class="form-label">Device Problem Description</label>
+            <label for="gadgetProblem" class="form-label">Problem Description</label>
             <textarea class="form-control" id="gadgetProblem" name="gadgetProblem" rows="3"
-              placeholder="Describe the device problem in detail"></textarea>
+              placeholder="Describe the issue with the device"></textarea>
           </div>
 
           <button type="submit" class="professional-submit-btn">
@@ -807,7 +807,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h2 class="modal-title" id="gadgetrModalLabel">
-          <i class="bi bi-clipboard-data me-3"></i>Add Inventory
+          <i class="bi bi-clipboard-data me-3"></i>Add Inventory Item
         </h2>
         <p class="modal-subtitle">Add new products to your inventory management system</p>
         <button type="button" class="professional-close-btn" data-bs-dismiss="modal" aria-label="Close">
@@ -888,7 +888,7 @@
           <div class="row">
             <div class="col-md-4">
               <div class="form-group">
-                <label for="Sale_Price" class="form-label">Sale Price *</label>
+                <label for="Sale_Price" class="form-label">Sale Price (Rs)*</label>
                 <input type="number" name="Sale_Price" class="form-control" id="Sale_Price" required
                   placeholder="Enter sale price">
               </div>
@@ -896,7 +896,7 @@
 
             <div class="col-md-4">
               <div class="form-group">
-                <label for="Retail_Price" class="form-label">Retail Price *</label>
+                <label for="Retail_Price" class="form-label">Retail Price (Rs)*</label>
                 <input type="number" name="Retail_Price" class="form-control" id="Retail_Price" required
                   placeholder="Enter retail price">
               </div>
@@ -914,7 +914,7 @@
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
-                <label for="Quantity" class="form-label">Quantity</label>
+                <label for="Quantity" class="form-label">Quantity*</label>
                 <input type="number" name="Quantity" class="form-control" id="Quantity" placeholder="Enter quantity">
               </div>
             </div>
@@ -922,13 +922,13 @@
             <div class="col-md-6">
               <div class="form-group">
                 <label for="device_image" class="form-label">Product Image *</label>
-                <input type="file" name="device_image" class="form-control" id="device_image" required accept="image/*">
+                <input type="file" name="device_image" class="form-control" id="device_image" required accept="image/*" placeholder="Upload product image">
               </div>
             </div>
           </div>
 
           <div class="form-group">
-            <label for="gadgetProblem" class="form-label">Product Details</label>
+            <label for="gadgetProblem" class="form-label">Product Description</label>
             <textarea class="form-control" id="gadgetProblem" name="gadget_problem" rows="3"
               placeholder="Describe product specifications and details"></textarea>
           </div>

@@ -60,7 +60,7 @@ exports.allusers = async (req, res) => {
       SoldItem.countDocuments({ user_id: userId }),
       SoldItem.find({ user_id: userId }).sort({ sale_date: -1 }).limit(100), // Fetch recent sold items with sale dates
       Repair.countDocuments({ user_id: userId }),
-      Repair.countDocuments({ status: 'Pending', user_id: userId }),
+      Repair.countDocuments({ status: 'Booking', user_id: userId }),
       Repair.countDocuments({ status: 'Completed', user_id: userId }),
       // Role-based team filtering
       user.role === 'admin'
@@ -142,10 +142,26 @@ exports.allusers = async (req, res) => {
     const totalSales = repairSales + productSales;
     const totalRepairs = deliveredRepairs.length;
 
-    // Calculate sales growth percentage (comparing with previous period)
-    const currentPeriodSales = totalSales;
-    const previousPeriodSales = currentPeriodSales * 0.85; // Mock previous period for now
-    const salesGrowth = previousPeriodSales > 0 ? ((currentPeriodSales - previousPeriodSales) / previousPeriodSales) * 100 : 0;
+    // Calculate sales growth percentage (current month vs previous month)
+    const now = new Date();
+    const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const previousMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const previousMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59);
+
+    const currentMonthSales = soldItems
+      .filter(item => new Date(item.sale_date) >= currentMonthStart)
+      .reduce((sum, item) => sum + (parseFloat(item.Price) || 0), 0);
+
+    const previousMonthSales = soldItems
+      .filter(item => {
+        const saleDate = new Date(item.sale_date);
+        return saleDate >= previousMonthStart && saleDate <= previousMonthEnd;
+      })
+      .reduce((sum, item) => sum + (parseFloat(item.Price) || 0), 0);
+
+    const salesGrowth = previousMonthSales > 0 
+      ? ((currentMonthSales - previousMonthSales) / previousMonthSales) * 100 
+      : (currentMonthSales > 0 ? 100 : 0);
 
     // Format total sales for display
     const formattedTotalSales = totalSales >= 1000 ? `${(totalSales / 1000).toFixed(1)}K` : totalSales.toFixed(0);

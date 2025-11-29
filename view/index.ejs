@@ -668,9 +668,9 @@
                     </div>
                 </div>
                 <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-                    <a href="/repair">
+                    <a href="/in_stock">
                     <div class="patient-card position-relative" style="background-color: #FFF3E0;">
-                        <div class="patient-card-header text-white" style="background-color: #3909d7ba;">Repair Total Sales</div>
+                        <div class="patient-card-header text-white" style="background-color: #3909d7ba;">Stock Total sales</div>
                         <div class="patient-card-body"> <%= totalSales ? totalSales : 0 %></div>
                         <i class="bi bi-bar-chart-fill position-absolute" style="font-size: 4.5rem; color: rgba(245, 124, 0, 0.2); bottom: -15px; right: 14px; z-index: 1;"></i>
                   </a>
@@ -1095,6 +1095,22 @@
               }
             </style>
 
+            <!-- Sales & Profit Analysis Section -->
+<div class="container-fluid p-4">
+    <div class="row">
+        <!-- Sales vs Profit Trend -->
+        <div class="col-12 mb-4">
+            <div class="custom-card" style="background-color: #FFFFFF; border: 1px solid #e5e7eb; border-radius: 15px; padding: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                <h5 style="color: #1f2937; font-weight: 600; margin-bottom: 20px;"><i class="bi bi-graph-up me-2" style="color: #1E88E5;"></i>Total Sales & Profit from Sold Stock
+</h5>
+                <div style="position: relative; height: 300px;">
+                    <canvas id="salesProfitChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
           <!-- Sales Chart Start -->
           <div class="container-fluid p-4">
@@ -1103,7 +1119,8 @@
                 <div class="col-12 mb-4">
                     <div class="custom-card" style="background-color: #FFFFFF; border: 1px solid #e5e7eb; border-radius: 15px; padding: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 style="color: #1f2937; font-weight: 600; margin: 0;">Daily Revenue Trend</h5>
+                            <h5 style="color: #1f2937; font-weight: 600; margin: 0;">Daily Revenue from Sold Stock Item
+</h5>
                             <h4 style="color: #1f2937; margin: 0;"><%= formattedTotalSales %> <span class="badge bg-success"><%= salesGrowth.toFixed(1) %>%</span></h4>
                         </div>
                         <div style="position: relative; height: 300px;">
@@ -1121,7 +1138,7 @@
         <div class="col-12 mb-4">
             <div class="custom-card" style="background-color: #FFFFFF; border: 1px solid #e5e7eb; border-radius: 15px; padding: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 style="color: #1f2937; font-weight: 600; margin: 0;"><i class="bi bi-clock me-2" style="color: #1E88E5;"></i>Monthly Completed Repairs Trend</h5>
+                    <h5 style="color: #1f2937; font-weight: 600; margin: 0;"><i class="bi bi-clock me-2" style="color: #1E88E5;"></i>Monthly Completed Repairs Request</h5>
                 </div>
                 <h2 style="color: #1f2937;">257 <span style="color: #4caf50;">16.8% &#9650;</span></h2>
                 <div style="position: relative; height: 300px;">
@@ -1132,22 +1149,25 @@
     </div>
 </div>
 
-
-
-<!-- Sales & Profit Analysis Section -->
+<!-- Monthly Repair Revenue Section -->
 <div class="container-fluid p-4">
     <div class="row">
-        <!-- Sales vs Profit Trend -->
         <div class="col-12 mb-4">
             <div class="custom-card" style="background-color: #FFFFFF; border: 1px solid #e5e7eb; border-radius: 15px; padding: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-                <h5 style="color: #1f2937; font-weight: 600; margin-bottom: 20px;"><i class="bi bi-graph-up me-2" style="color: #1E88E5;"></i>Total Sales & Profit Trend</h5>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 style="color: #1f2937; font-weight: 600; margin: 0;"><i class="bi bi-cash-coin me-2" style="color: #42A5F5;"></i>Monthly Revenue from Repair Services </h5>
+                </div>
                 <div style="position: relative; height: 300px;">
-                    <canvas id="salesProfitChart"></canvas>
+                    <canvas id="repairRevenueChart"></canvas>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+
+
+
 
 
 <!-- Quick Actions Section -->
@@ -1742,6 +1762,78 @@
                         setTimeout(refreshTasksChart, 1000);
                     }
                 });
+
+                // Monthly Repair Revenue Chart
+                async function initializeRepairRevenueChart() {
+                    try {
+                        const ctxRevenueElement = document.getElementById('repairRevenueChart');
+                        if (!ctxRevenueElement) return;
+
+                        const response = await fetch('/api/monthly-repair-revenue');
+                        let monthlyRevenue = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                        if (response.ok) {
+                            const data = await response.json();
+                            monthlyRevenue = data.monthlyRevenue || monthlyRevenue;
+                        }
+
+                        new Chart(ctxRevenueElement, {
+                            type: 'line',
+                            data: {
+                                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                                datasets: [{
+                                    label: 'Monthly Revenue',
+                                    data: monthlyRevenue,
+                                    borderColor: '#42A5F5',
+                                    backgroundColor: 'rgba(66, 165, 245, 0.1)',
+                                    tension: 0.4,
+                                    fill: true,
+                                    borderWidth: 3,
+                                    pointRadius: 5,
+                                    pointHoverRadius: 7,
+                                    pointBackgroundColor: '#42A5F5',
+                                    pointBorderColor: '#FFFFFF',
+                                    pointBorderWidth: 2
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                interaction: { intersect: false, mode: 'index' },
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        ticks: {
+                                            color: '#6b7280',
+                                            font: { size: 11, weight: '500' },
+                                            callback: function(value) { return '€' + value.toFixed(0); }
+                                        },
+                                        grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false },
+                                        border: { display: false }
+                                    },
+                                    x: {
+                                        ticks: { color: '#6b7280', font: { size: 11, weight: '500' } },
+                                        grid: { display: false },
+                                        border: { display: false }
+                                    }
+                                },
+                                plugins: {
+                                    legend: { display: false },
+                                    tooltip: {
+                                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                        padding: 12,
+                                        cornerRadius: 8,
+                                        callbacks: {
+                                            label: function(context) { return '€' + context.parsed.y.toFixed(2) + ' Revenue'; }
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    } catch (error) {
+                        console.error('Error initializing repair revenue chart:', error);
+                    }
+                }
+                initializeRepairRevenueChart();
 
                 // Website Visitors Chart
                 try {

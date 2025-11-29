@@ -55,7 +55,7 @@
 
       /* Filter Dropdown Dynamic Colors */
       .form-selects.filter-All { background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%); border-color: #6c757d; }
-      .form-selects.filter-Pending { background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); border-color: #ffc107; }
+      .form-selects.filter-Booking { background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); border-color: #ffc107; }
       .form-selects.filter-Cancelled { background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); border-color: #dc3545; }
       .form-selects.filter-Progress { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); border-color: #007bff; }
       .form-selects.filter-Completed { background: linear-gradient(135deg, #28a745 0%, #218838 100%); border-color: #28a745; }
@@ -63,20 +63,20 @@
 
       /* Filter Dropdown Option Colors */
       .form-selects option[value="All"] { background: #6c757d; color: white; }
-      .form-selects option[value="Pending"] { background: #ffc107; color: white; }
+      .form-selects option[value="Booking"] { background: #ffc107; color: white; }
       .form-selects option[value="Cancelled"] { background: #dc3545; color: white; }
       .form-selects option[value="Progress"] { background: #007bff; color: white; }
       .form-selects option[value="Completed"] { background: #28a745; color: white; }
       .form-selects option[value="Delivered"] { background: #6f42c1; color: white; }
 
       /* Status Select Colors */
-      .status-select.Pending { background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); color: white; border-color: #ffc107; }
+      .status-select.Booking { background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); color: white; border-color: #ffc107; }
       .status-select.Cancelled { background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; border-color: #dc3545; }
       .status-select.Progress { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); color: white; border-color: #007bff; }
       .status-select.Completed { background: linear-gradient(135deg, #28a745 0%, #218838 100%); color: white; border-color: #28a745; }
       .status-select.Delivered { background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%); color: white; border-color: #6f42c1; }
 
-      .status-select option[value="Pending"] { background: #ffc107; color: white; }
+      .status-select option[value="Booking"] { background: #ffc107; color: white; }
       .status-select option[value="Cancelled"] { background: #dc3545; color: white; }
       .status-select option[value="Progress"] { background: #007bff; color: white; }
       .status-select option[value="Completed"] { background: #28a745; color: white; }
@@ -653,7 +653,7 @@ initializeChart();
         <div class="filter-container ms-sm-3 w-auto flex-grow-1" style="min-width:150px;">
           <select id="statusFilter" class="form-selects w-100" onchange="filterTable()">
             <option value="All">All</option>
-            <option value="Pending">Pending</option>
+            <option value="Booking">Booking</option>
             <option value="Cancelled">Cancelled</option>
             <option value="Progress">Progress</option>
             <option value="Completed">Completed</option>
@@ -720,7 +720,7 @@ initializeChart();
         </td>
         <td>
           <select class="status-select <%= product.status %>" onchange="updateStatus('<%= product.id %>', this.value)">
-            <option value="Pending" <%= product.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+            <option value="Booking" <%= product.status === 'Booking' ? 'selected' : '' %>>Booking</option>
             <option value="Cancelled" <%= product.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
             <option value="Progress" <%= product.status === 'Progress' ? 'selected' : '' %>>Progress</option>
             <option value="Completed" <%= product.status === 'Completed' ? 'selected' : '' %>>Completed</option>
@@ -783,7 +783,7 @@ initializeChart();
         <span class="fw-semibold text-secondary me-2">Status:</span>
         <select class="form-select form-select-sm w-auto d-inline-block <%= product.status %>"
           onchange="updateStatus('<%= product.id %>', this.value)">
-          <option value="Pending" <%= product.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+          <option value="Booking" <%= product.status === 'Booking' ? 'selected' : '' %>>Booking</option>
           <option value="Cancelled" <%= product.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
           <option value="Progress" <%= product.status === 'Progress' ? 'selected' : '' %>>Progress</option>
           <option value="Completed" <%= product.status === 'Completed' ? 'selected' : '' %>>Completed</option>
@@ -871,7 +871,7 @@ initializeChart();
                 <div class="form-group col-md-6">
                   <label for="status-<%= product.id %>" class="form-label">Status</label>
                   <select class="form-control gadget-select status-select <%= product.status %>" id="status-<%= product.id %>" name="status" onchange="updateStatus('<%= product.id %>', this.value)">
-                    <option value="Pending" <%= product.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+                    <option value="Booking" <%= product.status === 'Booking' ? 'selected' : '' %>>Booking</option>
                     <option value="Cancelled" <%= product.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
                     <option value="Progress" <%= product.status === 'Progress' ? 'selected' : '' %>>Progress</option>
                     <option value="Completed" <%= product.status === 'Completed' ? 'selected' : '' %>>Completed</option>

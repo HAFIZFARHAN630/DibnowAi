@@ -91,7 +91,7 @@ exports.addProduct = async (req, res) => {
       email: userEmail,
       device: device || "Unknown Device",
       deviceImage,
-      status: status || "Pending",
+      status: status || "Booking",
       gadgetProblem: gadgetProblem || "Repair",
       user_id: req.session.userId,
       random_id: randomId,
@@ -596,6 +596,45 @@ exports.done = async (req, res) => {
    } catch (error) {
      console.error("Database error:", error.message);
      return res.status(500).send("Database error");
+   }
+ };
+
+exports.getMonthlyRepairRevenue = async (req, res) => {
+   try {
+     const userId = req.session.userId;
+     if (!userId) {
+       return res.status(401).json({ error: "User not authenticated" });
+     }
+
+     const currentYear = new Date().getFullYear();
+     const monthlyRevenue = await Repair.aggregate([
+       {
+         $match: {
+           user_id: new mongoose.Types.ObjectId(userId),
+           createdAt: {
+             $gte: new Date(currentYear, 0, 1),
+             $lte: new Date(currentYear, 11, 31, 23, 59, 59)
+           }
+         }
+       },
+       {
+         $group: {
+           _id: { $month: "$createdAt" },
+           totalRevenue: { $sum: "$Price" }
+         }
+       },
+       { $sort: { _id: 1 } }
+     ]);
+
+     const revenueByMonth = new Array(12).fill(0);
+     monthlyRevenue.forEach(item => {
+       revenueByMonth[item._id - 1] = item.totalRevenue || 0;
+     });
+
+     res.json({ monthlyRevenue: revenueByMonth });
+   } catch (error) {
+     console.error("Error fetching monthly repair revenue:", error.message);
+     return res.status(500).json({ error: "Internal Server Error" });
    }
  };
 

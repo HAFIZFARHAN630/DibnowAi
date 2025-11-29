@@ -18,6 +18,7 @@ const {
     done,
     getPublicTrackingPage,
     trackRepairById,
+    getMonthlyRepairRevenue,
   } = require("../controllers/repairController");
 
 // Add product
@@ -46,6 +47,7 @@ router.post("/Clients/:id", deleteClient);
 // Export the router
 router.get("/api/repair-prices", getRepairPrices);
 router.get("/api/completed-tasks", getCompletedTasksCount);
+router.get("/api/monthly-repair-revenue", getMonthlyRepairRevenue);
 router.post("/update-status", done);
 
 // Public tracking routes (no authentication required)
