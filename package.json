@@ -46,6 +46,7 @@
     "path": "^0.12.7",
     "paypal-rest-sdk": "^1.8.1",
     "socket.io": "^4.8.1",
-    "stripe": "^17.5.0"
+    "stripe": "^17.5.0",
+    "geoip-lite": "^1.4.10"
   }
 }

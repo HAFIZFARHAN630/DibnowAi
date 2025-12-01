@@ -144,6 +144,16 @@ app.use(async (req, res, next) => {
 const { addNotificationData } = require("./src/middlewares/notificationMiddleware");
 app.use(addNotificationData);
 
+// Currency detection middleware (LinkedIn-style) - AFTER session
+try {
+  const { detectCurrency, currencyLocals } = require("./src/middlewares/currencyMiddleware");
+  app.use(detectCurrency);
+  app.use(currencyLocals);
+  console.log('✅ Currency detection enabled');
+} catch (err) {
+  console.log('⚠️ Currency detection disabled (run: npm install)');
+}
+
 // Debug middleware
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.url}`);

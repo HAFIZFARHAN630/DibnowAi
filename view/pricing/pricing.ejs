@@ -598,9 +598,17 @@
             <div class="card card-body py-3">
               <div class="row align-items-center">
                 <div class="col-12">
-                  <div class="d-sm-flex align-items-center justify-content-center center-on-small">
+                  <div class="d-sm-flex align-items-center justify-content-between center-on-small">
                     <h2 class="mb-4 mb-sm-0 card-title text-center">Choose Your Plan</h2>
-                    
+                    <select id="currencySelector" onchange="changeCurrency(this.value)" style="padding: 8px 15px; border-radius: 8px; border: 2px solid #ddd; font-size: 14px; cursor: pointer;">
+                      <option value="PKR" <%= typeof displayCurrency !== 'undefined' && displayCurrency === 'PKR' ? 'selected' : '' %>>🇵🇰 PKR - Pakistan</option>
+                      <option value="INR" <%= typeof displayCurrency !== 'undefined' && displayCurrency === 'INR' ? 'selected' : '' %>>🇮🇳 INR - India</option>
+                      <option value="USD" <%= typeof displayCurrency !== 'undefined' && displayCurrency === 'USD' ? 'selected' : '' %>>🇺🇸 USD - USA</option>
+                      <option value="GBP" <%= typeof displayCurrency !== 'undefined' && displayCurrency === 'GBP' ? 'selected' : '' %>>🇬🇧 GBP - UK</option>
+                      <option value="EUR" <%= typeof displayCurrency !== 'undefined' && displayCurrency === 'EUR' ? 'selected' : '' %>>🇪🇺 EUR - Europe</option>
+                      <option value="CAD" <%= typeof displayCurrency !== 'undefined' && displayCurrency === 'CAD' ? 'selected' : '' %>>🇨🇦 CAD - Canada</option>
+                      <option value="AUD" <%= typeof displayCurrency !== 'undefined' && displayCurrency === 'AUD' ? 'selected' : '' %>>🇦🇺 AUD - Australia</option>
+                    </select>
                   </div>
                 </div>
               </div>
@@ -632,7 +640,10 @@
           <div class="card-body d-flex flex-column">
             <div class="title h6 text-uppercase fw-bold mb-2"><%= name %></div>
 
-            <div class="price-circle display-5 fw-bold my-2">€<%= price %></div>
+            <div class="price-circle display-5 fw-bold my-2" data-gpa-price="<%= price %>">
+              <%= typeof currencySymbol !== 'undefined' ? currencySymbol : 'Rs' %>
+              <%= typeof conversionRate !== 'undefined' ? (parseFloat(price) * conversionRate).toFixed(2) : (parseFloat(price) * 397.1863).toFixed(2) %>
+            </div>
             <div class="price mb-3 " style="color:#FFFFFC ;"><%= limit %>  </div>
 
             <ul class="features list-unstyled mb-3 d-flex flex-column align-items-center justify-content-center">
@@ -693,16 +704,16 @@
       <div class="balance-info">
         <div class="balance-row">
           <span class="balance-label">Plan Price:</span>
-          <span class="balance-value" id="modalPlanPrice">€0.00</span>
+          <span class="balance-value" id="modalPlanPrice"><%= typeof currencySymbol !== 'undefined' ? currencySymbol : '€' %>0.00</span>
         </div>
         <div class="balance-row">
           <span class="balance-label">Your Balance:</span>
-          <span class="balance-value" id="modalWalletBalance">€0.00</span>
+          <span class="balance-value" id="modalWalletBalance"><%= typeof currencySymbol !== 'undefined' ? currencySymbol : '€' %>0.00</span>
         </div>
         <hr style="border-color: rgba(255,255,255,0.3); margin: 15px 0;">
         <div class="balance-row">
           <span class="balance-label">Amount Needed:</span>
-          <span class="balance-value shortage" id="modalShortage">€0.00</span>
+          <span class="balance-value shortage" id="modalShortage"><%= typeof currencySymbol !== 'undefined' ? currencySymbol : '€' %>0.00</span>
         </div>
       </div>
 
@@ -761,7 +772,7 @@
                   <strong>💰 Your Wallet Balance</strong>
                 </div>
                 <div style="font-size: 24px; font-weight: bold; color: #ffffff; text-shadow: 0 1px 3px rgba(0,0,0,0.3);">
-                  € <span id="walletBalanceAmount"><%= typeof walletBalance !== 'undefined' ? walletBalance.toFixed(2) : '0.00' %></span>
+                  <%= typeof currencySymbol !== 'undefined' ? currencySymbol : 'Rs' %> <span id="walletBalanceAmount" data-gpa-balance="<%= typeof walletBalance !== 'undefined' ? walletBalance : 0 %>"><%= typeof walletBalance !== 'undefined' ? (walletBalance * (typeof conversionRate !== 'undefined' ? conversionRate : 397.1863)).toFixed(2) : '0.00' %></span>
                 </div>
               </div>
             </div>
@@ -819,6 +830,59 @@
     let planPrices = {};
     let planPricesPkr = {};
     let conversionRate = {};
+    
+    // Currency display context
+    let displayCurrency = '<%= typeof displayCurrency !== "undefined" ? displayCurrency : "PKR" %>';
+    let currencySymbol = '<%= typeof currencySymbol !== "undefined" ? currencySymbol : "Rs" %>';
+    let currencyRate = <%= typeof conversionRate !== 'undefined' ? conversionRate : 397.1863 %>;
+    
+    // Currency map - rates fetched from database
+    let CURRENCY_MAP = {
+      'PKR': { symbol: 'Rs', rate: 1.0 },
+      'INR': { symbol: '₹', rate: 1.0 },
+      'USD': { symbol: '$', rate: 1.0 },
+      'GBP': { symbol: '£', rate: 1.0 },
+      'EUR': { symbol: '€', rate: 1.0 },
+      'CAD': { symbol: 'C$', rate: 1.0 },
+      'AUD': { symbol: 'A$', rate: 1.0 }
+    };
+    
+    // Fetch currency rates from backend
+    async function fetchCurrencyRates() {
+      try {
+        const response = await fetch('/api/currency-rates');
+        const data = await response.json();
+        if (data.success) {
+          CURRENCY_MAP = data.rates;
+          console.log('✅ Currency rates loaded:', CURRENCY_MAP);
+        }
+      } catch (err) {
+        console.error('❌ Failed to fetch currency rates:', err);
+      }
+    }
+    
+    // Change currency function
+    function changeCurrency(currency) {
+      displayCurrency = currency;
+      currencySymbol = CURRENCY_MAP[currency].symbol;
+      currencyRate = CURRENCY_MAP[currency].rate;
+      
+      // Update all price displays
+      document.querySelectorAll('.price-circle').forEach(el => {
+        const gpaPrice = parseFloat(el.getAttribute('data-gpa-price'));
+        el.innerHTML = currencySymbol + (gpaPrice * currencyRate).toFixed(2);
+      });
+      
+      // Update wallet balance if visible
+      const walletEl = document.getElementById('walletBalanceAmount');
+      if (walletEl) {
+        const gpaBalance = parseFloat(walletEl.getAttribute('data-gpa-balance'));
+        walletEl.textContent = (gpaBalance * currencyRate).toFixed(2);
+        walletEl.parentElement.innerHTML = walletEl.parentElement.innerHTML.replace(/[Rs₹$£€C$A$]+\s/, currencySymbol + ' ');
+      }
+      
+      console.log(`🔄 Currency changed to ${currency} (${currencySymbol})`);
+    }
 
     // Fetch plan prices from backend on page load
     async function fetchPlanPrices() {
@@ -883,6 +947,7 @@
 
     // Fetch prices when page loads
     document.addEventListener('DOMContentLoaded', function() {
+        fetchCurrencyRates();
         fetchPlanPrices();
 
         // Add event listener for when manual payment form opens
@@ -1279,9 +1344,13 @@
     // Show insufficient balance modal
     function showInsufficientBalanceModal(planPrice, walletBalance) {
         const shortage = planPrice - walletBalance;
-        document.getElementById('modalPlanPrice').textContent = `€${planPrice.toFixed(2)}`;
-        document.getElementById('modalWalletBalance').textContent = `€${walletBalance.toFixed(2)}`;
-        document.getElementById('modalShortage').textContent = `€${shortage.toFixed(2)}`;
+        const displayPlanPrice = (planPrice * currencyRate).toFixed(2);
+        const displayWalletBalance = (walletBalance * currencyRate).toFixed(2);
+        const displayShortage = (shortage * currencyRate).toFixed(2);
+        
+        document.getElementById('modalPlanPrice').textContent = `${currencySymbol}${displayPlanPrice}`;
+        document.getElementById('modalWalletBalance').textContent = `${currencySymbol}${displayWalletBalance}`;
+        document.getElementById('modalShortage').textContent = `${currencySymbol}${displayShortage}`;
         document.getElementById('insufficientBalanceModal').style.display = 'block';
     }
 
@@ -1346,14 +1415,15 @@
             }
 
             if (paymentMethod === 'wallet') {
-                // Wallet payment - check balance before submission
-                const walletBalance = parseFloat(document.getElementById('walletBalanceAmount')?.textContent || '0');
+                // Wallet payment - check balance in GPA (backend uses GPA)
+                const displayedBalance = parseFloat(document.getElementById('walletBalanceAmount')?.textContent || '0');
+                const actualBalance = displayedBalance / currencyRate; // Convert back to GPA
                 const planPrice = parseFloat(planPrices[currentPlan] || planPrices[currentPlan.toUpperCase()] || '0');
 
-                console.log('Wallet payment check:', { walletBalance, planPrice, currentPlan });
+                console.log('Wallet payment check:', { displayedBalance, actualBalance, planPrice, currentPlan });
 
-                if (walletBalance < planPrice) {
-                    showInsufficientBalanceModal(planPrice, walletBalance);
+                if (actualBalance < planPrice) {
+                    showInsufficientBalanceModal(planPrice, actualBalance);
                     return;
                 }
 

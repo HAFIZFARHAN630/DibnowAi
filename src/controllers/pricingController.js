@@ -92,6 +92,11 @@ exports.allUsers = [
         console.log(`  - ${plan.plan_name}: ${plan.plan_price} (type: ${typeof plan.plan_price})`);
       });
 
+      // Currency display context from session (set by middleware)
+      const displayCurrency = req.session.displayCurrency || res.locals.displayCurrency || 'PKR';
+      const currencySymbol = req.session.currencySymbol || res.locals.currencySymbol || 'Rs';
+      const conversionRate = req.session.conversionRate || res.locals.conversionRate || 1.0;
+
       res.render("pricing/pricing", {
         plans,
         profileImagePath,
@@ -112,7 +117,11 @@ exports.allUsers = [
         status: user.status,
         reson: user.denial_reason,
         enabledGateways: enabledGateways,
-        walletBalance: wallet ? wallet.balance : 0
+        walletBalance: wallet ? wallet.balance : 0,
+        // Display currency context (UI only)
+        displayCurrency,
+        currencySymbol,
+        conversionRate
       });
     } catch (error) {
       console.error("Error fetching pricing data:", error.message);
@@ -436,6 +445,19 @@ exports.addSubscription = [
           client_secret: gatewaySettings.credentials.client_secret,
         });
 
+        // Use USD for PayPal (more widely supported)
+        const CurrencyRate = require('../models/currencyRate');
+        let usdRate = 1.27; // Default
+        try {
+          const usdCurrency = await CurrencyRate.findOne({ code: 'USD' });
+          if (usdCurrency) usdRate = usdCurrency.rate;
+        } catch (err) {
+          console.log('Using default USD rate');
+        }
+
+        const usdAmount = (parseFloat(expectedAmount) * usdRate).toFixed(2);
+        console.log(`💰 PayPal: GPA ${expectedAmount} → USD ${usdAmount}`);
+
         const create_payment_json = {
           intent: "sale",
           payer: { payment_method: "paypal" },
@@ -448,19 +470,19 @@ exports.addSubscription = [
               item_list: {
                 items: [
                   {
-                    name: `${plan} Plan - £${parseFloat(expectedAmount).toFixed(2)} GBP`,
+                    name: `${plan} Plan`,
                     sku: plan,
-                    price: (parseFloat(expectedAmount) * 397.1863).toFixed(2),
-                    currency: "PKR",
+                    price: usdAmount,
+                    currency: "USD",
                     quantity: 1,
                   },
                 ],
               },
               amount: {
-                currency: "PKR",
-                total: (parseFloat(expectedAmount) * 397.1863).toFixed(2),
+                currency: "USD",
+                total: usdAmount,
                 details: {
-                  subtotal: (parseFloat(expectedAmount) * 397.1863).toFixed(2),
+                  subtotal: usdAmount,
                 }
               },
               description: `Payment for the ${plan} plan.`,
@@ -470,7 +492,8 @@ exports.addSubscription = [
   
         paypal.payment.create(create_payment_json, (error, payment) => {
           if (error) {
-            console.error("PayPal payment creation error:", error.message);
+            console.error("PayPal payment creation error:", error);
+            console.error("PayPal error details:", JSON.stringify(error.response || error, null, 2));
             return res
               .status(500)
               .send("Error creating PayPal payment. Please try again later.");

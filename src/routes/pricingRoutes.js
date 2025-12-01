@@ -16,6 +16,7 @@ const payfastController = require("../controllers/payfastController");
 
 const { getEnabledGateways } = require("../controllers/paymentPublicController");
 const testPaymentController = require("../controllers/testPaymentController");
+const currencyController = require("../controllers/currencyController");
 
 router.get("/pricing", allUsers);
 router.post("/pricing", addSubscription);
@@ -50,6 +51,11 @@ router.post("/payfast/webhook", payfastController.handleWebhook);
 router.get("/pricing/payfast/success", payfastController.handleSuccess);
 router.get("/pricing/payfast/cancel", payfastController.handleCancel);
 router.post("/pricing/payfast/ipn", payfastController.handleWebhook);
+
+// Currency API routes
+router.get("/api/currency-rates", currencyController.getCurrencyRates);
+router.post("/api/currency-rates/update", currencyController.updateCurrencyRate);
+router.get("/api/currencies", currencyController.getAllCurrencies);
 
 // Test routes for debugging (REMOVE IN PRODUCTION)
 router.get("/test-payment-activation", testPaymentController.testPaymentActivation);
