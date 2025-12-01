@@ -2646,4 +2646,67 @@
 
   <!-- Template Javascript -->
   <script src="js/main.js"></script>
+
+  <!-- Team Member Login Popup -->
+  <% if (typeof isTeamMember !== 'undefined' && isTeamMember) { %>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Show popup notification
+      const popup = document.createElement('div');
+      popup.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%); color: white; padding: 30px 40px; border-radius: 20px; box-shadow: 0 20px 60px rgba(0, 51, 204, 0.4); z-index: 10000; text-align: center; min-width: 400px; animation: slideIn 0.3s ease-out;';
+      
+      popup.innerHTML = `
+        <style>
+          @keyframes slideIn {
+            from { opacity: 0; transform: translate(-50%, -60%); }
+            to { opacity: 1; transform: translate(-50%, -50%); }
+          }
+          @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+          }
+        </style>
+        <div style="margin-bottom: 15px;">
+          <i class="bi bi-person-check-fill" style="font-size: 3rem; color: #fff;"></i>
+        </div>
+        <h3 style="margin: 0 0 15px 0; font-weight: 700; color: #fff; font-size: 1.5rem;">Welcome to Dibnow Software Management</h3>
+        <p style="margin: 0 0 8px 0; font-size: 1.1rem; color: rgba(255,255,255,0.95);"><strong><%= teamMemberName %></strong> (<%= teamMemberEmail %>)</p>
+        <p style="margin: 0 0 15px 0; font-size: 1rem; color: rgba(255,255,255,0.9);">You are a team member of: <strong><%= firstName %> <%= lastName %></strong></p>
+        <p style="margin: 0 0 20px 0; font-size: 0.95rem; color: rgba(255,255,255,0.85); line-height: 1.5; padding: 0 10px;">You have limited access and can use the Dibnow system under your owner. Please follow instructions and do not modify owner settings.</p>
+        <button onclick="this.parentElement.style.animation='fadeOut 0.3s'; setTimeout(() => { this.parentElement.remove(); document.querySelector('.team-backdrop').remove(); }, 300);" style="background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.3); color: white; padding: 12px 35px; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.3s; font-size: 1rem;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">Start Using Dibnow</button>
+        <p style="margin-top: 15px; font-size: 0.8rem; color: rgba(255,255,255,0.7); padding: 0 10px;">
+          <i class="bi bi-info-circle me-1"></i>Tip: All your actions are tracked and synced with your owner's system.
+        </p>
+      `;
+      
+      // Add backdrop
+      const backdrop = document.createElement('div');
+      backdrop.className = 'team-backdrop';
+      backdrop.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; backdrop-filter: blur(5px);';
+      backdrop.onclick = function() {
+        popup.style.animation = 'fadeOut 0.3s';
+        backdrop.style.animation = 'fadeOut 0.3s';
+        setTimeout(() => {
+          popup.remove();
+          backdrop.remove();
+        }, 300);
+      };
+      
+      document.body.appendChild(backdrop);
+      document.body.appendChild(popup);
+      
+      // Auto close after 10 seconds
+      setTimeout(() => {
+        if (popup.parentElement) {
+          popup.style.animation = 'fadeOut 0.3s';
+          backdrop.style.animation = 'fadeOut 0.3s';
+          setTimeout(() => {
+            popup.remove();
+            backdrop.remove();
+          }, 300);
+        }
+      }, 10000);
+    });
+  </script>
+  <% } %>
 </html>

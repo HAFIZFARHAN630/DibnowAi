@@ -39,11 +39,18 @@
   <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
     <div class="text-center">
       <h1 class="text-3xl md:text-5xl font-bold text-white mb-4 fade-in-up">
-        <i class="fas fa-search mr-3 pulse-animation"></i>Track Your Repair
+        <i class="fas fa-shield-alt mr-3 pulse-animation"></i>Welcome to DibNow Repair Tracking System
       </h1>
-      <p class="text-lg md:text-xl text-indigo-100 mb-6 fade-in-up" style="animation-delay: 0.2s;">
-        Enter your tracking ID to check your repair status
+      <p class="text-lg md:text-xl text-white mb-4 fade-in-up" style="animation-delay: 0.2s;">
+        Monitor your device repair status in real-time with our secure and professional platform.
       </p>
+      <div class="flex items-center justify-center gap-4 text-sm md:text-base text-white/90 fade-in-up" style="animation-delay: 0.3s;">
+        <span class="flex items-center"><i class="fas fa-lock mr-2"></i>Secure</span>
+        <span class="text-white/50">|</span>
+        <span class="flex items-center"><i class="fas fa-eye mr-2"></i>Transparent</span>
+        <span class="text-white/50">|</span>
+        <span class="flex items-center"><i class="fas fa-sync-alt mr-2"></i>Real-Time Updates</span>
+      </div>
     </div>
   </div>
 </div>
@@ -53,8 +60,8 @@
   <div class="glass-morphism rounded-2xl shadow-2xl p-6 border border-white/20">
     <form id="trackingForm" action="" method="GET" class="space-y-4">
       <div class="text-center mb-4">
-        <h2 class="text-xl font-bold text-gray-800 mb-2">Enter Your Tracking ID</h2>
-        <p class="text-gray-600 text-sm">Get real-time updates on your repair status</p>
+        <h2 class="text-xl font-bold text-gray-800 mb-2">Track Your Repair Request</h2>
+        <p class="text-gray-600 text-sm">Enter your DibNow Tracking ID to view real-time repair status updates</p>
       </div>
 
       <div class="relative">
@@ -66,7 +73,7 @@
             id="trackingId"
             name="trackingId"
             type="text"
-            placeholder="Enter your tracking ID (e.g., 650a7b8c9f1e2d3a4b5c6d7e or custom ID)"
+            placeholder="Enter your DibNow Tracking ID (e.g., DBN-650A7B8C9)"
             autocomplete="off"
             required
             class="w-full rounded-xl border-2 border-gray-200 pl-10 pr-4 py-3 text-base text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-300 bg-white/80 backdrop-blur-sm"
@@ -90,20 +97,20 @@
       <!-- Help Text -->
       <div class="mt-4 p-3 bg-blue-50/80 rounded-lg border border-blue-100">
         <h3 class="text-xs font-semibold text-blue-800 mb-1 flex items-center">
-          <i class="fas fa-info-circle mr-2"></i>Where to find your Tracking ID?
+          <i class="fas fa-info-circle mr-2"></i>Where to find your DibNow Tracking ID?
         </h3>
         <p class="text-xs text-blue-700">
-          Your tracking ID was sent to you via email when you registered your repair. It looks like a combination of letters and numbers.
+          Your DibNow Tracking ID was provided via email after your repair registration. Please enter it exactly as received for accurate status updates.
         </p>
       </div>
 
       <!-- Notice about correct route -->
       <div class="mt-3 p-3 bg-green-50/80 rounded-lg border border-green-100">
         <h3 class="text-xs font-semibold text-green-800 mb-1 flex items-center">
-          <i class="fas fa-bullhorn mr-2"></i>Important Notice
+          <i class="fas fa-check-circle mr-2"></i>Important Notice
         </h3>
         <p class="text-xs text-green-700">
-          Make sure you're using the PUBLIC tracking system at <strong>/track</strong>, not the old <strong>/tracking</strong> system which requires login.
+          For best experience, please use the official DibNow public tracking portal (<strong>/track</strong>). Avoid using legacy systems that require login.
         </p>
       </div>
     </form>
@@ -163,7 +170,7 @@
 
         if (!trackingId) {
           e.preventDefault();
-          showNotification('Please enter a tracking ID', 'error');
+          showNotification('Tracking ID Required: Please provide your DibNow Tracking ID to proceed.', 'error');
           return false;
         }
 

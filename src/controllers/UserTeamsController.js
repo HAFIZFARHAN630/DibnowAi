@@ -2,6 +2,7 @@ const User = require("../models/user");
 const AddUser = require("../models/adduser");
 const Notification = require("../models/notification");
 const Plan = require("../models/plan.model");
+const bcrypt = require("bcrypt");
 
 // Show Add Team Form for Users
 exports.addTeamForm = async (req, res) => {
@@ -77,7 +78,7 @@ exports.createTeam = async (req, res) => {
     console.log('Session user ID:', req.session.userId);
 
     // Handle both JSON and form data
-    let { name, email, role, department, phone } = req.body;
+    let { name, email, role, department, phone, password } = req.body;
 
     // Debug: Log raw request data
     console.log('Raw request body:', JSON.stringify(req.body, null, 2));
@@ -97,14 +98,14 @@ exports.createTeam = async (req, res) => {
       return res.redirect("/sign_in");
     }
 
-    console.log('Final extracted data:', { name, email, role, department, phone });
+    console.log('Final extracted data:', { name, email, role, department, phone, password: password ? '***' : 'not provided' });
     console.log('User ID string:', userIdString);
 
-    if (!name || !email || !role) {
+    if (!name || !email || !role || !password) {
       if (req.headers['content-type']?.includes('application/json')) {
-        return res.json({ success: false, message: "All fields are required." });
+        return res.json({ success: false, message: "Name, email, role, and password are required." });
       }
-      req.flash("error_msg", "All fields are required.");
+      req.flash("error_msg", "Name, email, role, and password are required.");
       return res.redirect("/userteam/add");
     }
 
@@ -120,6 +121,9 @@ exports.createTeam = async (req, res) => {
 
     // Limit check is handled by middleware
 
+    // Hash password before saving
+    const hashedPassword = await bcrypt.hash(password, 10);
+    
     // Create new team member
     console.log('Creating team member with data:', {
       name,
@@ -127,6 +131,7 @@ exports.createTeam = async (req, res) => {
       role: role || 'Team Member',
       department: department || 'General',
       phone: phone || '',
+      password: '***',
       user_id: userIdString
     });
 
@@ -136,6 +141,7 @@ exports.createTeam = async (req, res) => {
       role: role || 'Team Member',
       department: department || 'General',
       phone: phone || '',
+      password: hashedPassword,
       user_id: userIdString // MongoDB will handle string to ObjectId conversion
     });
 
@@ -169,6 +175,7 @@ exports.createTeam = async (req, res) => {
           email: email || 'unknown@example.com',
           role: 'Team Member',
           department: 'General',
+          password: hashedPassword,
           user_id: userIdString // MongoDB will handle string to ObjectId conversion
         });
         await minimalMember.save();

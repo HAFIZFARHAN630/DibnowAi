@@ -241,6 +241,10 @@ exports.allusers = async (req, res) => {
       // Brands and Categories
       brands: brands || [],
       categories: categories || [],
+      // Team member login info (with defaults to prevent undefined errors)
+      isTeamMember: req.session.isTeamMember || false,
+      teamMemberName: req.session.teamMemberName || '',
+      teamMemberEmail: req.session.teamMemberEmail || '',
       success_msg: req.flash("success_msg"),
       error_msg: req.flash("error_msg"),
     });

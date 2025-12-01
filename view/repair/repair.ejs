@@ -910,9 +910,13 @@ initializeChart();
           <h2 style="font-size: 36px; font-weight: 700; color: #ffffff; margin-bottom: 10px; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);">Select Repair to Sell</h2>
           <p style="color: rgba(255, 255, 255, 0.9); font-size: 18px; line-height: 1.5; margin: 0;">Choose a repair item from the list below</p>
         </div>
+        <div style="margin-bottom: 20px; position: relative;">
+          <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: #666; font-size: 18px; z-index: 10;"></i>
+          <input type="text" id="repairSearchInput" class="form-control" placeholder="Search by customer name or product..." style="height: 50px; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 15px; padding: 15px 20px 15px 50px; font-size: 16px; background: rgba(255, 255, 255, 0.95); color: #333; outline: none; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+        </div>
         <div style="max-height: 400px; overflow-y: auto; padding: 10px;">
           <% products.forEach(items => { %>
-            <div class="card mb-3" style="background: rgba(255, 255, 255, 0.95); border: none; border-radius: 15px; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'" data-bs-toggle="modal" data-bs-target="#sellModalRepair<%= items.id %>" data-bs-dismiss="modal">
+            <div class="card mb-3 repair-item" data-customer-name="<%= items.fullName.toLowerCase() %>" data-product-name="<%= items.brand.toLowerCase() %>" style="background: rgba(255, 255, 255, 0.95); border: none; border-radius: 15px; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'" data-bs-toggle="modal" data-bs-target="#sellModalRepair<%= items.id %>" data-bs-dismiss="modal">
               <div class="card-body d-flex align-items-center justify-content-between">
                 <div>
                   <h6 class="mb-1" style="color: #0033cc; font-weight: 600;"><%= items.fullName %></h6>
@@ -1093,24 +1097,10 @@ function generateQRCode(userId, userName, userNumber, productName, price, status
   let qrDiv = document.getElementById("QR-div");
   let qrImage = document.getElementById("QR-image");
   
-  let now = new Date();
-  let formattedDate = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-  let formattedTime = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-  let randomData = Math.random().toString(36).substr(2, 9);
+  // Create tracking URL for QR code
+  const trackingURL = "https://apps.dibnow.com/track?trackingId=" + (trackingId || userId);
   
-  // Create simple text format that works with all QR scanners
-  let qrData = "REPAIR INVOICE\n" +
-               "Date: " + formattedDate + " " + formattedTime + "\n" +
-               "Ref: " + randomData + "\n" +
-               "Name: " + userName + "\n" +
-               "Number: " + userNumber + "\n" +
-               "Product: " + productName + "\n" +
-               "Price: " + price + "\n" +
-               "Tracking ID: " + (trackingId || 'N/A') + "\n" +
-               "Status: " + status + "\n" +
-               "ID: " + userId;
-  
-  let qrCodeURL = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodeURIComponent(qrData);
+  let qrCodeURL = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodeURIComponent(trackingURL);
   
   qrImage.src = qrCodeURL;
   qrDiv.style.display = "flex";
@@ -1353,6 +1343,25 @@ function deleteRepair(repairId) {
   form.submit();
 }
 
+// Repair search in modal
+const repairSearchInput = document.getElementById("repairSearchInput");
+if (repairSearchInput) {
+  repairSearchInput.addEventListener("input", () => {
+    const query = repairSearchInput.value.toLowerCase();
+    const repairItems = document.querySelectorAll(".repair-item");
+    
+    repairItems.forEach((item) => {
+      const customerName = item.getAttribute("data-customer-name");
+      const productName = item.getAttribute("data-product-name");
+      if (customerName.includes(query) || productName.includes(query)) {
+        item.style.display = "";
+      } else {
+        item.style.display = "none";
+      }
+    });
+  });
+}
+
 // Print button
 function printTable(userId) {
     if (!userId) return;
@@ -1371,19 +1380,11 @@ function printTable(userId) {
     let price = userRow.querySelector('.usr-price') ? userRow.querySelector('.usr-price').innerText : 'N/A';
     let trackingId = userRow.querySelector('.usr-tracking-id') ? userRow.querySelector('.usr-tracking-id').innerText : 'N/A';
     let status = userRow.querySelector('.status-select') ? userRow.querySelector('.status-select').value : 'N/A';
+    let companyName = '<%= company || "Dibnow" %>';
 
-    // Create simple invoice data for QR code
-    const invoiceData = "REPAIR INVOICE\n" +
-                       "Date: " + formattedDate + " " + formattedTime + "\n" +
-                       "Ref: " + randomData + "\n" +
-                       "Name: " + userName + "\n" +
-                       "Number: " + userNumber + "\n" +
-                       "Product: " + productName + "\n" +
-                       "Price: " + price + "\n" +
-                       "Tracking ID: " + trackingId + "\n" +
-                       "Status: " + status + "\n" +
-                       "ID: " + userId;
-    let qrCodeURL = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodeURIComponent(invoiceData);
+    // Create tracking URL for QR code
+    const trackingURL = "https://apps.dibnow.com/track?trackingId=" + trackingId;
+    let qrCodeURL = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodeURIComponent(trackingURL);
 
     var printWindow = window.open('', 'PrintWindow', 'height=600,width=800');
     printWindow.document.write(`
@@ -1399,11 +1400,17 @@ function printTable(userId) {
                     .info-section h5 { font-weight: bold; margin-bottom: 10px; }
                     .qr-code { margin-top: 50px; text-align: center; }
                     .qr-code img { width: 300px; height: 300px; }
-                    .footer { margin-top: 100px; text-align: center; font-weight: bold; }
+                    .tracking-info { margin-top: 20px; padding: 15px; background: #f0f9ff; border-left: 4px solid #0284c7; border-radius: 8px; }
+                    .tracking-info p { margin: 5px 0; color: #0c4a6e; font-size: 14px; line-height: 1.6; }
+                    .tracking-info strong { color: #0369a1; }
+                    .footer { margin-top: 50px; text-align: center; font-weight: bold; }
                 </style>
             </head>
             <body>
                 <h1>Repair Invoice</h1>
+                <div class="date">
+                    <p>Company: ${companyName}</p>
+                </div>
                 <div class="date">
                     <p>Date: ${formattedDate}</p>
                     <p>Time: ${formattedTime}</p>
@@ -1424,6 +1431,11 @@ function printTable(userId) {
                 <div class="qr-code">
                     <h3>QR Code</h3>
                     <img src="${qrCodeURL}" alt="QR Code" />
+                </div>
+                <div class="tracking-info">
+                    <p><strong>Stay updated:</strong> Visit <strong>https://apps.dibnow.com/track</strong> and enter your Tracking ID to check your repair progress.</p>
+                    <p><strong>Your Tracking ID:</strong> ${trackingId}</p>
+                    <p>Scan the QR code above to go directly to the tracking page.</p>
                 </div>
                 <div class="footer">
                     <p>Developed By ClickTake Technologies © 2025 DibNow</p>

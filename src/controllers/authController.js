@@ -264,9 +264,59 @@ exports.autoVerifySignup = async (req, res) => {
 exports.signin = async (req, res) => {
     try {
       const { email, password } = req.body;
+      console.log('POST /sign_in');
+      console.log('Request body:', { email, password });
 
-      const user = await User.findOne({ email });
+      // First check User collection
+      let user = await User.findOne({ email });
+      let isTeamMember = false;
+      
+      // If not found in User, check AddUser (team members)
       if (!user) {
+        const AddUser = require("../models/adduser");
+        const teamMember = await AddUser.findOne({ email });
+        
+        if (teamMember) {
+          console.log('Team member found:', teamMember.email);
+          isTeamMember = true;
+          
+          // Check if password exists
+          if (!teamMember.password) {
+            return res.render("Sigin/sign_in", { message: "Account setup incomplete. Please contact administrator." });
+          }
+          
+          // Hash the password if it's not already hashed (for backward compatibility)
+          let isMatch = false;
+          if (teamMember.password.startsWith('$2b$')) {
+            isMatch = await bcrypt.compare(password, teamMember.password);
+          } else {
+            isMatch = password === teamMember.password;
+          }
+          
+          if (!isMatch) {
+            return res.render("Sigin/sign_in", { message: "Invalid password." });
+          }
+          
+          // Get the parent user account
+          user = await User.findById(teamMember.user_id);
+          if (!user) {
+            return res.render("Sigin/sign_in", { message: "Parent account not found." });
+          }
+          
+          console.log('User ID from session:', user._id);
+          req.session.userId = user._id;
+          req.session.isTeamMember = true;
+          req.session.teamMemberEmail = teamMember.email;
+          req.session.teamMemberName = teamMember.name;
+          
+          const token = jwt.sign({ id: user._id }, "your_jwt_secret", {
+            expiresIn: "1h",
+          });
+          res.cookie("auth_token", token, { httpOnly: true });
+          
+          return res.redirect("/index");
+        }
+        
         return res.render("Sigin/sign_in", { message: "Invalid email." });
       }
 
@@ -276,6 +326,11 @@ exports.signin = async (req, res) => {
       }
 
       req.session.userId = user._id;
+      // Clear team member flags for regular user login
+      req.session.isTeamMember = false;
+      req.session.teamMemberEmail = null;
+      req.session.teamMemberName = null;
+      
       const token = jwt.sign({ id: user._id }, "your_jwt_secret", {
         expiresIn: "1h",
       });

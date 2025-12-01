@@ -35,6 +35,7 @@
       .status-progress { background: linear-gradient(135deg, #f59e0b, #d97706); }
       .status-completed { background: linear-gradient(135deg, #10b981, #059669); }
       .status-delivered { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+      .status-registered { background: linear-gradient(135deg, #eab308, #ca8a04); }
     </style>
 </head>
 <body class="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 min-h-screen">
@@ -45,11 +46,8 @@
   <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
     <div class="text-center">
       <h1 class="text-3xl md:text-5xl font-bold text-white mb-4 fade-in-up">
-        <i class="fas fa-check-circle mr-3 pulse-animation"></i>Repair Found
+        <i class="fas fa-check-circle mr-3 pulse-animation"></i>DibNow Repair Tracking Information
       </h1>
-      <p class="text-lg md:text-xl text-green-100 mb-6 fade-in-up" style="animation-delay: 0.2s;">
-        Here are the details for your repair
-      </p>
     </div>
   </div>
 </div>
@@ -63,8 +61,8 @@
       <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
         <i class="fas fa-<%= foundType === 'repair' ? 'wrench' : 'ticket-alt' %> text-2xl text-white"></i>
       </div>
-      <h2 class="text-2xl font-bold text-gray-800 mb-2">📋 <%= foundType === 'repair' ? 'Repair Details' : 'Ticket Details' %></h2>
-      <p class="text-gray-600">Complete information about your <%= foundType === 'repair' ? 'repair request' : 'support ticket' %></p>
+      <h2 class="text-2xl font-bold text-gray-800 mb-2">📋 <%= foundType === 'repair' ? 'Repair Summary' : 'Ticket Details' %></h2>
+      <p class="text-gray-600"><%= foundType === 'repair' ? 'Detailed information about your device repair request' : 'Complete information about your support ticket' %></p>
     </div>
 
     <!-- Tracking Information Grid -->
@@ -74,7 +72,7 @@
         <!-- Tracking ID -->
         <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100">
           <div class="flex items-center justify-between mb-2">
-            <label class="text-sm font-semibold text-blue-700 uppercase tracking-wide">Tracking ID</label>
+            <label class="text-sm font-semibold text-blue-700 uppercase tracking-wide">Repair Tracking ID</label>
             <i class="fas fa-hashtag text-blue-500"></i>
           </div>
           <p class="text-lg font-bold text-blue-800 font-mono break-all"><%= foundType === 'repair' ? (repair._id || repair.random_id || 'N/A') : (ticket.ticketId || 'N/A') %></p>
@@ -85,7 +83,7 @@
         <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 border border-green-100">
           <div class="flex items-center mb-3">
             <i class="fas fa-user-circle text-green-600 text-lg mr-2"></i>
-            <label class="text-sm font-semibold text-green-700 uppercase tracking-wide">Customer Information</label>
+            <label class="text-sm font-semibold text-green-700 uppercase tracking-wide">Customer Details</label>
           </div>
           <div class="space-y-2">
             <div>
@@ -131,7 +129,7 @@
         <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-4 border border-purple-100">
           <div class="flex items-center mb-3">
             <i class="fas fa-mobile-alt text-purple-600 text-lg mr-2"></i>
-            <label class="text-sm font-semibold text-purple-700 uppercase tracking-wide">Device Information</label>
+            <label class="text-sm font-semibold text-purple-700 uppercase tracking-wide">Device Details</label>
           </div>
           <div class="space-y-2">
             <div>
@@ -155,16 +153,19 @@
           repair.status === 'Completed' ? 'green' :
           repair.status === 'In Progress' ? 'amber' :
           repair.status === 'Delivered' ? 'cyan' :
+          repair.status === 'Booking' ? 'yellow' :
           'red'
         %>-50 to-<%=
           repair.status === 'Completed' ? 'emerald' :
           repair.status === 'In Progress' ? 'orange' :
           repair.status === 'Delivered' ? 'teal' :
+          repair.status === 'Booking' ? 'amber' :
           'rose'
         %>-50 rounded-xl p-4 border border-<%=
           repair.status === 'Completed' ? 'green' :
           repair.status === 'In Progress' ? 'amber' :
           repair.status === 'Delivered' ? 'cyan' :
+          repair.status === 'Booking' ? 'yellow' :
           'red'
         %>-100">
           <div class="flex items-center justify-between mb-2">
@@ -172,17 +173,20 @@
               repair.status === 'Completed' ? 'text-green-700' :
               repair.status === 'In Progress' ? 'text-amber-700' :
               repair.status === 'Delivered' ? 'text-cyan-700' :
+              repair.status === 'Booking' ? 'text-yellow-700' :
               'text-red-700'
             %> uppercase tracking-wide">Repair Status</label>
             <i class="fas fa-<%=
               repair.status === 'Completed' ? 'check-circle' :
               repair.status === 'In Progress' ? 'clock' :
               repair.status === 'Delivered' ? 'truck' :
+              repair.status === 'Booking' ? 'clipboard-check' :
               'times-circle'
             %> <%=
               repair.status === 'Completed' ? 'text-green-600' :
               repair.status === 'In Progress' ? 'text-amber-600' :
               repair.status === 'Delivered' ? 'text-cyan-600' :
+              repair.status === 'Booking' ? 'text-yellow-600' :
               'text-red-600'
             %>"></i>
           </div>
@@ -190,15 +194,17 @@
             repair.status === 'Completed' ? 'status-completed' :
             repair.status === 'In Progress' ? 'status-progress' :
             repair.status === 'Delivered' ? 'status-delivered' :
+            repair.status === 'Booking' ? 'status-registered' :
             'status-pending'
           %> text-white shadow-lg">
             <i class="fas fa-<%=
               repair.status === 'Completed' ? 'check' :
               repair.status === 'In Progress' ? 'tools' :
               repair.status === 'Delivered' ? 'truck' :
+              repair.status === 'Booking' ? 'clipboard-check' :
               'clock'
             %> mr-2"></i>
-            <%= repair.status || 'Pending' %>
+            <%= repair.status === 'Booking' ? 'Registered' : repair.status === 'In Progress' ? 'Under Repair' : repair.status === 'Completed' ? 'Repair Completed' : repair.status === 'Delivered' ? 'Ready for Pickup' : repair.status || 'Pending' %>
           </span>
         </div>
         <% } else { %>
@@ -249,7 +255,7 @@
         <!-- Description -->
         <div class="bg-gradient-to-r from-gray-50 to-slate-50 rounded-xl p-4 border border-gray-100">
           <div class="flex items-center justify-between mb-2">
-            <label class="text-sm font-semibold text-gray-700 uppercase tracking-wide"><%= foundType === 'repair' ? 'Problem Description' : 'Description' %></label>
+            <label class="text-sm font-semibold text-gray-700 uppercase tracking-wide"><%= foundType === 'repair' ? 'Issue Reported' : 'Description' %></label>
             <i class="fas fa-exclamation-triangle text-gray-500"></i>
           </div>
           <p class="text-gray-700 leading-relaxed"><%= foundType === 'repair' ? (repair.gadgetProblem || 'N/A') : (ticket.description || 'N/A') %></p>
@@ -261,7 +267,7 @@
           <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-4 border border-emerald-100 text-center">
             <div class="flex items-center justify-center mb-2">
               <i class="fas fa-dollar-sign text-emerald-600 mr-2"></i>
-              <label class="text-sm font-semibold text-emerald-700 uppercase tracking-wide">Price</label>
+              <label class="text-sm font-semibold text-emerald-700 uppercase tracking-wide">Estimated Repair Cost</label>
             </div>
             <p class="text-xl font-bold text-emerald-800">$<%= repair.Price || '0.00' %></p>
           </div>
@@ -269,7 +275,7 @@
           <div class="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-xl p-4 border border-indigo-100 text-center">
             <div class="flex items-center justify-center mb-2">
               <i class="fas fa-image text-indigo-600 mr-2"></i>
-              <label class="text-sm font-semibold text-indigo-700 uppercase tracking-wide">Device Image</label>
+              <label class="text-sm font-semibold text-indigo-700 uppercase tracking-wide">Device Image Preview</label>
             </div>
             <div class="w-12 h-12 bg-gradient-to-br from-indigo-200 to-purple-200 rounded-full flex items-center justify-center mx-auto">
               <% if (repair.deviceImage) { %>
@@ -284,7 +290,7 @@
         <!-- Full Device Image -->
         <% if (repair.deviceImage) { %>
         <div class="bg-gradient-to-r from-gray-50 to-slate-50 rounded-xl p-4 border border-gray-100 text-center">
-          <label class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3 block">Device Preview</label>
+          <label class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3 block">Device Image Preview</label>
           <div class="relative inline-block">
             <img src="<%= repair.deviceImage %>" alt="Device Image" class="w-32 h-32 object-cover rounded-xl border-4 border-white shadow-lg">
             <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-xl"></div>
@@ -298,12 +304,26 @@
     <!-- Action Buttons -->
     <div class="flex flex-col sm:flex-row gap-3 mt-6 pt-4 border-t border-gray-200">
       <button onclick="window.location.href='/track'" class="flex-1 bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white font-semibold py-2 px-4 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
-        <i class="fas fa-search mr-2"></i>Track Another <%= foundType === 'repair' ? 'Repair' : 'Ticket' %>
+        <i class="fas fa-search mr-2"></i>Track Another Repair
       </button>
       <button onclick="window.location.href='/contact'" class="flex-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-2 px-4 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
-        <i class="fas fa-headset mr-2"></i>Contact Support
+        <i class="fas fa-headset mr-2"></i>Need Assistance? Contact Support
       </button>
     </div>
+
+    <!-- Tracking Instructions (Repair Only) -->
+    <% if (foundType === 'repair') { %>
+    <div class="mt-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100">
+      <div class="flex items-start">
+        <i class="fas fa-info-circle text-blue-600 text-lg mr-3 mt-1"></i>
+        <div>
+          <p class="text-sm text-blue-800 leading-relaxed">
+            <strong>Track your repair anytime:</strong> Visit <a href="https://apps.dibnow.com/track" class="font-semibold underline hover:text-blue-900" target="_blank">https://apps.dibnow.com/track</a> and enter your Repair Tracking ID.
+          </p>
+        </div>
+      </div>
+    </div>
+    <% } %>
   </div>
 </div>
 
@@ -311,18 +331,78 @@
 <!-- Not Found -->
 <div class="max-w-4xl mx-auto mt-8 px-4 mb-12 fade-in-up" style="animation-delay: 0.4s;">
   <div class="glass-morphism rounded-2xl shadow-2xl p-8 border border-white/20 text-center">
-    <div class="w-16 h-16 bg-gradient-to-br from-red-500 to-rose-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-      <i class="fas fa-exclamation-triangle text-2xl text-white"></i>
+    <div class="w-20 h-20 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg pulse-animation">
+      <i class="fas fa-search-minus text-3xl text-white"></i>
     </div>
-    <h2 class="text-2xl font-bold text-gray-800 mb-4">Repair Not Found</h2>
-    <p class="text-gray-600 mb-6"><%= error_msg || 'No repair found with this Tracking ID. Please check your tracking ID and try again.' %></p>
+    <h2 class="text-3xl font-bold text-gray-800 mb-3">Oops! Repair Not Found</h2>
+    <p class="text-lg text-gray-700 mb-2 font-semibold">We couldn't locate your repair request</p>
+    <!-- <p class="text-gray-600 mb-6 max-w-2xl mx-auto"><%= error_msg || 'The DibNow Tracking ID you entered does not match any records in our system. Please double-check the ID and try again, or contact our support team for assistance.' %></p> -->
 
-    <div class="space-y-3">
-      <button onclick="window.location.href='/track'" class="bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white font-semibold py-2 px-6 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
-        <i class="fas fa-search mr-2"></i>Try Another Tracking ID
-      </button>
-      <p class="text-sm text-gray-500">Need help? <a href="/contact" class="text-indigo-600 hover:text-indigo-700 font-semibold">Contact our support team</a></p>
+    <!-- Troubleshooting Steps -->
+    <div class="bg-blue-50/80 rounded-xl p-5 mb-6 text-left max-w-2xl mx-auto border border-blue-100">
+      <h3 class="text-sm font-bold text-blue-800 mb-3 flex items-center">
+        <i class="fas fa-tools mr-2"></i>Troubleshooting Steps:
+      </h3>
+      <ul class="text-xs text-blue-700 space-y-2.5">
+        <li class="flex items-start">
+          <span class="font-bold mr-2 text-blue-800">•</span>
+          <span>Make sure you're using the PUBLIC tracking system at <strong>/track</strong> (not <strong>/tracking</strong>)</span>
+        </li>
+        <li class="flex items-start">
+          <span class="font-bold mr-2 text-blue-800">•</span>
+          <span>Check that the ID is exactly as provided in your email</span>
+        </li>
+        <li class="flex items-start">
+          <span class="font-bold mr-2 text-blue-800">•</span>
+          <span>Try copying and pasting the ID directly from your email</span>
+        </li>
+        <li class="flex items-start">
+          <span class="font-bold mr-2 text-blue-800">•</span>
+          <span>Contact support if you continue having issues</span>
+        </li>
+      </ul>
     </div>
+
+    <!-- Tracking ID Format -->
+    <div class="bg-purple-50/80 rounded-xl p-5 mb-6 text-left max-w-2xl mx-auto border border-purple-100">
+      <h3 class="text-sm font-bold text-purple-800 mb-3 flex items-center">
+        <i class="fas fa-hashtag mr-2"></i>Your tracking ID should be either:
+      </h3>
+      <ul class="text-xs text-purple-700 space-y-2">
+        <li class="flex items-start">
+          <span class="font-bold mr-2 text-purple-800">•</span>
+          <span>A 24-character MongoDB ID (e.g., <code class="bg-purple-100 px-2 py-0.5 rounded font-mono text-purple-900">650a7b8c9f1e2d3a4b5c6d7e</code>)</span>
+        </li>
+        <li class="flex items-start">
+          <span class="font-bold mr-2 text-purple-800">•</span>
+          <span>A custom ticket ID (e.g., <code class="bg-purple-100 px-2 py-0.5 rounded font-mono text-purple-900">TCK-20251016-152646-0TVS</code>)</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Already Booked Notice -->
+    <div class="bg-green-50/80 rounded-xl p-5 mb-6 text-left max-w-2xl mx-auto border border-green-100">
+      <h3 class="text-sm font-bold text-green-800 mb-3 flex items-center">
+        <i class="fas fa-user-check mr-2"></i>Already Booked a Repair?
+      </h3>
+      <p class="text-xs text-green-700 leading-relaxed">
+        If you've already booked a repair, please <strong>login to the website</strong> at <a href="https://apps.dibnow.com" class="font-semibold underline hover:text-green-900" target="_blank">apps.dibnow.com</a> and check your repair status from your dashboard.
+      </p>
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+      <button onclick="window.location.href='/track'" class="bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white font-semibold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+        <i class="fas fa-redo mr-2"></i>Try Another Tracking ID
+      </button>
+      <button onclick="window.open('https://apps.dibnow.com', '_blank')" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+        <i class="fas fa-sign-in-alt mr-2"></i>Login to Dashboard
+      </button>
+      <button onclick="window.location.href='/contact'" class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+        <i class="fas fa-headset mr-2"></i>Contact Support
+      </button>
+    </div>
+    
+    <p class="text-sm text-gray-500 mt-6">Our support team is available 24/7 to assist you with any tracking issues</p>
   </div>
 </div>
 <% } %>

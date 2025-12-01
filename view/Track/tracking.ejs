@@ -56,7 +56,7 @@
 <!-- Search Form -->
 <div class="max-w-4xl mx-auto -mt-16 px-4 relative z-10 fade-in-up" style="animation-delay: 0.4s;">
   <div class="glass-morphism rounded-3xl shadow-2xl p-8 border border-white/20">
-    <form id="trackingForm" action="" method="POST" class="space-y-6">
+    <form id="trackingForm" action="/track-product" method="POST" class="space-y-6">
       <div class="text-center mb-6">
         <h2 class="text-2xl font-bold text-gray-800 mb-2">Enter Tracking Details</h2>
         <p class="text-gray-600">Get real-time updates on your product delivery status</p>
@@ -319,8 +319,7 @@
           return false;
         }
 
-        // Set the form action to the correct endpoint
-        this.action = '/track-product';
+        // Form action is already set to /tracking in the HTML
 
         // Show loading state
         const submitBtn = this.querySelector('button[type="submit"]');
