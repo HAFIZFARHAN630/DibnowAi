@@ -564,9 +564,11 @@
         <!-- Right Section -->
         <div class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center gap-2 w-100 w-sm-auto">
           <div class="search-container flex-grow-1">
-            <div class="search-input-wrapper w-100">
-              <!-- <i class="bi bi-search search-icon"></i> -->
-              <input type="text" id="teamSearch" class="form-control" placeholder="Search team members...">
+            <div style="background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%); padding: 12px 15px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 51, 204, 0.3);">
+              <div class="search-input-wrapper w-100" style="position: relative;">
+                <i class="bi bi-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #ffffff; z-index: 10;"></i>
+                <input type="text" id="teamSearch" class="form-control" placeholder="Search team members..." style="padding-left: 40px; border-radius: 8px; border: none; height: 40px; color: #ffffff !important; background: rgba(255, 255, 255, 0.2) !important;">
+              </div>
             </div>
           </div>
           <a href="/userteam/add" class="btn-add-team text-center">
@@ -878,16 +880,30 @@
     document.addEventListener('DOMContentLoaded', function() {
         const searchInput = document.getElementById('teamSearch');
         if (searchInput) {
-            searchInput.addEventListener('input', function() {
-                const searchTerm = this.value.toLowerCase();
-                const table = document.getElementById('paginatedTable');
-                if (table) {
-                    const rows = table.querySelectorAll('tbody tr');
-                    rows.forEach(row => {
-                        const text = row.textContent.toLowerCase();
-                        row.style.display = text.includes(searchTerm) ? '' : 'none';
-                    });
-                }
+            searchInput.addEventListener('keyup', function() {
+                const searchTerm = this.value.toLowerCase().trim();
+                const tableRows = document.querySelectorAll('.search-table tbody tr.search-items');
+                const cardItems = document.querySelectorAll('.grid.gap-4 > div');
+                
+                // Search in table rows
+                tableRows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    if (searchTerm === '' || text.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+                
+                // Search in card items (mobile view)
+                cardItems.forEach(card => {
+                    const text = card.textContent.toLowerCase();
+                    if (searchTerm === '' || text.includes(searchTerm)) {
+                        card.style.display = '';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
             });
         }
     });

@@ -644,8 +644,11 @@ initializeChart();
         <i class="icon fa-solid fa-screwdriver-wrench" style="font-size:17px;padding-left:5px;"></i>
         
         <div class="search-container flex-grow-1" style="min-width:200px;">
-          <div class="search-input-wrapper w-100">
-            <input type="text" id="text-srh" class="form-control" placeholder="Search Product">
+          <div style="background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%); padding: 12px 15px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 51, 204, 0.3);">
+            <div class="search-input-wrapper w-100" style="position: relative;">
+              <i class="bi bi-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #ffffff; z-index: 10;"></i>
+              <input type="text" id="text-srh" class="form-control" placeholder="Search Product" style="padding-left: 40px; border-radius: 8px; border: none; height: 40px; color: #ffffff !important; background: rgba(255, 255, 255, 0.2) !important;">
+            </div>
           </div>
         </div>
         
@@ -737,7 +740,7 @@ initializeChart();
               <i class="fa-solid fa-trash-can text-danger"></i>
             </button>
 
-            <button class="btn text-primary" onclick="generateQRCode('<%= product.id %>', '<%= product.fullName %>', '<%= product.mobileNumber %>', '<%= product.brand %>', '<%= product.Price %>', '<%= product.status %>')">
+            <button class="btn text-primary" onclick="generateQRCode('<%= product.id %>', '<%= product.fullName %>', '<%= product.mobileNumber %>', '<%= product.brand %>', '<%= product.Price %>', '<%= product.status %>', '<%= product.random_id %>')">
               <i class="fas fa-qrcode"></i> Generate QR
             </button>
 
@@ -801,7 +804,7 @@ initializeChart();
         </button>
 
         <button class="btn btn-sm btn-outline-primary"
-          onclick="generateQRCode('<%= product.id %>', '<%= product.fullName %>', '<%= product.mobileNumber %>', '<%= product.brand %>', '<%= product.Price %>', '<%= product.status %>')" title="Generate QR">
+          onclick="generateQRCode('<%= product.id %>', '<%= product.fullName %>', '<%= product.mobileNumber %>', '<%= product.brand %>', '<%= product.Price %>', '<%= product.status %>', '<%= product.random_id %>')" title="Generate QR">
           <i class="fas fa-qrcode"></i>
         </button>
 
@@ -972,7 +975,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // QR Code Scanner
-function generateQRCode(userId, userName, userNumber, productName, price, status) {
+function generateQRCode(userId, userName, userNumber, productName, price, status, trackingId) {
   let qrDiv = document.getElementById("QR-div");
   let qrImage = document.getElementById("QR-image");
   
@@ -989,7 +992,7 @@ function generateQRCode(userId, userName, userNumber, productName, price, status
                "Number: " + userNumber + "\n" +
                "Product: " + productName + "\n" +
                "Price: " + price + "\n" +
-               "Tracking ID: " + trackingId + "\n" +
+               "Tracking ID: " + (trackingId || 'N/A') + "\n" +
                "Status: " + status + "\n" +
                "ID: " + userId;
   
@@ -1086,16 +1089,17 @@ function updateStatus(productId, status) {
 }
 
 // Search Filter
-document.getElementById('text-srh').addEventListener('input', function () {
-   const searchTerm = this.value.toLowerCase();
+document.getElementById('text-srh').addEventListener('keyup', function () {
+   const searchTerm = this.value.toLowerCase().trim();
    const tableRows = document.querySelectorAll('#paginatedTable tbody .search-items');
 
    tableRows.forEach(row => {
-     const fullName = row.querySelector('td:first-child .usr-name').textContent.toLowerCase();
-     const productName = row.querySelector('td:nth-child(2) .usr-location').textContent.toLowerCase();
-     const trackingId = row.querySelector('td:nth-child(4) .usr-tracking-id').textContent.toLowerCase();
+     const fullName = row.querySelector('td:nth-child(2) .usr-name') ? row.querySelector('td:nth-child(2) .usr-name').textContent.toLowerCase() : '';
+     const productName = row.querySelector('td:nth-child(3) .usr-location') ? row.querySelector('td:nth-child(3) .usr-location').textContent.toLowerCase() : '';
+     const price = row.querySelector('td:nth-child(4) .usr-price') ? row.querySelector('td:nth-child(4) .usr-price').textContent.toLowerCase() : '';
+     const trackingId = row.querySelector('td:nth-child(5) .usr-tracking-id') ? row.querySelector('td:nth-child(5) .usr-tracking-id').textContent.toLowerCase() : '';
 
-     if (fullName.includes(searchTerm) || productName.includes(searchTerm) || trackingId.includes(searchTerm)) {
+     if (searchTerm === '' || fullName.includes(searchTerm) || productName.includes(searchTerm) || trackingId.includes(searchTerm) || price.includes(searchTerm)) {
        row.style.display = '';
      } else {
        row.style.display = 'none';

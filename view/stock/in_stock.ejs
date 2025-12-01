@@ -549,10 +549,13 @@
     <div class="card-body p-4 pb-0">
       <div class="d-flex justify-content-between align-items-center gap-6 mb-4">
         <h5 class="fs-5 mb-0 d-none d-lg-block text-dark">All Products</h5>
-        <div class="search-container">
-          <div class="search-input-wrapper">
-            <i class="bi bi-search search-icon"></i>
-            <input type="text" id="text-srh" class="form-control" placeholder="Search Product">
+        <div class="search-container" style="flex: 1; max-width: 500px;">
+          <div style="background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%); padding: 15px 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0, 51, 204, 0.3);">
+            <div class="search-input-wrapper" style="position: relative;">
+              <i class="bi bi-search" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #ffffff; z-index: 10;"></i>
+              <input type="text" id="text-srh" class="form-control" placeholder="Search Product" style="padding-left: 45px; border-radius: 10px; border: none; height: 45px; color: #ffffff !important; background: rgba(255, 255, 255, 0.2) !important;">
+              <style>#text-srh::placeholder { color: rgba(255, 255, 255, 0.7) !important; }</style>
+            </div>
           </div>
         </div>
       </div>
@@ -812,48 +815,23 @@
   });
   
   // Search functionality
-  document.addEventListener("DOMContentLoaded", () => {
-    const searchInput = document.getElementById('search-input');
-    if (searchInput) {
-      searchInput.addEventListener('input', function() {
-        const searchTerm = this.value.toLowerCase();
-        const productCards = document.querySelectorAll('[data-category]');
-        productCards.forEach(card => {
-          const text = card.textContent.toLowerCase();
-          card.style.display = text.includes(searchTerm) ? '' : 'none';
-        });
-      });
-    }
-  });
-  
-  // Close button hover effect
-  document.addEventListener('DOMContentLoaded', function() {
-    const closeBtns = document.querySelectorAll('.close-btn');
-    closeBtns.forEach(btn => {
-      btn.addEventListener('mouseenter', function() {
-        this.style.transform = 'scale(1.1) rotate(90deg)';
-      });
-      btn.addEventListener('mouseleave', function() {
-        this.style.transform = 'scale(1) rotate(0deg)';
-      });
-    });
-  });
-  
   const searchInput = document.getElementById("text-srh");
-    const productCards = document.querySelectorAll('[data-category]');
-  
-    searchInput.addEventListener("input", () => {
-      const query = searchInput.value.toLowerCase();
+  if (searchInput) {
+    searchInput.addEventListener("keyup", function() {
+      const query = this.value.toLowerCase().trim();
+      const productCards = document.querySelectorAll('[data-category]');
   
       productCards.forEach(card => {
-        const productName = card.getAttribute("data-category").toLowerCase();
-        if (productName.includes(query)) {
+        const cardText = card.textContent.toLowerCase();
+        
+        if (query === '' || cardText.includes(query)) {
           card.style.display = "";
         } else {
           card.style.display = "none";
         }
       });
     });
+  }
 
     // Dynamic dropdown color change for modals
     function initDropdowns() {
@@ -882,7 +860,7 @@
     document.querySelectorAll('.modal').forEach(modal => {
       modal.addEventListener('shown.bs.modal', initDropdowns);
     });
-  });
+  
   </script>
 
 </body>
