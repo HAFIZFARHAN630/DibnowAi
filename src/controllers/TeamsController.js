@@ -382,3 +382,37 @@ exports.listTeams = async (req, res) => {
     res.redirect("/index");
   }
 };
+
+// Get All Admin Team Members
+exports.getAllAdminTeam = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const user = await User.findById(userId).select("first_name last_name user_img role plan_name status denial_reason");
+
+    if (!user || user.role !== "admin") {
+      return res.redirect("/index");
+    }
+
+    const adminTeamMembers = await AddUser.find({}).populate('user_id', 'first_name last_name email');
+
+    const Notification = require("../models/notification");
+    const notifications = await Notification.find().sort({ timestamp: -1 }).limit(10);
+    const unreadCount = await Notification.countDocuments({ isRead: false });
+
+    res.render("adminTeam/all_admin_team", {
+      teamMembers: adminTeamMembers,
+      profileImagePath: user.user_img || "/uploads/default.png",
+      firstName: user.first_name,
+      lastName: user.last_name,
+      isUser: false,
+      plan_name: user.plan_name || "No Plan",
+      status: user.status,
+      reson: user.denial_reason,
+      notifications: notifications,
+      unreadCount: unreadCount
+    });
+  } catch (error) {
+    console.error("Error fetching admin team:", error.message);
+    res.redirect("/index");
+  }
+};

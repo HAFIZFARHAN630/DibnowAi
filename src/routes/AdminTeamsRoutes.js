@@ -11,6 +11,7 @@ const {
   addAdminTeamMember,
   updateteam,
   deleteteam,
+  getAllAdminTeam,
 } = require("../controllers/AdminTeamsController");
 
 router.get("/Teams", isAuthenticated, isAdmin, SelectTeam);
@@ -18,6 +19,8 @@ router.post("/Teams", isAuthenticated, isAdmin, addteams);
 
 router.get("/AdminTeam", isAuthenticated, isAdmin, showAddTeamMemberForm);
 router.post("/AdminTeam", isAuthenticated, isAdmin, addAdminTeamMember);
+
+router.get("/AllAdminTeam", isAuthenticated, isAdmin, getAllAdminTeam);
 
 // Admin team update and delete routes
 router.post("/updateteam", isAuthenticated, isAdmin, updateteam);

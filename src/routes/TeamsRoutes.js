@@ -14,6 +14,7 @@ const {
   addTeamForm,
   createTeam,
   listTeams,
+  getAllAdminTeam,
 } = require("../controllers/TeamsController");
 
 router.get("/Teams", SelectTeam);
@@ -23,6 +24,8 @@ router.post("/Teams", addteams);
 router.get("/AdminTeam", isAuthenticated, showAddTeamMemberForm);
 
 router.post("/AdminTeam", isAuthenticated, addAdminTeamMember);
+
+router.get("/AllAdminTeam", isAuthenticated, getAllAdminTeam);
 
 // Test routes without authentication first
 router.post("/updateteam", updateteam);

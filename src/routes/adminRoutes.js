@@ -15,7 +15,9 @@ const {
   saveNotificationSettingsPage,
   allStock,
   allSales,
-  allRepairs
+  allRepairs,
+  getAllAdmins,
+  toggleAdminStatus
 } = require("../controllers/adminController");
 const upload = require("../middlewares/uploadMiddleware");
 const mongoose = require("mongoose");
@@ -107,5 +109,7 @@ router.post("/save-notification-settings", isAuthenticated, isAdmin,saveNotifica
 router.get("/admin/all-stock", isAuthenticated, isAdmin, allStock);
 router.get("/admin/all-sales", isAuthenticated, isAdmin, allSales);
 router.get("/admin/all-repairs", isAuthenticated, isAdmin, allRepairs);
+router.get("/admin/all-admins", isAuthenticated, isAdmin, getAllAdmins);
+router.post("/admin/toggle-status/:id", isAuthenticated, isAdmin, toggleAdminStatus);
 
 module.exports = router;

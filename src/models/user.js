@@ -25,6 +25,8 @@ const userSchema = new mongoose.Schema({
   otp: {type:String},
   otp_expiry:{type:Date},
   stripe_customer_id: { type: String },
+  created_by: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  isActive: { type: Boolean, default: true },
   planLimits: {
     repairCustomer: { type: Number, default: 0 },
     category: { type: Number, default: 0 },
@@ -32,6 +34,6 @@ const userSchema = new mongoose.Schema({
     teams: { type: Number, default: 0 },
     inStock: { type: Number, default: 0 }
   }
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model("User", userSchema);

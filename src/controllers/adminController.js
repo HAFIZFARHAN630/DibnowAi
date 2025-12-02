@@ -149,9 +149,7 @@ exports.addAdmin = async (req, res) => {
       email,
       phone_number,
       password,
-      role,
-      plan_name,
-      plan_limit,
+      role
     } = req.body;
 
     // Validate inputs
@@ -161,11 +159,10 @@ exports.addAdmin = async (req, res) => {
       !email ||
       !phone_number ||
       !password ||
-      !role ||
-      !plan_limit
+      !role
     ) {
       req.flash("error_msg", "All fields are required.");
-      return res.redirect("/addAdmin");
+      return res.redirect("/addadmin");
     }
 
     // Hash the password
@@ -179,17 +176,16 @@ exports.addAdmin = async (req, res) => {
       phone_number,
       password: hashedPassword,
       role,
-      plan_name,
-      plan_limit
+      created_by: req.session.userId
     });
 
     await newUser.save();
     req.flash("success_msg", "Admin created successfully!");
-    res.redirect("/admin");
+    res.redirect("/admin/all-admins");
   } catch (error) {
     console.error("Error creating admin:", error.message);
     req.flash("error_msg", "Failed to create admin. Please try again.");
-    res.redirect("/addAdmin");
+    res.redirect("/addadmin");
   }
 };
 
@@ -801,6 +797,69 @@ exports.allRepairs = async (req, res) => {
   } catch (error) {
     console.error("Error fetching all repairs:", error.message);
     req.flash("error_msg", "Unable to load repairs data.");
+    res.redirect("/index");
+  }
+};
+
+// Toggle Admin Status
+exports.toggleAdminStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const admin = await User.findById(id);
+    
+    if (!admin) {
+      return res.json({ success: false, message: 'Admin not found' });
+    }
+    
+    admin.isActive = !admin.isActive;
+    await admin.save();
+    
+    res.json({ success: true, isActive: admin.isActive });
+  } catch (error) {
+    console.error('Error toggling admin status:', error.message);
+    res.json({ success: false, message: 'Failed to update status' });
+  }
+};
+
+// Admin - View All Admins
+exports.getAllAdmins = async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    const user = await User.findById(userId).select("first_name user_img role");
+    
+    if (!user || user.role !== 'admin') {
+      req.flash("error_msg", "Access denied.");
+      return res.redirect("/index");
+    }
+
+    const admins = await User.find({ role: 'admin' })
+      .select('first_name last_name email phone_number createdAt created_by isActive')
+      .populate({
+        path: 'created_by',
+        select: 'first_name last_name email'
+      })
+      .sort({ _id: -1 });
+
+    console.log('Admins with creators:', JSON.stringify(admins, null, 2));
+
+    const Notification = require("../models/notification");
+    const notifications = await Notification.find().sort({ timestamp: -1 }).limit(10);
+    const unreadCount = await Notification.countDocuments({ isRead: false });
+
+    res.render("admin/all-admins", {
+      profileImagePath: user.user_img || "/uploads/default.png",
+      firstName: user.first_name,
+      admins,
+      notifications,
+      unreadCount,
+      isAdmin: true,
+      isUser: false,
+      success_msg: req.flash("success_msg"),
+      error_msg: req.flash("error_msg")
+    });
+  } catch (error) {
+    console.error("Error fetching all admins:", error.message);
+    req.flash("error_msg", "Unable to load admins data.");
     res.redirect("/index");
   }
 };
