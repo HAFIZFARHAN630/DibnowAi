@@ -179,3 +179,28 @@ exports.UpdateProduct = async (req, res) => {
     res.redirect("/sell");
   }
 };
+
+// API endpoint for sold items (role-based)
+exports.getSoldItems = async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const user = await User.findById(userId).select("role");
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const soldItems = user.role === 'admin' 
+      ? await SoldItem.find().sort({ sale_date: -1 }).limit(100)
+      : await SoldItem.find({ user_id: userId }).sort({ sale_date: -1 }).limit(100);
+
+    console.log(`API /api/sold-items - Role: ${user.role}, Items found: ${soldItems.length}`);
+    res.json({ soldItems });
+  } catch (error) {
+    console.error("Error fetching sold items:", error.message);
+    res.status(500).json({ error: "Failed to fetch sold items" });
+  }
+};

@@ -546,11 +546,16 @@ exports.getCompletedTasksCount = async (req, res) => {
        return res.status(401).json({ error: "User not authenticated" });
      }
 
-     // Get count of completed repairs for the current user
-     const completedCount = await Repair.countDocuments({
-       user_id: userId,
-       status: "Completed"
-     });
+     const user = await User.findById(userId).select("role");
+     if (!user) {
+       return res.status(404).json({ error: "User not found" });
+     }
+
+     // Role-based query filter
+     const queryFilter = user.role === 'admin' ? { status: "Completed" } : { user_id: userId, status: "Completed" };
+
+     // Get count of completed repairs
+     const completedCount = await Repair.countDocuments(queryFilter);
 
      // Get monthly completed repairs data for the current year
      const currentYear = new Date().getFullYear();
@@ -560,12 +565,11 @@ exports.getCompletedTasksCount = async (req, res) => {
        const startOfMonth = new Date(currentYear, month, 1);
        const endOfMonth = new Date(currentYear, month + 1, 0, 23, 59, 59, 999);
 
-       const count = await Repair.countDocuments({
-         user_id: userId,
-         status: "Completed",
-         createdAt: { $gte: startOfMonth, $lte: endOfMonth }
-       });
+       const monthFilter = user.role === 'admin' 
+         ? { status: "Completed", createdAt: { $gte: startOfMonth, $lte: endOfMonth } }
+         : { user_id: userId, status: "Completed", createdAt: { $gte: startOfMonth, $lte: endOfMonth } };
 
+       const count = await Repair.countDocuments(monthFilter);
        monthlyData.push(count);
      }
 
@@ -577,6 +581,7 @@ exports.getCompletedTasksCount = async (req, res) => {
        ? (((currentMonthCount - previousMonthCount) / previousMonthCount) * 100).toFixed(1)
        : 0;
 
+     console.log(`API /api/completed-tasks - Role: ${user.role}, Completed: ${completedCount}, Current Month: ${monthlyData[currentMonth]}`);
      res.json({
        completedCount,
        monthlyData,
@@ -606,17 +611,31 @@ exports.getMonthlyRepairRevenue = async (req, res) => {
        return res.status(401).json({ error: "User not authenticated" });
      }
 
+     const user = await User.findById(userId).select("role");
+     if (!user) {
+       return res.status(404).json({ error: "User not found" });
+     }
+
      const currentYear = new Date().getFullYear();
-     const monthlyRevenue = await Repair.aggregate([
-       {
-         $match: {
-           user_id: new mongoose.Types.ObjectId(userId),
+     
+     // Role-based match filter
+     const matchFilter = user.role === 'admin' 
+       ? {
            createdAt: {
              $gte: new Date(currentYear, 0, 1),
              $lte: new Date(currentYear, 11, 31, 23, 59, 59)
            }
          }
-       },
+       : {
+           user_id: new mongoose.Types.ObjectId(userId),
+           createdAt: {
+             $gte: new Date(currentYear, 0, 1),
+             $lte: new Date(currentYear, 11, 31, 23, 59, 59)
+           }
+         };
+
+     const monthlyRevenue = await Repair.aggregate([
+       { $match: matchFilter },
        {
          $group: {
            _id: { $month: "$createdAt" },
@@ -631,12 +650,48 @@ exports.getMonthlyRepairRevenue = async (req, res) => {
        revenueByMonth[item._id - 1] = item.totalRevenue || 0;
      });
 
+     console.log(`API /api/monthly-repair-revenue - Role: ${user.role}, Total revenue: ${revenueByMonth.reduce((a,b) => a+b, 0)}`);
      res.json({ monthlyRevenue: revenueByMonth });
    } catch (error) {
      console.error("Error fetching monthly repair revenue:", error.message);
      return res.status(500).json({ error: "Internal Server Error" });
    }
  };
+
+exports.getCompletedRepairs = async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    if (!userId) {
+      return res.redirect("/sign_in");
+    }
+
+    const [user, completedRepairs] = await Promise.all([
+      User.findById(userId).select("first_name last_name email user_img role plan_name"),
+      Repair.find({ user_id: userId, status: "Completed" }).sort({ updatedAt: -1 })
+    ]);
+
+    if (!user) {
+      return res.redirect("/sign_in");
+    }
+
+    res.render("repair/completed_repair", {
+      profileImagePath: user.user_img || "/uploads/default.png",
+      firstName: user.first_name,
+      lastName: user.last_name,
+      email: user.email,
+      plan_name: user.plan_name || "No Plan",
+      products: completedRepairs,
+      success_msg: req.flash("success_msg"),
+      error_msg: req.flash("error_msg"),
+      isAdmin: user.role === "admin",
+      isUser: user.role === "user"
+    });
+  } catch (error) {
+    console.error("Error fetching completed repairs:", error.message);
+    req.flash("error_msg", "Unable to load completed repairs.");
+    res.redirect("/repair");
+  }
+};
 
  // Public tracking methods (no authentication required)
  exports.getPublicTrackingPage = async (req, res) => {

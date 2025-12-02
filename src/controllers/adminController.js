@@ -710,3 +710,97 @@ exports.saveSettings = async (req, res) => {
     res.redirect("/admin-settings");
   }
 };
+
+// Admin - View All Stock Products
+const Inventory = require("../models/inventery");
+const SoldItem = require("../models/Sold_Products");
+const Repair = require("../models/repair");
+
+exports.allStock = async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    const user = await User.findById(userId).select("first_name user_img role");
+    
+    if (!user || user.role !== 'admin') {
+      req.flash("error_msg", "Access denied.");
+      return res.redirect("/index");
+    }
+
+    const inventory = await Inventory.find().populate('user_id', 'first_name last_name email').sort({ _id: -1 });
+
+    res.render("admin/all-stock", {
+      profileImagePath: user.user_img || "/uploads/default.png",
+      firstName: user.first_name,
+      inventory,
+      isAdmin: true,
+      isUser: false,
+      success_msg: req.flash("success_msg"),
+      error_msg: req.flash("error_msg")
+    });
+  } catch (error) {
+    console.error("Error fetching all stock:", error.message);
+    req.flash("error_msg", "Unable to load stock data.");
+    res.redirect("/index");
+  }
+};
+
+// Admin - View All Sales
+exports.allSales = async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    const user = await User.findById(userId).select("first_name user_img role");
+    
+    if (!user || user.role !== 'admin') {
+      req.flash("error_msg", "Access denied.");
+      return res.redirect("/index");
+    }
+
+    const soldItems = await SoldItem.find().populate('user_id', 'first_name last_name email').sort({ _id: -1 });
+
+    res.render("admin/all-sales", {
+      profileImagePath: user.user_img || "/uploads/default.png",
+      firstName: user.first_name,
+      soldItems,
+      isAdmin: true,
+      isUser: false,
+      success_msg: req.flash("success_msg"),
+      error_msg: req.flash("error_msg")
+    });
+  } catch (error) {
+    console.error("Error fetching all sales:", error.message);
+    req.flash("error_msg", "Unable to load sales data.");
+    res.redirect("/index");
+  }
+};
+
+// Admin - View All Repairs
+exports.allRepairs = async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    const user = await User.findById(userId).select("first_name user_img role");
+    
+    if (!user || user.role !== 'admin') {
+      req.flash("error_msg", "Access denied.");
+      return res.redirect("/index");
+    }
+
+    const statusFilter = req.query.status;
+    const query = statusFilter ? { status: statusFilter } : {};
+    const repairs = await Repair.find(query).populate('user_id', 'first_name last_name email').sort({ _id: -1 });
+
+    res.render("admin/all-repairs", {
+      profileImagePath: user.user_img || "/uploads/default.png",
+      firstName: user.first_name,
+      repairs,
+      statusFilter,
+      isAdmin: true,
+      isUser: false,
+      success_msg: req.flash("success_msg"),
+      error_msg: req.flash("error_msg")
+    });
+  } catch (error) {
+    console.error("Error fetching all repairs:", error.message);
+    req.flash("error_msg", "Unable to load repairs data.");
+    res.redirect("/index");
+  }
+};

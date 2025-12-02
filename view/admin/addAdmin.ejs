@@ -132,20 +132,9 @@
         .form-select#role option[value="admin"] { background: #dc3545; }
         .form-select#role option[value="user"] { background: #007bff; }
         
-        /* Plan Dropdown Colors */
-        .form-select#plan_name option[value="FREE TRIAL"] { background: #6c757d; }
-        .form-select#plan_name option[value="BASIC"] { background: #007bff; }
-        .form-select#plan_name option[value="STANDARD"] { background: #ffc107; color: #333; }
-        .form-select#plan_name option[value="PREMIUM"] { background: #28a745; }
-        
         /* Dynamic Select Background on Change */
         .form-select.role-admin { background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; border-color: #dc3545; }
         .form-select.role-user { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); color: white; border-color: #007bff; }
-        
-        .form-select.plan-FREE-TRIAL { background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%); color: white; border-color: #6c757d; }
-        .form-select.plan-BASIC { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); color: white; border-color: #007bff; }
-        .form-select.plan-STANDARD { background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); color: #333; border-color: #ffc107; }
-        .form-select.plan-PREMIUM { background: linear-gradient(135deg, #28a745 0%, #218838 100%); color: white; border-color: #28a745; }
         
         .form-control::placeholder {
             color: #9ca3af;
@@ -231,17 +220,10 @@
     // Dynamic dropdown color change
     document.addEventListener('DOMContentLoaded', function() {
         const roleSelect = document.getElementById('role');
-        const planSelect = document.getElementById('plan_name');
         
         if (roleSelect) {
             roleSelect.addEventListener('change', function() {
                 this.className = 'form-select role-' + this.value;
-            });
-        }
-        
-        if (planSelect) {
-            planSelect.addEventListener('change', function() {
-                this.className = 'form-select plan-' + this.value.replace(/ /g, '-');
             });
         }
     });
@@ -319,27 +301,6 @@
               <option value="admin">Admin</option>
               <option value="user">User</option>
             </select>
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-6">
-          <div class="form-group">
-            <label for="plan_name" class="form-label">Plan *</label>
-            <select class="form-select" id="plan_name" name="plan_name" required>
-              <option value="FREE TRIAL">FREE TRIAL</option>
-              <option value="BASIC">BASIC</option>
-              <option value="STANDARD">STANDARD</option>
-              <option value="PREMIUM">PREMIUM</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="col-md-6">
-          <div class="form-group">
-            <label for="plan_limit" class="form-label">Plan Limit *</label>
-            <input type="number" class="form-control" id="plan_limit" name="plan_limit" required placeholder="Enter plan limit">
           </div>
         </div>
       </div>

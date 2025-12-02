@@ -1223,7 +1223,7 @@ function filterTable() {
    statusFilterEl.className = 'form-selects w-100 filter-' + statusFilter;
    
    tableRows.forEach(row => {
-     const productStatus = row.querySelector('td:nth-child(5) select').value;
+     const productStatus = row.querySelector('td:nth-child(6) select').value;
      
      if (statusFilter === 'All' || productStatus === statusFilter) {
        row.style.display = '';

@@ -9,13 +9,41 @@
         <a href="/admin" class="nav-item nav-link"><i class="bi bi-people-fill dynamic-color-icon"></i>All User</a>
         <a href="/addadmin" class="nav-item nav-link"><i class="fa-solid fa-user-tie dynamic-color-icon"></i>Add
           Admin</a>
-        <a href="/AdminTeam" class="nav-item nav-link"><i class="fas fa-users-cog dynamic-color-icon"></i>Add Team</a>
-        <a href="/Teams" class="nav-item nav-link"><i class="fa-solid fa-users dynamic-color-icon"></i>All Teams</a>
+        <a href="/AdminTeam" class="nav-item nav-link"><i class="fas fa-users-cog dynamic-color-icon"></i>Add Admin Team</a>
+        
+
+        <a href="/Teams" class="nav-item nav-link"><i class="fa-solid fa-users dynamic-color-icon"></i>All User Teams</a>
+
+        <a href="/admin/all-repairs" class="nav-item nav-link">
+  <i class="bi bi-clipboard-check dynamic-color-icon"></i>All Repair Bookings
+</a>
+
+<a href="/admin/all-stock" class="nav-item nav-link">
+  <i class="bi bi-box-seam dynamic-color-icon"></i>All Inventory
+</a>
+
+<a href="/admin/all-sales" class="nav-item nav-link">
+  <i class="bi bi-cart-check dynamic-color-icon"></i>All Sold Products
+</a>
+
+<a href="<%= isAdmin ? '/admin/all-repairs?status=Completed' : '/repair' %>" class="nav-item nav-link">
+  <i class="bi bi-check-circle dynamic-color-icon"></i>Completed Repairs
+</a>
+
+         
+
+       
         <a href="/request" class="nav-item nav-link"><i
             class="fa-solid fa-code-pull-request dynamic-color-icon"></i>Request</a>
+
+
+
         <a href="/admin/payment-settings" class="nav-item nav-link">
           <i class="bi bi-credit-card dynamic-color-icon"></i>Billing Settings
         </a>
+
+
+
         <a href="/admin/wallet" class="nav-item nav-link">
           <i class="bi bi-wallet2 dynamic-color-icon"></i>Wallet Management
         </a>
@@ -37,7 +65,10 @@
           <i class="bi bi-inbox dynamic-color-icon"></i>
           <span class="menu-title pl-2">Plan Requests</span>
         </a>
-
+<a href="/show-tickets" class="nav-item nav-link">
+  <i class="bi bi-card-text dynamic-color-icon"></i>
+  Show Tickets
+</a>
         <!-- Settings -->
         <a class="nav-link" href="/admin-settings">
           <i class="bi bi-gear dynamic-color-icon"></i>
@@ -60,8 +91,8 @@
             <a href="/inventory" class="nav-item nav-link"><i
                 class="bi bi-clipboard-data dynamic-color-icon"></i>Inventory</a>
             <a href="/repair" class="nav-item nav-link"><i class="bi bi-tools dynamic-color-icon"></i>Repair</a>
-            <a href="/in_stock" class="nav-item nav-link"><i class="bi bi-shop-window dynamic-color-icon"></i>In
-              Stock</a>
+            <a href="/in_stock" class="nav-item nav-link"><i class="bi bi-shop-window dynamic-color-icon"></i>All
+              Stock Item</a>
             <a href="/Clients" class="nav-item nav-link"><i class="bi bi-people dynamic-color-icon"></i>Clients</a>
             <a href="/userteam/add" class="nav-item nav-link"><i class="bi bi-person-plus dynamic-color-icon"></i>Add
               Team</a>
@@ -73,8 +104,12 @@
               All categories</a>
             <a href="/pricing" class="nav-item nav-link"><i class="bi bi-wallet2 dynamic-color-icon"></i>Plans</a>
             <a href="/wallet" class="nav-item nav-link"><i class="bi bi-credit-card dynamic-color-icon"></i>Wallet</a>
-            <a href="/sell" class="nav-item nav-link"><i class="bi bi-cash-stack dynamic-color-icon"></i>Item
-              History</a>
+            <a href="/sell" class="nav-item nav-link"><i class="bi bi-cash-stack dynamic-color-icon"></i>All Sold Item</a>
+              <!-- Completed Repairs -->
+<a href="/completed-repairs" class="nav-item nav-link">
+  <i class="bi bi-check-circle dynamic-color-icon"></i>
+  Completed Repairs
+</a>
             <a href="/Help" class="nav-item nav-link"><i class="bi bi-chat-dots dynamic-color-icon"></i>Help</a>
             <a href="/ticket" class="nav-item nav-link"><i class="bi bi-chat-dots dynamic-color-icon"></i>Generate
               Ticket</a>
@@ -95,6 +130,8 @@
   <i class="bi bi-tools dynamic-color-icon"></i>
   Track Repair
 </a>
+
+
             <% } %>
     </div>
     <br>

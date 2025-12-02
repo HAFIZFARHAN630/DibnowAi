@@ -61,12 +61,12 @@ exports.allusers = async (req, res) => {
     ] = await Promise.all([
       Repair.find({ user_id: userId }).sort({ _id: -1 }),
       Inventory.find({ user_id: userId }).sort({ _id: -1 }),
-      Inventory.countDocuments({ user_id: userId }),
-      SoldItem.countDocuments({ user_id: userId }),
-      SoldItem.find({ user_id: userId }).sort({ sale_date: -1 }).limit(100), // Fetch recent sold items with sale dates
-      Repair.countDocuments({ user_id: userId }),
-      Repair.countDocuments({ status: 'Booking', user_id: userId }),
-      Repair.countDocuments({ status: 'Completed', user_id: userId }),
+      user.role === 'admin' ? Inventory.countDocuments() : Inventory.countDocuments({ user_id: userId }),
+      user.role === 'admin' ? SoldItem.countDocuments() : SoldItem.countDocuments({ user_id: userId }),
+      user.role === 'admin' ? SoldItem.find().sort({ sale_date: -1 }).limit(100) : SoldItem.find({ user_id: userId }).sort({ sale_date: -1 }).limit(100),
+      user.role === 'admin' ? Repair.countDocuments() : Repair.countDocuments({ user_id: userId }),
+      user.role === 'admin' ? Repair.countDocuments({ status: 'Booking' }) : Repair.countDocuments({ status: 'Booking', user_id: userId }),
+      user.role === 'admin' ? Repair.countDocuments({ status: 'Completed' }) : Repair.countDocuments({ status: 'Completed', user_id: userId }),
       // Role-based team filtering
       user.role === 'admin'
         ? AddUser.find().select('name') // Admin sees all team members

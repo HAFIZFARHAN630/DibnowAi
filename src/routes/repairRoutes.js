@@ -19,6 +19,7 @@ const {
     getPublicTrackingPage,
     trackRepairById,
     getMonthlyRepairRevenue,
+    getCompletedRepairs,
   } = require("../controllers/repairController");
 
 // Add product
@@ -49,6 +50,9 @@ router.get("/api/repair-prices", getRepairPrices);
 router.get("/api/completed-tasks", getCompletedTasksCount);
 router.get("/api/monthly-repair-revenue", getMonthlyRepairRevenue);
 router.post("/update-status", done);
+
+// Completed repairs route
+router.get("/completed-repairs", getCompletedRepairs);
 
 // Public tracking routes (no authentication required)
 router.get("/track", getPublicTrackingPage);
