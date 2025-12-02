@@ -93,8 +93,8 @@ exports.allUsers = [
       });
 
       // Currency display context from session (set by middleware)
-      const displayCurrency = req.session.displayCurrency || res.locals.displayCurrency || 'PKR';
-      const currencySymbol = req.session.currencySymbol || res.locals.currencySymbol || 'Rs';
+      const displayCurrency = req.session.displayCurrency || res.locals.displayCurrency || 'GBP';
+      const currencySymbol = req.session.currencySymbol || res.locals.currencySymbol || '£';
       const conversionRate = req.session.conversionRate || res.locals.conversionRate || 1.0;
 
       res.render("pricing/pricing", {

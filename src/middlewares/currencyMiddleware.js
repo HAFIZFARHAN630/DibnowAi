@@ -38,7 +38,7 @@ const CURRENCY_SYMBOLS = {
   'AUD': 'A$'
 };
 
-const DEFAULT_CURRENCY = 'PKR';
+const DEFAULT_CURRENCY = 'GBP';
 
 // Get currency rate from database
 async function getCurrencyRate(currencyCode) {
@@ -67,10 +67,10 @@ async function detectCurrency(req, res, next) {
 
     // Detect country from IP
     const geo = geoip ? geoip.lookup(ip) : null;
-    const countryCode = geo?.country || 'PK';
+    const countryCode = geo?.country || 'GB';
     
     if (!geo) {
-      console.log(`⚠️ GeoIP lookup failed (localhost/private IP). Using default: PK`);
+      console.log(`⚠️ GeoIP lookup failed (localhost/private IP). Using default: GB (GPA)`);
     }
 
     // Get currency code for country

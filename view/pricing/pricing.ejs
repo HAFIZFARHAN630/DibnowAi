@@ -832,9 +832,9 @@
     let conversionRate = {};
     
     // Currency display context
-    let displayCurrency = '<%= typeof displayCurrency !== "undefined" ? displayCurrency : "PKR" %>';
-    let currencySymbol = '<%= typeof currencySymbol !== "undefined" ? currencySymbol : "Rs" %>';
-    let currencyRate = <%= typeof conversionRate !== 'undefined' ? conversionRate : 397.1863 %>;
+    let displayCurrency = '<%= typeof displayCurrency !== "undefined" ? displayCurrency : "GBP" %>';
+    let currencySymbol = '<%= typeof currencySymbol !== "undefined" ? currencySymbol : "£" %>';
+    let currencyRate = <%= typeof conversionRate !== 'undefined' ? conversionRate : 1.0 %>;
     
     // Currency map - rates fetched from database
     let CURRENCY_MAP = {
