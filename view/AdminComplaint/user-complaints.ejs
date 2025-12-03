@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>My Complaints</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <link rel="icon" href="\images\DIB-NOW-512.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="/bootstrap.css" rel="stylesheet">
+    <link href="/styles.css" rel="stylesheet">
+</head>
+<body>
+    <%- include('../par/sidebar.ejs') %>
+    <%- include('../par/header.ejs') %>
+
+    <div class="container-fluid pt-4 px-4">
+        <div class="card-header bg-white text-black d-flex justify-content-between align-items-center">
+            <h4 style="color: black !important; margin: 0;"><i class="bi bi-chat-right-quote"></i> My Complaints</h4>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addComplaintModal">
+                <i class="fas fa-plus"></i> Add Complaint
+            </button>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th style="color: black !important;"> User Complaint</th>
+                        <th style="color: black !important;">Department</th>
+                        <th style="color: black !important;">Status</th>
+                        <th style="color: black !important;">Date</th>
+                        <th style="color: black !important;">Admin Reply</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (complaints && complaints.length > 0) { %>
+                        <% complaints.forEach(complaint => { %>
+                            <tr>
+                                <td><%= complaint.Complaint %></td>
+                                <td><span class="badge bg-info"><%= complaint.department %></span></td>
+                                <td>
+                                    <% if (complaint.status === 'Pending') { %>
+                                        <span class="badge bg-warning">Pending</span>
+                                    <% } else if (complaint.status === 'Progress') { %>
+                                        <span class="badge bg-primary">In Progress</span>
+                                    <% } else { %>
+                                        <span class="badge bg-success">Complete</span>
+                                    <% } %>
+                                </td>
+                                <td><%= complaint.created_at ? new Date(complaint.created_at).toLocaleDateString() : 'N/A' %></td>
+                                <td>
+                                    <% if (complaint.admin_reply) { %>
+                                        <div class="alert alert-success mb-0">
+                                            <strong>Reply:</strong> <%= complaint.admin_reply %><br>
+                                            <small class="text-muted"><%= complaint.reply_date ? new Date(complaint.reply_date).toLocaleString() : '' %></small>
+                                        </div>
+                                    <% } else { %>
+                                        <span class="text-muted">No reply yet</span>
+                                    <% } %>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="5" class="text-center">No complaints found</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Add Complaint Modal -->
+    <div class="modal fade" id="addComplaintModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header" style="background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%); color: white;">
+                    <h5 class="modal-title"><i class="fas fa-file-alt"></i> Submit New Complaint</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="/complaint" method="POST">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label"><i class="fas fa-user"></i> Full Name *</label>
+                                <input type="text" name="username" class="form-control" required placeholder="Enter your full name">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label"><i class="fas fa-phone"></i> Phone Number *</label>
+                                <input type="number" name="number" class="form-control" required placeholder="Enter your phone number">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label"><i class="fas fa-building"></i> Department *</label>
+                                <select name="department" class="form-select" required>
+                                    <option value="" disabled selected>Select Department</option>
+                                    <option value="Billing">Billing & Payments</option>
+                                    <option value="Sales">Sales & Packages</option>
+                                    <option value="Support">Technical Support</option>
+                                    <option value="New Connection">New Connection</option>
+                                    <option value="Other">Other Issues</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label"><i class="fas fa-map-marker-alt"></i> Service Address *</label>
+                                <input type="text" name="Address" class="form-control" required placeholder="Enter your service address">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label"><i class="fas fa-comment-alt"></i> Complaint Details *</label>
+                            <textarea name="Complaint" class="form-control" required rows="5" placeholder="Please describe your issue in detail" maxlength="500"></textarea>
+                            <small class="text-muted">Maximum 500 characters</small>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary px-4">
+                                <i class="fas fa-paper-plane"></i> Submit Complaint
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../par/footer.ejs') %>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -8,6 +8,8 @@ const complaintSchema = new mongoose.Schema({
   Address: { type: String },
   user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   status: { type: String, default: 'pending' },
+  admin_reply: { type: String },
+  reply_date: { type: Date },
   created_at: { type: Date, default: Date.now }
 });
 

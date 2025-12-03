@@ -43,7 +43,7 @@ exports.AllComplaint = async (req, res) => {
 
     res.render("complaint/complaint", {
       users: complaintResults,
-      email: loggedInUser.email,
+      email: userResults.email,
       user: userResults,
       message: null,
       messages: req.flash(),
@@ -58,6 +58,66 @@ exports.AllComplaint = async (req, res) => {
   } catch (err) {
     console.error("Database query error:", err);
     return res.status(500).send("Internal Server Error");
+  }
+};
+
+// Admin Update Complaint with Reply
+exports.updateComplaint = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { Username, department, number, Address, Complaint, status, priority, admin_reply } = req.body;
+
+    const updateData = {
+      Username,
+      department,
+      number,
+      Address,
+      Complaint,
+      status,
+      priority
+    };
+
+    if (admin_reply) {
+      updateData.admin_reply = admin_reply;
+      updateData.reply_date = new Date();
+    }
+
+    await UserComplaint.findByIdAndUpdate(id, updateData);
+    res.redirect("/UserComplaint");
+  } catch (error) {
+    console.error("Error updating complaint:", error.message);
+    res.redirect("/UserComplaint");
+  }
+};
+
+// User View All Complaints with Admin Replies
+exports.userAllComplaints = async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    const user = await User.findById(userId).select("first_name last_name user_img role");
+    
+    if (!user) {
+      return res.redirect("/sign_in");
+    }
+
+    const complaints = await UserComplaint.find({ user_id: userId }).sort({ created_at: -1 });
+
+    const Notification = require("../models/notification");
+    const notifications = await Notification.find().sort({ timestamp: -1 }).limit(10);
+    const unreadCount = await Notification.countDocuments({ isRead: false });
+
+    res.render("AdminComplaint/user-complaints", {
+      complaints,
+      profileImagePath: user.user_img || "/uploads/default.png",
+      firstName: user.first_name,
+      isAdmin: false,
+      isUser: true,
+      notifications,
+      unreadCount
+    });
+  } catch (error) {
+    console.error("Error fetching user complaints:", error.message);
+    res.redirect("/index");
   }
 };
 
