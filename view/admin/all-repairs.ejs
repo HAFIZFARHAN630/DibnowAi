@@ -16,15 +16,15 @@
 
     <div class="container-fluid pt-4 px-4">
         
-            <div class="card-header bg-warning text-white">
-                <h4><i class="bi bi-tools"></i> All Users' Repair Products <%= statusFilter ? '- ' + statusFilter : '' %></h4>
+            <div class="card-header bg-white text-black">
+                <h4 style="text-align: center !important; color: black !important;"><i class="bi bi-tools"></i> All Users' Repair Products <%= statusFilter ? '- ' + statusFilter : '' %></h4>
             </div>
             <div class="card-body">
-                <div class="mb-3">
-                    <a href="/admin/all-repairs" class="btn btn-primary btn-sm">All</a>
-                    <a href="/admin/all-repairs?status=Booking" class="btn btn-danger btn-sm">Pending</a>
-                    <a href="/admin/all-repairs?status=Completed" class="btn btn-success btn-sm">Completed</a>
-                    <a href="/admin/all-repairs?status=Delivered" class="btn btn-info btn-sm">Delivered</a>
+                <div class="mb-3 mt-1 d-flex  gap-2 justify-content-end align-items-center">
+                    <a href="/admin/all-repairs" class="btn btn-primary btn-lg">All</a>
+                    <a href="/admin/all-repairs?status=Booking" class="btn btn-danger btn-lg">Booking</a>
+                    <a href="/admin/all-repairs?status=Completed" class="btn btn-success btn-lg">Completed</a>
+                    <a href="/admin/all-repairs?status=Delivered" class="btn btn-info btn-lg">Delivered</a>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-striped table-hover">
