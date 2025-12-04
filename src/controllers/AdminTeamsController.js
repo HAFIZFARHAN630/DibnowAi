@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const AddUser = require("../models/adduser");
+const bcrypt = require("bcrypt");
 
 // Fetch Team profile data for Admin
 exports.SelectTeam = async (req, res) => {
@@ -137,18 +138,21 @@ exports.addAdminTeamMember = async (req, res) => {
     const { Username, Email, password, Number, role, department } = req.body;
     const userId = req.userId || req.session.userId;
 
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const newAdminTeamMember = new AddUser({
       name: Username,
       email: Email,
       phone: Number,
       role: role,
       department: department,
+      password: hashedPassword,
       user_id: userId
     });
 
     await newAdminTeamMember.save();
     req.flash("success_msg", "Team member created successfully!");
-    res.redirect("/Teams");
+    res.redirect("/AllAdminTeam");
   } catch (error) {
     console.error("Error creating admin team member:", error.message);
     req.flash("error_msg", "Failed to create team member. Please try again.");
