@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const { checkPermission } = require("../middlewares/permissionMiddleware");
 const {
   Sell,
   SelectSell,
@@ -8,7 +9,7 @@ const {
   getSoldItems,
 } = require("../controllers/sellingController");
 
-router.get("/sell", SelectSell);
+router.get("/sell", checkPermission('sell'), SelectSell);
 
 router.post("/sell/:id", Sell);
 

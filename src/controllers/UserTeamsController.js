@@ -16,6 +16,12 @@ exports.addTeamForm = async (req, res) => {
       return res.redirect("/sign_in");
     }
 
+    const teamMember = await AddUser.findOne({ email: user.email });
+    if (teamMember && teamMember.status !== 'active') {
+      req.session.destroy();
+      return res.redirect("/sign_in");
+    }
+
     // Get notification data for users
     let userNotifications = [];
     let userUnreadCount = 0;
@@ -74,6 +80,7 @@ exports.createTeam = async (req, res) => {
     console.log('Request method:', req.method);
     console.log('Content-Type:', req.headers['content-type']);
     console.log('Request body:', req.body);
+    console.log('Request file:', req.file);
     console.log('User ID from middleware:', req.userId);
     console.log('Session user ID:', req.session.userId);
 
@@ -142,7 +149,8 @@ exports.createTeam = async (req, res) => {
       department: department || 'General',
       phone: phone || '',
       password: hashedPassword,
-      user_id: userIdString // MongoDB will handle string to ObjectId conversion
+      user_id: userIdString,
+      status: 'active'
     });
 
     console.log('About to save team member to database...');
@@ -176,7 +184,8 @@ exports.createTeam = async (req, res) => {
           role: 'Team Member',
           department: 'General',
           password: hashedPassword,
-          user_id: userIdString // MongoDB will handle string to ObjectId conversion
+          user_id: userIdString,
+          status: 'active'
         });
         await minimalMember.save();
         console.log("✅ Minimal team member saved successfully:", minimalMember);
@@ -234,6 +243,15 @@ exports.listTeams = async (req, res) => {
     if (!userIdString) {
        console.log('No user ID found from JWT, redirecting to sign in');
        return res.redirect("/sign_in");
+     }
+
+     const tempUser = await User.findById(userIdString);
+     if (tempUser) {
+       const teamMember = await AddUser.findOne({ email: tempUser.email });
+       if (teamMember && teamMember.status !== 'active') {
+         req.session.destroy();
+         return res.redirect("/sign_in");
+       }
      }
 
      // Get user information
@@ -378,6 +396,43 @@ exports.listTeams = async (req, res) => {
   }
 };
 
+// Update Team Member Permissions
+exports.updatePermissions = async (req, res) => {
+  try {
+    const { teamMemberId, permissions } = req.body;
+    const userId = req.userId || req.session.userId;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.json({ success: false, message: "User not found." });
+    }
+    await AddUser.findByIdAndUpdate(teamMemberId, { permissions });
+    res.json({ success: true, message: "Permissions updated successfully" });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};
+
+// Toggle Team Member Status
+exports.toggleStatus = async (req, res) => {
+  try {
+    const { id, status } = req.body;
+    const userId = req.userId || req.session.userId;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.json({ success: false, message: "User not found." });
+    }
+    const teamMember = await AddUser.findOne({ email: user.email });
+    if (teamMember && teamMember.status !== 'active') {
+      req.session.destroy();
+      return res.json({ success: false, message: "Access denied." });
+    }
+    await AddUser.findByIdAndUpdate(id, { status });
+    res.json({ success: true });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};
+
 // Update User Team Member
 exports.updateUserTeam = async (req, res) => {
   try {
@@ -386,6 +441,16 @@ exports.updateUserTeam = async (req, res) => {
     console.log('User ID from middleware:', req.userId);
     console.log('Request method:', req.method);
     console.log('Request URL:', req.url);
+
+    const userId = req.userId || req.session.userId;
+    const user = await User.findById(userId);
+    if (user) {
+      const teamMember = await AddUser.findOne({ email: user.email });
+      if (teamMember && teamMember.status !== 'active') {
+        req.session.destroy();
+        return res.json({ success: false, message: "Access denied." });
+      }
+    }
 
     const { id, name, email, role, department, phone } = req.body;
 
@@ -425,6 +490,16 @@ exports.deleteUserTeam = async (req, res) => {
     console.log('User ID from middleware:', req.userId);
     console.log('Request method:', req.method);
     console.log('Request URL:', req.url);
+
+    const userId = req.userId || req.session.userId;
+    const user = await User.findById(userId);
+    if (user) {
+      const teamMember = await AddUser.findOne({ email: user.email });
+      if (teamMember && teamMember.status !== 'active') {
+        req.session.destroy();
+        return res.json({ success: false, message: "Access denied." });
+      }
+    }
 
     if (!teamMemberId) {
       console.log('No team member ID provided');

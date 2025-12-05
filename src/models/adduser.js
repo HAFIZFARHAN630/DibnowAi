@@ -15,7 +15,12 @@ const addUserSchema = new mongoose.Schema({
   phone: { type: String, trim: true },
   department: { type: String, required: true, trim: true },
   role: { type: String, required: true, trim: true },
-  password: { type: String, required: true }
+  password: { type: String, required: true },
+  status: { type: String, default: 'active', enum: ['active', 'inactive'] },
+  permissions: {
+    type: Object,
+    default: null
+  }
 }, {
   timestamps: true // This adds createdAt and updatedAt fields
 });

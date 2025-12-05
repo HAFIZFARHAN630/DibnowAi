@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const { checkPermission } = require("../middlewares/permissionMiddleware");
 const {
   getWallet,
   getHistory,
@@ -13,13 +14,13 @@ const {
 } = require("../controllers/walletController");
 
 // GET /wallet - render wallet page
-router.get("/wallet", getWallet);
+router.get("/wallet", checkPermission('wallet'), getWallet);
 
 // GET /wallet/history - render transaction history
-router.get("/wallet/history", getHistory);
+router.get("/wallet/history", checkPermission('wallet'), getHistory);
 
 // GET /wallet/topup - render top-up form
-router.get("/wallet/topup", getTopup);
+router.get("/wallet/topup", checkPermission('wallet'), getTopup);
 
 // POST /wallet/topup - process top-up
 router.post("/wallet/topup", postTopup);

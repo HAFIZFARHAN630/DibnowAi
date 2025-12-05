@@ -144,6 +144,10 @@ app.use(async (req, res, next) => {
 const { addNotificationData } = require("./src/middlewares/notificationMiddleware");
 app.use(addNotificationData);
 
+// Add permission middleware
+const { attachPermissions } = require("./src/middlewares/permissionMiddleware");
+app.use(attachPermissions);
+
 // Currency detection middleware (LinkedIn-style) - AFTER session
 try {
   const { detectCurrency, currencyLocals } = require("./src/middlewares/currencyMiddleware");

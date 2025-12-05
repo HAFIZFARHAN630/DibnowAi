@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const upload = require("../middlewares/uploadMiddleware");
 const { checkLimit } = require("../middlewares/checkLimitMiddleware");
+const { checkPermission } = require("../middlewares/permissionMiddleware");
 const Repair = require("../models/repair");
 const {
     addProduct,
@@ -23,10 +24,10 @@ const {
   } = require("../controllers/repairController");
 
 // Add product
-router.post("/repair", checkLimit("repairCustomer", Repair), upload.single("deviceImage"), addProduct);
+router.post("/repair", checkPermission('repair'), checkLimit("repairCustomer", Repair), upload.single("deviceImage"), addProduct);
 
 // Select product
-router.get("/repair", getRepairProducts);
+router.get("/repair", checkPermission('repair'), getRepairProducts);
 
 // Update product
 router.put("/repair/:id", updateProduct);
@@ -36,7 +37,7 @@ router.post("/repair/delete", deleteProducts);
 router.post("/repair/delete/:id", deleteProduct);
 
 // Select clients
-router.get("/Clients", getClients);
+router.get("/Clients", checkPermission('clients'), getClients);
 
 // Update Status
 router.post("/Clients/update/:id", updateClients);
@@ -52,7 +53,7 @@ router.get("/api/monthly-repair-revenue", getMonthlyRepairRevenue);
 router.post("/update-status", done);
 
 // Completed repairs route
-router.get("/completed-repairs", getCompletedRepairs);
+router.get("/completed-repairs", checkPermission('completedRepairs'), getCompletedRepairs);
 
 // Public tracking routes (no authentication required)
 router.get("/track", getPublicTrackingPage);

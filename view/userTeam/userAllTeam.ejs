@@ -571,6 +571,11 @@
               </div>
             </div>
           </div>
+          <% if (isUser) { %>
+          <button class="btn-add-team text-center" onclick="openRoleAccessModal()" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);">
+            <i class="fas fa-user-shield"></i> Role Access
+          </button>
+          <% } %>
           <a href="/userteam/add" class="btn-add-team text-center">
             <i class="fas fa-user-plus"></i> Add Team Member
           </a>
@@ -614,6 +619,8 @@
         <th class="px-4 py-2">Phone</th>
         <th class="px-4 py-2">Department</th>
         <th class="px-4 py-2">Role</th>
+        <th class="px-4 py-2">Status</th>
+        <th class="px-4 py-2">Permissions</th>
         <th class="px-4 py-2"></th>
       </tr>
     </thead>
@@ -635,7 +642,29 @@
           <td class="px-4 py-2"><%= user.department || 'N/A' %></td>
           <td class="px-4 py-2"><%= user.role || 'N/A' %></td>
           <td class="px-4 py-2">
+            <span class="badge <%= (user.status === 'active' || !user.status) ? 'bg-success' : 'bg-danger' %>">
+              <%= (user.status === 'active' || !user.status) ? 'Active' : 'Inactive' %>
+            </span>
+          </td>
+          <td class="px-4 py-2">
+            <% if (!user.permissions) { %>
+              <span class="badge bg-success">Full Access</span>
+            <% } else { %>
+              <% const activePerms = Object.values(user.permissions).filter(p => p === true).length; %>
+              <span class="badge bg-info"><%= activePerms %>/9</span>
+            <% } %>
+          </td>
+          <td class="px-4 py-2">
             <div class="flex gap-2">
+              <% if (user.status === 'active' || !user.status) { %>
+                <button type="button" class="btn btn-sm btn-warning" onclick="toggleStatus('<%= user._id %>', 'inactive')">
+                  <i class="fa-solid fa-ban"></i> Disable
+                </button>
+              <% } else { %>
+                <button type="button" class="btn btn-sm btn-success" onclick="toggleStatus('<%= user._id %>', 'active')">
+                  <i class="fa-solid fa-check"></i> Enable
+                </button>
+              <% } %>
               <button type="button" class="text-green-600"
                 data-id="<%= user._id %>"
                 data-name="<%= user.name %>"
@@ -687,8 +716,30 @@
         <p><span class="font-medium">Phone:</span> <%= user.phone || 'N/A' %></p>
         <p><span class="font-medium">Department:</span> <%= user.department || 'N/A' %></p>
         <p><span class="font-medium">Role:</span> <%= user.role || 'N/A' %></p>
+        <p><span class="font-medium">Status:</span> 
+          <span class="badge <%= (user.status === 'active' || !user.status) ? 'bg-success' : 'bg-danger' %>">
+            <%= (user.status === 'active' || !user.status) ? 'Active' : 'Inactive' %>
+          </span>
+        </p>
+        <p><span class="font-medium">Permissions:</span> 
+          <% if (!user.permissions) { %>
+            <span class="badge bg-success">Full Access</span>
+          <% } else { %>
+            <% const activePerms = Object.values(user.permissions).filter(p => p === true).length; %>
+            <span class="badge bg-info"><%= activePerms %>/9</span>
+          <% } %>
+        </p>
       </div>
       <div class="flex justify-end gap-3">
+        <% if (user.status === 'active' || !user.status) { %>
+          <button type="button" class="btn btn-sm btn-warning" onclick="toggleStatus('<%= user._id %>', 'inactive')">
+            <i class="fa-solid fa-ban"></i> Disable
+          </button>
+        <% } else { %>
+          <button type="button" class="btn btn-sm btn-success" onclick="toggleStatus('<%= user._id %>', 'active')">
+            <i class="fa-solid fa-check"></i> Enable
+          </button>
+        <% } %>
         <button type="button" class="text-green-600"
           data-id="<%= user._id %>"
           data-name="<%= user.name %>"
@@ -801,6 +852,104 @@
   
           <button type="submit" class="submit-btn">
             <i class="fas fa-save me-2"></i>Update Team Member
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Role Access Modal -->
+<div class="modal fade" id="roleAccessModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content" style="background: transparent; border: none;">
+      <div class="form-container">
+        <button class="close-btn" data-bs-dismiss="modal">
+          <i class="fas fa-times"></i>
+        </button>
+        <div class="form-header">
+          <h1 class="form-title"><i class="fas fa-user-shield me-2"></i>Role Based Access</h1>
+          <p class="form-subtitle">Manage team member permissions</p>
+        </div>
+        <form id="roleAccessForm">
+          <div class="form-group">
+            <label class="form-label"><i class="fas fa-user me-2"></i>Select Team Member</label>
+            <select class="form-control" id="selectTeamMember" required>
+              <option value="">Choose team member...</option>
+              <% if (users && users.length > 0) { users.forEach(user => { %>
+              <option value="<%= user._id %>" data-role="<%= user.role %>" data-permissions='<%= JSON.stringify(user.permissions || {}) %>'>
+                <%= user.name %> - <%= user.role %>
+              </option>
+              <% }); } %>
+            </select>
+          </div>
+          <div id="roleDisplay" style="display:none;" class="mb-3">
+            <label class="form-label"><i class="fas fa-user-tag me-2"></i>Current Role</label>
+            <div class="form-control" id="currentRole" style="background: rgba(255,255,255,0.3); color: white; font-weight: 600;"></div>
+          </div>
+          <div id="permissionsSection" style="display:none;">
+            <label class="form-label mb-3"><i class="fas fa-key me-2"></i>Permissions</label>
+            <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px;">
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label style="color: white; font-weight: 500; display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" name="inventory" class="form-check-input" style="width: 20px; height: 20px;">
+                    <i class="bi bi-clipboard-data"></i> Inventory Access
+                  </label>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label style="color: white; font-weight: 500; display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" name="repair" class="form-check-input" style="width: 20px; height: 20px;">
+                    <i class="bi bi-tools"></i> Repair Access
+                  </label>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label style="color: white; font-weight: 500; display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" name="stock" class="form-check-input" style="width: 20px; height: 20px;">
+                    <i class="bi bi-shop-window"></i> Stock Access
+                  </label>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label style="color: white; font-weight: 500; display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" name="clients" class="form-check-input" style="width: 20px; height: 20px;">
+                    <i class="bi bi-people"></i> Client Management
+                  </label>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label style="color: white; font-weight: 500; display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" name="plans" class="form-check-input" style="width: 20px; height: 20px;">
+                    <i class="bi bi-wallet2"></i> Plan / Pricing View
+                  </label>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label style="color: white; font-weight: 500; display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" name="wallet" class="form-check-input" style="width: 20px; height: 20px;">
+                    <i class="bi bi-credit-card"></i> Wallet Access
+                  </label>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label style="color: white; font-weight: 500; display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" name="sell" class="form-check-input" style="width: 20px; height: 20px;">
+                    <i class="bi bi-cash-stack"></i> Sell / Sales View
+                  </label>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label style="color: white; font-weight: 500; display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" name="completedRepairs" class="form-check-input" style="width: 20px; height: 20px;">
+                    <i class="bi bi-check-circle"></i> Completed Repairs View
+                  </label>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label style="color: white; font-weight: 500; display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" name="tickets" class="form-check-input" style="width: 20px; height: 20px;">
+                    <i class="bi bi-chat-dots"></i> Tickets / Help Access
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="submit-btn mt-4">
+            <i class="fas fa-save me-2"></i>Save Permissions
           </button>
         </form>
       </div>
@@ -1054,6 +1203,64 @@ document.getElementById('updateRole').addEventListener('change', function() {
 });
 
 // Delete team member with confirmation
+function toggleStatus(id, newStatus) {
+    const action = newStatus === 'inactive' ? 'Disable' : 'Enable';
+    const title = newStatus === 'inactive' ? 'Disable Team Member?' : 'Enable Team Member?';
+    const message = newStatus === 'inactive' 
+        ? 'Are you sure you want to disable this team member? They will not be able to login.' 
+        : 'Are you sure you want to enable this team member?';
+    const icon = newStatus === 'inactive' ? 'warning' : 'question';
+    const confirmButtonText = action;
+    const confirmButtonColor = newStatus === 'inactive' ? '#dc3545' : '#28a745';
+    
+    Swal.fire({
+        title: title,
+        text: message,
+        icon: icon,
+        showCancelButton: true,
+        confirmButtonColor: confirmButtonColor,
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: confirmButtonText,
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch('/userteam/toggle-status', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, status: newStatus })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: `Team member ${action.toLowerCase()}d successfully`,
+                        timer: 1500,
+                        showConfirmButton: false
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: data.message || 'Error updating status'
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'Network error: ' + error.message
+                });
+            });
+        }
+    });
+}
+
 function deleteTeamMember(button) {
     const id = button.getAttribute('data-id');
     const name = button.getAttribute('data-name');
@@ -1105,6 +1312,88 @@ function deleteTeamMember(button) {
         });
     }
 }
+
+// Role Access Modal Functions
+function openRoleAccessModal() {
+    const modal = new bootstrap.Modal(document.getElementById('roleAccessModal'));
+    modal.show();
+}
+
+document.getElementById('selectTeamMember').addEventListener('change', function() {
+    const selectedOption = this.options[this.selectedIndex];
+    if (this.value) {
+        const role = selectedOption.getAttribute('data-role');
+        const permissionsStr = selectedOption.getAttribute('data-permissions');
+        const permissions = permissionsStr && permissionsStr !== 'null' ? JSON.parse(permissionsStr) : null;
+        
+        document.getElementById('roleDisplay').style.display = 'block';
+        document.getElementById('currentRole').textContent = role || 'Team Member';
+        document.getElementById('permissionsSection').style.display = 'block';
+        
+        // If permissions is null, check all (full access by default)
+        const hasFullAccess = !permissions;
+        document.querySelector('input[name="inventory"]').checked = hasFullAccess || permissions.inventory !== false;
+        document.querySelector('input[name="repair"]').checked = hasFullAccess || permissions.repair !== false;
+        document.querySelector('input[name="stock"]').checked = hasFullAccess || permissions.stock !== false;
+        document.querySelector('input[name="clients"]').checked = hasFullAccess || permissions.clients !== false;
+        document.querySelector('input[name="plans"]').checked = hasFullAccess || permissions.plans !== false;
+        document.querySelector('input[name="wallet"]').checked = hasFullAccess || permissions.wallet !== false;
+        document.querySelector('input[name="sell"]').checked = hasFullAccess || permissions.sell !== false;
+        document.querySelector('input[name="completedRepairs"]').checked = hasFullAccess || permissions.completedRepairs !== false;
+        document.querySelector('input[name="tickets"]').checked = hasFullAccess || permissions.tickets !== false;
+    } else {
+        document.getElementById('roleDisplay').style.display = 'none';
+        document.getElementById('permissionsSection').style.display = 'none';
+    }
+});
+
+document.getElementById('roleAccessForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const teamMemberId = document.getElementById('selectTeamMember').value;
+    if (!teamMemberId) return;
+    
+    const permissions = {
+        inventory: document.querySelector('input[name="inventory"]').checked,
+        repair: document.querySelector('input[name="repair"]').checked,
+        stock: document.querySelector('input[name="stock"]').checked,
+        clients: document.querySelector('input[name="clients"]').checked,
+        plans: document.querySelector('input[name="plans"]').checked,
+        wallet: document.querySelector('input[name="wallet"]').checked,
+        sell: document.querySelector('input[name="sell"]').checked,
+        completedRepairs: document.querySelector('input[name="completedRepairs"]').checked,
+        tickets: document.querySelector('input[name="tickets"]').checked
+    };
+    
+    const submitBtn = this.querySelector('.submit-btn');
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saving...';
+    submitBtn.disabled = true;
+    
+    fetch('/userteam/update-permissions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ teamMemberId, permissions })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: 'Permissions updated successfully',
+                timer: 1500
+            }).then(() => location.reload());
+        } else {
+            Swal.fire({ icon: 'error', title: 'Error!', text: data.message });
+        }
+    })
+    .catch(error => {
+        Swal.fire({ icon: 'error', title: 'Error!', text: 'Network error: ' + error.message });
+    })
+    .finally(() => {
+        submitBtn.innerHTML = '<i class="fas fa-save me-2"></i>Save Permissions';
+        submitBtn.disabled = false;
+    });
+});
 </script>
 <!-- JavaScript Libraries -->
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>

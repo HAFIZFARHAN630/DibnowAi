@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const { checkPermission } = require("../middlewares/permissionMiddleware");
 const {
   allUsers,
   addSubscription,
@@ -18,7 +19,7 @@ const { getEnabledGateways } = require("../controllers/paymentPublicController")
 const testPaymentController = require("../controllers/testPaymentController");
 const currencyController = require("../controllers/currencyController");
 
-router.get("/pricing", allUsers);
+router.get("/pricing", checkPermission('plans'), allUsers);
 router.post("/pricing", addSubscription);
 router.get("/success", paymentSuccess);
 router.get("/cancel", paymentCancel);

@@ -12,6 +12,8 @@ const {
   listTeams,
   updateUserTeam,
   deleteUserTeam,
+  toggleStatus,
+  updatePermissions,
 } = require("../controllers/UserTeamsController");
 
 // User team management routes
@@ -23,5 +25,7 @@ router.get("/userteam/list", isAuthenticated, listTeams);
 router.post("/userteam/update", isAuthenticated, updateUserTeam);
 router.post("/userteam/update/:id", isAuthenticated, updateUserTeam);
 router.post("/userteam/delete/:id", isAuthenticated, deleteUserTeam);
+router.post("/userteam/toggle-status", isAuthenticated, toggleStatus);
+router.post("/userteam/update-permissions", isAuthenticated, updatePermissions);
 
 module.exports = router;

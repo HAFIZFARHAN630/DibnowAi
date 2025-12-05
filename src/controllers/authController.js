@@ -280,6 +280,11 @@ exports.signin = async (req, res) => {
           console.log('Team member found:', teamMember.email);
           isTeamMember = true;
           
+          // Check status
+          if (teamMember.status !== 'active' && teamMember.status) {
+            return res.render("Sigin/sign_in", { message: "Your account has been disabled. Please contact administrator." });
+          }
+          
           // Check if password exists
           if (!teamMember.password) {
             return res.render("Sigin/sign_in", { message: "Account setup incomplete. Please contact administrator." });
