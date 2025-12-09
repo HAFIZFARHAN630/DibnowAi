@@ -731,22 +731,41 @@
   }
 
   // Product search in modal
-  const productSearchInput = document.getElementById("productSearchInput");
-  if (productSearchInput) {
-    productSearchInput.addEventListener("input", () => {
-      const query = productSearchInput.value.toLowerCase();
-      const productItems = document.querySelectorAll(".product-item");
-      
-      productItems.forEach((item) => {
-        const productName = item.getAttribute("data-product-name");
-        if (productName.includes(query)) {
-          item.style.display = "";
-        } else {
-          item.style.display = "none";
+  document.addEventListener('DOMContentLoaded', function() {
+    const productSearchInput = document.getElementById("productSearchInput");
+    if (productSearchInput) {
+      productSearchInput.addEventListener("input", function() {
+        const query = this.value.toLowerCase().trim();
+        const productItems = document.querySelectorAll(".product-item");
+        
+        let visibleCount = 0;
+        productItems.forEach(function(item) {
+          const productName = item.getAttribute("data-product-name");
+          if (productName && productName.includes(query)) {
+            item.style.display = "block";
+            visibleCount++;
+          } else {
+            item.style.display = "none";
+          }
+        });
+        
+        // Show/hide no results message
+        const container = document.getElementById("productListContainer");
+        let noResultsMsg = container.querySelector(".no-results-msg");
+        if (visibleCount === 0 && query !== "") {
+          if (!noResultsMsg) {
+            noResultsMsg = document.createElement("p");
+            noResultsMsg.className = "no-results-msg";
+            noResultsMsg.style.cssText = "text-align: center; color: rgba(255, 255, 255, 0.9); padding: 20px;";
+            noResultsMsg.textContent = "No products found";
+            container.appendChild(noResultsMsg);
+          }
+        } else if (noResultsMsg) {
+          noResultsMsg.remove();
         }
       });
-    });
-  }
+    }
+  })
 
 </script>
 <!-- footer -->
