@@ -16,10 +16,13 @@ exports.addTeamForm = async (req, res) => {
       return res.redirect("/sign_in");
     }
 
-    const teamMember = await AddUser.findOne({ email: user.email });
-    if (teamMember && teamMember.status !== 'active') {
-      req.session.destroy();
-      return res.redirect("/sign_in");
+    // Only check status if this is a team member login (not owner)
+    if (req.session.isTeamMember === true && req.session.teamMemberEmail) {
+      const teamMember = await AddUser.findOne({ email: req.session.teamMemberEmail });
+      if (teamMember && teamMember.status !== 'active') {
+        req.session.destroy();
+        return res.redirect("/sign_in");
+      }
     }
 
     // Get notification data for users
@@ -113,6 +116,16 @@ exports.createTeam = async (req, res) => {
         return res.json({ success: false, message: "Name, email, role, and password are required." });
       }
       req.flash("error_msg", "Name, email, role, and password are required.");
+      return res.redirect("/userteam/add");
+    }
+
+    // CRITICAL: Prevent owner emails from being added as team members
+    const ownerCheck = await User.findOne({ email: email });
+    if (ownerCheck) {
+      if (req.headers['content-type']?.includes('application/json')) {
+        return res.json({ success: false, message: "Cannot add owner as team member. This email is already registered as an owner." });
+      }
+      req.flash("error_msg", "Cannot add owner as team member. This email is already registered as an owner.");
       return res.redirect("/userteam/add");
     }
 
@@ -245,9 +258,9 @@ exports.listTeams = async (req, res) => {
        return res.redirect("/sign_in");
      }
 
-     const tempUser = await User.findById(userIdString);
-     if (tempUser) {
-       const teamMember = await AddUser.findOne({ email: tempUser.email });
+     // Only check status if this is a team member login (not owner)
+     if (req.session.isTeamMember === true && req.session.teamMemberEmail) {
+       const teamMember = await AddUser.findOne({ email: req.session.teamMemberEmail });
        if (teamMember && teamMember.status !== 'active') {
          req.session.destroy();
          return res.redirect("/sign_in");
@@ -416,16 +429,6 @@ exports.updatePermissions = async (req, res) => {
 exports.toggleStatus = async (req, res) => {
   try {
     const { id, status } = req.body;
-    const userId = req.userId || req.session.userId;
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.json({ success: false, message: "User not found." });
-    }
-    const teamMember = await AddUser.findOne({ email: user.email });
-    if (teamMember && teamMember.status !== 'active') {
-      req.session.destroy();
-      return res.json({ success: false, message: "Access denied." });
-    }
     await AddUser.findByIdAndUpdate(id, { status });
     res.json({ success: true });
   } catch (error) {
@@ -444,8 +447,10 @@ exports.updateUserTeam = async (req, res) => {
 
     const userId = req.userId || req.session.userId;
     const user = await User.findById(userId);
-    if (user) {
-      const teamMember = await AddUser.findOne({ email: user.email });
+    
+    // Only check status if this is a team member login (not owner)
+    if (req.session.isTeamMember === true && req.session.teamMemberEmail) {
+      const teamMember = await AddUser.findOne({ email: req.session.teamMemberEmail });
       if (teamMember && teamMember.status !== 'active') {
         req.session.destroy();
         return res.json({ success: false, message: "Access denied." });
@@ -493,8 +498,10 @@ exports.deleteUserTeam = async (req, res) => {
 
     const userId = req.userId || req.session.userId;
     const user = await User.findById(userId);
-    if (user) {
-      const teamMember = await AddUser.findOne({ email: user.email });
+    
+    // Only check status if this is a team member login (not owner)
+    if (req.session.isTeamMember === true && req.session.teamMemberEmail) {
+      const teamMember = await AddUser.findOne({ email: req.session.teamMemberEmail });
       if (teamMember && teamMember.status !== 'active') {
         req.session.destroy();
         return res.json({ success: false, message: "Access denied." });

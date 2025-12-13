@@ -265,3 +265,25 @@ exports.getAllAdminTeam = async (req, res) => {
     res.redirect("/index");
   }
 };
+
+// Toggle Admin Team Member Status
+exports.toggleAdminStatus = async (req, res) => {
+  try {
+    const { id, status } = req.body;
+    await AddUser.findByIdAndUpdate(id, { status });
+    res.json({ success: true });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};
+
+// Update Admin Team Member Permissions
+exports.updateAdminPermissions = async (req, res) => {
+  try {
+    const { teamMemberId, permissions } = req.body;
+    await AddUser.findByIdAndUpdate(teamMemberId, { permissions });
+    res.json({ success: true, message: "Permissions updated successfully" });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};

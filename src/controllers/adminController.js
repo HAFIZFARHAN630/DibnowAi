@@ -16,12 +16,17 @@ exports.admin = async (req, res) => {
     
     // Fetch all users
     const allUsers = await User.find().select(
-      "first_name email phone_number role user_img plan_name company plan_limit"
+      "first_name email phone_number role user_img plan_name company plan_limit isActive"
     );
     
     // Find the logged-in user
     const loggedInUser = allUsers.find((user) => user._id.toString() === userId);
     if (!loggedInUser) {
+      return res.redirect("/sign_in");
+    }
+    
+    if (loggedInUser.role === 'admin' && loggedInUser.isActive === false) {
+      req.session.destroy();
       return res.redirect("/sign_in");
     }
     
@@ -59,6 +64,13 @@ exports.admin = async (req, res) => {
 // Update User
 exports.updateUser = async (req, res) => {
   try {
+    const currentUserId = req.session.userId;
+    const currentUser = await User.findById(currentUserId).select('role isActive');
+    if (currentUser && currentUser.role === 'admin' && currentUser.isActive === false) {
+      req.session.destroy();
+      return res.redirect("/sign_in");
+    }
+    
     const userId = req.params.id;
     const { first_name, last_name, email, phone_number, plan_name, plan_limit } = req.body;
 
@@ -83,6 +95,13 @@ exports.updateUser = async (req, res) => {
 // Delete a user by ID
 exports.deleteUser = async (req, res) => {
   try {
+    const currentUserId = req.session.userId;
+    const currentUser = await User.findById(currentUserId).select('role isActive');
+    if (currentUser && currentUser.role === 'admin' && currentUser.isActive === false) {
+      req.session.destroy();
+      return res.redirect("/sign_in");
+    }
+    
     const userId = req.params.id;
     
     await User.findByIdAndDelete(userId);
@@ -102,11 +121,16 @@ exports.selectAddAdmin = async (req, res) => {
     
     // Fetch all users
     const allUsers = await User.find().select(
-      "first_name last_name email phone_number role user_img plan_name"
+      "first_name last_name email phone_number role user_img plan_name isActive"
     );
     
     const loggedInUser = allUsers.find((user) => user._id.toString() === userId);
     if (!loggedInUser) {
+      return res.redirect("/sign_in");
+    }
+    
+    if (loggedInUser.role === 'admin' && loggedInUser.isActive === false) {
+      req.session.destroy();
       return res.redirect("/sign_in");
     }
     
@@ -143,13 +167,21 @@ exports.selectAddAdmin = async (req, res) => {
 // Add an admin
 exports.addAdmin = async (req, res) => {
   try {
+    const userId = req.session.userId;
+    const currentUser = await User.findById(userId).select('role isActive');
+    if (currentUser && currentUser.role === 'admin' && currentUser.isActive === false) {
+      req.session.destroy();
+      return res.redirect("/sign_in");
+    }
+    
     const {
       first_name,
       last_name,
       email,
       phone_number,
       password,
-      role
+      role,
+      isActive
     } = req.body;
 
     // Validate inputs
@@ -176,6 +208,7 @@ exports.addAdmin = async (req, res) => {
       phone_number,
       password: hashedPassword,
       role,
+      isActive: isActive === 'true',
       created_by: req.session.userId
     });
 
@@ -192,6 +225,13 @@ exports.addAdmin = async (req, res) => {
 // Add a user
 exports.addUser = async (req, res) => {
   try {
+    const userId = req.session.userId;
+    const currentUser = await User.findById(userId).select('role isActive');
+    if (currentUser && currentUser.role === 'admin' && currentUser.isActive === false) {
+      req.session.destroy();
+      return res.redirect("/sign_in");
+    }
+    
     const {
       first_name,
       email,
@@ -229,8 +269,13 @@ exports.walletManagement = async (req, res) => {
     const userId = req.session.userId;
 
     // Fetch current user for profile
-    const user = await User.findById(userId).select("first_name user_img");
+    const user = await User.findById(userId).select("first_name user_img role isActive");
     if (!user) {
+      return res.redirect("/sign_in");
+    }
+    
+    if (user.role === 'admin' && user.isActive === false) {
+      req.session.destroy();
       return res.redirect("/sign_in");
     }
 
@@ -318,8 +363,13 @@ exports.paymentSettings = async (req, res) => {
     const userId = req.session.userId;
 
     // Fetch current user for profile
-    const user = await User.findById(userId).select("first_name user_img");
+    const user = await User.findById(userId).select("first_name user_img role isActive");
     if (!user) {
+      return res.redirect("/sign_in");
+    }
+    
+    if (user.role === 'admin' && user.isActive === false) {
+      req.session.destroy();
       return res.redirect("/sign_in");
     }
 
@@ -362,6 +412,13 @@ exports.paymentSettings = async (req, res) => {
 // Payment Settings - POST
 exports.updatePaymentSettings = async (req, res) => {
   try {
+    const userId = req.session.userId;
+    const currentUser = await User.findById(userId).select('role isActive');
+    if (currentUser && currentUser.role === 'admin' && currentUser.isActive === false) {
+      req.session.destroy();
+      return res.redirect("/sign_in");
+    }
+    
     const {
       stripe_enabled, stripe_publishable_key, stripe_secret_key,
       paypal_enabled, paypal_client_id, paypal_client_secret,
@@ -414,8 +471,13 @@ exports.activeUsers = async (req, res) => {
     const userId = req.session.userId;
 
     // Fetch current user for profile
-    const user = await User.findById(userId).select("first_name user_img");
+    const user = await User.findById(userId).select("first_name user_img role isActive");
     if (!user) {
+      return res.redirect("/sign_in");
+    }
+    
+    if (user.role === 'admin' && user.isActive === false) {
+      req.session.destroy();
       return res.redirect("/sign_in");
     }
 
@@ -483,8 +545,13 @@ exports.expiredUsers = async (req, res) => {
     const userId = req.session.userId;
 
     // Fetch current user for profile
-    const user = await User.findById(userId).select("first_name user_img");
+    const user = await User.findById(userId).select("first_name user_img role isActive");
     if (!user) {
+      return res.redirect("/sign_in");
+    }
+    
+    if (user.role === 'admin' && user.isActive === false) {
+      req.session.destroy();
       return res.redirect("/sign_in");
     }
 
@@ -539,12 +606,17 @@ exports.settings = async (req, res) => {
     
     // Fetch all users
     const allUsers = await User.find().select(
-      "first_name email phone_number role user_img plan_name company plan_limit"
+      "first_name email phone_number role user_img plan_name company plan_limit isActive"
     );
     
     // Find the logged-in user
     const loggedInUser = allUsers.find((user) => user._id.toString() === userId);
     if (!loggedInUser) {
+      return res.redirect("/sign_in");
+    }
+    
+    if (loggedInUser.role === 'admin' && loggedInUser.isActive === false) {
+      req.session.destroy();
       return res.redirect("/sign_in");
     }
     
@@ -590,12 +662,17 @@ exports.notificationSettingsPage = async (req, res) => {
     
     // Fetch all users
     const allUsers = await User.find().select(
-      "first_name email phone_number role user_img plan_name company plan_limit"
+      "first_name email phone_number role user_img plan_name company plan_limit isActive"
     );
     
     // Find the logged-in user
     const loggedInUser = allUsers.find((user) => user._id.toString() === userId);
     if (!loggedInUser) {
+      return res.redirect("/sign_in");
+    }
+    
+    if (loggedInUser.role === 'admin' && loggedInUser.isActive === false) {
+      req.session.destroy();
       return res.redirect("/sign_in");
     }
     
@@ -640,6 +717,13 @@ exports.notificationSettingsPage = async (req, res) => {
 
 exports.saveNotificationSettingsPage = async (req, res) => {
   try {
+    const userId = req.session.userId;
+    const currentUser = await User.findById(userId).select('role isActive');
+    if (currentUser && currentUser.role === 'admin' && currentUser.isActive === false) {
+      req.session.destroy();
+      return res.redirect("/sign_in");
+    }
+    
     const {
       emailNotification,
       systemImportantChange,
@@ -676,6 +760,13 @@ exports.saveNotificationSettingsPage = async (req, res) => {
 
 exports.saveSettings = async (req, res) => {
   try {
+    const userId = req.session.userId;
+    const currentUser = await User.findById(userId).select('role isActive');
+    if (currentUser && currentUser.role === 'admin' && currentUser.isActive === false) {
+      req.session.destroy();
+      return res.redirect("/sign_in");
+    }
+    
     const title = req.body.title;
     const favicon = req.file?.filename;
 
@@ -715,11 +806,16 @@ const Repair = require("../models/repair");
 exports.allStock = async (req, res) => {
   try {
     const userId = req.session.userId;
-    const user = await User.findById(userId).select("first_name user_img role");
+    const user = await User.findById(userId).select("first_name user_img role isActive");
     
     if (!user || user.role !== 'admin') {
       req.flash("error_msg", "Access denied.");
       return res.redirect("/index");
+    }
+    
+    if (user.isActive === false) {
+      req.session.destroy();
+      return res.redirect("/sign_in");
     }
 
     const inventory = await Inventory.find().populate('user_id', 'first_name last_name email').sort({ _id: -1 });
@@ -744,11 +840,16 @@ exports.allStock = async (req, res) => {
 exports.allSales = async (req, res) => {
   try {
     const userId = req.session.userId;
-    const user = await User.findById(userId).select("first_name user_img role");
+    const user = await User.findById(userId).select("first_name user_img role isActive");
     
     if (!user || user.role !== 'admin') {
       req.flash("error_msg", "Access denied.");
       return res.redirect("/index");
+    }
+    
+    if (user.isActive === false) {
+      req.session.destroy();
+      return res.redirect("/sign_in");
     }
 
     const soldItems = await SoldItem.find().populate('user_id', 'first_name last_name email').sort({ _id: -1 });
@@ -773,11 +874,16 @@ exports.allSales = async (req, res) => {
 exports.allRepairs = async (req, res) => {
   try {
     const userId = req.session.userId;
-    const user = await User.findById(userId).select("first_name user_img role");
+    const user = await User.findById(userId).select("first_name user_img role isActive");
     
     if (!user || user.role !== 'admin') {
       req.flash("error_msg", "Access denied.");
       return res.redirect("/index");
+    }
+    
+    if (user.isActive === false) {
+      req.session.destroy();
+      return res.redirect("/sign_in");
     }
 
     const statusFilter = req.query.status;
@@ -804,6 +910,12 @@ exports.allRepairs = async (req, res) => {
 // Toggle Admin Status
 exports.toggleAdminStatus = async (req, res) => {
   try {
+    const userId = req.session.userId;
+    const currentUser = await User.findById(userId).select('role isActive');
+    if (currentUser && currentUser.role === 'admin' && currentUser.isActive === false) {
+      return res.json({ success: false, message: 'Access denied' });
+    }
+    
     const { id } = req.params;
     const admin = await User.findById(id);
     
@@ -825,11 +937,16 @@ exports.toggleAdminStatus = async (req, res) => {
 exports.getAllAdmins = async (req, res) => {
   try {
     const userId = req.session.userId;
-    const user = await User.findById(userId).select("first_name user_img role");
+    const user = await User.findById(userId).select("first_name user_img role isActive");
     
     if (!user || user.role !== 'admin') {
       req.flash("error_msg", "Access denied.");
       return res.redirect("/index");
+    }
+    
+    if (user.isActive === false) {
+      req.session.destroy();
+      return res.redirect("/sign_in");
     }
 
     const admins = await User.find({ role: 'admin' })

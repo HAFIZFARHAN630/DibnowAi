@@ -5,16 +5,13 @@ const User = require("../models/user");
 exports.checkPermission = (permissionName) => {
   return async (req, res, next) => {
     try {
-      const userId = req.userId || req.session.userId;
-      const user = await User.findById(userId);
-      
-      // If admin or owner, allow all access
-      if (!user || user.role === "admin") {
+      // If session says NOT a team member, allow all access
+      if (req.session.isTeamMember !== true) {
         return next();
       }
       
-      // Check if this is a team member login
-      if (req.session.isTeamMember && req.session.teamMemberEmail) {
+      // Check if this is a team member login (NOT owner)
+      if (req.session.isTeamMember === true && req.session.teamMemberEmail) {
         const teamMember = await AddUser.findOne({ email: req.session.teamMemberEmail });
         
         if (teamMember) {
@@ -27,7 +24,7 @@ exports.checkPermission = (permissionName) => {
           if (teamMember.permissions[permissionName] === false) {
             return res.status(403).render("error", {
               message: "Access Denied",
-              error: { status: 403, stack: "You don't have permission to access this resource." }
+              error: { status: 403, stack: "You do not have the required permissions to access this resource. Please contact your administrator if you believe this is an error." }
             });
           }
         }
@@ -54,20 +51,26 @@ exports.attachPermissions = async (req, res, next) => {
       return next();
     }
     
-    // If admin, set all permissions to true
-    if (user.role === "admin") {
-      res.locals.teamPermissions = null;
+    // CRITICAL: If session says NOT a team member, skip all team member checks
+    if (req.session.isTeamMember !== true) {
       res.locals.isTeamMember = false;
+      res.locals.teamPermissions = null;
       return next();
     }
     
     // Check if this is a team member login
-    if (req.session.isTeamMember && req.session.teamMemberEmail) {
+    if (req.session.isTeamMember === true && req.session.teamMemberEmail) {
       const teamMember = await AddUser.findOne({ email: req.session.teamMemberEmail });
       if (teamMember) {
+        // Block access if inactive
+        if (teamMember.status === 'inactive') {
+          return res.status(403).render("error", {
+            message: "Account Suspended",
+            error: { status: 403, stack: "Your account has been temporarily suspended by the system administrator. Please contact support for further assistance or to request account reactivation." }
+          });
+        }
         res.locals.isTeamMember = true;
         res.locals.teamPermissions = teamMember.permissions;
-        console.log('Team member permissions loaded:', teamMember.email, teamMember.permissions);
         return next();
       }
     }
@@ -75,7 +78,6 @@ exports.attachPermissions = async (req, res, next) => {
     // Regular owner user
     res.locals.isTeamMember = false;
     res.locals.teamPermissions = null;
-    
     next();
   } catch (error) {
     console.error("Attach permissions error:", error);

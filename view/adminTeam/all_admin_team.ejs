@@ -27,7 +27,9 @@
                         <th style="color: black !important;">Phone</th>
                         <th style="color: black !important;">Role</th>
                         <th style="color: black !important;">Department</th>
-                        <th style="color: black !important;">Added By</th>
+                        <th style="color: black !important;">Status</th>
+                        <th style="color: black !important;">Permissions</th>
+                        <th style="color: black !important;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -49,12 +51,34 @@
                                     <% } %>
                                 </td>
                                 <td><%= member.department || 'N/A' %></td>
-                                <td><%= member.user_id ? (member.user_id.first_name + ' ' + (member.user_id.last_name || '')) : 'Unknown' %></td>
+                                <td>
+                                    <% if (member.status === 'active') { %>
+                                        <span class="badge bg-success">Active</span>
+                                    <% } else { %>
+                                        <span class="badge bg-danger">Inactive</span>
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <% if (!member.permissions) { %>
+                                        <span class="badge bg-info">Full Access</span>
+                                    <% } else { %>
+                                        <% const permCount = Object.values(member.permissions).filter(p => p !== false).length; %>
+                                        <span class="badge bg-warning"><%= permCount %>/13</span>
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <% if (member.status === 'active') { %>
+                                        <button class="btn btn-sm btn-danger" onclick="toggleStatus('<%= member._id %>', 'inactive')">Disable</button>
+                                    <% } else { %>
+                                        <button class="btn btn-sm btn-success" onclick="toggleStatus('<%= member._id %>', 'active')">Enable</button>
+                                    <% } %>
+                                    <button class="btn btn-sm btn-primary" onclick="openPermissionsModal('<%= member._id %>', '<%= member.name %>', '<%= JSON.stringify(member.permissions) %>')">Permissions</button>
+                                </td>
                             </tr>
                         <% }) %>
                     <% } else { %>
                         <tr>
-                            <td colspan="6" class="text-center">No team members found</td>
+                            <td colspan="9" class="text-center">No team members found</td>
                         </tr>
                     <% } %>
                 </tbody>
@@ -63,7 +87,154 @@
     </div>
 
     <%- include('../par/footer.ejs') %>
+    
+    <!-- Permissions Modal -->
+    <div class="modal fade" id="permissionsModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Manage Permissions</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="memberId">
+                    <h6 id="memberName"></h6>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="perm_allUsers">
+                        <label class="form-check-label" for="perm_allUsers">All Users</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="perm_addAdmin">
+                        <label class="form-check-label" for="perm_addAdmin">Add Admin</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="perm_allAdmins">
+                        <label class="form-check-label" for="perm_allAdmins">All Admins</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="perm_adminTeam">
+                        <label class="form-check-label" for="perm_adminTeam">Admin Team Management</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="perm_userTeams">
+                        <label class="form-check-label" for="perm_userTeams">User Teams</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="perm_repairs">
+                        <label class="form-check-label" for="perm_repairs">Repair Bookings</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="perm_inventory">
+                        <label class="form-check-label" for="perm_inventory">Inventory</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="perm_sales">
+                        <label class="form-check-label" for="perm_sales">Sold Products</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="perm_wallet">
+                        <label class="form-check-label" for="perm_wallet">Wallet Management</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="perm_billing">
+                        <label class="form-check-label" for="perm_billing">Billing Settings</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="perm_complaints">
+                        <label class="form-check-label" for="perm_complaints">Complaints & Reviews</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="perm_plans">
+                        <label class="form-check-label" for="perm_plans">Plan Management</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="perm_settings">
+                        <label class="form-check-label" for="perm_settings">Settings</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="savePermissions()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function toggleStatus(id, status) {
+            Swal.fire({
+                title: status === 'inactive' ? 'Disable Team Member?' : 'Enable Team Member?',
+                text: status === 'inactive' ? 'This team member will not be able to login.' : 'This team member will be able to login.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'No'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch('/adminteam/toggle-status', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id, status })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire('Success', 'Status updated', 'success').then(() => location.reload());
+                        } else {
+                            Swal.fire('Error', data.message, 'error');
+                        }
+                    });
+                }
+            });
+        }
+
+        function openPermissionsModal(id, name, perms) {
+            document.getElementById('memberId').value = id;
+            document.getElementById('memberName').textContent = name;
+            const permissions = perms === 'null' ? null : JSON.parse(perms);
+            
+            ['allUsers', 'addAdmin', 'allAdmins', 'adminTeam', 'userTeams', 'repairs', 'inventory', 'sales', 'wallet', 'billing', 'complaints', 'plans', 'settings'].forEach(perm => {
+                document.getElementById('perm_' + perm).checked = !permissions || permissions[perm] !== false;
+            });
+            
+            new bootstrap.Modal(document.getElementById('permissionsModal')).show();
+        }
+
+        function savePermissions() {
+            const id = document.getElementById('memberId').value;
+            const permissions = {
+                allUsers: document.getElementById('perm_allUsers').checked,
+                addAdmin: document.getElementById('perm_addAdmin').checked,
+                allAdmins: document.getElementById('perm_allAdmins').checked,
+                adminTeam: document.getElementById('perm_adminTeam').checked,
+                userTeams: document.getElementById('perm_userTeams').checked,
+                repairs: document.getElementById('perm_repairs').checked,
+                inventory: document.getElementById('perm_inventory').checked,
+                sales: document.getElementById('perm_sales').checked,
+                wallet: document.getElementById('perm_wallet').checked,
+                billing: document.getElementById('perm_billing').checked,
+                complaints: document.getElementById('perm_complaints').checked,
+                plans: document.getElementById('perm_plans').checked,
+                settings: document.getElementById('perm_settings').checked
+            };
+
+            fetch('/adminteam/update-permissions', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ teamMemberId: id, permissions })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire('Success', 'Permissions updated', 'success').then(() => location.reload());
+                } else {
+                    Swal.fire('Error', data.message, 'error');
+                }
+            });
+        }
+    </script>
 </body>
 </html>

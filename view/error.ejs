@@ -38,8 +38,9 @@
             font-size: 18px;
             color: #666;
             margin-bottom: 30px;
+            line-height: 1.6;
         }
-        .btn-back {
+        .btn-logout {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
             padding: 12px 30px;
@@ -49,8 +50,9 @@
             text-decoration: none;
             display: inline-block;
             transition: all 0.3s ease;
+            cursor: pointer;
         }
-        .btn-back:hover {
+        .btn-logout:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
             color: white;
@@ -62,11 +64,14 @@
         <i class="fas fa-ban error-icon"></i>
         <h1 class="error-title"><%= message || 'Access Denied' %></h1>
         <p class="error-message">
-            <%= error && error.stack ? error.stack : 'You do not have permission to access this resource. Please contact your administrator.' %>
+            <%= error && error.stack ? error.stack : 'You do not have permission to access this resource. Please contact your administrator for assistance.' %>
         </p>
-        <a href="/index" class="btn-back">
-            <i class="fas fa-home me-2"></i>Back to Dashboard
-        </a>
+        <form action="/logout" method="POST" style="display: inline;">
+            <input type="hidden" name="reason" value="Account access restricted">
+            <button type="submit" class="btn-logout">
+                <i class="fas fa-sign-out-alt me-2"></i>Logout
+            </button>
+        </form>
     </div>
 </body>
 </html>

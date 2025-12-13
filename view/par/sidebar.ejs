@@ -5,100 +5,58 @@
     <div class="navbar-nav w-100">
       <a href="/index" class="nav-item nav-link active"><i class="bi bi-tv dynamic-color-icon"></i>Dashboard</a>
       <% if (isAdmin) { %>
-
+        <% 
+          const perms = typeof teamPermissions !== 'undefined' ? teamPermissions : null;
+          const isTeam = typeof isTeamMember !== 'undefined' ? isTeamMember : false;
+        %>
+        <% if (!isTeam || !perms || perms.allUsers !== false) { %>
         <a href="/admin" class="nav-item nav-link"><i class="bi bi-people-fill dynamic-color-icon"></i>All User</a>
-        <a href="/addadmin" class="nav-item nav-link"><i class="fa-solid fa-user-tie dynamic-color-icon"></i>Add
-          Admin</a>
-        
-          <a href="/admin/all-admins" class="nav-item nav-link">
-  <i class="fa-solid fa-user-shield dynamic-color-icon"></i>All Admins
-</a>
-
-<a href="/AdminTeam" class="nav-item nav-link">
-  <i class="fa-solid fa-user-plus dynamic-color-icon"></i>Add Admin Team
-</a>
-
-<a href="/AllAdminTeam" class="nav-item nav-link">
-  <i class="fa-solid fa-users-gear dynamic-color-icon"></i>All Admin Team
-</a>
-
-<a href="/Teams" class="nav-item nav-link">
-  <i class="fa-solid fa-users-gear dynamic-color-icon"></i>All User Teams
-</a>
-
-
-        <a href="/admin/all-repairs" class="nav-item nav-link">
-  <i class="bi bi-clipboard-check dynamic-color-icon"></i>All Repair Bookings
-</a>
-
-<a href="/admin/all-stock" class="nav-item nav-link">
-  <i class="bi bi-box-seam dynamic-color-icon"></i>All Inventory
-</a>
-
-<a href="/admin/all-sales" class="nav-item nav-link">
-  <i class="bi bi-cart-check dynamic-color-icon"></i>All Sold Products
-</a>
-
-<a href="<%= isAdmin ? '/admin/all-repairs?status=Completed' : '/repair' %>" class="nav-item nav-link">
-  <i class="bi bi-check-circle dynamic-color-icon"></i>Completed Repairs
-</a>
-
-         
-
-       
-        <a href="/request" class="nav-item nav-link"><i
-            class="fa-solid fa-code-pull-request dynamic-color-icon"></i>Request</a>
-
-
-
-        <a href="/admin/payment-settings" class="nav-item nav-link">
-          <i class="bi bi-credit-card dynamic-color-icon"></i>Billing Settings
-        </a>
-
-
-
-        <a href="/admin/wallet" class="nav-item nav-link">
-          <i class="bi bi-wallet2 dynamic-color-icon"></i>Wallet Management
-        </a>
-        <a href="/admin/active-users" class="nav-item nav-link">
-          <i class="bi bi-person-check dynamic-color-icon"></i>Active Users
-        </a>
-        <a href="/admin/expired-users" class="nav-item nav-link">
-          <i class="bi bi-person-x dynamic-color-icon"></i>Expired Users
-        </a>
-        <a class="nav-link" href="/UserComplaint">
-          <i class="bi bi-chat-right-quote dynamic-color-icon"></i>
-          <span class="menu-title pl-2">User Complaint</span>
-        </a>
-        <a class="nav-link" href="/review">
-          <i class="bi bi-star dynamic-color-icon"></i>
-          <span class="menu-title pl-2">Reviews</span>
-        </a>
-        <a class="nav-link" href="/package-request">
-          <i class="bi bi-inbox dynamic-color-icon"></i>
-          <span class="menu-title pl-2">Plan Requests</span>
-        </a>
-<a href="/show-tickets" class="nav-item nav-link">
-  <i class="bi bi-card-text dynamic-color-icon"></i>
-  Show Tickets
-</a>
-        <!-- Settings -->
-        <a class="nav-link" href="/admin-settings">
-          <i class="bi bi-gear dynamic-color-icon"></i>
-          <span class="menu-title pl-2">Settings</span>
-        </a>
-
-        <!-- Create Plan -->
-        <a class="nav-link" href="/create-plan">
-          <i class="bi bi-box dynamic-color-icon"></i>
-          <span class="menu-title pl-2">Create Plan</span>
-        </a>
-
-        <a href="https://dashboard.tawk.to/#/dashboard/659fdbaf0ff6374032bedfad" class="nav-item nav-link"
-          target="_blank"><i class="bi bi-chat-text-fill dynamic-color-icon"></i>Chat</a>
-
-
-
+        <% } %>
+        <% if (!isTeam || !perms || perms.addAdmin !== false) { %>
+        <a href="/addadmin" class="nav-item nav-link"><i class="fa-solid fa-user-tie dynamic-color-icon"></i>Add Admin</a>
+        <% } %>
+        <% if (!isTeam || !perms || perms.allAdmins !== false) { %>
+        <a href="/admin/all-admins" class="nav-item nav-link"><i class="fa-solid fa-user-shield dynamic-color-icon"></i>All Admins</a>
+        <% } %>
+        <% if (!isTeam) { %>
+        <a href="/AdminTeam" class="nav-item nav-link"><i class="fa-solid fa-user-plus dynamic-color-icon"></i>Add Admin Team</a>
+        <a href="/AllAdminTeam" class="nav-item nav-link"><i class="fa-solid fa-users-gear dynamic-color-icon"></i>All Admin Team</a>
+        <% } %>
+        <% if (!isTeam || !perms || perms.userTeams !== false) { %>
+        <a href="/Teams" class="nav-item nav-link"><i class="fa-solid fa-users-gear dynamic-color-icon"></i>All User Teams</a>
+        <% } %>
+        <% if (!isTeam || !perms || perms.repairs !== false) { %>
+        <a href="/admin/all-repairs" class="nav-item nav-link"><i class="bi bi-clipboard-check dynamic-color-icon"></i>All Repair Bookings</a>
+        <% } %>
+        <% if (!isTeam || !perms || perms.inventory !== false) { %>
+        <a href="/admin/all-stock" class="nav-item nav-link"><i class="bi bi-box-seam dynamic-color-icon"></i>All Inventory</a>
+        <% } %>
+        <% if (!isTeam || !perms || perms.sales !== false) { %>
+        <a href="/admin/all-sales" class="nav-item nav-link"><i class="bi bi-cart-check dynamic-color-icon"></i>All Sold Products</a>
+        <a href="/admin/all-repairs?status=Completed" class="nav-item nav-link"><i class="bi bi-check-circle dynamic-color-icon"></i>Completed Repairs</a>
+        <% } %>
+        <a href="/request" class="nav-item nav-link"><i class="fa-solid fa-code-pull-request dynamic-color-icon"></i>Request</a>
+        <% if (!isTeam || !perms || perms.billing !== false) { %>
+        <a href="/admin/payment-settings" class="nav-item nav-link"><i class="bi bi-credit-card dynamic-color-icon"></i>Billing Settings</a>
+        <% } %>
+        <% if (!isTeam || !perms || perms.wallet !== false) { %>
+        <a href="/admin/wallet" class="nav-item nav-link"><i class="bi bi-wallet2 dynamic-color-icon"></i>Wallet Management</a>
+        <% } %>
+        <a href="/admin/active-users" class="nav-item nav-link"><i class="bi bi-person-check dynamic-color-icon"></i>Active Users</a>
+        <a href="/admin/expired-users" class="nav-item nav-link"><i class="bi bi-person-x dynamic-color-icon"></i>Expired Users</a>
+        <% if (!isTeam || !perms || perms.complaints !== false) { %>
+        <a class="nav-link" href="/UserComplaint"><i class="bi bi-chat-right-quote dynamic-color-icon"></i><span class="menu-title pl-2">User Complaint</span></a>
+        <a class="nav-link" href="/review"><i class="bi bi-star dynamic-color-icon"></i><span class="menu-title pl-2">Reviews</span></a>
+        <% } %>
+        <% if (!isTeam || !perms || perms.plans !== false) { %>
+        <a class="nav-link" href="/package-request"><i class="bi bi-inbox dynamic-color-icon"></i><span class="menu-title pl-2">Plan Requests</span></a>
+        <% } %>
+        <a href="/show-tickets" class="nav-item nav-link"><i class="bi bi-card-text dynamic-color-icon"></i>Show Tickets</a>
+        <% if (!isTeam || !perms || perms.settings !== false) { %>
+        <a class="nav-link" href="/admin-settings"><i class="bi bi-gear dynamic-color-icon"></i><span class="menu-title pl-2">Settings</span></a>
+        <a class="nav-link" href="/create-plan"><i class="bi bi-box dynamic-color-icon"></i><span class="menu-title pl-2">Create Plan</span></a>
+        <% } %>
+        <a href="https://dashboard.tawk.to/#/dashboard/659fdbaf0ff6374032bedfad" class="nav-item nav-link" target="_blank"><i class="bi bi-chat-text-fill dynamic-color-icon"></i>Chat</a>
         <% } %>
           <% if (isUser) { %>
             <% 

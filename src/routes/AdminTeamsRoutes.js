@@ -12,6 +12,8 @@ const {
   updateteam,
   deleteteam,
   getAllAdminTeam,
+  toggleAdminStatus,
+  updateAdminPermissions,
 } = require("../controllers/AdminTeamsController");
 
 router.get("/Teams", isAuthenticated, isAdmin, SelectTeam);
@@ -25,5 +27,9 @@ router.get("/AllAdminTeam", isAuthenticated, isAdmin, getAllAdminTeam);
 // Admin team update and delete routes
 router.post("/updateteam", isAuthenticated, isAdmin, updateteam);
 router.post("/deleteteam/:id", isAuthenticated, isAdmin, deleteteam);
+
+// Admin team status and permissions routes
+router.post("/adminteam/toggle-status", isAuthenticated, isAdmin, toggleAdminStatus);
+router.post("/adminteam/update-permissions", isAuthenticated, isAdmin, updateAdminPermissions);
 
 module.exports = router;

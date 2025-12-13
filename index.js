@@ -311,7 +311,21 @@ app.use((req, res) => {
 // Start the server
 const PORT = process.env.PORT || 3000;
 
-connectDB().then(() => {
+connectDB().then(async () => {
+  // CRITICAL: Cleanup - Remove any owner emails from AddUser table on startup
+  try {
+    const User = require('./src/models/user');
+    const AddUser = require('./src/models/adduser');
+    const owners = await User.find({}).select('email');
+    const ownerEmails = owners.map(o => o.email);
+    const result = await AddUser.deleteMany({ email: { $in: ownerEmails } });
+    if (result.deletedCount > 0) {
+      console.log(`✅ Cleanup: Removed ${result.deletedCount} owner email(s) from team members table`);
+    }
+  } catch (error) {
+    console.error('❌ Cleanup error:', error.message);
+  }
+
   server.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
   });

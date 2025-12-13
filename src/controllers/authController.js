@@ -308,18 +308,26 @@ exports.signin = async (req, res) => {
             return res.render("Sigin/sign_in", { message: "Parent account not found." });
           }
           
-          console.log('User ID from session:', user._id);
+          console.log('✅ Team member login - Setting session flags');
           req.session.userId = user._id;
           req.session.isTeamMember = true;
           req.session.teamMemberEmail = teamMember.email;
           req.session.teamMemberName = teamMember.name;
+          console.log('✅ Team member session:', { isTeamMember: true, teamMemberEmail: teamMember.email });
           
           const token = jwt.sign({ id: user._id }, "your_jwt_secret", {
             expiresIn: "1h",
           });
           res.cookie("auth_token", token, { httpOnly: true });
           
-          return res.redirect("/index");
+          // CRITICAL: Save session before redirect
+          return req.session.save((err) => {
+            if (err) {
+              console.error('Session save error:', err);
+              return res.render("Sigin/sign_in", { message: "Login error. Please try again." });
+            }
+            res.redirect("/index");
+          });
         }
         
         return res.render("Sigin/sign_in", { message: "Invalid email." });
@@ -330,11 +338,24 @@ exports.signin = async (req, res) => {
         return res.render("Sigin/sign_in", { message: "Invalid password." });
       }
 
+      if (user.role === 'admin' && user.isActive === false) {
+        return res.render("Sigin/sign_in", { message: "Your admin account has been disabled. Please contact the system administrator." });
+      }
+
+      // CRITICAL: Ensure owner is not in AddUser table
+      const AddUserCheck = require("../models/adduser");
+      const ownerInTeamTable = await AddUserCheck.findOne({ email: user.email });
+      if (ownerInTeamTable) {
+        console.log('⚠️ WARNING: Owner email found in team members table, deleting:', user.email);
+        await AddUserCheck.deleteOne({ email: user.email });
+      }
+      
       req.session.userId = user._id;
-      // Clear team member flags for regular user login
+      // CRITICAL: Clear team member flags for owner login
       req.session.isTeamMember = false;
       req.session.teamMemberEmail = null;
       req.session.teamMemberName = null;
+      console.log('✅ Owner login - Session flags set:', { isTeamMember: false, teamMemberEmail: null });
       
       const token = jwt.sign({ id: user._id }, "your_jwt_secret", {
         expiresIn: "1h",
