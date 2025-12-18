@@ -115,9 +115,9 @@
       text-decoration: underline;
     }
 
-    .bg-dark {
+    /* .bg-dark {
       background: linear-gradient(135deg, #1f2937 0%, #111827 100%) !important;
-    }
+    } */
 
     #main-wrapper {
       background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%) !important;
@@ -125,6 +125,99 @@
 
     .bg-body {
       background: linear-gradient(135deg, #0033cc 0%, #33ccff 100%) !important;
+    }
+
+    /* Carousel styles */
+    .login-carousel {
+      max-width: 100%;
+      margin-top: 60px;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .login-carousel .carousel-inner {
+      border-radius: 20px;
+    }
+
+    .login-carousel img {
+      width: 100%;
+      height: 500px;
+      object-fit: cover;
+      border-radius: 16px;
+    }
+
+    .inline-logo {
+      width: 50px;
+      height: 50px;
+      object-fit: contain;
+      margin-left: 10px;
+      vertical-align: middle;
+    }
+
+    /* Responsive adjustments for 1024px and 1440px */
+    @media (min-width: 992px) and (max-width: 1440px) {
+      .col-lg-11 {
+        margin-top: 40px !important;
+      }
+      .login-carousel {
+        margin-top: 40px;
+      }
+      .login-carousel img {
+        height: 280px;
+      }
+      .inline-logo {
+        width: 40px;
+        height: 40px;
+        flex-shrink: 0;
+      }
+      h2.fs-10 {
+        font-size: 1rem !important;
+      }
+      .d-flex.align-items-center {
+        flex-wrap: nowrap;
+      }
+    }
+
+    .welcome-section {
+      padding: 50px 35px 50px 35px;
+    }
+
+    .welcome-section h2 {
+      font-size: clamp(1.5rem, 4vw, 2.5rem);
+    }
+
+    .welcome-section span {
+      font-size: clamp(0.9rem, 2vw, 1.1rem);
+    }
+
+    @media (min-width: 2560px) {
+      .welcome-section {
+        padding: 50px 120px;
+      }
+      
+      .auth-card {
+        max-width: 850px;
+      }
+    }
+
+    @media (min-width: 1441px) and (max-width: 2559px) {
+      .welcome-section {
+        padding: 50px 80px;
+      }
+    }
+
+    @media (min-width: 992px) and (max-width: 1440px) {
+      .welcome-section {
+        padding: 50px 50px 50px 35px;
+      }
+    }
+
+    @media (max-width: 991px) {
+      .auth-card {
+        padding: 35px 30px;
+        max-width: 95%;
+      }
     }
 
     @media (max-width: 768px) {
@@ -136,6 +229,14 @@
 
       .form-control {
         height: 45px;
+      }
+
+      .auth-card h1 {
+        font-size: 2rem;
+      }
+
+      .auth-card p {
+        font-size: 1rem;
       }
     }
 
@@ -154,22 +255,30 @@
       .btn-primary {
         height: 50px;
       }
+
+      .auth-card h1 {
+        font-size: 1.75rem;
+      }
+
+      .auth-card p {
+        font-size: 0.95rem;
+      }
     }
   </style>
 
 </head>
 
-<body class="link-sidebar " style="overflow: hidden;">
+<body class="link-sidebar">
 
   <div id="main-wrapper">
-    <div class="position-relative overflow-hidden radial-gradient min-vh-100 w-100">
-      <div class="position-relative z-index-5">
-        <div class="row gx-0">
+    <div class="position-relative radial-gradient w-100" style="height: 100vh;">
+      <div class="position-relative z-index-5 h-100">
+        <div class="row gx-0 h-100">
 
-          <div class="col-lg-6 col-xl-6 col-xxl-6"
+          <div class="col-lg-6 col-xl-6 col-xxl-6 h-100"
             style="background: linear-gradient(135deg, #744FA7 0%, #5a3a85 50%, #744FA7 100%);">
-            <div class="min-vh-100 bg-body row justify-content-center align-items-center p-5 mt-n4">
-              <div class="col-12 auth-card mt-n4 " style="margin-top:-50px;">
+            <div class="h-100 bg-body row justify-content-center align-items-center p-5">
+              <div class="col-12 auth-card">
 
                 <h1 class="mb-2 mt-3 fs-7 fw-bolder" style="color: #0749D3;">Sign Up</h1>
 
@@ -233,25 +342,53 @@
 
           </div>
 
-          <div class="col-lg-6 col-xl-6 col-xxl-6 position-relative overflow-hidden bg-dark d-none d-lg-block">
-
-            <div>
-              <img src="<%= info?.favicon ? '/uploads/' + info.favicon : '/images/DIB-NOW-512.png' %>"
-                class="circle-bottom" alt="Logo-Dark" />
-            </div>
+          <div class="col-lg-6 col-xl-6 col-xxl-6 position-relative bg-dark d-none d-lg-block h-100">
 
             <!--  -->
-            <div class="d-lg-flex align-items-center z-index-5 position-relative h-n80">
-              <div class="row  w-100" style="margin-left: 35px;">
-                <div class="col-lg-8 col-xxl-8 col-xl-8 " style="margin-top: -241px;">
-                  <h2 class="text-white fs-10 mb-3 lh-sm">
-                    Welcome to <%= title %>
-                  </h2>
-                  <span class="opacity-75 fs-4 text-white d-block mb-3">
+            <div class="d-lg-flex align-items-center z-index-5 position-relative ">
+              <div class="row w-100" style="margin-left: 35px; margin-right: 35px;">
+                <div class="col-lg-11 col-xxl-11 col-xl-11" style="margin-top: 80px;">
+                  <div class="d-flex align-items-center mb-3">
+                    <h2 class="text-white fs-10 mb-0 lh-sm">
+                      Welcome to <%= title %>
+                    </h2>
+                    <img src="<%= info?.favicon ? '/uploads/' + info.favicon : '/images/DIB-NOW-512.png' %>" class="inline-logo" alt="Logo" />
+                  </div>
+                  <span class="opacity-75 fs-6 fw-normal text-white d-block mb-4">
                     <%= welcome_description %>
-
+                  </span>
+                  
+                  <!-- Image Carousel -->
+                  <div id="signupCarousel" class="carousel slide carousel-fade login-carousel" data-bs-ride="carousel" data-bs-interval="3000">
+                    <div class="carousel-inner">
+                      <div class="carousel-item active">
+                        <img src="/images/dibnowlogin.jpeg" alt="Dibnow Login">
+                      </div>
+                      <div class="carousel-item">
+                        <img src="/images/dibnowpc.jpg" alt="Dibnow PC">
+                      </div>
+                      <div class="carousel-item">
+                        <img src="/images/dibnow mobile.jpg" alt="Dibnow Mobile">
+                      </div>
+                      <div class="carousel-item">
+                        <img src="/images/pcreapir.jpg" alt="PC Repair">
+                      </div>
+                      <div class="carousel-item">
+                        <img src="/images/shopmanagement.jpg" alt="Shop Management">
+                      </div>
+                      <div class="carousel-item">
+                        <img src="/images/mobierepair.jpg" alt="Mobile Repair">
+                      </div>
+                      <div class="carousel-item">
+                        <img src="/images/shopmanagement.jpg" alt="Shop Management">
+                      </div>
+                      <div class="carousel-item">
+                        <img src="/images/dibnowmain.jpg" alt="Dibnow Main">
+                      </div>
+                    </div>
+                  </div>
+                  
                 </div>
-                <!--  -->
               </div>
             </div>
           </div>

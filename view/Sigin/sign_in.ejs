@@ -180,21 +180,27 @@
         vertical-align: middle;
       }
 
-      /* Responsive adjustments for 1024px */
-      @media (max-width: 1024px) and (min-width: 992px) {
-        .col-lg-6.bg-dark .row {
-          margin-left: 20px !important;
-          margin-right: 20px !important;
-        }
+      /* Responsive adjustments for 1024px and 1440px */
+      @media (min-width: 992px) and (max-width: 1440px) {
         .col-lg-11 {
-          margin-top: -100px !important;
+          margin-top: 40px !important;
+        }
+        .login-carousel {
+          margin-top: 40px;
         }
         .login-carousel img {
-          height: 300px;
+          height: 280px;
         }
         .inline-logo {
           width: 40px;
           height: 40px;
+          flex-shrink: 0;
+        }
+        h2.fs-10 {
+          font-size: 2rem !important;
+        }
+        .d-flex.align-items-center {
+          flex-wrap: nowrap;
         }
       }
 
@@ -323,7 +329,7 @@
       <div class="position-relative z-index-5">
         <div class="row gx-0">
 
-          <div class="col-lg-6 col-xl-6 col-xxl-6" style="background: linear-gradient(135deg, #744FA7 0%, #5a3a85 50%, #744FA7 100%);">
+          <div class="col-lg-6 col-xl-6 col-xxl-6" >
             <div class="min-vh-100 bg-body row justify-content-center align-items-center p-5 mt-n4">
               <div class="col-12 auth-card mt-n4">
              
@@ -368,7 +374,7 @@
           <div class="col-lg-6 col-xl-6 col-xxl-6 position-relative overflow-hidden bg-dark d-none d-lg-block">
             
             <!--  -->
-            <div class="d-lg-flex align-items-center z-index-5 position-relative h-n80">
+            <div class="d-lg-flex align-items-center z-index-5 position-relative ">
               <div class="row  w-100" style="margin-left: 35px; margin-right: 35px;">
                 <div class="col-lg-11 col-xxl-11 col-xl-11" style="margin-top: 80px;">
                   <div class="d-flex align-items-center mb-3">
